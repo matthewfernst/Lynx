@@ -29,12 +29,22 @@ class AccountViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let tabBarController = self.tabBarController as! TabViewController
+        self.profileModel = tabBarController.profileModel
+        
         self.title = "Account"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         
         tableView.register(SettingTableViewCell.self, forCellReuseIdentifier: SettingTableViewCell.identifier)
         tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: ProfileTableViewCell.identifier)
         tableView.register(MadeWithLoveFooterView.self, forHeaderFooterViewReuseIdentifier: MadeWithLoveFooterView.identifier)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        let tabBarController = self.tabBarController as! TabViewController
+        tabBarController.profileModel = self.profileModel
     }
     
     // MARK: UITableViewController
@@ -73,6 +83,7 @@ class AccountViewController: UITableViewController {
             }
             
             profileCell.configure(withProfile: profileModel)
+            
             return profileCell
             
         case .general:

@@ -32,8 +32,6 @@ class EditProfileTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-
-        
         self.title = "Edit Profile"
         self.navigationController?.navigationBar.prefersLargeTitles = false
                 

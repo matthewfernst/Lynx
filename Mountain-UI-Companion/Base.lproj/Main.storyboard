@@ -395,7 +395,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WFT-1f-l7C" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-126" y="1115"/>
+            <point key="canvasLocation" x="-153" y="1115"/>
         </scene>
         <!--Notification Settings Table View Controller-->
         <scene sceneID="QgC-5G-fTG">

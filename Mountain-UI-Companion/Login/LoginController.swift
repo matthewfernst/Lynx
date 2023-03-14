@@ -50,7 +50,7 @@ class LoginController
                     }
                 }
             }
-            Logger.dynamoDB.debug("User info being returned.")
+            Logger.dynamoDB.debug("Profile Attributes being returned.")
             return profileAttributes
         }
         Logger.dynamoDB.debug("Nil being returned for user info")
