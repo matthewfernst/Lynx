@@ -143,16 +143,15 @@ class LoginViewController: UIViewController
     }
     
     func goToMainApp() {
-        if let tabController = self.storyboard?.instantiateViewController(withIdentifier: "TabController") as? UITabBarController {
-            // Set up data to pass to first view controller
-            if let slopesConnectionViewContoller = tabController.viewControllers?.first as? SlopesConnectionViewController {
-                slopesConnectionViewContoller.profileModel = loginController.profileModel
-            }
+        
+        if let tabBarController = self.storyboard?.instantiateViewController(withIdentifier: "TabController") as? TabViewController {
+            tabBarController.profileModel = loginController.profileModel
+            tabBarController.modalTransitionStyle = .flipHorizontal
+            tabBarController.modalPresentationStyle = .fullScreen
             
-            tabController.modalPresentationStyle = .fullScreen
-            tabController.modalTransitionStyle = .flipHorizontal
-            self.present(tabController, animated: true, completion: nil)
+            self.present(tabBarController, animated: true)
         }
+    
     }
 
     

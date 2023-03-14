@@ -75,10 +75,10 @@
             </objects>
             <point key="canvasLocation" x="-866.41221374045801" y="-930.28169014084517"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--Tab View Controller-->
         <scene sceneID="5b3-LL-357">
             <objects>
-                <tabBarController storyboardIdentifier="TabController" id="vTQ-fC-hKE" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="TabController" id="vTQ-fC-hKE" customClass="TabViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="szM-zI-j5P"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="g4g-nm-2u7">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>

@@ -24,12 +24,17 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     var profileModel: Profile!
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let tabController = segue.destination as? TabViewController {
+            // Set up data to pass to first view controller
+            if let firstViewController = tabController.viewControllers?.first as? LogBookViewController {
+                firstViewController.profileModel = tabController.profileModel
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let tabBarController = self.tabBarController as? TabViewController {
-            profileModel = tabBarController.profileModel
-        }
         
         self.title = "LogBook"
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -84,7 +89,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
             configuration.text = "Season Summary"
             configuration.secondaryText = "5 runs | 2 days | 4.3k FT"
             configuration.secondaryTextProperties.color = .secondaryLabel
-        
+            
             cell.backgroundColor = .secondarySystemBackground
             
             return cell

@@ -19,7 +19,7 @@ class LoginController
     
     func handleCommonSignIn(uuid: String, firstName: String? = nil, lastName: String? = nil, email: String? = nil, profilePictureURL: String = "") async {
         if let profileAttributes = try? await self.getExistingUser(uuid: uuid) {
-            loginUser(userInfo: profileAttributes)
+            loginUser(profileAttributes: profileAttributes)
         } else if let firstName = firstName, let lastName = lastName, let email = email {
             await self.createNewUser(profileAttributes: ProfileAttributes(uuid: uuid,
                                                                           firstName: firstName,
@@ -57,13 +57,13 @@ class LoginController
         return nil
     }
     
-    private func loginUser(userInfo: ProfileAttributes) {
-        Logger.userInfo.info("Existing user found.")
-        self.signInUser(profileAttributes: userInfo)
+    private func loginUser(profileAttributes: ProfileAttributes) {
+        Logger.loginController.info("Existing user found.")
+        self.signInUser(profileAttributes: profileAttributes)
     }
     
     private func createNewUser(profileAttributes: ProfileAttributes) async {
-        Logger.userInfo.info("User does not exist. Creating User.")
+        Logger.loginController.info("User does not exist. Creating User.")
         
         self.signInUser(profileAttributes: profileAttributes)
         
@@ -71,14 +71,28 @@ class LoginController
     }
     
     private func signInUser(profileAttributes: ProfileAttributes) {
+        let group = DispatchGroup() // Create a DispatchGroup
+        
+        var createdProfile: Profile? // Declare a variable to store the created profile
+        
+        group.enter() // Enter the DispatchGroup
+        
         Profile.createProfile(uuid: profileAttributes.uuid,
                               firstName: profileAttributes.firstName,
                               lastName: profileAttributes.lastName,
                               email: profileAttributes.email,
                               profilePictureURL: profileAttributes.profilePictureURL) { profile in
-            self.profileModel = profile
+            createdProfile = profile // Store the created profile in the variable
+            group.leave() // Leave the DispatchGroup
+        }
+        
+        group.wait() // Wait until the DispatchGroup is empty
+        
+        if let profile = createdProfile {
+            self.profileModel = profile // Use the created profile
         }
     }
+
 }
 
 // MARK: ProfileAttributes

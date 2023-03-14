@@ -26,16 +26,8 @@ class AccountViewController: UITableViewController {
     private var generalSettings = Setting.sampleSettingOptions
     private var supportSettings = Support.sampleSupportOptions
     
-    override func viewWillAppear(_ animated: Bool) {
-        self.tableView.reloadData()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let tabBarController = self.tabBarController as? TabViewController {
-            profileModel = tabBarController.profileModel
-        }
         
         self.title = "Account"
         self.navigationController?.navigationBar.prefersLargeTitles = true

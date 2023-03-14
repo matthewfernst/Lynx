@@ -32,9 +32,7 @@ class EditProfileTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let tabBarController = self.tabBarController as? TabViewController {
-            profileModel = tabBarController.profileModel
-        }
+
         
         self.title = "Edit Profile"
         self.navigationController?.navigationBar.prefersLargeTitles = false

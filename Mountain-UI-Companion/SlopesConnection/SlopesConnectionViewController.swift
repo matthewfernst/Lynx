@@ -35,9 +35,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let tabBarController = self.tabBarController as? TabViewController {
-            profileModel = tabBarController.profileModel
-        }
+
         
         // loadAllBookmarks()
         
