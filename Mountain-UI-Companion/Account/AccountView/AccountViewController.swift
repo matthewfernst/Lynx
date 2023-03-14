@@ -20,7 +20,8 @@ enum GeneralSettinsSections: Int, CaseIterable {
     case notifications = 1
 }
 
-class AccountViewController: UITableViewController {
+class AccountViewController: UITableViewController
+{
     var profileModel: Profile!
     
     private var generalSettings = Setting.sampleSettingOptions
@@ -75,7 +76,6 @@ class AccountViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         switch AllSettingsSections(rawValue: indexPath.section) {
         case .profile:
             guard let profileCell = tableView.dequeueReusableCell(withIdentifier: ProfileTableViewCell.identifier, for: indexPath) as? ProfileTableViewCell else {
@@ -141,20 +141,21 @@ class AccountViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch AllSettingsSections(rawValue: indexPath.section) {
         case .profile:
-            if let profileVC = self.storyboard?.instantiateViewController(withIdentifier: EditProfileTableViewController.identifier) as? EditProfileTableViewController {
-                self.navigationController?.pushViewController(profileVC, animated: true)
+            if let editProfileViewController = self.storyboard?.instantiateViewController(withIdentifier: EditProfileTableViewController.identifier) as? EditProfileTableViewController {
+                editProfileViewController.profileModel = self.profileModel
+                self.navigationController?.pushViewController(editProfileViewController, animated: true)
             }
             
         case .general:
             switch GeneralSettinsSections(rawValue: indexPath.row) {
             case .app:
-                if let appVC = self.storyboard?.instantiateViewController(withIdentifier: AppSettingTableViewController.identitifer) as? AppSettingTableViewController {
-                    self.navigationController?.pushViewController(appVC, animated: true)
+                if let appSettingsViewController = self.storyboard?.instantiateViewController(withIdentifier: AppSettingTableViewController.identitifer) as? AppSettingTableViewController {
+                    self.navigationController?.pushViewController(appSettingsViewController, animated: true)
                 }
                 
             case .notifications:
-                if let notificationVC = self.storyboard?.instantiateViewController(withIdentifier: NotificationSettingsTableViewController.identifier) as? NotificationSettingsTableViewController {
-                    self.navigationController?.pushViewController(notificationVC, animated: true)
+                if let notificationViewController = self.storyboard?.instantiateViewController(withIdentifier: NotificationSettingsTableViewController.identifier) as? NotificationSettingsTableViewController {
+                    self.navigationController?.pushViewController(notificationViewController, animated: true)
                 }
                 
             default:

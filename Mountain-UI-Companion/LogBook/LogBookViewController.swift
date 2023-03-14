@@ -36,6 +36,9 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let tabBarController = self.tabBarController as! TabViewController
+        self.profileModel = tabBarController.profileModel
+        
         self.title = "LogBook"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         

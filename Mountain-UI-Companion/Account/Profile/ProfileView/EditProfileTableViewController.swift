@@ -7,17 +7,20 @@
 
 import UIKit
 
-enum ProfileSections: Int, CaseIterable {
+enum ProfileSections: Int, CaseIterable
+{
     case changeNameAndEmail = 0
     case signOut = 1
 }
 
-enum NameAndEmailSections: Int, CaseIterable {
+enum NameAndEmailSections: Int, CaseIterable
+{
     case name = 0
     case email = 1
 }
 
-class EditProfileTableViewController: UITableViewController {
+class EditProfileTableViewController: UITableViewController
+{
     
     static var identifier = "EditProfileTableViewController"
     
