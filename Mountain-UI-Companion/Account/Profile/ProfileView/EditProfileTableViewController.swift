@@ -21,8 +21,7 @@ class EditProfileTableViewController: UITableViewController {
     
     static var identifier = "EditProfileTableViewController"
     
-    private var profileViewModel = ProfileViewModel.shared
-    private var profile: Profile!
+    var profileModel: Profile!
     
     private let dynamoDBClient = DynamoDBUtils.dynamoDBClient
     private let userTable = DynamoDBUtils.usersTable
@@ -33,11 +32,13 @@ class EditProfileTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if let tabBarController = self.tabBarController as? TabViewController {
+            profileModel = tabBarController.profileModel
+        }
+        
         self.title = "Edit Profile"
         self.navigationController?.navigationBar.prefersLargeTitles = false
-        
-        bindViewModel()
-        
+                
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(goBackToSettings))
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveNameAndEmailChanges))
         
@@ -53,33 +54,31 @@ class EditProfileTableViewController: UITableViewController {
         changedLastName = newLastName
     }
     
-    func bindViewModel() {
-        profile = profileViewModel.profile
-    }
     
     @objc func goBackToSettings() {
         self.navigationController?.popViewController(animated: true)
     }
     
     @objc func saveNameAndEmailChanges()  {
-        #warning("TODO: Add Profile Picture Change -> Image Picker needed.")
+        // TODO: Add Profile Picture Change -> Image Picker needed.
         let newProfilePictureURL = URL(string: "https://i.imgur.com/w5rkSIj.jpg")!
         
-        let firstName = changedFirstName ?? profile.firstName
-        let lastName = changedLastName ?? profile.lastName
+        let firstName = changedFirstName ?? profileModel.firstName
+        let lastName = changedLastName ?? profileModel.lastName
         let email = "matthew.f.ernst@gmail.com"
         
         let newName = firstName + " " + lastName
         // Update Dynamo
         Task {
-            await DynamoDBUtils.updateDynamoDBItem(uuid: self.profileViewModel.uuid,
+            await DynamoDBUtils.updateDynamoDBItem(uuid: profileModel.uuid,
                                                    newName: newName,
                                                    newProfilePictureURL: newProfilePictureURL.absoluteString)
         }
         
         // Update shared profile to update all other views
-        Profile.createProfile(uuid: self.profileViewModel.uuid, name: newName, email: email, profilePictureURL: newProfilePictureURL) { [unowned self] newProfile in
-            self.profileViewModel.updateProfile(newProfile: newProfile)
+        Profile.createProfile(uuid: profileModel.uuid, firstName: firstName, lastName: lastName, email: email) { [unowned self] newProfile in
+            // TODO: What now? Delegate back or set in tabcontroller?
+
             DispatchQueue.main.async {
                 // Refresh the previous view controller
                 self.navigationController?.popViewController(animated: true)
@@ -112,14 +111,14 @@ class EditProfileTableViewController: UITableViewController {
                     return UITableViewCell()
                 }
                 
-                nameCell.configure(name: profile.name, delegate: self)
+                nameCell.configure(name: profileModel.name, delegate: self)
                 
                 return nameCell
                 
             case .email:
                 guard let emailCell = tableView.dequeueReusableCell(withIdentifier: EmailTableViewCell.identifier, for: indexPath) as? EmailTableViewCell else { return UITableViewCell()
                 }
-                emailCell.configure(email: profile.email)
+                emailCell.configure(email: profileModel.email)
                 
                 return emailCell
             default:

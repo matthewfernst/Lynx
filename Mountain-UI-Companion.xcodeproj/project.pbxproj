@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		65362D5A29C1037600507CCE /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65362D5929C1037600507CCE /* LoginController.swift */; };
+		65362D5C29C115A100507CCE /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65362D5B29C115A100507CCE /* TabViewController.swift */; };
 		653A0E5F29BCFE8200C8F308 /* SignInWithGoogleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653A0E5E29BCFE8200C8F308 /* SignInWithGoogleButton.swift */; };
 		65478ADD29BE6FB100861A63 /* EmailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65478ADC29BE6FB100861A63 /* EmailTableViewCell.swift */; };
 		65478ADF29BE8B4400861A63 /* NameTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65478ADE29BE8B4400861A63 /* NameTableViewCell.swift */; };
 		65478AE129BE972500861A63 /* DynamoDBUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65478AE029BE972500861A63 /* DynamoDBUtils.swift */; };
-		65478AE729BEBB6500861A63 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65478AE629BEBB6500861A63 /* ProfileViewModel.swift */; };
 		654DEABF297F5E8C001565A3 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654DEABE297F5E8C001565A3 /* Extension.swift */; };
 		654DEAC3297F6720001565A3 /* SlopesConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654DEAC2297F6720001565A3 /* SlopesConnectionViewController.swift */; };
 		654DEAC52980FAB5001565A3 /* MadeWithLoveFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654DEAC42980FAB5001565A3 /* MadeWithLoveFooterView.swift */; };
@@ -45,12 +45,12 @@
 
 /* Begin PBXFileReference section */
 		65362D5929C1037600507CCE /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		65362D5B29C115A100507CCE /* TabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		653A0E5E29BCFE8200C8F308 /* SignInWithGoogleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithGoogleButton.swift; sourceTree = "<group>"; };
 		6540781F29875ADB00CFE259 /* Mountain-UI-Companion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Mountain-UI-Companion.entitlements"; sourceTree = "<group>"; };
 		65478ADC29BE6FB100861A63 /* EmailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailTableViewCell.swift; sourceTree = "<group>"; };
 		65478ADE29BE8B4400861A63 /* NameTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameTableViewCell.swift; sourceTree = "<group>"; };
 		65478AE029BE972500861A63 /* DynamoDBUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamoDBUtils.swift; sourceTree = "<group>"; };
-		65478AE629BEBB6500861A63 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		654DEABE297F5E8C001565A3 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		654DEAC2297F6720001565A3 /* SlopesConnectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlopesConnectionViewController.swift; sourceTree = "<group>"; };
 		654DEAC42980FAB5001565A3 /* MadeWithLoveFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MadeWithLoveFooterView.swift; sourceTree = "<group>"; };
@@ -104,14 +104,6 @@
 			path = Login;
 			sourceTree = "<group>";
 		};
-		65478AE229BEBADB00861A63 /* ProfileViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				65478AE629BEBB6500861A63 /* ProfileViewModel.swift */,
-			);
-			path = ProfileViewModel;
-			sourceTree = "<group>";
-		};
 		65478AE329BEBAE500861A63 /* ProfileView */ = {
 			isa = PBXGroup;
 			children = (
@@ -147,7 +139,6 @@
 			isa = PBXGroup;
 			children = (
 				65478AE329BEBAE500861A63 /* ProfileView */,
-				65478AE229BEBADB00861A63 /* ProfileViewModel */,
 				654DEAD52981C1CD001565A3 /* ProfileModel */,
 			);
 			path = Profile;
@@ -211,6 +202,7 @@
 				65A370E4297E594600E1D851 /* Assets.xcassets */,
 				65A370E6297E594600E1D851 /* LaunchScreen.storyboard */,
 				65A370E9297E594600E1D851 /* Info.plist */,
+				65362D5B29C115A100507CCE /* TabViewController.swift */,
 			);
 			path = "Mountain-UI-Companion";
 			sourceTree = "<group>";
@@ -346,11 +338,11 @@
 				654DEAE029820806001565A3 /* Profile.swift in Sources */,
 				654DEAE82983933C001565A3 /* LoginViewController.swift in Sources */,
 				65478ADD29BE6FB100861A63 /* EmailTableViewCell.swift in Sources */,
+				65362D5C29C115A100507CCE /* TabViewController.swift in Sources */,
 				65E5ACDD29BFFE620093ECA9 /* S3Utils.swift in Sources */,
 				65A370F3297E5DCD00E1D851 /* Setting.swift in Sources */,
 				65A370E0297E594500E1D851 /* ViewController.swift in Sources */,
 				65478AE129BE972500861A63 /* DynamoDBUtils.swift in Sources */,
-				65478AE729BEBB6500861A63 /* ProfileViewModel.swift in Sources */,
 				653A0E5F29BCFE8200C8F308 /* SignInWithGoogleButton.swift in Sources */,
 				65AF9FF6297F355500DC59C3 /* LogBookViewController.swift in Sources */,
 				654DEAE429824134001565A3 /* SessionTableViewCell.swift in Sources */,

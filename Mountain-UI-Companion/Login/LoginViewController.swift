@@ -143,12 +143,18 @@ class LoginViewController: UIViewController
     }
     
     func goToMainApp() {
-        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "TabController") {
-            vc.modalPresentationStyle = .fullScreen
-            vc.modalTransitionStyle = .flipHorizontal
-            self.present(vc, animated: true)
+        if let tabController = self.storyboard?.instantiateViewController(withIdentifier: "TabController") as? UITabBarController {
+            // Set up data to pass to first view controller
+            if let slopesConnectionViewContoller = tabController.viewControllers?.first as? SlopesConnectionViewController {
+                slopesConnectionViewContoller.profileModel = loginController.profileModel
+            }
+            
+            tabController.modalPresentationStyle = .fullScreen
+            tabController.modalTransitionStyle = .flipHorizontal
+            self.present(tabController, animated: true, completion: nil)
         }
     }
+
     
     func showErrorWithSignIn() {
         let message = """
@@ -177,12 +183,13 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             break
             
         // TODO: Needed for existing sign in
-        case let passwordCredential as ASPasswordCredential:
-            // Sign in using exisiting iCloud Keychain credential.
-            // For the purpose of this demo app, show alert
-            self.updateViewFromModel()
-            break
+//        case let passwordCredential as ASPasswordCredential:
+//            // Sign in using exisiting iCloud Keychain credential.
+//            // For the purpose of this demo app, show alert
+//            self.updateViewFromModel()
+//            break
         default:
+            showErrorWithSignIn()
             Swift.debugPrint("Not ready yet")
         }
     }

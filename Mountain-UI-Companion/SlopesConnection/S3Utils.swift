@@ -13,18 +13,11 @@ struct S3Utils {
     private static let bucketName = "mountain-ui-app-slopes-zipped"
     private static let s3Client = try! S3Client(region: "us-east-1")
     
-    private static let profileViewModel = ProfileViewModel.shared
-    
-    static func uploadSlopesDataToS3(file: URL) async throws {
-        enum ValidationError: Error {
-            case noUUID
-        }
-        guard let uuid = self.profileViewModel.profile?.uuid else { throw ValidationError.noUUID }
-        
+    static func uploadSlopesDataToS3(uuid: String, file: URL) async throws {
         let fileKey = "\(uuid)/\(file.lastPathComponent)"
         let fileData = try Data(contentsOf: file)
         
-        let _ = try await createFile(key: fileKey, data: fileData)
+        let _ = try await S3Utils.createFile(key: fileKey, data: fileData)
     }
     
     static func createFile(key: String, data: Data) async throws -> PutObjectOutputResponse {

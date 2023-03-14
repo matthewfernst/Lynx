@@ -8,7 +8,8 @@
 import Foundation
 import OSLog
 
-class LoginController {
+class LoginController
+{
     let loginViewController: LoginViewController
     var profileModel: Profile?
     

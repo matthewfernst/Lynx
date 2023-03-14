@@ -22,16 +22,17 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet var allLifetimeStateButton: UIButton!
     @IBOutlet var sessionSummaryTableView: UITableView!
     
-    var profileViewModel = ProfileViewModel.shared
-    var profile: Profile!
+    var profileModel: Profile!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if let tabBarController = self.tabBarController as? TabViewController {
+            profileModel = tabBarController.profileModel
+        }
+        
         self.title = "LogBook"
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        
-        profile = profileViewModel.profile
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(explainMoreWithSlopes))
         
@@ -40,7 +41,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         sessionSummaryTableView.register(SessionTableViewCell.self, forCellReuseIdentifier: SessionTableViewCell.identifier)
         sessionSummaryTableView.rowHeight = 66.0
         
-        let profileImage = profile.profilePicture ?? profile.defaultLogbookProfilePicture
+        let profileImage = profileModel.profilePicture ?? profileModel.defaultLogbookProfilePicture
         profileImageView.image = profileImage
         profileImageView.backgroundColor = .secondarySystemBackground
         profileImageView.makeRounded()
