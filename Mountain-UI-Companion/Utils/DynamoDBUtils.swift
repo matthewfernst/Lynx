@@ -13,12 +13,13 @@ struct DynamoDBUtils {
     static let usersTable = "mountain-ui-app-users"
     static let dynamoDBClient = try! DynamoDBClient(region: "us-west-2")
     
-    static func putDynamoDBItem(uuid: String, name: String, email: String, profilePictureURL: String) async {
+    static func putDynamoDBItem(profileAttributes: ProfileAttributes) async {
         let itemValues = [
-            "uuid": DynamoDBClientTypes.AttributeValue.s(uuid),
-            "email": DynamoDBClientTypes.AttributeValue.s(email),
-            "name": DynamoDBClientTypes.AttributeValue.s(name),
-            "profilePictureURL": DynamoDBClientTypes.AttributeValue.s(profilePictureURL)
+            "uuid": DynamoDBClientTypes.AttributeValue.s(profileAttributes.uuid),
+            "firstName": DynamoDBClientTypes.AttributeValue.s(profileAttributes.firstName),
+            "lastName": DynamoDBClientTypes.AttributeValue.s(profileAttributes.lastName),
+            "email": DynamoDBClientTypes.AttributeValue.s(profileAttributes.email),
+            "profilePictureURL": DynamoDBClientTypes.AttributeValue.s(profileAttributes.profilePictureURL)
         ]
         let input = PutItemInput(item: itemValues, tableName: usersTable)
         do {
