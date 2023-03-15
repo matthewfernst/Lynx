@@ -53,13 +53,16 @@ class EditNameTableViewCell: UITableViewCell {
         
         NSLayoutConstraint.activate([
             nameLabel.widthAnchor.constraint(equalToConstant: 50),
+            nameLabel.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
             nameLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
             nameLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
             
+            firstNameTextField.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
             firstNameTextField.widthAnchor.constraint(equalToConstant: 100),
             firstNameTextField.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
             firstNameTextField.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 20),
             
+            lastNameTextField.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
             lastNameTextField.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
             lastNameTextField.leadingAnchor.constraint(equalTo: firstNameTextField.trailingAnchor, constant: 20),
             lastNameTextField.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor)

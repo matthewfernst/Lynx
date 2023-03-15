@@ -42,21 +42,25 @@ class EditEmailTableViewCell: UITableViewCell {
         emailTextField.text = email
         emailTextField.delegate = delegate
         
+        emailLabel.translatesAutoresizingMaskIntoConstraints = false
+        emailTextField.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            emailLabel.widthAnchor.constraint(equalToConstant: 45),
+            emailLabel.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
+            emailLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            emailLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
+            
+            emailTextField.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
+            emailTextField.leadingAnchor.constraint(equalTo: emailLabel.trailingAnchor, constant: 20),
+            emailTextField.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
+            emailTextField.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor)
+        ])
+        
+        
         self.backgroundColor = .secondarySystemBackground
         self.selectionStyle = .none
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let contentHeight = contentView.frame.size.height
-        let contentWidth = contentView.frame.size.width
         
-        emailLabel.frame = CGRect(x: 20, y: 0, width: contentHeight, height: contentHeight)
-        
-        emailTextField.frame = CGRect(x: emailLabel.frame.midX + 40,
-                                      y: 0,
-                                      width: contentWidth,
-                                      height: contentHeight)
     }
     
     override func awakeFromNib() {
