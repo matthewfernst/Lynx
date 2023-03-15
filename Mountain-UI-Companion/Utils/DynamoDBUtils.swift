@@ -13,12 +13,13 @@ struct DynamoDBUtils {
     static let usersTable = "mountain-ui-app-users"
     static let dynamoDBClient = try! DynamoDBClient(region: "us-west-2")
     
-    static func putDynamoDBItem(uuid: String, name: String, email: String, profilePictureURL: String) async {
+    static func putDynamoDBItem(profileAttributes: ProfileAttributes) async {
         let itemValues = [
-            "uuid": DynamoDBClientTypes.AttributeValue.s(uuid),
-            "email": DynamoDBClientTypes.AttributeValue.s(email),
-            "name": DynamoDBClientTypes.AttributeValue.s(name),
-            "profilePictureURL": DynamoDBClientTypes.AttributeValue.s(profilePictureURL)
+            "uuid": DynamoDBClientTypes.AttributeValue.s(profileAttributes.uuid),
+            "firstName": DynamoDBClientTypes.AttributeValue.s(profileAttributes.firstName),
+            "lastName": DynamoDBClientTypes.AttributeValue.s(profileAttributes.lastName),
+            "email": DynamoDBClientTypes.AttributeValue.s(profileAttributes.email),
+            "profilePictureURL": DynamoDBClientTypes.AttributeValue.s(profileAttributes.profilePictureURL)
         ]
         let input = PutItemInput(item: itemValues, tableName: usersTable)
         do {
@@ -40,11 +41,17 @@ struct DynamoDBUtils {
     }
     
     static func updateDynamoDBItem(uuid: String,
-                                   newName: String,
+                                   newFirstName: String,
+                                   newLastName: String,
+                                   newEmail: String,
                                    newProfilePictureURL: String) async {
         let itemKey = ["uuid" : DynamoDBClientTypes.AttributeValue.s(uuid)]
-        let updatedValues = ["name": DynamoDBClientTypes.AttributeValueUpdate(action: .put, value: DynamoDBClientTypes.AttributeValue.s(newName)),
-                             "profilePictureURL": DynamoDBClientTypes.AttributeValueUpdate(action: .put, value: DynamoDBClientTypes.AttributeValue.s(newProfilePictureURL))]
+        let updatedValues = [
+            "firstName": DynamoDBClientTypes.AttributeValueUpdate(action: .put, value: DynamoDBClientTypes.AttributeValue.s(newFirstName)),
+            "lastName": DynamoDBClientTypes.AttributeValueUpdate(action: .put, value: DynamoDBClientTypes.AttributeValue.s(newLastName)),
+            "email": DynamoDBClientTypes.AttributeValueUpdate(action: .put, value: DynamoDBClientTypes.AttributeValue.s(newEmail)),
+            "profilePictureURL": DynamoDBClientTypes.AttributeValueUpdate(action: .put, value: DynamoDBClientTypes.AttributeValue.s(newProfilePictureURL))
+        ]
         do {
             let _ = try await dynamoDBClient.updateItem(input: UpdateItemInput(attributeUpdates: updatedValues, key: itemKey, tableName: usersTable))
             

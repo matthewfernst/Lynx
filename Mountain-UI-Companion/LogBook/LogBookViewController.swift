@@ -22,16 +22,25 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet var allLifetimeStateButton: UIButton!
     @IBOutlet var sessionSummaryTableView: UITableView!
     
-    var profileViewModel = ProfileViewModel.shared
-    var profile: Profile!
+    var profileModel: Profile!
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let tabController = segue.destination as? TabViewController {
+            // Set up data to pass to first view controller
+            if let firstViewController = tabController.viewControllers?.first as? LogBookViewController {
+                firstViewController.profileModel = tabController.profileModel
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let tabBarController = self.tabBarController as! TabViewController
+        self.profileModel = tabBarController.profileModel
+        
         self.title = "LogBook"
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        
-        profile = profileViewModel.profile
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(explainMoreWithSlopes))
         
@@ -40,7 +49,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         sessionSummaryTableView.register(SessionTableViewCell.self, forCellReuseIdentifier: SessionTableViewCell.identifier)
         sessionSummaryTableView.rowHeight = 66.0
         
-        let profileImage = profile.profilePicture ?? profile.defaultLogbookProfilePicture
+        let profileImage = profileModel.profilePicture ?? profileModel.defaultLogbookProfilePicture
         profileImageView.image = profileImage
         profileImageView.backgroundColor = .secondarySystemBackground
         profileImageView.makeRounded()
@@ -83,7 +92,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
             configuration.text = "Season Summary"
             configuration.secondaryText = "5 runs | 2 days | 4.3k FT"
             configuration.secondaryTextProperties.color = .secondaryLabel
-        
+            
             cell.backgroundColor = .secondarySystemBackground
             
             return cell

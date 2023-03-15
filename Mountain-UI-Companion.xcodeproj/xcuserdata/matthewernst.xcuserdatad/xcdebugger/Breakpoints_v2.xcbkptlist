@@ -7,92 +7,95 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "1CFB11EC-EAF9-4A45-B31A-F224B9E2AFA7"
-            shouldBeEnabled = "No"
+            uuid = "B01AD361-4CD5-415A-842C-260DE7048D5C"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Mountain-UI-Companion/Login/LoginViewController.swift"
+            filePath = "Mountain-UI-Companion/LogBook/LogBookViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
-            landmarkName = "handleAuthorizationGoogleButtonPress()"
+            startingLineNumber = "28"
+            endingLineNumber = "28"
+            landmarkName = "prepare(for:sender:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "1CFB11EC-EAF9-4A45-B31A-F224B9E2AFA7 - 9134090ffeb5d4f4"
+                  uuid = "B01AD361-4CD5-415A-842C-260DE7048D5C - 33352c9b84c55034"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 (Swift.Optional&lt;__C.GIDSignInResult&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Mountain_UI_Companion.LoginViewController.handleAuthorizationGoogleButtonPress() -&gt; ()"
+                  symbolName = "Mountain_UI_Companion.LogBookViewController.prepare(for: __C.UIStoryboardSegue, sender: Swift.Optional&lt;Any&gt;) -&gt; ()"
                   moduleName = "Mountain-UI-Companion"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Login/LoginViewController.swift"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/LogBook/LogBookViewController.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "124"
-                  endingLineNumber = "124"
-                  offsetFromSymbolStart = "128">
+                  startingLineNumber = "28"
+                  endingLineNumber = "28"
+                  offsetFromSymbolStart = "56">
                </Location>
                <Location
-                  uuid = "1CFB11EC-EAF9-4A45-B31A-F224B9E2AFA7 - 9134090ffeb5d4f4"
+                  uuid = "B01AD361-4CD5-415A-842C-260DE7048D5C - 33352c9b84c55034"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 (Swift.Optional&lt;__C.GIDSignInResult&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Mountain_UI_Companion.LoginViewController.handleAuthorizationGoogleButtonPress() -&gt; ()"
+                  symbolName = "Mountain_UI_Companion.LogBookViewController.prepare(for: __C.UIStoryboardSegue, sender: Swift.Optional&lt;Any&gt;) -&gt; ()"
                   moduleName = "Mountain-UI-Companion"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Login/LoginViewController.swift"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/LogBook/LogBookViewController.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "124"
-                  endingLineNumber = "124"
-                  offsetFromSymbolStart = "740">
+                  startingLineNumber = "28"
+                  endingLineNumber = "28"
+                  offsetFromSymbolStart = "180">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EE62AA9B-D299-451D-8597-16FB19B56B16"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Mountain-UI-Companion/Account/Profile/ProfileView/EditProfileTableViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
+            landmarkName = "textField(_:shouldChangeCharactersIn:replacementString:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "EE62AA9B-D299-451D-8597-16FB19B56B16 - ff733216bc402308"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Mountain_UI_Companion.EditProfileTableViewController.textField(_: __C.UITextField, shouldChangeCharactersIn: __C._NSRange, replacementString: Swift.String) -&gt; Swift.Bool"
+                  moduleName = "Mountain-UI-Companion"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Account/Profile/ProfileView/EditProfileTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "214"
+                  endingLineNumber = "214"
+                  offsetFromSymbolStart = "104">
                </Location>
                <Location
-                  uuid = "1CFB11EC-EAF9-4A45-B31A-F224B9E2AFA7 - 436a24d9f458d2d4"
+                  uuid = "EE62AA9B-D299-451D-8597-16FB19B56B16 - ff733216bc402308"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 (Swift.Optional&lt;__C.GIDSignInResult&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Mountain_UI_Companion.LoginViewController.handleAuthorizationGoogleButtonPress() -&gt; ()"
+                  symbolName = "Mountain_UI_Companion.EditProfileTableViewController.textField(_: __C.UITextField, shouldChangeCharactersIn: __C._NSRange, replacementString: Swift.String) -&gt; Swift.Bool"
                   moduleName = "Mountain-UI-Companion"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Login/LoginViewController.swift"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Account/Profile/ProfileView/EditProfileTableViewController.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "124"
-                  endingLineNumber = "124"
-                  offsetFromSymbolStart = "40">
-               </Location>
-               <Location
-                  uuid = "1CFB11EC-EAF9-4A45-B31A-F224B9E2AFA7 - 375b9122744c1034"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 (Swift.Optional&lt;__C.GIDSignInResult&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Mountain_UI_Companion.LoginViewController.handleAuthorizationGoogleButtonPress() -&gt; ()"
-                  moduleName = "Mountain-UI-Companion"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Login/LoginViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "126"
-                  endingLineNumber = "126"
-                  offsetFromSymbolStart = "52">
-               </Location>
-               <Location
-                  uuid = "1CFB11EC-EAF9-4A45-B31A-F224B9E2AFA7 - 375b9122744c10f6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 (Swift.Optional&lt;__C.GIDSignInResult&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Mountain_UI_Companion.LoginViewController.handleAuthorizationGoogleButtonPress() -&gt; ()"
-                  moduleName = "Mountain-UI-Companion"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Login/LoginViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "124"
-                  endingLineNumber = "124"
-                  offsetFromSymbolStart = "140">
+                  startingLineNumber = "214"
+                  endingLineNumber = "214"
+                  offsetFromSymbolStart = "588">
                </Location>
             </Locations>
          </BreakpointContent>

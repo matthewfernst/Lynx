@@ -12,11 +12,9 @@ enum NameTextFieldTags: Int, CaseIterable {
     case lastName = 1
 }
 
-class NameTableViewCell: UITableViewCell {
-
-    static let identifier = "NameTableViewCell"
+class EditNameTableViewCell: UITableViewCell {
     
-    var delegate: EditProfileTableViewController?
+    static let identifier = "NameTableViewCell"
     
     private let nameLabel: UILabel = {
         let label = UILabel()
@@ -26,23 +24,22 @@ class NameTableViewCell: UITableViewCell {
         return label
     }()
     
-    let firstNameTextField: UITextField = {
-        let textField = UITextField()
-        textField.autocorrectionType = .no
-        textField.autocapitalizationType = .words
-        textField.returnKeyType = .done
-        textField.tag = NameTextFieldTags.firstName.rawValue
-        return textField
+    private lazy var firstNameTextField: UITextField = {
+        return getTextField(tag: EditProfileTextFieldTags.firstName.rawValue)
     }()
     
-    let lastNameTextField: UITextField = {
+    private lazy var lastNameTextField: UITextField = {
+        return getTextField(tag: EditProfileTextFieldTags.lastName.rawValue)
+    }()
+    
+    private func getTextField(tag: Int) -> UITextField {
         let textField = UITextField()
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .words
         textField.returnKeyType = .done
-        textField.tag = NameTextFieldTags.lastName.rawValue
+        textField.tag = tag
         return textField
-    }()
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -58,9 +55,10 @@ class NameTableViewCell: UITableViewCell {
     public func configure(name: String, delegate: EditProfileTableViewController) {
         let fullName = name.components(separatedBy: " ")
         firstNameTextField.text = fullName[0]
-        lastNameTextField.text = fullName[1]
+        firstNameTextField.delegate = delegate
         
-        self.delegate = delegate
+        lastNameTextField.text = fullName[1]
+        lastNameTextField.delegate = delegate
         
         self.backgroundColor = .secondarySystemBackground
         self.selectionStyle = .none
@@ -73,21 +71,19 @@ class NameTableViewCell: UITableViewCell {
         nameLabel.frame = CGRect(x: 20, y: 0, width: size + 3, height: size)
         
         firstNameTextField.frame = CGRect(x: nameLabel.frame.midX + 40, y: 0, width: size * 2, height: size)
-        firstNameTextField.delegate = delegate
         
         lastNameTextField.frame = CGRect(x: firstNameTextField.frame.midX + 60, y: 0, width: size * 2, height: size)
-        lastNameTextField.delegate = delegate
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
-
+    
 }

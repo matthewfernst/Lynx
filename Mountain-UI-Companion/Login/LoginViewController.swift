@@ -12,13 +12,12 @@ import GoogleSignIn
 import UIKit
 import OSLog
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController
+{
     @IBOutlet var appLabel: UILabel!
     @IBOutlet var learnMoreButton: UIButton!
     
-    //    public static var userProfile: Profile!
-    
-    var profileViewModel = ProfileViewModel.shared
+    lazy var loginController = LoginController(loginViewController: self)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -121,56 +120,40 @@ class LoginViewController: UIViewController {
             }
             
             Task {
-                await handleSignIn(uuid: uuid,
-                                   name: profile.name,
-                                   email: profile.email,
-                                   profilePictureURL: profile.imageURL(withDimension: 320)!)
-                
-                #warning ("TODO change to ProfileViewModel")
-                let defaults = UserDefaults.standard
-                defaults.set(profile.email, forKey: "email")
-                
-                self.goToMainApp()
+                let name = profile.name.components(separatedBy: " ")
+                let (firstName, lastName) = (name[0], name[1])
+                await loginController.handleCommonSignIn(uuid: uuid,
+                                                         firstName: firstName,
+                                                         lastName: lastName,
+                                                         email: profile.email,
+                                                         profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "")
+            
+                self.updateViewFromModel()
             }
         }
     }
     
-    // MARK: Helper functions for Login
-    func setCurrentUser(userInfo: UserProfileInfo) {
-        Profile.createProfile(uuid: userInfo.uuid,
-                              name: userInfo.name,
-                              email: userInfo.email,
-                              profilePictureURL: userInfo.profilePictureURL) { profile in
-            self.profileViewModel.updateProfile(newProfile: profile)
+    func updateViewFromModel() {
+        guard let _ = loginController.profileModel else {
+            showErrorWithSignIn()
+            return
         }
-    }
-    
-    func loginUser(userInfo: UserProfileInfo) {
-        Logger.userInfo.info("Existing user found.")
-        setCurrentUser(userInfo: userInfo)
-    }
-    
-    func createNewUser(userInfo: UserProfileInfo) async {
-        Logger.userInfo.info("User does not exist. Creating User.")
         
-        setCurrentUser(userInfo: userInfo)
-        
-        await DynamoDBUtils.putDynamoDBItem(uuid: userInfo.uuid,
-                                            name: userInfo.name,
-                                            email: userInfo.email,
-                                            profilePictureURL: userInfo.profilePictureURL?.absoluteString ?? "")
+        self.goToMainApp()
     }
     
-    func handleSignIn(uuid: String, name: String? = nil, email: String? = nil, profilePictureURL: URL? = nil) async {
-        if let userInfo = try? await self.getExistingUser(uuid: uuid) {
-            loginUser(userInfo: userInfo)
-        } else if let email = email, let name = name {
-            await self.createNewUser(userInfo: UserProfileInfo(uuid: uuid,
-                                                               name: name,
-                                                               email: email,
-                                                               profilePictureURL: profilePictureURL))
+    func goToMainApp() {
+        
+        if let tabBarController = self.storyboard?.instantiateViewController(withIdentifier: "TabController") as? TabViewController {
+            tabBarController.profileModel = loginController.profileModel
+            tabBarController.modalTransitionStyle = .flipHorizontal
+            tabBarController.modalPresentationStyle = .fullScreen
+            
+            self.present(tabBarController, animated: true)
         }
+    
     }
+
     
     func showErrorWithSignIn() {
         let message = """
@@ -181,44 +164,6 @@ class LoginViewController: UIViewController {
         
         present(ac, animated: true)
     }
-    
-    @objc func goToMainApp() {
-        if let vc = self.storyboard?.instantiateViewController(withIdentifier: "TabController") {
-            vc.modalPresentationStyle = .fullScreen
-            vc.modalTransitionStyle = .flipHorizontal
-            self.present(vc, animated: true)
-        }
-    }
-    
-    func getExistingUser(uuid: String) async throws -> UserProfileInfo? {
-        if let dynamoDBUserInfo = await DynamoDBUtils.getDynamoDBItem(uuid: uuid) {
-            var userInfo = UserProfileInfo(uuid: "", name: "", email: "", profilePictureURL: nil)
-            for (key, value) in dynamoDBUserInfo {
-                print(key)
-                if case let .s(value) = value {
-                    switch key {
-                    case "uuid":
-                        userInfo.uuid = value
-                    case "name":
-                        userInfo.name = value
-                    case "email":
-                        userInfo.email = value
-                    case "profilePictureURL":
-                        if let url = URL(string: value) {
-                            userInfo.profilePictureURL = url
-                        }
-                    default:
-                        break
-                    }
-                }
-            }
-            Logger.dynamoDB.debug("User info being returned.")
-            return userInfo
-        }
-        Logger.dynamoDB.debug("Nil being returned for user info")
-        return nil
-    }
-    
 }
 
 
@@ -227,21 +172,23 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
         switch authorization.credential {
         case let appleIdCredential as ASAuthorizationAppleIDCredential:
             Task {
-                let name = (appleIdCredential.fullName?.givenName ?? "") + " " + (appleIdCredential.fullName?.familyName ?? "")
-                await handleSignIn(uuid: appleIdCredential.user,
-                                   name: name,
-                                   email: appleIdCredential.email)
-                self.goToMainApp()
+                await loginController.handleCommonSignIn(uuid: appleIdCredential.user,
+                                                         firstName: appleIdCredential.fullName?.givenName,
+                                                         lastName: appleIdCredential.fullName?.familyName,
+                                                         email: appleIdCredential.email)
+                
+                self.updateViewFromModel()
             }
             break
             
-        #warning("TODO needed?")
-        case let passwordCredential as ASPasswordCredential:
-            // Sign in using exisiting iCloud Keychain credential.
-            // For the purpose of this demo app, show alert
-            goToMainApp()
-            break
+        // TODO: Needed for existing sign in
+//        case let passwordCredential as ASPasswordCredential:
+//            // Sign in using exisiting iCloud Keychain credential.
+//            // For the purpose of this demo app, show alert
+//            self.updateViewFromModel()
+//            break
         default:
+            showErrorWithSignIn()
             Swift.debugPrint("Not ready yet")
         }
     }

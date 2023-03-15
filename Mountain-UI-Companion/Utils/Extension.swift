@@ -98,7 +98,7 @@ extension UIColor {
 extension Logger {
     private static var subsystem = Bundle.main.bundleIdentifier!
     
-    static let userInfo = Logger(subsystem: subsystem, category: "UserInfo")
+    static let loginController = Logger(subsystem: subsystem, category: "UserInfo")
     
     static let dynamoDB = Logger(subsystem: subsystem, category: "DynamoDB")
     

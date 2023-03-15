@@ -27,7 +27,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     private var documentPicker: UIDocumentPickerViewController!
     private var bookmarks: [(uuid: String, url: URL)] = []
     
-    private let profileViewModel = ProfileViewModel.shared
+    var profileModel: Profile!
     
     private func getAppSandboxDirectory() -> URL {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -35,6 +35,10 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let tabBarController = self.tabBarController as! TabViewController
+        self.profileModel = tabBarController.profileModel
+        
         // loadAllBookmarks()
         
         if bookmarks.isEmpty {
@@ -148,7 +152,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                 Logger.slopesConnection.debug("chosen file: \(file.lastPathComponent)")
                 Task {
                     do {
-                        try await S3Utils.uploadSlopesDataToS3(file: file)
+                        try await S3Utils.uploadSlopesDataToS3(uuid: profileModel.uuid, file: file)
                     } catch {
                         Logger.slopesConnection.debug("\(error)")
                         showErrorUploadingToS3Alert()

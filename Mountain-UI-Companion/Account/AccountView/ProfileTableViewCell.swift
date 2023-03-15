@@ -59,10 +59,10 @@ class ProfileTableViewCell: UITableViewCell {
         editProfileAndAccountLabel.text = nil
     }
     
-    public func configure(with profile: Profile) {
+    public func configure(withProfile profile: Profile) {
         profileImageContainer.backgroundColor = .systemBackground
         
-        profileImageView.image = profile.profilePicture ?? profile.defaultAccountSettingsProfilePicture
+        profileImageView.image = profile.profilePicture ?? profile.defaultProfilePictureSmall
         
         usersNameLabel.text = profile.name
         editProfileAndAccountLabel.text = "Edit Account & Profile"

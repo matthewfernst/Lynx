@@ -7,28 +7,25 @@
 
 import UIKit
 
-enum ProfileSections: Int, CaseIterable {
-    case changeNameAndEmail = 0
-    case signOut = 1
+protocol EditProfileDelegate {
+    func editProfileCompletionHandler(profile: Profile)
 }
 
-enum NameAndEmailSections: Int, CaseIterable {
-    case name = 0
-    case email = 1
-}
-
-class EditProfileTableViewController: UITableViewController {
+class EditProfileTableViewController: UITableViewController
+{
+    public static var identifier = "EditProfileTableViewController"
     
-    static var identifier = "EditProfileTableViewController"
+    public var profileModel: Profile!
     
-    private var profileViewModel = ProfileViewModel.shared
-    private var profile: Profile!
+    var delegate: EditProfileDelegate?
     
     private let dynamoDBClient = DynamoDBUtils.dynamoDBClient
     private let userTable = DynamoDBUtils.usersTable
     
     private var changedFirstName: String? = nil
     private var changedLastName: String? = nil
+    private var changedEmail: String? = nil
+    private var changedProfilePicture: UIImage? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,64 +33,148 @@ class EditProfileTableViewController: UITableViewController {
         self.title = "Edit Profile"
         self.navigationController?.navigationBar.prefersLargeTitles = false
         
-        bindViewModel()
-        
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(goBackToSettings))
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveNameAndEmailChanges))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveProfileChangesButtonTapped))
         
-        tableView.register(NameTableViewCell.self, forCellReuseIdentifier: NameTableViewCell.identifier)
-        tableView.register(EmailTableViewCell.self, forCellReuseIdentifier: EmailTableViewCell.identifier)
+        
+        self.tableView.delaysContentTouches = true
+        
+        tableView.register(EditProfilePictureTableViewCell.self, forCellReuseIdentifier: EditProfilePictureTableViewCell.identifier)
+        tableView.register(EditNameTableViewCell.self, forCellReuseIdentifier: EditNameTableViewCell.identifier)
+        tableView.register(EditEmailTableViewCell.self, forCellReuseIdentifier: EditEmailTableViewCell.identifier)
     }
     
-    func handleFirstNameChange(newFirstName: String) {
-        changedFirstName = newFirstName
-    }
-    
-    func handleLastNameChange(newLastName: String) {
-        changedLastName = newLastName
-    }
-    
-    func bindViewModel() {
-        profile = profileViewModel.profile
-    }
     
     @objc func goBackToSettings() {
         self.navigationController?.popViewController(animated: true)
     }
     
-    @objc func saveNameAndEmailChanges()  {
-        #warning("TODO: Add Profile Picture Change -> Image Picker needed.")
-        let newProfilePictureURL = URL(string: "https://i.imgur.com/w5rkSIj.jpg")!
-        
-        let firstName = changedFirstName ?? profile.firstName
-        let lastName = changedLastName ?? profile.lastName
-        let email = "matthew.f.ernst@gmail.com"
-        
-        let newName = firstName + " " + lastName
-        // Update Dynamo
-        Task {
-            await DynamoDBUtils.updateDynamoDBItem(uuid: self.profileViewModel.uuid,
-                                                   newName: newName,
-                                                   newProfilePictureURL: newProfilePictureURL.absoluteString)
+    func handleProfilePictureChange(newProfilePicture: UIImage) {
+        changedProfilePicture = newProfilePicture
+    }
+    
+    @objc func saveProfileChangesButtonTapped() {
+        Task.detached { [weak self] in
+            await self?.saveProfileChanges()
         }
-        
-        // Update shared profile to update all other views
-        Profile.createProfile(uuid: self.profileViewModel.uuid, name: newName, email: email, profilePictureURL: newProfilePictureURL) { [unowned self] newProfile in
-            self.profileViewModel.updateProfile(newProfile: newProfile)
+    }
+    
+    func saveProfileChanges() async {
+        // TODO: Add Profile Picture Change -> Image Picker needed.
+        let newFirstName = changedFirstName ?? self.profileModel.firstName
+        let newLastName = changedLastName ?? self.profileModel.lastName
+        let newEmail = changedEmail ?? self.profileModel.email
+
+        var newProfilePictureURL = self.profileModel.profilePictureURL
+        if let changedProfilePicture = changedProfilePicture {
+            do {
+                // Upload new profile picture to S3
+                try await S3Utils.uploadProfilePictureToS3(uuid: self.profileModel.uuid, picture: changedProfilePicture)
+                // Get new profile picture's Object URL
+                let objectURL = await S3Utils.getObjectURL(uuid: self.profileModel.uuid)
+                newProfilePictureURL = objectURL
+                print("HERE! : \(newProfilePictureURL)")
+            } catch {
+                // Handle error
+                print("Error uploading profile picture: \(error)")
+            }
+        }
+
+        Task {
+            // Update Dynamo
+            await DynamoDBUtils.updateDynamoDBItem(uuid: self.profileModel.uuid,
+                                                    newFirstName: newFirstName,
+                                                    newLastName: newLastName,
+                                                    newEmail: newEmail,
+                                                    newProfilePictureURL: newProfilePictureURL ?? "")
+        }
+
+        Profile.createProfile(uuid: profileModel.uuid,
+                              firstName: newFirstName,
+                              lastName: newLastName,
+                              email: newEmail,
+                              profilePictureURL: newProfilePictureURL) { [unowned self] newProfile in
+            // TODO: What now? Delegate back or set in tabcontroller?
+            self.delegate?.editProfileCompletionHandler(profile: newProfile)
             DispatchQueue.main.async {
                 // Refresh the previous view controller
                 self.navigationController?.popViewController(animated: true)
             }
         }
-        
+    }
+
+    
+//    @objc func saveProfileChanges()  {
+//        // TODO: Add Profile Picture Change -> Image Picker needed.
+//        let newFirstName = changedFirstName ?? self.profileModel.firstName
+//        let newLastName = changedLastName ?? self.profileModel.lastName
+//        let newEmail = changedEmail ?? self.profileModel.email
+//
+//        var newProfilePictureURL = self.profileModel.profilePictureURL
+//        if let changedProfilePicture = changedProfilePicture {
+//            Task {
+//                // Upload new profile picture to S3
+//                try await S3Utils.uploadProfilePictureToS3(uuid: self.profileModel.uuid, picture: changedProfilePicture)
+//                // Get new profile picture's Object URL
+//                newProfilePictureURL = await S3Utils.getObjectURL(uuid: self.profileModel.uuid)
+//                print("HERE! : \(newProfilePictureURL)")
+//            }
+//        }
+//
+//        Task {
+//            // Update Dynamo
+//            await DynamoDBUtils.updateDynamoDBItem(uuid: self.profileModel.uuid,
+//                                                    newFirstName: newFirstName,
+//                                                    newLastName: newLastName,
+//                                                    newEmail: newEmail,
+//                                                    newProfilePictureURL: newProfilePictureURL ?? "")
+//        }
+//
+//        Profile.createProfile(uuid: profileModel.uuid,
+//                              firstName: newFirstName,
+//                              lastName: newLastName,
+//                              email: newEmail,
+//                              profilePictureURL: newProfilePictureURL) { [unowned self] newProfile in
+//            // TODO: What now? Delegate back or set in tabcontroller?
+//            self.delegate?.editProfileCompletionHandler(profile: newProfile)
+//            DispatchQueue.main.async {
+//                // Refresh the previous view controller
+//                self.navigationController?.popViewController(animated: true)
+//            }
+//        }
+//    }
+    
+    // MARK: - TableViewController Functions
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return EditProfileSections.allCases.count
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return ProfileSections.allCases.count
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch EditProfileSections(rawValue: indexPath.section) {
+        case .changeProfilePicture:
+            return 150
+        default:
+            return -1
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 10
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        switch EditProfileSections(rawValue: section) {
+        case .changeProfilePicture:
+            return 1
+        default:
+            return 18
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch ProfileSections(rawValue: section) {
+        switch EditProfileSections(rawValue: section) {
+        case .changeProfilePicture:
+            return 1
         case .changeNameAndEmail:
             return 2
         case .signOut:
@@ -104,24 +185,33 @@ class EditProfileTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch ProfileSections(rawValue: indexPath.section) {
+        switch EditProfileSections(rawValue: indexPath.section) {
+        case .changeProfilePicture:
+            guard let editProfileCell = tableView.dequeueReusableCell(withIdentifier: EditProfilePictureTableViewCell.identifier, for: indexPath) as? EditProfilePictureTableViewCell else {
+                return UITableViewCell()
+            }
+            
+            editProfileCell.configure(withProfile: self.profileModel, delegate: self)
+            
+            return editProfileCell
+            
         case .changeNameAndEmail:
-            switch NameAndEmailSections(rawValue: indexPath.row) {
+            switch NameAndEmailRows(rawValue: indexPath.row) {
             case .name:
-                guard let nameCell = tableView.dequeueReusableCell(withIdentifier: NameTableViewCell.identifier, for: indexPath) as? NameTableViewCell else {
+                guard let editNameCell = tableView.dequeueReusableCell(withIdentifier: EditNameTableViewCell.identifier, for: indexPath) as? EditNameTableViewCell else {
                     return UITableViewCell()
                 }
                 
-                nameCell.configure(name: profile.name, delegate: self)
+                editNameCell.configure(name: profileModel.name, delegate: self)
                 
-                return nameCell
+                return editNameCell
                 
             case .email:
-                guard let emailCell = tableView.dequeueReusableCell(withIdentifier: EmailTableViewCell.identifier, for: indexPath) as? EmailTableViewCell else { return UITableViewCell()
+                guard let editEmailCell = tableView.dequeueReusableCell(withIdentifier: EditEmailTableViewCell.identifier, for: indexPath) as? EditEmailTableViewCell else { return UITableViewCell()
                 }
-                emailCell.configure(email: profile.email)
+                editEmailCell.configure(email: profileModel.email, delegate: self)
                 
-                return emailCell
+                return editEmailCell
             default:
                 return UITableViewCell()
             }
@@ -146,23 +236,37 @@ class EditProfileTableViewController: UITableViewController {
     
 }
 
-
+// MARK: - Name and Email TextField Delegate
 extension EditProfileTableViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        switch NameTextFieldTags(rawValue: textField.tag) {
+    
+    func setTextForProfile(text: String, tag: Int) {
+        switch EditProfileTextFieldTags(rawValue: tag) {
         case .firstName:
-            if let text = textField.text {
-                let newFirstName = (text as NSString).replacingCharacters(in: range, with: string)
-                self.handleFirstNameChange(newFirstName: newFirstName)
-            }
+            changedFirstName = text
         case .lastName:
-            if let text = textField.text {
-                let newLastName = (text as NSString).replacingCharacters(in: range, with: string)
-                self.handleLastNameChange(newLastName: newLastName)
-            }
+            changedLastName = text
+        case .email:
+            changedEmail = text
         default:
             break
         }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        guard let text = textField.text else { return false }
+        
+        setTextForProfile(text: text, tag: textField.tag)
+        
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard var text = textField.text else { return false }
+        text = (text as NSString).replacingCharacters(in: range, with: string)
+        
+        setTextForProfile(text: text, tag: textField.tag)
+        
         return true
     }
 }

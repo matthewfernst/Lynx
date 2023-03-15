@@ -8,73 +8,76 @@
 import Foundation
 import UIKit
 
-enum DefaultProfilePictureIndex: Int, CaseIterable {
-    case accountSettings = 0
-    case logBook = 1
-}
-
-class Profile {
+class Profile
+{
     var uuid: String
-    var name: String
-    var firstName: String {
-        name.components(separatedBy: " ")[0]
-    }
-    var lastName: String {
-        name.components(separatedBy: " ")[1]
+    var firstName, lastName: String
+    var name: String {
+        return firstName + " " + lastName
     }
     var email: String
     var profilePicture: UIImage?
+    var profilePictureURL: String?
+    var isSignedIn: Bool
     var defaultLogbookProfilePicture: UIImage!
-    var defaultAccountSettingsProfilePicture: UIImage!
+    var defaultProfilePictureSmall: UIImage!
     // TODO: Season Stats in different place?
     // var seasonSummary = [SessionSummary?]()
     // var mostRecentSessionSummary = [SessionSummary?]()
     
-    init(uuid: String, name: String, email: String, profilePicture: UIImage? = nil) {
+    init(uuid: String, firstName: String, lastName: String, email: String, profilePicture: UIImage? = nil, profilePictureURL: String? = "", isSignedIn: Bool = true) {
         self.uuid = uuid
-        self.name = name
+        self.firstName = firstName
+        self.lastName = lastName
         self.email = email
         self.profilePicture = profilePicture
+        self.profilePictureURL = profilePictureURL
+        self.isSignedIn = isSignedIn
+        
+        // TODO: Move to generic profile picture?
+        let name = firstName + " " + lastName
         self.defaultLogbookProfilePicture = name.initials.image(move: .zero)?.withTintColor(.label)
-        self.defaultAccountSettingsProfilePicture = name.initials.image(withAttributes: [
+        self.defaultProfilePictureSmall = name.initials.image(withAttributes: [
             .font: UIFont.systemFont(ofSize: 45, weight: .medium),
         ], size: CGSize(width: 110, height: 110), move: CGPoint(x: 22, y: 28))?.withTintColor(.label)
     }
     
-    static func createProfile(uuid: String, name: String, email: String, profilePictureURL: URL? = nil, completion: @escaping (Profile) -> Void) {
-        guard let profilePictureURL = profilePictureURL else {
-            completion(Profile(uuid: uuid, name: name, email: email))
+    static func createProfile(uuid: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
+        print("PROFILE PIC URL: \(profilePictureURL)")
+        guard let profilePictureURL = URL(string: profilePictureURL ?? "") else {
+            completion(Profile(uuid: uuid, firstName: firstName, lastName: lastName, email: email))
             return
         }
-        
+
         URLSession.shared.dataTask(with: profilePictureURL) { (data, response, error) in
             if let error = error {
                 print("Error downloading profile picture: \(error.localizedDescription)")
-                completion(Profile(uuid: uuid, name: name, email: email))
+                completion(Profile(uuid: uuid, firstName: firstName, lastName: lastName, email: email))
                 return
             }
             
             guard let data = data, let profilePicture = UIImage(data: data) else {
-                completion(Profile(uuid: uuid, name: name, email: email))
+                completion(Profile(uuid: uuid, firstName: firstName, lastName: lastName, email: email))
                 return
             }
             
-            let profile = Profile(uuid: uuid, name: name, email: email, profilePicture: profilePicture)
+            let profile = Profile(uuid: uuid,
+                                  firstName: firstName,
+                                  lastName: lastName,
+                                  email: email,
+                                  profilePicture: profilePicture,
+                                  profilePictureURL: profilePictureURL.absoluteString)
             completion(profile)
         }.resume()
     }
 
 }
 
-struct UserProfileInfo {
-    var uuid: String
-    var name: String
-    var email: String
-    var profilePictureURL: URL?
-}
-
 #if DEBUG
 extension Profile {
-    static var sampleProfile = Profile(uuid: UUID().uuidString, name: "John Appleseed", email: "johnappleseed@icloud.com")
+    static var sampleProfile = Profile(uuid: UUID().uuidString,
+                                       firstName: "John",
+                                       lastName: "AppleSeed",
+                                       email: "johnappleseed@icloud.com")
 }
 #endif
