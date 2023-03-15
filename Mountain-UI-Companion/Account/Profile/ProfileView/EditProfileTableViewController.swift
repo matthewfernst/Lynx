@@ -114,7 +114,7 @@ class EditProfileTableViewController: UITableViewController
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         switch EditProfileSections(rawValue: section) {
         case .changeProfilePicture:
-            return 2
+            return 1
         default:
             return 18
         }

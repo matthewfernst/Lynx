@@ -48,11 +48,15 @@ class EditEmailTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        let size = contentView.frame.size.height
+        let contentHeight = contentView.frame.size.height
+        let contentWidth = contentView.frame.size.width
         
-        emailLabel.frame = CGRect(x: 20, y: 0, width: size, height: size)
+        emailLabel.frame = CGRect(x: 20, y: 0, width: contentHeight, height: contentHeight)
         
-        emailTextField.frame = CGRect(x: emailLabel.frame.midX + 40, y: 0, width: size * 5, height: size)
+        emailTextField.frame = CGRect(x: emailLabel.frame.midX + 40,
+                                      y: 0,
+                                      width: contentWidth,
+                                      height: contentHeight)
     }
     
     override func awakeFromNib() {

@@ -98,6 +98,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		65362D6329C16C8100507CCE /* EditProfileTableCells */ = {
+			isa = PBXGroup;
+			children = (
+				65478ADC29BE6FB100861A63 /* EditEmailTableViewCell.swift */,
+				65478ADE29BE8B4400861A63 /* EditNameTableViewCell.swift */,
+				65362D5F29C1526900507CCE /* EditProfilePictureTableViewCell.swift */,
+			);
+			path = EditProfileTableCells;
+			sourceTree = "<group>";
+		};
 		653A0E5D29BCD20A00C8F308 /* Login */ = {
 			isa = PBXGroup;
 			children = (
@@ -112,9 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				654DEAD12981BF6D001565A3 /* EditProfileTableViewController.swift */,
-				65478ADC29BE6FB100861A63 /* EditEmailTableViewCell.swift */,
-				65478ADE29BE8B4400861A63 /* EditNameTableViewCell.swift */,
-				65362D5F29C1526900507CCE /* EditProfilePictureTableViewCell.swift */,
+				65362D6329C16C8100507CCE /* EditProfileTableCells */,
 			);
 			path = ProfileView;
 			sourceTree = "<group>";

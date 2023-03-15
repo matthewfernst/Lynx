@@ -32,7 +32,6 @@ class EditProfilePictureTableViewCell: UITableViewCell {
         configuration.cornerStyle = .medium
         
         let button = UIButton(configuration: configuration)
-        button.isUserInteractionEnabled = true
         button.addTarget(self.delegate, action: #selector(handleChangeProfilePicture), for: .touchUpInside)
         return button
     }()
@@ -55,6 +54,19 @@ class EditProfilePictureTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(profilePictureView)
         contentView.addSubview(changeProfilePictureButton)
+        
+        let imageViewSize = CGSize(width: 100, height: 100)
+        profilePictureView.translatesAutoresizingMaskIntoConstraints = false
+        changeProfilePictureButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            profilePictureView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            profilePictureView.widthAnchor.constraint(equalToConstant: imageViewSize.width),
+            profilePictureView.heightAnchor.constraint(equalToConstant: imageViewSize.height),
+            
+            changeProfilePictureButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            changeProfilePictureButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
+        ])
     }
     
     required init?(coder: NSCoder) {
@@ -70,31 +82,6 @@ class EditProfilePictureTableViewCell: UITableViewCell {
         self.backgroundColor = .systemBackground
         self.selectionStyle = .none
     }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        let margin: CGFloat = 16
-        
-        // Get the intrinsic content size of the profile picture view
-        let imageViewSize = CGSize(width: 100, height: 100) // set to the size you want
-        
-        // Set the profile picture frame to be centered horizontally and aligned to the top of the contentView with a margin of 16 points
-        profilePictureView.frame = CGRect(x: contentView.bounds.midX - imageViewSize.width / 2,
-                                           y: margin,
-                                           width: imageViewSize.width,
-                                           height: imageViewSize.height)
-        
-        // Get the intrinsic content size of the button
-        let buttonSize = changeProfilePictureButton.intrinsicContentSize
-        
-        // Set the button frame to be centered horizontally and aligned to the bottom of the contentView
-        changeProfilePictureButton.frame = CGRect(x: contentView.bounds.midX - buttonSize.width / 2,
-                                                  y: contentView.bounds.maxY - buttonSize.height,
-                                                  width: buttonSize.width,
-                                                  height: buttonSize.height)
-    }
-    
     
     override func awakeFromNib() {
         super.awakeFromNib()
