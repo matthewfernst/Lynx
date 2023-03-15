@@ -7,27 +7,34 @@
 
 import UIKit
 
+protocol EditProfileDelegate {
+    func editProfileCompletionHandler(profile: Profile)
+}
+
 class EditProfileTableViewController: UITableViewController
 {
+    public static var identifier = "EditProfileTableViewController"
     
-    static var identifier = "EditProfileTableViewController"
+    public var profileModel: Profile!
     
-    var profileModel: Profile!
+    var delegate: EditProfileDelegate?
     
     private let dynamoDBClient = DynamoDBUtils.dynamoDBClient
     private let userTable = DynamoDBUtils.usersTable
     
     private var changedFirstName: String? = nil
     private var changedLastName: String? = nil
+    private var changedEmail: String? = nil
+    private var changedProfilePicture: UIImage? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.title = "Edit Profile"
         self.navigationController?.navigationBar.prefersLargeTitles = false
-                
+        
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(goBackToSettings))
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveNameAndEmailChanges))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveProfileChanges))
         
         
         self.tableView.delaysContentTouches = true
@@ -37,73 +44,81 @@ class EditProfileTableViewController: UITableViewController
         tableView.register(EditEmailTableViewCell.self, forCellReuseIdentifier: EditEmailTableViewCell.identifier)
     }
     
-    func handleFirstNameChange(newFirstName: String) {
-        changedFirstName = newFirstName
-    }
-    
-    func handleLastNameChange(newLastName: String) {
-        changedLastName = newLastName
-    }
-    
     
     @objc func goBackToSettings() {
         self.navigationController?.popViewController(animated: true)
     }
     
-    @objc func saveNameAndEmailChanges()  {
+    func handleProfilePictureChange(newProfilePicture: UIImage) {
+        changedProfilePicture = newProfilePicture
+    }
+    
+    @objc func saveProfileChanges()  {
         // TODO: Add Profile Picture Change -> Image Picker needed.
-        let newProfilePictureURL = URL(string: "https://i.imgur.com/w5rkSIj.jpg")!
+        let newFirstName = changedFirstName ?? self.profileModel.firstName
+        let newLastName = changedLastName ?? self.profileModel.lastName
+        let newEmail = changedEmail ?? self.profileModel.email
         
-        let firstName = changedFirstName ?? profileModel.firstName
-        let lastName = changedLastName ?? profileModel.lastName
-        let email = "matthew.f.ernst@gmail.com"
-        
-        let newName = firstName + " " + lastName
-        // Update Dynamo
-        Task {
-            await DynamoDBUtils.updateDynamoDBItem(uuid: profileModel.uuid,
-                                                   newName: newName,
-                                                   newProfilePictureURL: newProfilePictureURL.absoluteString)
+        var newProfilePictureURL = self.profileModel.profilePictureURL
+        if let changedProfilePicture = changedProfilePicture {
+            Task {
+                // Upload new profile picture to S3
+                try await S3Utils.uploadProfilePictureToS3(uuid: self.profileModel.uuid, picture: changedProfilePicture)
+                // Get new profile picture's Object URL
+                newProfilePictureURL = await S3Utils.getObjectURL(uuid: self.profileModel.uuid)
+            }
         }
         
-        // Update shared profile to update all other views
-        Profile.createProfile(uuid: profileModel.uuid, firstName: firstName, lastName: lastName, email: email) { [unowned self] newProfile in
+        Task {
+            // Update Dynamo
+            await DynamoDBUtils.updateDynamoDBItem(uuid: self.profileModel.uuid,
+                                                    newFirstName: newFirstName,
+                                                    newLastName: newLastName,
+                                                    newEmail: newEmail,
+                                                    newProfilePictureURL: newProfilePictureURL ?? "")
+                                                    // "https://blog.imgur.com/wp-content/uploads/2016/05/dog33.jpg")
+        }
+        
+        Profile.createProfile(uuid: profileModel.uuid,
+                              firstName: newFirstName,
+                              lastName: newLastName,
+                              email: newEmail,
+                              profilePictureURL: newProfilePictureURL) { [unowned self] newProfile in
             // TODO: What now? Delegate back or set in tabcontroller?
-
+            self.delegate?.editProfileCompletionHandler(profile: newProfile)
             DispatchQueue.main.async {
                 // Refresh the previous view controller
                 self.navigationController?.popViewController(animated: true)
             }
         }
-        
     }
     
-    // MARK: TableViewController Functions
+    // MARK: - TableViewController Functions
     override func numberOfSections(in tableView: UITableView) -> Int {
         return EditProfileSections.allCases.count
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-         switch EditProfileSections(rawValue: indexPath.section) {
-         case .changeProfilePicture:
-             return 150
-         default:
-             return -1
-         }
-     }
-     
-     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-         return 10
-     }
-     
-     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-         switch EditProfileSections(rawValue: section) {
-         case .changeProfilePicture:
-             return 2
-         default:
-             return 18
-         }
-     }
+        switch EditProfileSections(rawValue: indexPath.section) {
+        case .changeProfilePicture:
+            return 150
+        default:
+            return -1
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 10
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        switch EditProfileSections(rawValue: section) {
+        case .changeProfilePicture:
+            return 2
+        default:
+            return 18
+        }
+    }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch EditProfileSections(rawValue: section) {
@@ -143,7 +158,7 @@ class EditProfileTableViewController: UITableViewController
             case .email:
                 guard let editEmailCell = tableView.dequeueReusableCell(withIdentifier: EditEmailTableViewCell.identifier, for: indexPath) as? EditEmailTableViewCell else { return UITableViewCell()
                 }
-                editEmailCell.configure(email: profileModel.email)
+                editEmailCell.configure(email: profileModel.email, delegate: self)
                 
                 return editEmailCell
             default:
@@ -170,23 +185,37 @@ class EditProfileTableViewController: UITableViewController
     
 }
 
-
+// MARK: - Name and Email TextField Delegate
 extension EditProfileTableViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        switch NameTextFieldTags(rawValue: textField.tag) {
+    
+    func setTextForProfile(text: String, tag: Int) {
+        switch EditProfileTextFieldTags(rawValue: tag) {
         case .firstName:
-            if let text = textField.text {
-                let newFirstName = (text as NSString).replacingCharacters(in: range, with: string)
-                self.handleFirstNameChange(newFirstName: newFirstName)
-            }
+            changedFirstName = text
         case .lastName:
-            if let text = textField.text {
-                let newLastName = (text as NSString).replacingCharacters(in: range, with: string)
-                self.handleLastNameChange(newLastName: newLastName)
-            }
+            changedLastName = text
+        case .email:
+            changedEmail = text
         default:
             break
         }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        guard let text = textField.text else { return false }
+        
+        setTextForProfile(text: text, tag: textField.tag)
+        
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard var text = textField.text else { return false }
+        text = (text as NSString).replacingCharacters(in: range, with: string)
+        
+        setTextForProfile(text: text, tag: textField.tag)
+        
         return true
     }
 }

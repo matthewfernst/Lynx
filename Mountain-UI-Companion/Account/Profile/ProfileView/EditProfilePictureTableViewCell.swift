@@ -41,9 +41,10 @@ class EditProfilePictureTableViewCell: UITableViewCell {
         let ac = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         ac.addAction(UIAlertAction(title: "Replace", style: .default))
         ac.addAction(UIAlertAction(title: "Remove", style: .destructive){ [unowned self] _ in
-            let newPicture = self.profileModel.defaultProfilePictureSmall
-            self.profilePictureView.image = newPicture
-//            self.delegate?.handleProfilePictureChange(newPicture: newPicture)
+            if let newPicture = self.profileModel.defaultProfilePictureSmall {
+                self.profilePictureView.image = newPicture
+                self.delegate?.handleProfilePictureChange(newProfilePicture: newPicture)
+            }
         })
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         

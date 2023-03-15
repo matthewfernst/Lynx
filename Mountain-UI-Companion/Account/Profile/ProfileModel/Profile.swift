@@ -17,6 +17,7 @@ class Profile
     }
     var email: String
     var profilePicture: UIImage?
+    var profilePictureURL: String?
     var isSignedIn: Bool
     var defaultLogbookProfilePicture: UIImage!
     var defaultProfilePictureSmall: UIImage!
@@ -24,12 +25,13 @@ class Profile
     // var seasonSummary = [SessionSummary?]()
     // var mostRecentSessionSummary = [SessionSummary?]()
     
-    init(uuid: String, firstName: String, lastName: String, email: String, profilePicture: UIImage? = nil, isSignedIn: Bool = true) {
+    init(uuid: String, firstName: String, lastName: String, email: String, profilePicture: UIImage? = nil, profilePictureURL: String? = "", isSignedIn: Bool = true) {
         self.uuid = uuid
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
         self.profilePicture = profilePicture
+        self.profilePictureURL = profilePictureURL
         self.isSignedIn = isSignedIn
         
         // TODO: Move to generic profile picture?
@@ -58,7 +60,12 @@ class Profile
                 return
             }
             
-            let profile = Profile(uuid: uuid, firstName: firstName, lastName: lastName, email: email, profilePicture: profilePicture)
+            let profile = Profile(uuid: uuid,
+                                  firstName: firstName,
+                                  lastName: lastName,
+                                  email: email,
+                                  profilePicture: profilePicture,
+                                  profilePictureURL: profilePictureURL.absoluteString)
             completion(profile)
         }.resume()
     }

@@ -20,8 +20,9 @@ enum GeneralSettinsSections: Int, CaseIterable {
     case notifications = 1
 }
 
-class AccountViewController: UITableViewController
+class AccountViewController: UITableViewController, EditProfileDelegate
 {
+    
     var profileModel: Profile!
     
     private var generalSettings = Setting.sampleSettingOptions
@@ -48,7 +49,16 @@ class AccountViewController: UITableViewController
         tabBarController.profileModel = self.profileModel
     }
     
-    // MARK: UITableViewController
+    func editProfileCompletionHandler(profile: Profile) {
+        DispatchQueue.main.async {
+            let tabBarController = self.tabBarController as! TabViewController
+            tabBarController.profileModel = profile
+            self.profileModel = profile
+            self.tableView.reloadData()
+        }
+    }
+    
+    // MARK: - UITableViewController Functions
     override func numberOfSections(in tableView: UITableView) -> Int {
         return AllSettingsSections.allCases.count
     }
@@ -142,7 +152,10 @@ class AccountViewController: UITableViewController
         switch AllSettingsSections(rawValue: indexPath.section) {
         case .profile:
             if let editProfileViewController = self.storyboard?.instantiateViewController(withIdentifier: EditProfileTableViewController.identifier) as? EditProfileTableViewController {
+                
                 editProfileViewController.profileModel = self.profileModel
+                editProfileViewController.delegate = self
+
                 self.navigationController?.pushViewController(editProfileViewController, animated: true)
             }
             

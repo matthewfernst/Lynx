@@ -95,7 +95,7 @@ class LoginController
 
 }
 
-// MARK: ProfileAttributes
+// MARK: - ProfileAttributes
 struct ProfileAttributes {
     var uuid: String
     var firstName: String
