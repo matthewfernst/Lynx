@@ -43,6 +43,7 @@ class Profile
     }
     
     static func createProfile(uuid: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
+        print("PROFILE PIC URL: \(profilePictureURL)")
         guard let profilePictureURL = URL(string: profilePictureURL ?? "") else {
             completion(Profile(uuid: uuid, firstName: firstName, lastName: lastName, email: email))
             return

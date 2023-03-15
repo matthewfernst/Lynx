@@ -34,7 +34,7 @@ class EditProfileTableViewController: UITableViewController
         self.navigationController?.navigationBar.prefersLargeTitles = false
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(goBackToSettings))
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveProfileChanges))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveProfileChangesButtonTapped))
         
         
         self.tableView.delaysContentTouches = true
@@ -53,22 +53,33 @@ class EditProfileTableViewController: UITableViewController
         changedProfilePicture = newProfilePicture
     }
     
-    @objc func saveProfileChanges()  {
+    @objc func saveProfileChangesButtonTapped() {
+        Task.detached { [weak self] in
+            await self?.saveProfileChanges()
+        }
+    }
+    
+    func saveProfileChanges() async {
         // TODO: Add Profile Picture Change -> Image Picker needed.
         let newFirstName = changedFirstName ?? self.profileModel.firstName
         let newLastName = changedLastName ?? self.profileModel.lastName
         let newEmail = changedEmail ?? self.profileModel.email
-        
+
         var newProfilePictureURL = self.profileModel.profilePictureURL
         if let changedProfilePicture = changedProfilePicture {
-            Task {
+            do {
                 // Upload new profile picture to S3
                 try await S3Utils.uploadProfilePictureToS3(uuid: self.profileModel.uuid, picture: changedProfilePicture)
                 // Get new profile picture's Object URL
-                newProfilePictureURL = await S3Utils.getObjectURL(uuid: self.profileModel.uuid)
+                let objectURL = await S3Utils.getObjectURL(uuid: self.profileModel.uuid)
+                newProfilePictureURL = objectURL
+                print("HERE! : \(newProfilePictureURL)")
+            } catch {
+                // Handle error
+                print("Error uploading profile picture: \(error)")
             }
         }
-        
+
         Task {
             // Update Dynamo
             await DynamoDBUtils.updateDynamoDBItem(uuid: self.profileModel.uuid,
@@ -76,9 +87,8 @@ class EditProfileTableViewController: UITableViewController
                                                     newLastName: newLastName,
                                                     newEmail: newEmail,
                                                     newProfilePictureURL: newProfilePictureURL ?? "")
-                                                    // "https://blog.imgur.com/wp-content/uploads/2016/05/dog33.jpg")
         }
-        
+
         Profile.createProfile(uuid: profileModel.uuid,
                               firstName: newFirstName,
                               lastName: newLastName,
@@ -92,6 +102,47 @@ class EditProfileTableViewController: UITableViewController
             }
         }
     }
+
+    
+//    @objc func saveProfileChanges()  {
+//        // TODO: Add Profile Picture Change -> Image Picker needed.
+//        let newFirstName = changedFirstName ?? self.profileModel.firstName
+//        let newLastName = changedLastName ?? self.profileModel.lastName
+//        let newEmail = changedEmail ?? self.profileModel.email
+//
+//        var newProfilePictureURL = self.profileModel.profilePictureURL
+//        if let changedProfilePicture = changedProfilePicture {
+//            Task {
+//                // Upload new profile picture to S3
+//                try await S3Utils.uploadProfilePictureToS3(uuid: self.profileModel.uuid, picture: changedProfilePicture)
+//                // Get new profile picture's Object URL
+//                newProfilePictureURL = await S3Utils.getObjectURL(uuid: self.profileModel.uuid)
+//                print("HERE! : \(newProfilePictureURL)")
+//            }
+//        }
+//
+//        Task {
+//            // Update Dynamo
+//            await DynamoDBUtils.updateDynamoDBItem(uuid: self.profileModel.uuid,
+//                                                    newFirstName: newFirstName,
+//                                                    newLastName: newLastName,
+//                                                    newEmail: newEmail,
+//                                                    newProfilePictureURL: newProfilePictureURL ?? "")
+//        }
+//
+//        Profile.createProfile(uuid: profileModel.uuid,
+//                              firstName: newFirstName,
+//                              lastName: newLastName,
+//                              email: newEmail,
+//                              profilePictureURL: newProfilePictureURL) { [unowned self] newProfile in
+//            // TODO: What now? Delegate back or set in tabcontroller?
+//            self.delegate?.editProfileCompletionHandler(profile: newProfile)
+//            DispatchQueue.main.async {
+//                // Refresh the previous view controller
+//                self.navigationController?.popViewController(animated: true)
+//            }
+//        }
+//    }
     
     // MARK: - TableViewController Functions
     override func numberOfSections(in tableView: UITableView) -> Int {

@@ -48,16 +48,17 @@ struct S3Utils {
 
     static func getObjectURL(uuid: String) async -> String {
         do {
+            // TODO: Figure out how to get S3 URL
             let fileKey = "\(uuid)/profilePicture"
             let inputObject = GetObjectInput(bucket: S3BucketNames.profilePictureBucketName.rawValue, key: fileKey)
             let output = try await s3Client.getObject(input: inputObject)
-            print("OUTPUT: \(output)")
+            
             // ...
         } catch {
             dump(error)
         }
         
-        return URL(string: "https://blog.imgur.com/wp-content/uploads/2016/05/dog33.jpg")!.absoluteString
+        return "https://blog.imgur.com/wp-content/uploads/2016/05/dog33.jpg"
     }
 
     
