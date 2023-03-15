@@ -12,7 +12,7 @@ enum NameTextFieldTags: Int, CaseIterable {
     case lastName = 1
 }
 
-class NameTableViewCell: UITableViewCell {
+class EditNameTableViewCell: UITableViewCell {
 
     static let identifier = "NameTableViewCell"
     

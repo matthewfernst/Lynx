@@ -7,18 +7,6 @@
 
 import UIKit
 
-enum ProfileSections: Int, CaseIterable
-{
-    case changeNameAndEmail = 0
-    case signOut = 1
-}
-
-enum NameAndEmailSections: Int, CaseIterable
-{
-    case name = 0
-    case email = 1
-}
-
 class EditProfileTableViewController: UITableViewController
 {
     
@@ -41,8 +29,12 @@ class EditProfileTableViewController: UITableViewController
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(goBackToSettings))
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveNameAndEmailChanges))
         
-        tableView.register(NameTableViewCell.self, forCellReuseIdentifier: NameTableViewCell.identifier)
-        tableView.register(EmailTableViewCell.self, forCellReuseIdentifier: EmailTableViewCell.identifier)
+        
+        self.tableView.delaysContentTouches = true
+        
+        tableView.register(EditProfilePictureTableViewCell.self, forCellReuseIdentifier: EditProfilePictureTableViewCell.identifier)
+        tableView.register(EditNameTableViewCell.self, forCellReuseIdentifier: EditNameTableViewCell.identifier)
+        tableView.register(EditEmailTableViewCell.self, forCellReuseIdentifier: EditEmailTableViewCell.identifier)
     }
     
     func handleFirstNameChange(newFirstName: String) {
@@ -86,12 +78,37 @@ class EditProfileTableViewController: UITableViewController
         
     }
     
+    // MARK: TableViewController Functions
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return ProfileSections.allCases.count
+        return EditProfileSections.allCases.count
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+         switch EditProfileSections(rawValue: indexPath.section) {
+         case .changeProfilePicture:
+             return 150
+         default:
+             return -1
+         }
+     }
+     
+     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+         return 10
+     }
+     
+     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+         switch EditProfileSections(rawValue: section) {
+         case .changeProfilePicture:
+             return 2
+         default:
+             return 18
+         }
+     }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch ProfileSections(rawValue: section) {
+        switch EditProfileSections(rawValue: section) {
+        case .changeProfilePicture:
+            return 1
         case .changeNameAndEmail:
             return 2
         case .signOut:
@@ -102,24 +119,33 @@ class EditProfileTableViewController: UITableViewController
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch ProfileSections(rawValue: indexPath.section) {
+        switch EditProfileSections(rawValue: indexPath.section) {
+        case .changeProfilePicture:
+            guard let editProfileCell = tableView.dequeueReusableCell(withIdentifier: EditProfilePictureTableViewCell.identifier, for: indexPath) as? EditProfilePictureTableViewCell else {
+                return UITableViewCell()
+            }
+            
+            editProfileCell.configure(withProfile: self.profileModel, delegate: self)
+            
+            return editProfileCell
+            
         case .changeNameAndEmail:
-            switch NameAndEmailSections(rawValue: indexPath.row) {
+            switch NameAndEmailRows(rawValue: indexPath.row) {
             case .name:
-                guard let nameCell = tableView.dequeueReusableCell(withIdentifier: NameTableViewCell.identifier, for: indexPath) as? NameTableViewCell else {
+                guard let editNameCell = tableView.dequeueReusableCell(withIdentifier: EditNameTableViewCell.identifier, for: indexPath) as? EditNameTableViewCell else {
                     return UITableViewCell()
                 }
                 
-                nameCell.configure(name: profileModel.name, delegate: self)
+                editNameCell.configure(name: profileModel.name, delegate: self)
                 
-                return nameCell
+                return editNameCell
                 
             case .email:
-                guard let emailCell = tableView.dequeueReusableCell(withIdentifier: EmailTableViewCell.identifier, for: indexPath) as? EmailTableViewCell else { return UITableViewCell()
+                guard let editEmailCell = tableView.dequeueReusableCell(withIdentifier: EditEmailTableViewCell.identifier, for: indexPath) as? EditEmailTableViewCell else { return UITableViewCell()
                 }
-                emailCell.configure(email: profileModel.email)
+                editEmailCell.configure(email: profileModel.email)
                 
-                return emailCell
+                return editEmailCell
             default:
                 return UITableViewCell()
             }

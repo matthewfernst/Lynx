@@ -8,11 +8,6 @@
 import Foundation
 import UIKit
 
-enum DefaultProfilePictureIndex: Int, CaseIterable {
-    case accountSettings = 0
-    case logBook = 1
-}
-
 class Profile
 {
     var uuid: String
@@ -24,7 +19,7 @@ class Profile
     var profilePicture: UIImage?
     var isSignedIn: Bool
     var defaultLogbookProfilePicture: UIImage!
-    var defaultAccountSettingsProfilePicture: UIImage!
+    var defaultProfilePictureSmall: UIImage!
     // TODO: Season Stats in different place?
     // var seasonSummary = [SessionSummary?]()
     // var mostRecentSessionSummary = [SessionSummary?]()
@@ -40,7 +35,7 @@ class Profile
         // TODO: Move to generic profile picture?
         let name = firstName + " " + lastName
         self.defaultLogbookProfilePicture = name.initials.image(move: .zero)?.withTintColor(.label)
-        self.defaultAccountSettingsProfilePicture = name.initials.image(withAttributes: [
+        self.defaultProfilePictureSmall = name.initials.image(withAttributes: [
             .font: UIFont.systemFont(ofSize: 45, weight: .medium),
         ], size: CGSize(width: 110, height: 110), move: CGPoint(x: 22, y: 28))?.withTintColor(.label)
     }
