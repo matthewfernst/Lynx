@@ -46,7 +46,7 @@ class LoginViewController: UIViewController
     private func debugLogin() {
         #if DEBUG
         print("DEBUG MODE!")
-        loginController.profileModel = Profile.sampleProfile
+        loginController.profile = Profile.sampleProfile
         self.goToMainApp()
         #endif
     }
@@ -144,7 +144,7 @@ class LoginViewController: UIViewController
     }
     
     func updateViewFromModel() {
-        guard let _ = loginController.profileModel else {
+        guard let _ = loginController.profile else {
             showErrorWithSignIn()
             return
         }
@@ -155,7 +155,7 @@ class LoginViewController: UIViewController
     func goToMainApp() {
         
         if let tabBarController = self.storyboard?.instantiateViewController(withIdentifier: "TabController") as? TabViewController {
-            tabBarController.profileModel = loginController.profileModel
+            tabBarController.profile = loginController.profile
             tabBarController.modalTransitionStyle = .flipHorizontal
             tabBarController.modalPresentationStyle = .fullScreen
             

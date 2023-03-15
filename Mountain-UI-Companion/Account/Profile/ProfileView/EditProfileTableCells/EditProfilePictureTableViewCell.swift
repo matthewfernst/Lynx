@@ -11,7 +11,8 @@ class EditProfilePictureTableViewCell: UITableViewCell {
     
     static let identifier = "ProfilePictureTableViewCell"
     
-    private var profileModel: Profile!
+    private var profile: Profile!
+    private var defaultProfilePicture: UIImage!
     
     var delegate: EditProfileTableViewController?
     
@@ -40,7 +41,7 @@ class EditProfilePictureTableViewCell: UITableViewCell {
         let ac = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         ac.addAction(UIAlertAction(title: "Replace", style: .default))
         ac.addAction(UIAlertAction(title: "Remove", style: .destructive){ [unowned self] _ in
-            if let newPicture = self.profileModel.defaultProfilePictureSmall {
+            if let newPicture = defaultProfilePicture {
                 self.profilePictureView.image = newPicture
                 self.delegate?.handleProfilePictureChange(newProfilePicture: newPicture)
             }
@@ -73,10 +74,12 @@ class EditProfilePictureTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configure(withProfile profile: Profile, delegate: EditProfileTableViewController) {
-        profilePictureView.image = profile.profilePicture ?? profile.defaultProfilePictureSmall
+    public func configure(withProfile profileModel: Profile, delegate: EditProfileTableViewController) {
+        defaultProfilePicture = profileModel.getDefaultProfilePicture(fontSize: 50, size: CGSize(width: 100, height: 100), move: CGPoint(x: 20, y: 20))
         
-        self.profileModel = profile
+        profilePictureView.image = profileModel.profilePicture ?? defaultProfilePicture
+        
+        self.profile = profileModel
         self.delegate = delegate
         
         self.backgroundColor = .systemBackground

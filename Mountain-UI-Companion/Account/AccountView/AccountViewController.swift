@@ -23,7 +23,7 @@ enum GeneralSettinsSections: Int, CaseIterable {
 class AccountViewController: UITableViewController, EditProfileDelegate
 {
     
-    var profileModel: Profile!
+    var profile: Profile!
     
     private var generalSettings = Setting.sampleSettingOptions
     private var supportSettings = Support.sampleSupportOptions
@@ -32,7 +32,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
         super.viewDidLoad()
         
         let tabBarController = self.tabBarController as! TabViewController
-        self.profileModel = tabBarController.profileModel
+        self.profile = tabBarController.profile
         
         self.title = "Account"
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -46,14 +46,14 @@ class AccountViewController: UITableViewController, EditProfileDelegate
         super.viewWillDisappear(animated)
         
         let tabBarController = self.tabBarController as! TabViewController
-        tabBarController.profileModel = self.profileModel
+        tabBarController.profile = self.profile
     }
     
     func editProfileCompletionHandler(profile: Profile) {
         DispatchQueue.main.async {
             let tabBarController = self.tabBarController as! TabViewController
-            tabBarController.profileModel = profile
-            self.profileModel = profile
+            tabBarController.profile = profile
+            self.profile = profile
             self.tableView.reloadData()
         }
     }
@@ -92,7 +92,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
                 return UITableViewCell()
             }
             
-            profileCell.configure(withProfile: profileModel)
+            profileCell.configure(withProfile: profile)
             
             return profileCell
             
@@ -153,7 +153,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
         case .profile:
             if let editProfileViewController = self.storyboard?.instantiateViewController(withIdentifier: EditProfileTableViewController.identifier) as? EditProfileTableViewController {
                 
-                editProfileViewController.profileModel = self.profileModel
+                editProfileViewController.profile = self.profile
                 editProfileViewController.delegate = self
 
                 self.navigationController?.pushViewController(editProfileViewController, animated: true)

@@ -19,8 +19,7 @@ class Profile
     var profilePicture: UIImage?
     var profilePictureURL: String?
     var isSignedIn: Bool
-    var defaultLogbookProfilePicture: UIImage!
-    var defaultProfilePictureSmall: UIImage!
+    
     // TODO: Season Stats in different place?
     // var seasonSummary = [SessionSummary?]()
     // var mostRecentSessionSummary = [SessionSummary?]()
@@ -33,17 +32,15 @@ class Profile
         self.profilePicture = profilePicture
         self.profilePictureURL = profilePictureURL
         self.isSignedIn = isSignedIn
-        
-        // TODO: Move to generic profile picture?
-        let name = firstName + " " + lastName
-        self.defaultLogbookProfilePicture = name.initials.image(move: .zero)?.withTintColor(.label)
-        self.defaultProfilePictureSmall = name.initials.image(withAttributes: [
-            .font: UIFont.systemFont(ofSize: 45, weight: .medium),
-        ], size: CGSize(width: 110, height: 110), move: CGPoint(x: 22, y: 28))?.withTintColor(.label)
+    }
+    
+    func getDefaultProfilePicture(fontSize: CGFloat, size: CGSize, move: CGPoint) -> UIImage {
+        return (name.initials.image(withAttributes: [
+            .font: UIFont.systemFont(ofSize: fontSize, weight: .medium),
+        ], size: size, move: move)?.withTintColor(.label))!
     }
     
     static func createProfile(uuid: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
-        print("PROFILE PIC URL: \(profilePictureURL)")
         guard let profilePictureURL = URL(string: profilePictureURL ?? "") else {
             completion(Profile(uuid: uuid, firstName: firstName, lastName: lastName, email: email))
             return

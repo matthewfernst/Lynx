@@ -22,13 +22,13 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet var allLifetimeStateButton: UIButton!
     @IBOutlet var sessionSummaryTableView: UITableView!
     
-    var profileModel: Profile!
+    var profile: Profile!
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let tabController = segue.destination as? TabViewController {
             // Set up data to pass to first view controller
             if let firstViewController = tabController.viewControllers?.first as? LogBookViewController {
-                firstViewController.profileModel = tabController.profileModel
+                firstViewController.profile = tabController.profile
             }
         }
     }
@@ -37,7 +37,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         
         let tabBarController = self.tabBarController as! TabViewController
-        self.profileModel = tabBarController.profileModel
+        self.profile = tabBarController.profile
         
         self.title = "LogBook"
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -49,7 +49,9 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         sessionSummaryTableView.register(SessionTableViewCell.self, forCellReuseIdentifier: SessionTableViewCell.identifier)
         sessionSummaryTableView.rowHeight = 66.0
         
-        let profileImage = profileModel.profilePicture ?? profileModel.defaultLogbookProfilePicture
+        let profileImage = profile.profilePicture ?? profile.getDefaultProfilePicture(fontSize: 60,
+                                                                                                size: CGSize(width: profileImageView.frame.width, height: profileImageView.frame.height),
+                                                                                                move: CGPoint(x: 20, y: 15))
         profileImageView.image = profileImage
         profileImageView.backgroundColor = .secondarySystemBackground
         profileImageView.makeRounded()
