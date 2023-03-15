@@ -42,6 +42,15 @@ class LoginViewController: UIViewController
         }
     }
     
+    // MARK: DEBUG login for working on other parts of the app and bypassing login
+    private func debugLogin() {
+        #if DEBUG
+        print("DEBUG MODE!")
+        loginController.profileModel = Profile.sampleProfile
+        self.goToMainApp()
+        #endif
+    }
+    
     // MARK: Apple Sign In
     func setupSignInWithAppleButton() {
         let signInWithAppleButton = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .white)
@@ -105,6 +114,7 @@ class LoginViewController: UIViewController
     }
     
     @objc func handleAuthorizationGoogleButtonPress() {
+        debugLogin()
         GIDSignIn.sharedInstance.signIn(withPresenting: self) { [unowned self] signInResult, error in
             guard error == nil else {
                 showErrorWithSignIn()
