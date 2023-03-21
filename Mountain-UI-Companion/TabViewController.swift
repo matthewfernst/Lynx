@@ -9,7 +9,7 @@ import UIKit
 
 class TabViewController: UITabBarController
 {
-    var profileModel: Profile?
+    var profile: Profile?
     
     override func viewDidLoad() {
         super.viewDidLoad()

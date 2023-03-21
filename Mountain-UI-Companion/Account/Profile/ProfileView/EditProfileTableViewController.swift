@@ -15,7 +15,7 @@ class EditProfileTableViewController: UITableViewController
 {
     public static var identifier = "EditProfileTableViewController"
     
-    public var profileModel: Profile!
+    public var profile: Profile!
     
     var delegate: EditProfileDelegate?
     
@@ -61,17 +61,17 @@ class EditProfileTableViewController: UITableViewController
     
     func saveProfileChanges() async {
         // TODO: Add Profile Picture Change -> Image Picker needed.
-        let newFirstName = changedFirstName ?? self.profileModel.firstName
-        let newLastName = changedLastName ?? self.profileModel.lastName
-        let newEmail = changedEmail ?? self.profileModel.email
+        let newFirstName = changedFirstName ?? self.profile.firstName
+        let newLastName = changedLastName ?? self.profile.lastName
+        let newEmail = changedEmail ?? self.profile.email
 
-        var newProfilePictureURL = self.profileModel.profilePictureURL
+        var newProfilePictureURL = self.profile.profilePictureURL
         if let changedProfilePicture = changedProfilePicture {
             do {
                 // Upload new profile picture to S3
-                try await S3Utils.uploadProfilePictureToS3(uuid: self.profileModel.uuid, picture: changedProfilePicture)
+                try await S3Utils.uploadProfilePictureToS3(uuid: self.profile.uuid, picture: changedProfilePicture)
                 // Get new profile picture's Object URL
-                let objectURL = await S3Utils.getObjectURL(uuid: self.profileModel.uuid)
+                let objectURL = await S3Utils.getObjectURL(uuid: self.profile.uuid)
                 newProfilePictureURL = objectURL
                 print("HERE! : \(newProfilePictureURL)")
             } catch {
@@ -82,14 +82,14 @@ class EditProfileTableViewController: UITableViewController
 
         Task {
             // Update Dynamo
-            await DynamoDBUtils.updateDynamoDBItem(uuid: self.profileModel.uuid,
+            await DynamoDBUtils.updateDynamoDBItem(uuid: self.profile.uuid,
                                                     newFirstName: newFirstName,
                                                     newLastName: newLastName,
                                                     newEmail: newEmail,
                                                     newProfilePictureURL: newProfilePictureURL ?? "")
         }
 
-        Profile.createProfile(uuid: profileModel.uuid,
+        Profile.createProfile(uuid: profile.uuid,
                               firstName: newFirstName,
                               lastName: newLastName,
                               email: newEmail,
@@ -102,47 +102,6 @@ class EditProfileTableViewController: UITableViewController
             }
         }
     }
-
-    
-//    @objc func saveProfileChanges()  {
-//        // TODO: Add Profile Picture Change -> Image Picker needed.
-//        let newFirstName = changedFirstName ?? self.profileModel.firstName
-//        let newLastName = changedLastName ?? self.profileModel.lastName
-//        let newEmail = changedEmail ?? self.profileModel.email
-//
-//        var newProfilePictureURL = self.profileModel.profilePictureURL
-//        if let changedProfilePicture = changedProfilePicture {
-//            Task {
-//                // Upload new profile picture to S3
-//                try await S3Utils.uploadProfilePictureToS3(uuid: self.profileModel.uuid, picture: changedProfilePicture)
-//                // Get new profile picture's Object URL
-//                newProfilePictureURL = await S3Utils.getObjectURL(uuid: self.profileModel.uuid)
-//                print("HERE! : \(newProfilePictureURL)")
-//            }
-//        }
-//
-//        Task {
-//            // Update Dynamo
-//            await DynamoDBUtils.updateDynamoDBItem(uuid: self.profileModel.uuid,
-//                                                    newFirstName: newFirstName,
-//                                                    newLastName: newLastName,
-//                                                    newEmail: newEmail,
-//                                                    newProfilePictureURL: newProfilePictureURL ?? "")
-//        }
-//
-//        Profile.createProfile(uuid: profileModel.uuid,
-//                              firstName: newFirstName,
-//                              lastName: newLastName,
-//                              email: newEmail,
-//                              profilePictureURL: newProfilePictureURL) { [unowned self] newProfile in
-//            // TODO: What now? Delegate back or set in tabcontroller?
-//            self.delegate?.editProfileCompletionHandler(profile: newProfile)
-//            DispatchQueue.main.async {
-//                // Refresh the previous view controller
-//                self.navigationController?.popViewController(animated: true)
-//            }
-//        }
-//    }
     
     // MARK: - TableViewController Functions
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -191,7 +150,7 @@ class EditProfileTableViewController: UITableViewController
                 return UITableViewCell()
             }
             
-            editProfileCell.configure(withProfile: self.profileModel, delegate: self)
+            editProfileCell.configure(withProfile: self.profile, delegate: self)
             
             return editProfileCell
             
@@ -202,14 +161,14 @@ class EditProfileTableViewController: UITableViewController
                     return UITableViewCell()
                 }
                 
-                editNameCell.configure(name: profileModel.name, delegate: self)
+                editNameCell.configure(name: profile.name, delegate: self)
                 
                 return editNameCell
                 
             case .email:
                 guard let editEmailCell = tableView.dequeueReusableCell(withIdentifier: EditEmailTableViewCell.identifier, for: indexPath) as? EditEmailTableViewCell else { return UITableViewCell()
                 }
-                editEmailCell.configure(email: profileModel.email, delegate: self)
+                editEmailCell.configure(email: profile.email, delegate: self)
                 
                 return editEmailCell
             default:

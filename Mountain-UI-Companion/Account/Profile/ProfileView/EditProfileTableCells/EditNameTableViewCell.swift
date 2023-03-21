@@ -43,9 +43,31 @@ class EditNameTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(nameLabel)
-        contentView.addSubview(firstNameTextField)
-        contentView.addSubview(lastNameTextField)
+        self.contentView.addSubview(nameLabel)
+        self.contentView.addSubview(firstNameTextField)
+        self.contentView.addSubview(lastNameTextField)
+        
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        firstNameTextField.translatesAutoresizingMaskIntoConstraints = false
+        lastNameTextField.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            nameLabel.widthAnchor.constraint(equalToConstant: 50),
+            nameLabel.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
+            nameLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            nameLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
+            
+            firstNameTextField.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
+            firstNameTextField.widthAnchor.constraint(equalToConstant: 100),
+            firstNameTextField.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
+            firstNameTextField.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 20),
+            
+            lastNameTextField.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
+            lastNameTextField.heightAnchor.constraint(equalToConstant: self.contentView.frame.height),
+            lastNameTextField.leadingAnchor.constraint(equalTo: firstNameTextField.trailingAnchor, constant: 20),
+            lastNameTextField.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor)
+        ])
+        
     }
     
     required init?(coder: NSCoder) {
@@ -62,17 +84,6 @@ class EditNameTableViewCell: UITableViewCell {
         
         self.backgroundColor = .secondarySystemBackground
         self.selectionStyle = .none
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let size =  contentView.frame.size.height
-        
-        nameLabel.frame = CGRect(x: 20, y: 0, width: size + 3, height: size)
-        
-        firstNameTextField.frame = CGRect(x: nameLabel.frame.midX + 40, y: 0, width: size * 2, height: size)
-        
-        lastNameTextField.frame = CGRect(x: firstNameTextField.frame.midX + 60, y: 0, width: size * 2, height: size)
     }
     
     override func awakeFromNib() {

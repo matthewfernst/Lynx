@@ -11,7 +11,7 @@ import OSLog
 class LoginController
 {
     let loginViewController: LoginViewController
-    var profileModel: Profile?
+    var profile: Profile?
     
     init(loginViewController: LoginViewController) {
         self.loginViewController = loginViewController
@@ -89,7 +89,7 @@ class LoginController
         group.wait() // Wait until the DispatchGroup is empty
         
         if let profile = createdProfile {
-            self.profileModel = profile // Use the created profile
+            self.profile = profile // Use the created profile
         }
     }
 

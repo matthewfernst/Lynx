@@ -11,11 +11,12 @@ class EditProfilePictureTableViewCell: UITableViewCell {
     
     static let identifier = "ProfilePictureTableViewCell"
     
-    private var profileModel: Profile!
+    private var profile: Profile!
+    private var defaultProfilePicture: UIImage!
     
     var delegate: EditProfileTableViewController?
     
-    private let profilePictureView: UIImageView = {
+    private let profilePictureImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person")
         imageView.backgroundColor = .secondarySystemFill
@@ -40,8 +41,8 @@ class EditProfilePictureTableViewCell: UITableViewCell {
         let ac = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         ac.addAction(UIAlertAction(title: "Replace", style: .default))
         ac.addAction(UIAlertAction(title: "Remove", style: .destructive){ [unowned self] _ in
-            if let newPicture = self.profileModel.defaultProfilePictureSmall {
-                self.profilePictureView.image = newPicture
+            if let newPicture = defaultProfilePicture {
+                self.profilePictureImageView.image = newPicture
                 self.delegate?.handleProfilePictureChange(newProfilePicture: newPicture)
             }
         })
@@ -52,17 +53,17 @@ class EditProfilePictureTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(profilePictureView)
+        contentView.addSubview(profilePictureImageView)
         contentView.addSubview(changeProfilePictureButton)
         
         let imageViewSize = CGSize(width: 100, height: 100)
-        profilePictureView.translatesAutoresizingMaskIntoConstraints = false
+        profilePictureImageView.translatesAutoresizingMaskIntoConstraints = false
         changeProfilePictureButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            profilePictureView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            profilePictureView.widthAnchor.constraint(equalToConstant: imageViewSize.width),
-            profilePictureView.heightAnchor.constraint(equalToConstant: imageViewSize.height),
+            profilePictureImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            profilePictureImageView.widthAnchor.constraint(equalToConstant: imageViewSize.width),
+            profilePictureImageView.heightAnchor.constraint(equalToConstant: imageViewSize.height),
             
             changeProfilePictureButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             changeProfilePictureButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
@@ -73,10 +74,12 @@ class EditProfilePictureTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configure(withProfile profile: Profile, delegate: EditProfileTableViewController) {
-        profilePictureView.image = profile.profilePicture ?? profile.defaultProfilePictureSmall
+    public func configure(withProfile profileModel: Profile, delegate: EditProfileTableViewController) {
+        defaultProfilePicture = profileModel.getDefaultProfilePicture(fontSize: 50, size: CGSize(width: 100, height: 100), move: CGPoint(x: 20, y: 20))
         
-        self.profileModel = profile
+        profilePictureImageView.image = profileModel.profilePicture ?? defaultProfilePicture
+        
+        self.profile = profileModel
         self.delegate = delegate
         
         self.backgroundColor = .systemBackground

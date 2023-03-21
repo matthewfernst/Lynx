@@ -10,21 +10,17 @@ import UIKit
 class ProfileTableViewCell: UITableViewCell {
     static let identifier = "ProfileTableViewCell"
     
-    private let profileImageContainer: UIView = {
-        let view = UIView()
-        view.clipsToBounds = true
-        view.layer.masksToBounds = true
-        return view
-    }()
-    
-    private let profileImageView: UIImageView = {
+    private let profilePictureImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.tintColor = .white
         imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 35
         return imageView
     }()
     
-    private let usersNameLabel: UILabel = {
+    private let nameLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
         label.font = UIFont.preferredFont(forTextStyle: .title2)
@@ -35,61 +31,49 @@ class ProfileTableViewCell: UITableViewCell {
         let label = UILabel()
         label.numberOfLines = 1
         label.font = UIFont.preferredFont(forTextStyle: .footnote)
+        label.text = "Edit Account & Profile"
         return label
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(usersNameLabel)
+        contentView.addSubview(nameLabel)
         contentView.addSubview(editProfileAndAccountLabel)
-        contentView.addSubview(profileImageContainer)
-        contentView.addSubview(profileImageView)
-        contentView.clipsToBounds = true
+        contentView.addSubview(profilePictureImageView)
         accessoryType = .disclosureIndicator
+        
+        
+        profilePictureImageView.translatesAutoresizingMaskIntoConstraints = false
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        editProfileAndAccountLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            profilePictureImageView.widthAnchor.constraint(equalToConstant: 70),
+            profilePictureImageView.heightAnchor.constraint(equalToConstant: 70),
+            profilePictureImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 15),
+            profilePictureImageView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
+            
+            nameLabel.leadingAnchor.constraint(equalTo: profilePictureImageView.trailingAnchor, constant: 15),
+            nameLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
+            nameLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor, constant: -10),
+            
+            editProfileAndAccountLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 5),
+            editProfileAndAccountLabel.leadingAnchor.constraint(equalTo: profilePictureImageView.trailingAnchor, constant: 15)
+        ])
+        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func prepareForReuse() {
-        profileImageContainer.backgroundColor = nil
-        profileImageView.image = nil
-        usersNameLabel.text = nil
-        editProfileAndAccountLabel.text = nil
-    }
-    
     public func configure(withProfile profile: Profile) {
-        profileImageContainer.backgroundColor = .systemBackground
-        
-        profileImageView.image = profile.profilePicture ?? profile.defaultProfilePictureSmall
-        
-        usersNameLabel.text = profile.name
-        editProfileAndAccountLabel.text = "Edit Account & Profile"
+        profilePictureImageView.image = profile.profilePicture ?? profile.getDefaultProfilePicture(fontSize: 50,
+                                                                                            size: CGSize(width: 100, height: 100),
+                                                                                            move: CGPoint(x: 20, y: 20))
+        profilePictureImageView.backgroundColor = .systemBackground
+        nameLabel.text = profile.name
         self.backgroundColor = .secondarySystemBackground
-        
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let size = contentView.frame.size.height - 12
-        profileImageContainer.frame = CGRect(x: 10, y: 6, width: size, height: size)
-        profileImageContainer.layer.cornerRadius = profileImageContainer.frame.size.width / 2.0
-        
-        let imageSize = size
-        profileImageView.frame = CGRect(x: (size - imageSize) / 2, y: (size - imageSize) / 2, width: imageSize, height: imageSize)
-        profileImageView.center = profileImageContainer.center
-        profileImageView.makeRounded()
-        
-        usersNameLabel.frame = CGRect(x: contentView.center.x - 60,
-                                      y: contentView.center.y - 55,
-                                      width: contentView.frame.size.width - 15 - profileImageContainer.frame.size.width,
-                                      height: contentView.frame.size.height)
-        
-        editProfileAndAccountLabel.frame = CGRect(x: contentView.center.x - 60,
-                                                  y: contentView.center.y - 35,
-                                                  width: contentView.frame.size.width - 15 - profileImageContainer.frame.size.width,
-                                                  height: contentView.frame.size.height)
     }
     
     override func awakeFromNib() {

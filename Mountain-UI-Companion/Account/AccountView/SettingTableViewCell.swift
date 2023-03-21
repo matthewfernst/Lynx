@@ -45,32 +45,32 @@ class SettingTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func prepareForReuse() {
-        iconImageView.image = nil
-        label.text = nil
-        iconContainer.backgroundColor = nil
-    }
-    
     public func configure(with setting: Setting) {
         label.text = setting.name
         iconImageView.image = setting.iconImage
         iconContainer.backgroundColor = setting.backgroundColor
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        iconContainer.translatesAutoresizingMaskIntoConstraints = false
+        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            iconContainer.widthAnchor.constraint(equalToConstant: 28),
+            iconContainer.heightAnchor.constraint(equalToConstant: 28),
+            iconContainer.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
+            iconContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 10),
+            
+            iconImageView.widthAnchor.constraint(equalToConstant: 23),
+            iconImageView.heightAnchor.constraint(equalToConstant: 23),
+            iconImageView.centerYAnchor.constraint(equalTo: iconContainer.centerYAnchor),
+            iconImageView.centerXAnchor.constraint(equalTo: iconContainer.centerXAnchor),
+            
+            label.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 50),
+            label.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
+            label.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor)
+        ])
+        
         self.backgroundColor = .secondarySystemBackground
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let size = contentView.frame.size.height - 12
-        iconContainer.frame = CGRect(x: 10, y: 6, width: size, height: size)
-        
-        let imageSize = size / 1.5
-        iconImageView.frame = CGRect(x: (size - imageSize) / 2, y: (size - imageSize) / 2, width: imageSize, height: imageSize)
-        iconImageView.center = iconContainer.center
-        
-        label.frame = CGRect(x: 20 + iconContainer.frame.size.width,
-                             y: 0,
-                             width: contentView.frame.size.width - 15 - iconContainer.frame.size.width,
-                             height: contentView.frame.size.height)
     }
     
     override func awakeFromNib() {
