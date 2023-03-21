@@ -20,6 +20,7 @@ class AppSettingTableViewController: UITableViewController {
         super.viewDidLoad()
         self.title = "App Settings"
         self.navigationItem.largeTitleDisplayMode = .never
+        setAppearance(traitCollection.userInterfaceStyle)
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -73,10 +74,25 @@ class AppSettingTableViewController: UITableViewController {
         pullDownButton.semanticContentAttribute = .forceRightToLeft
         
         var menuOptions = [UIAction]()
-        actionTitles.forEach {  menuOptions.append(UIAction(title: "\($0) ", handler: {_ in })) }
-        pullDownButton.menu = UIMenu(title: "", children:
-            menuOptions
-        )
+        
+        actionTitles.forEach { title in
+            let action = UIAction(title: title) { [weak self] _ in
+                // TODO: Add theme to Profile to load in.
+                if title == "Dark" {
+                    self?.setAppearance(.dark)
+                    pullDownButton.setTitle("Dark", for: .normal)
+                } else if title == "Light" {
+                    self?.setAppearance(.light)
+                    pullDownButton.setTitle("Light", for: .normal)
+                } else {
+                    pullDownButton.setTitle("System", for: .normal)
+                    self?.setAppearance(.unspecified)
+                }
+            }
+            menuOptions.append(action)
+        }
+
+        pullDownButton.menu = UIMenu(title: "", children: menuOptions)
         
         pullDownButton.setTitleColor(.label, for: .normal)
         pullDownButton.showsMenuAsPrimaryAction = true
@@ -84,6 +100,12 @@ class AppSettingTableViewController: UITableViewController {
         pullDownButton.sizeToFit()
         
         return pullDownButton
+    }
+    
+    func setAppearance(_ style: UIUserInterfaceStyle) {
+        // TODO: System theme?
+        overrideUserInterfaceStyle = style
+        self.tabBarController?.overrideUserInterfaceStyle = style
     }
 
 }
