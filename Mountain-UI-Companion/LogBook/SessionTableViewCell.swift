@@ -84,38 +84,27 @@ class SessionTableViewCell: UITableViewCell {
         ]
         
         resortDateImageView.image = "Jan\n2".image(withAttributes: dateOfSessionAttributes, move: .zero)?.withTintColor(.label)
+        
+        resortDateImageView.translatesAutoresizingMaskIntoConstraints = false
+        resortNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        resortStatsLabel.translatesAutoresizingMaskIntoConstraints = false
+        snowboardFigureImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            resortDateImageView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
+            resortDateImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            
+            resortNameLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor, constant: -10),
+            resortNameLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 70),
+            
+            resortStatsLabel.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor, constant: 10),
+            resortStatsLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 95),
+            
+            snowboardFigureImageView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor, constant: 10),
+            snowboardFigureImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 70)
+        ])
+        
         self.backgroundColor = .secondarySystemBackground
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let size = contentView.frame.size.height - 12
-        resortDateContainer.frame = CGRect(x: 10, y: 6, width: size, height: size)
-        
-        let imageSize = size / 1.5
-        resortDateImageView.frame = CGRect(x: (size - imageSize) / 2, y: (size - imageSize) / 2, width: imageSize, height: imageSize)
-        resortDateImageView.center = resortDateContainer.center
-        
-        resortNameLabel.frame = CGRect(x: 15 + resortDateContainer.frame.size.width,
-                                       y: -10,
-                                       width: contentView.frame.size.width - 15 - resortDateContainer.frame.size.width,
-                                       height: contentView.frame.size.height)
-        
-        resortStatsLabel.frame = CGRect(x: 40  + resortDateContainer.frame.size.width,
-                                        y: 10,
-                                        width: contentView.frame.size.width - 15 - resortDateContainer.frame.size.width,
-                                        height: contentView.frame.size.height)
-        
-        snowboardFigureContainer.frame = CGRect(x: resortDateContainer.frame.size.width,
-                                                y: 15,
-                                                width: size,
-                                                height: size)
-        
-        snowboardFigureImageView.frame = CGRect(x: (size - imageSize) / 2, y: (size - imageSize) / 2, width: 18, height: 18)
-        snowboardFigureImageView.center = snowboardFigureContainer.center
-        
-        
-        
     }
     
     required init?(coder: NSCoder) {
