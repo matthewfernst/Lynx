@@ -29,6 +29,21 @@ class Profile: NSObject, NSCoding
         self.profilePictureURL = profilePictureURL
     }
     
+    required convenience init?(coder: NSCoder) {
+        let uuid = coder.decodeObject(forKey: "uuid") as! String
+        let firstName = coder.decodeObject(forKey: "firstName") as! String
+        let lastName = coder.decodeObject(forKey: "lastName") as! String
+        let email = coder.decodeObject(forKey: "email") as! String
+        let profilePicture = coder.decodeObject(forKey: "profilePicture") as? UIImage
+        let profilePictureURL = coder.decodeObject(forKey: "profilePictureURL") as? String
+        let appTheme = coder.decodeObject(forKey: "appTheme") as! String
+        let units = coder.decodeObject(forKey: "units") as! String
+        
+        self.init(uuid: uuid, firstName: firstName, lastName: lastName, email: email, profilePicture: profilePicture, profilePictureURL: profilePictureURL)
+        self.appTheme = appTheme
+        self.units = units
+    }
+    
     public func getDefaultProfilePicture(fontSize: CGFloat, size: CGSize, move: CGPoint) -> UIImage {
         return (name.initials.image(withAttributes: [
             .font: UIFont.systemFont(ofSize: fontSize, weight: .medium),
@@ -62,84 +77,6 @@ class Profile: NSObject, NSCoding
             completion(profile)
         }.resume()
     }
-    
-    // MARK: - NSCoding
-    
-    func encode(with coder: NSCoder) {
-        coder.encode(uuid, forKey: "uuid")
-        coder.encode(firstName, forKey: "firstName")
-        coder.encode(lastName, forKey: "lastName")
-        coder.encode(email, forKey: "email")
-        coder.encode(profilePicture, forKey: "profilePicture")
-        coder.encode(profilePictureURL, forKey: "profilePictureURL")
-        coder.encode(appTheme, forKey: "appTheme")
-        coder.encode(units, forKey: "units")
-    }
-    
-    required convenience init?(coder: NSCoder) {
-        let uuid = coder.decodeObject(forKey: "uuid") as! String
-        let firstName = coder.decodeObject(forKey: "firstName") as! String
-        let lastName = coder.decodeObject(forKey: "lastName") as! String
-        let email = coder.decodeObject(forKey: "email") as! String
-        let profilePicture = coder.decodeObject(forKey: "profilePicture") as? UIImage
-        let profilePictureURL = coder.decodeObject(forKey: "profilePictureURL") as? String
-        let appTheme = coder.decodeObject(forKey: "appTheme") as! String
-        let units = coder.decodeObject(forKey: "units") as! String
-        
-        self.init(uuid: uuid, firstName: firstName, lastName: lastName, email: email, profilePicture: profilePicture, profilePictureURL: profilePictureURL)
-        self.appTheme = appTheme
-        self.units = units
-    }
-    
-    static func loadProfileFromKeychain() -> Profile? {
-        let query = [
-            kSecClass as String: kSecClassGenericPassword as String,
-            kSecAttrService as String: "com.yourcompany.yourapp.profileservice",
-            kSecReturnData as String: kCFBooleanTrue!,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ] as CFDictionary
-
-        var dataTypeRef: AnyObject?
-        let status: OSStatus = SecItemCopyMatching(query, &dataTypeRef)
-        if status == errSecSuccess {
-            if let data = dataTypeRef as? Data,
-               let profile = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? Profile {
-                return profile
-            }
-        }
-        return nil
-    }
-
-    public func saveToKeychain() {
-        let data = try? NSKeyedArchiver.archivedData(withRootObject: self, requiringSecureCoding: false)
-
-        let query = [
-            kSecClass as String: kSecClassGenericPassword as String,
-            kSecAttrService as String: "com.matthewfernst.Mountain-UI-Companion",
-            kSecValueData as String: data!
-        ] as CFDictionary
-
-        SecItemDelete(query) // Delete any existing item
-
-        let status = SecItemAdd(query, nil)
-        if status != errSecSuccess {
-            print("Failed to save profile to Keychain with error: \(status)")
-        }
-    }
-
-    
-    public func signOut() {
-        let query = [
-            kSecClass as String: kSecClassGenericPassword as String,
-            kSecAttrService as String: "com.matthewfernst.Mountain-UI-Companion"
-        ] as CFDictionary
-
-        let status = SecItemDelete(query)
-        if status != errSecSuccess && status != errSecItemNotFound {
-            print("Failed to delete profile from Keychain with error: \(status)")
-        }
-    }
-
     
     override var description: String {
         // For debugging purposes
