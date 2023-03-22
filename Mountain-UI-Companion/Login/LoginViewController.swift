@@ -19,7 +19,7 @@ class LoginViewController: UIViewController
     
     static let identitfier = "LoginViewController"
     
-    lazy var loginController = LoginController(loginViewController: self)
+    private lazy var loginController = LoginController(loginViewController: self)
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -38,7 +38,7 @@ class LoginViewController: UIViewController
         setupSignInWithGoogleButton()
     }
     
-    @objc func showMountainUIDisplayPage() {
+    @objc private func showMountainUIDisplayPage() {
         if let url = URL(string: Constants.mountainUIDisplayGitub) {
             UIApplication.shared.open(url)
         }
@@ -54,7 +54,7 @@ class LoginViewController: UIViewController
     }
     
     // MARK: Apple Sign In
-    func setupSignInWithAppleButton() {
+    private func setupSignInWithAppleButton() {
         let signInWithAppleButton = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .white)
         signInWithAppleButton.addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
         self.view.addSubview(signInWithAppleButton)
@@ -69,7 +69,7 @@ class LoginViewController: UIViewController
         ])
     }
     
-    @objc func handleAuthorizationAppleIDButtonPress() {
+    @objc private func handleAuthorizationAppleIDButtonPress() {
         let request = ASAuthorizationAppleIDProvider().createRequest()
         request.requestedScopes = [.fullName, .email]
         
@@ -82,7 +82,7 @@ class LoginViewController: UIViewController
     }
     
     // MARK: Google Sign In
-    func setupSignInWithGoogleButton() {
+    private func setupSignInWithGoogleButton() {
         let signInWithGoogleButton = getSignInWithGoogleButton()
         
         signInWithGoogleButton.addTarget(self, action: #selector(handleAuthorizationGoogleButtonPress), for: .touchUpInside)
@@ -98,7 +98,7 @@ class LoginViewController: UIViewController
         ])
     }
     
-    @objc func handleAuthorizationGoogleButtonPress() {
+    @objc private func handleAuthorizationGoogleButtonPress() {
         debugLogin()
         GIDSignIn.sharedInstance.signIn(withPresenting: self) { [unowned self] signInResult, error in
             guard error == nil else {
@@ -117,18 +117,19 @@ class LoginViewController: UIViewController
             Task {
                 let name = profile.name.components(separatedBy: " ")
                 let (firstName, lastName) = (name[0], name[1])
+                let activityIndicator = self.showSignInActivityIndicator()
                 await LoginController.handleCommonSignIn(uuid: uuid,
                                                          firstName: firstName,
                                                          lastName: lastName,
                                                          email: profile.email,
                                                          profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "")
-                
+                activityIndicator.stopAnimating()
                 self.updateViewFromModel()
             }
         }
     }
     
-    func updateViewFromModel() {
+    private func updateViewFromModel() {
         guard let _ = LoginController.profile else {
             showErrorWithSignIn()
             return
@@ -137,7 +138,7 @@ class LoginViewController: UIViewController
         self.goToMainApp()
     }
     
-    func goToMainApp() {
+    private func goToMainApp() {
         
         if let tabBarController = self.storyboard?.instantiateViewController(withIdentifier: TabViewController.identifier) as? TabViewController {
             tabBarController.profile = LoginController.profile
@@ -150,7 +151,7 @@ class LoginViewController: UIViewController
     }
     
     
-    func showErrorWithSignIn() {
+    private func showErrorWithSignIn() {
         let message = """
                       It looks like we weren't able to log you in. Please try again. If the issue continues, please contact the developers.
                       """
@@ -160,29 +161,34 @@ class LoginViewController: UIViewController
         present(ac, animated: true)
     }
     
-    func signInExistingUser() {
+    private func showSignInActivityIndicator() -> UIActivityIndicatorView {
+        let background = UIView(frame: self.view.frame)
+        background.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        
+        self.view.addSubview(background)
+        
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.color = .white
+        activityIndicator.transform = CGAffineTransformMakeScale(2, 2)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        background.addSubview(activityIndicator)
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+        ])
+        
+        activityIndicator.startAnimating()
+        
+        return activityIndicator
+    }
+    
+    private func signInExistingUser() {
         let isSignedIn = UserDefaults.standard.bool(forKey: Profile.isSignedInKey)
         
         if isSignedIn {
-            let background = UIView(frame: self.view.frame)
-            background.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
-            
-            self.view.addSubview(background)
-            
-            let activityIndicator = UIActivityIndicatorView()
-            activityIndicator.color = .white
-            activityIndicator.transform = CGAffineTransformMakeScale(2, 2)
-            activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-            
-            background.addSubview(activityIndicator)
-            
-            NSLayoutConstraint.activate([
-                activityIndicator.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-                activityIndicator.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
-            ])
-            
-            activityIndicator.startAnimating()
-            
+            let activityIndicator = showSignInActivityIndicator()
             Task {
                 await Profile.loadProfileFromKeychain { [unowned self] profile in
                     activityIndicator.stopAnimating()
@@ -201,11 +207,12 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
         case let appleIdCredential as ASAuthorizationAppleIDCredential:
             Logger.loginViewController.debug("Sign in with Apple: Credential Sign in")
             Task {
+                let activityIndicator = self.showSignInActivityIndicator()
                 await LoginController.handleCommonSignIn(uuid: appleIdCredential.user,
                                                          firstName: appleIdCredential.fullName?.givenName,
                                                          lastName: appleIdCredential.fullName?.familyName,
                                                          email: appleIdCredential.email)
-                
+                activityIndicator.stopAnimating()
                 self.updateViewFromModel()
             }
             
