@@ -19,6 +19,8 @@ class Profile
     var profilePicture: UIImage?
     var profilePictureURL: String?
     var isSignedIn: Bool
+    var appTheme: String = "System"
+    var units: String = "Imperial"
     
     // TODO: Season Stats in different place?
     // var seasonSummary = [SessionSummary?]()

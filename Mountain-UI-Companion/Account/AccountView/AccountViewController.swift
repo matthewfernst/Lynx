@@ -163,6 +163,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
             switch GeneralSettinsSections(rawValue: indexPath.row) {
             case .app:
                 if let appSettingsViewController = self.storyboard?.instantiateViewController(withIdentifier: AppSettingTableViewController.identitifer) as? AppSettingTableViewController {
+                    appSettingsViewController.profile = profile
                     self.navigationController?.pushViewController(appSettingsViewController, animated: true)
                 }
                 
