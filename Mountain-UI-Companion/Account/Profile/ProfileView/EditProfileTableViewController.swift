@@ -73,7 +73,6 @@ class EditProfileTableViewController: UITableViewController
     }
     
     private func saveProfileChanges() async {
-        // TODO: Add Profile Picture Change -> Image Picker needed.
         let newFirstName = changedFirstName ?? self.profile.firstName
         let newLastName = changedLastName ?? self.profile.lastName
         let newEmail = changedEmail ?? self.profile.email
@@ -86,7 +85,6 @@ class EditProfileTableViewController: UITableViewController
                 // Get new profile picture's Object URL
                 let objectURL = await S3Utils.getObjectURL(uuid: self.profile.uuid)
                 newProfilePictureURL = objectURL
-                print("HERE! : \(newProfilePictureURL)")
             } catch {
                 // Handle error
                 print("Error uploading profile picture: \(error)")
@@ -107,10 +105,10 @@ class EditProfileTableViewController: UITableViewController
                               lastName: newLastName,
                               email: newEmail,
                               profilePictureURL: newProfilePictureURL) { [unowned self] newProfile in
-            // TODO: What now? Delegate back or set in tabcontroller?
+            
             self.delegate?.editProfileCompletionHandler(profile: newProfile)
+            
             DispatchQueue.main.async {
-                // Refresh the previous view controller
                 self.activityIndicator.stopAnimating()
                 self.navigationController?.popViewController(animated: true)
             }
