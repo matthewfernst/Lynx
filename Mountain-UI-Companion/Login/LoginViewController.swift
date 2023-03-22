@@ -17,6 +17,8 @@ class LoginViewController: UIViewController
     @IBOutlet var appLabel: UILabel!
     @IBOutlet var learnMoreButton: UIButton!
     
+    static let identitfier = "LoginViewController"
+    
     lazy var loginController = LoginController(loginViewController: self)
     
     override func viewDidLoad() {

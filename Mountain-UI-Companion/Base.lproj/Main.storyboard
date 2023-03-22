@@ -12,7 +12,7 @@
         <!--Login View Controller-->
         <scene sceneID="fJT-xZ-gFj">
             <objects>
-                <viewController storyboardIdentifier="LoginVC" id="1q6-pJ-EvQ" customClass="LoginViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" id="1q6-pJ-EvQ" customClass="LoginViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Vt7-M1-c0P">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

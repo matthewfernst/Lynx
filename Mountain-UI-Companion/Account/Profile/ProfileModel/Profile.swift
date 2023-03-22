@@ -12,9 +12,7 @@ class Profile: NSObject, NSCoding
 {
     var uuid: String
     var firstName, lastName: String
-    var name: String {
-        return firstName + " " + lastName
-    }
+    var name: String { firstName + " " + lastName }
     var email: String
     var profilePicture: UIImage?
     var profilePictureURL: String?
@@ -103,7 +101,16 @@ class Profile: NSObject, NSCoding
     
     func saveToUserDefaults() {
         let data = try? NSKeyedArchiver.archivedData(withRootObject: self, requiringSecureCoding: false)
-        UserDefaults.standard.set(data, forKey: Profile.profileSignedInKey)
+        let defaults = UserDefaults.standard
+        defaults.set(data, forKey: Profile.profileSignedInKey)
+        defaults.set(true, forKey: Profile.isSignedInKey)
+    }
+    
+    func signOut() {
+        let defaults = UserDefaults.standard
+        
+        defaults.set(false, forKey: Profile.isSignedInKey)
+        defaults.removeObject(forKey: Profile.profileSignedInKey)
     }
     
     override var description: String {

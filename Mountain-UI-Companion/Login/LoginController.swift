@@ -90,8 +90,6 @@ class LoginController
         
         if let profile = createdProfile {
             self.profile = profile
-            
-            UserDefaults.standard.setValue(true, forKey: Profile.isSignedInKey)
             profile.saveToUserDefaults()
         }
     }
