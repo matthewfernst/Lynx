@@ -19,6 +19,8 @@ class EditProfileTableViewController: UITableViewController
     
     var delegate: EditProfileDelegate?
     
+    private let activityIndicator = UIActivityIndicatorView(style: .large)
+    
     private let dynamoDBClient = DynamoDBUtils.dynamoDBClient
     private let userTable = DynamoDBUtils.usersTable
     
@@ -42,6 +44,16 @@ class EditProfileTableViewController: UITableViewController
         tableView.register(EditProfilePictureTableViewCell.self, forCellReuseIdentifier: EditProfilePictureTableViewCell.identifier)
         tableView.register(EditNameTableViewCell.self, forCellReuseIdentifier: EditNameTableViewCell.identifier)
         tableView.register(EditEmailTableViewCell.self, forCellReuseIdentifier: EditEmailTableViewCell.identifier)
+        
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.color = .gray
+        view.addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        
     }
     
     
@@ -54,17 +66,18 @@ class EditProfileTableViewController: UITableViewController
     }
     
     @objc func saveProfileChangesButtonTapped() {
+        activityIndicator.startAnimating()
         Task.detached { [weak self] in
             await self?.saveProfileChanges()
         }
     }
     
-    func saveProfileChanges() async {
+    private func saveProfileChanges() async {
         // TODO: Add Profile Picture Change -> Image Picker needed.
         let newFirstName = changedFirstName ?? self.profile.firstName
         let newLastName = changedLastName ?? self.profile.lastName
         let newEmail = changedEmail ?? self.profile.email
-
+        
         var newProfilePictureURL = self.profile.profilePictureURL
         if let changedProfilePicture = changedProfilePicture {
             do {
@@ -79,16 +92,16 @@ class EditProfileTableViewController: UITableViewController
                 print("Error uploading profile picture: \(error)")
             }
         }
-
+        
         Task {
             // Update Dynamo
             await DynamoDBUtils.updateDynamoDBItem(uuid: self.profile.uuid,
-                                                    newFirstName: newFirstName,
-                                                    newLastName: newLastName,
-                                                    newEmail: newEmail,
-                                                    newProfilePictureURL: newProfilePictureURL ?? "")
+                                                   newFirstName: newFirstName,
+                                                   newLastName: newLastName,
+                                                   newEmail: newEmail,
+                                                   newProfilePictureURL: newProfilePictureURL ?? "")
         }
-
+        
         Profile.createProfile(uuid: profile.uuid,
                               firstName: newFirstName,
                               lastName: newLastName,
@@ -98,6 +111,7 @@ class EditProfileTableViewController: UITableViewController
             self.delegate?.editProfileCompletionHandler(profile: newProfile)
             DispatchQueue.main.async {
                 // Refresh the previous view controller
+                self.activityIndicator.stopAnimating()
                 self.navigationController?.popViewController(animated: true)
             }
         }
@@ -198,7 +212,7 @@ class EditProfileTableViewController: UITableViewController
 // MARK: - Name and Email TextField Delegate
 extension EditProfileTableViewController: UITextFieldDelegate {
     
-    func setTextForProfile(text: String, tag: Int) {
+    private func setTextForProfile(text: String, tag: Int) {
         switch EditProfileTextFieldTags(rawValue: tag) {
         case .firstName:
             changedFirstName = text

@@ -62,8 +62,8 @@
             filePath = "Mountain-UI-Companion/Account/Profile/ProfileView/EditProfileTableViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "224"
-            endingLineNumber = "224"
+            startingLineNumber = "238"
+            endingLineNumber = "238"
             landmarkName = "textField(_:shouldChangeCharactersIn:replacementString:)"
             landmarkType = "7">
             <Locations>

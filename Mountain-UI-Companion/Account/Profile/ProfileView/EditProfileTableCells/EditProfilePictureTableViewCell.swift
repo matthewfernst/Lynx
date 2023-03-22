@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import TOCropViewController
 
 class EditProfilePictureTableViewCell: UITableViewCell {
     
@@ -39,8 +40,12 @@ class EditProfilePictureTableViewCell: UITableViewCell {
     
     @objc func handleChangeProfilePicture() {
         let ac = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        ac.addAction(UIAlertAction(title: "Replace", style: .default))
-        ac.addAction(UIAlertAction(title: "Remove", style: .destructive){ [unowned self] _ in
+        ac.addAction(UIAlertAction(title: "Replace", style: .default) { [weak self] _ in
+            let picker = UIImagePickerController()
+            picker.delegate = self
+            self?.delegate?.present(picker, animated: true)
+        })
+        ac.addAction(UIAlertAction(title: "Remove", style: .destructive) { [unowned self] _ in
             if let newPicture = defaultProfilePicture {
                 self.profilePictureImageView.image = newPicture
                 self.delegate?.handleProfilePictureChange(newProfilePicture: newPicture)
@@ -97,4 +102,30 @@ class EditProfilePictureTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+}
+
+extension EditProfilePictureTableViewCell: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true, completion: nil)
+        if let image = info[.originalImage] as? UIImage {
+            showCropViewController(with: image)
+        }
+        
+    }
+    
+    func showCropViewController(with image: UIImage) {
+        let cropViewController = TOCropViewController(croppingStyle: .circular, image: image)
+        cropViewController.delegate = self
+        cropViewController.aspectRatioLockEnabled = true
+        cropViewController.resetAspectRatioEnabled = false
+        self.delegate?.present(cropViewController, animated: true, completion: nil)
+    }
+}
+
+extension EditProfilePictureTableViewCell: TOCropViewControllerDelegate {
+    func cropViewController(_ cropViewController: TOCropViewController, didCropToCircularImage image: UIImage, with cropRect: CGRect, angle: Int) {
+        self.profilePictureImageView.image = image
+        self.delegate?.handleProfilePictureChange(newProfilePicture: image)
+        cropViewController.dismiss(animated: true)
+    }
 }
