@@ -11,13 +11,13 @@ import OSLog
 class LoginController
 {
     let loginViewController: LoginViewController
-    var profile: Profile?
+    static var profile: Profile?
     
     init(loginViewController: LoginViewController) {
         self.loginViewController = loginViewController
     }
     
-    func handleCommonSignIn(uuid: String, firstName: String? = nil, lastName: String? = nil, email: String? = nil, profilePictureURL: String = "") async {
+    static func handleCommonSignIn(uuid: String, firstName: String? = nil, lastName: String? = nil, email: String? = nil, profilePictureURL: String = "") async {
         if let profileAttributes = try? await self.getExistingUser(uuid: uuid) {
             loginUser(profileAttributes: profileAttributes)
         } else if let firstName = firstName, let lastName = lastName, let email = email {
@@ -29,7 +29,7 @@ class LoginController
         }
     }
     
-    private func getExistingUser(uuid: String) async throws -> ProfileAttributes? {
+    private static func getExistingUser(uuid: String) async throws -> ProfileAttributes? {
         if let dynamoDBUserInfo = await DynamoDBUtils.getDynamoDBItem(uuid: uuid) {
             var profileAttributes = ProfileAttributes()
             for (key, value) in dynamoDBUserInfo {
@@ -57,12 +57,12 @@ class LoginController
         return nil
     }
     
-    private func loginUser(profileAttributes: ProfileAttributes) {
+    private static func loginUser(profileAttributes: ProfileAttributes) {
         Logger.loginController.info("Existing user found.")
         self.signInUser(profileAttributes: profileAttributes)
     }
     
-    private func createNewUser(profileAttributes: ProfileAttributes) async {
+    private static func createNewUser(profileAttributes: ProfileAttributes) async {
         Logger.loginController.info("User does not exist. Creating User.")
         
         self.signInUser(profileAttributes: profileAttributes)
@@ -70,7 +70,7 @@ class LoginController
         await DynamoDBUtils.putDynamoDBItem(profileAttributes: profileAttributes)
     }
     
-    private func signInUser(profileAttributes: ProfileAttributes) {
+    private static func signInUser(profileAttributes: ProfileAttributes) {
         let group = DispatchGroup()
         
         var createdProfile: Profile?
@@ -89,7 +89,8 @@ class LoginController
         group.wait()
         
         if let profile = createdProfile {
-            self.profile = profile
+            LoginController.profile = profile
+            UserDefaults.standard.set(true, forKey: Profile.isSignedInKey)
             profile.saveToKeychain()
         }
     }
