@@ -1,5 +1,5 @@
 //
-//  ProfileEnums.swift
+//  Profile+Enums.swift
 //  Mountain-UI-Companion
 //
 //  Created by Matthew Ernst on 3/14/23.
