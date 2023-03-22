@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if isSignedIn {
             let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
             if let tabViewController = mainStoryboard.instantiateViewController(withIdentifier: TabViewController.identifier) as? TabViewController {
-                if let profile = Profile.loadProfileFromUserDefaults() {
+                if let profile = Profile.loadProfileFromKeychain() {
     
                     tabViewController.profile = profile
                     

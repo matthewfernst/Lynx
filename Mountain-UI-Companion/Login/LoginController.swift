@@ -90,7 +90,7 @@ class LoginController
         
         if let profile = createdProfile {
             self.profile = profile
-            profile.saveToUserDefaults()
+            profile.saveToKeychain()
         }
     }
 

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Security
 import UIKit
 
 class Profile: NSObject, NSCoding
@@ -28,13 +29,13 @@ class Profile: NSObject, NSCoding
         self.profilePictureURL = profilePictureURL
     }
     
-    func getDefaultProfilePicture(fontSize: CGFloat, size: CGSize, move: CGPoint) -> UIImage {
+    public func getDefaultProfilePicture(fontSize: CGFloat, size: CGSize, move: CGPoint) -> UIImage {
         return (name.initials.image(withAttributes: [
             .font: UIFont.systemFont(ofSize: fontSize, weight: .medium),
         ], size: size, move: move)?.withTintColor(.label))!
     }
     
-    static func createProfile(uuid: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
+    public static func createProfile(uuid: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
         guard let profilePictureURL = URL(string: profilePictureURL ?? "") else {
             completion(Profile(uuid: uuid, firstName: firstName, lastName: lastName, email: email))
             return
@@ -90,28 +91,55 @@ class Profile: NSObject, NSCoding
         self.units = units
     }
     
-    static func loadProfileFromUserDefaults() -> Profile? {
-        guard let data = UserDefaults.standard.object(forKey: Profile.profileSignedInKey) as? Data,
-              let profile = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? Profile
-        else {
-            return nil
+    static func loadProfileFromKeychain() -> Profile? {
+        let query = [
+            kSecClass as String: kSecClassGenericPassword as String,
+            kSecAttrService as String: "com.yourcompany.yourapp.profileservice",
+            kSecReturnData as String: kCFBooleanTrue!,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ] as CFDictionary
+
+        var dataTypeRef: AnyObject?
+        let status: OSStatus = SecItemCopyMatching(query, &dataTypeRef)
+        if status == errSecSuccess {
+            if let data = dataTypeRef as? Data,
+               let profile = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? Profile {
+                return profile
+            }
         }
-        return profile
+        return nil
     }
-    
-    func saveToUserDefaults() {
+
+    public func saveToKeychain() {
         let data = try? NSKeyedArchiver.archivedData(withRootObject: self, requiringSecureCoding: false)
-        let defaults = UserDefaults.standard
-        defaults.set(data, forKey: Profile.profileSignedInKey)
-        defaults.set(true, forKey: Profile.isSignedInKey)
+
+        let query = [
+            kSecClass as String: kSecClassGenericPassword as String,
+            kSecAttrService as String: "com.matthewfernst.Mountain-UI-Companion",
+            kSecValueData as String: data!
+        ] as CFDictionary
+
+        SecItemDelete(query) // Delete any existing item
+
+        let status = SecItemAdd(query, nil)
+        if status != errSecSuccess {
+            print("Failed to save profile to Keychain with error: \(status)")
+        }
     }
+
     
-    func signOut() {
-        let defaults = UserDefaults.standard
-        
-        defaults.set(false, forKey: Profile.isSignedInKey)
-        defaults.removeObject(forKey: Profile.profileSignedInKey)
+    public func signOut() {
+        let query = [
+            kSecClass as String: kSecClassGenericPassword as String,
+            kSecAttrService as String: "com.matthewfernst.Mountain-UI-Companion"
+        ] as CFDictionary
+
+        let status = SecItemDelete(query)
+        if status != errSecSuccess && status != errSecItemNotFound {
+            print("Failed to delete profile from Keychain with error: \(status)")
+        }
     }
+
     
     override var description: String {
         // For debugging purposes
