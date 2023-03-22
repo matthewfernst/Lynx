@@ -71,25 +71,28 @@ class LoginController
     }
     
     private func signInUser(profileAttributes: ProfileAttributes) {
-        let group = DispatchGroup() // Create a DispatchGroup
+        let group = DispatchGroup()
         
-        var createdProfile: Profile? // Declare a variable to store the created profile
+        var createdProfile: Profile?
         
-        group.enter() // Enter the DispatchGroup
+        group.enter()
         
         Profile.createProfile(uuid: profileAttributes.uuid,
                               firstName: profileAttributes.firstName,
                               lastName: profileAttributes.lastName,
                               email: profileAttributes.email,
                               profilePictureURL: profileAttributes.profilePictureURL) { profile in
-            createdProfile = profile // Store the created profile in the variable
-            group.leave() // Leave the DispatchGroup
+            createdProfile = profile
+            group.leave()
         }
         
-        group.wait() // Wait until the DispatchGroup is empty
+        group.wait()
         
         if let profile = createdProfile {
-            self.profile = profile // Use the created profile
+            self.profile = profile
+            
+            UserDefaults.standard.setValue(true, forKey: Profile.isSignedInKey)
+            profile.saveToUserDefaults()
         }
     }
 
