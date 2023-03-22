@@ -16,16 +16,18 @@ class AppSettingTableViewController: UITableViewController {
     
     static var identitifer = "AppSettingTableView"
     
+    var profile: Profile!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "App Settings"
         self.navigationItem.largeTitleDisplayMode = .never
     }
-
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return AppSettingSections.allCases.count
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch AppSettingSections(rawValue: section) {
         case .units:
@@ -44,11 +46,11 @@ class AppSettingTableViewController: UITableViewController {
         switch AppSettingSections(rawValue: indexPath.section) {
         case .units:
             configuration.text = "Units"
-            cell.accessoryView = getPopoverButtonForCell(actionTitles: ["Imperial", "Metric"])
+            cell.accessoryView = getPopOverButtonForCell(isTheme: false)
             cell.accessoryView?.tintColor = .label
         case .theme:
             configuration.text = "Theme"
-            cell.accessoryView = getPopoverButtonForCell(actionTitles: ["System", "Dark", "Light"])
+            cell.accessoryView = getPopOverButtonForCell(isTheme: true)
             cell.accessoryView?.tintColor = .label
         default:
             return UITableViewCell()
@@ -58,11 +60,12 @@ class AppSettingTableViewController: UITableViewController {
         return cell
     }
     
-    
-    func getPopoverButtonForCell(actionTitles: [String]) -> UIButton {
+    private func getPopOverButtonForCell(isTheme: Bool) -> UIButton {
         let pullDownButton = UIButton()
         
         pullDownButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        pullDownButton.titleLabel?.preferredMaxLayoutWidth = 100
+        pullDownButton.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20)
         
         let chevronDown = UIImage(systemName: "chevron.down")?.scalePreservingAspectRatio(targetSize: CGSize(width: 14, height: 14)).withTintColor(.lightGray)
         pullDownButton.setImage(chevronDown, for: .normal)
@@ -72,12 +75,7 @@ class AppSettingTableViewController: UITableViewController {
         
         pullDownButton.semanticContentAttribute = .forceRightToLeft
         
-        var menuOptions = [UIAction]()
-        actionTitles.forEach {  menuOptions.append(UIAction(title: "\($0) ", handler: {_ in })) }
-        pullDownButton.menu = UIMenu(title: "", children:
-            menuOptions
-        )
-        
+        pullDownButton.menu = isTheme ? getThemeMenuActions() : getUnitMenuActions()
         pullDownButton.setTitleColor(.label, for: .normal)
         pullDownButton.showsMenuAsPrimaryAction = true
         pullDownButton.changesSelectionAsPrimaryAction = true
@@ -85,5 +83,54 @@ class AppSettingTableViewController: UITableViewController {
         
         return pullDownButton
     }
-
+    
+    private func getThemeMenuActions() -> UIMenu {
+        var menuOptions = [UIAction]()
+        
+        ["System", "Dark", "Light"].forEach { theme in
+            let action = UIAction(title: theme) { [weak self] _ in
+                if theme == "Dark" {
+                    self?.setAppearance(.dark)
+                } else if theme == "Light" {
+                    self?.setAppearance(.light)
+                } else {
+                    self?.setAppearance(.unspecified)
+                }
+                self?.profile.appTheme = theme
+                self?.saveTheme(theme: theme)
+            }
+            if theme == self.profile.appTheme {
+                action.state = .on
+            }
+            menuOptions.append(action)
+        }
+        
+        return UIMenu(children: menuOptions)
+    }
+    
+    private func getUnitMenuActions() -> UIMenu {
+        var menuOptions = [UIAction]()
+        
+        ["Imperial", "Metric"].forEach { unit in
+            let action = UIAction(title: unit) { [weak self] _ in
+                self?.profile.units = unit
+            }
+            if unit == self.profile.units {
+                action.state = .on
+            }
+            menuOptions.append(action)
+        }
+        
+        return UIMenu(children: menuOptions)
+    }
+    
+    func saveTheme(theme: String) {
+        UserDefaults.standard.set(theme, forKey: "theme")
+    }
+    
+    private func setAppearance(_ style: UIUserInterfaceStyle) {
+        overrideUserInterfaceStyle = style
+        self.tabBarController?.overrideUserInterfaceStyle = style
+    }
+    
 }
