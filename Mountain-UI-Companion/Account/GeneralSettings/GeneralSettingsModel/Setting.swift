@@ -16,11 +16,9 @@ struct Setting {
 }
 
 
-#if DEBUG
 extension Setting {
-    static let sampleSettingOptions: [Setting] = [
+    static let settingOptions: [Setting] = [
         .init(name: "General", iconImage: UIImage(systemName: "gear"), backgroundColor: .lightGray),
         .init(name: "Notifications", iconImage: UIImage(systemName: "bell.badge.fill"), backgroundColor: .red),
     ]
 }
-#endif

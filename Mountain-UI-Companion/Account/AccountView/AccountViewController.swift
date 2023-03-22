@@ -25,8 +25,8 @@ class AccountViewController: UITableViewController, EditProfileDelegate
     
     var profile: Profile!
     
-    private var generalSettings = Setting.sampleSettingOptions
-    private var supportSettings = Support.sampleSupportOptions
+    private var generalSettings = Setting.settingOptions
+    private var supportSettings = Support.supportOptions
     
     override func viewDidLoad() {
         super.viewDidLoad()

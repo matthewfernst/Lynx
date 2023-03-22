@@ -55,6 +55,15 @@
       }
     },
     {
+      "identity" : "rskimagecropper",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ruslanskorb/RSKImageCropper",
+      "state" : {
+        "revision" : "0cbf9cbb77b6763c80eb4d44673395acf5a8d93c",
+        "version" : "4.0.0"
+      }
+    },
+    {
       "identity" : "smithy-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/awslabs/smithy-swift",
@@ -79,6 +88,15 @@
       "state" : {
         "revision" : "32e8d724467f8fe623624570367e3d50c5638e46",
         "version" : "1.5.2"
+      }
+    },
+    {
+      "identity" : "tocropviewcontroller",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/TimOliver/TOCropViewController",
+      "state" : {
+        "revision" : "d0470491f56e734731bbf77991944c0dfdee3e0e",
+        "version" : "2.6.1"
       }
     },
     {

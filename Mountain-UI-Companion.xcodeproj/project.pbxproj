@@ -11,6 +11,9 @@
 		65362D5C29C115A100507CCE /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65362D5B29C115A100507CCE /* TabViewController.swift */; };
 		65362D5E29C1512600507CCE /* ProfileEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65362D5D29C1512600507CCE /* ProfileEnums.swift */; };
 		65362D6029C1526900507CCE /* EditProfilePictureTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65362D5F29C1526900507CCE /* EditProfilePictureTableViewCell.swift */; };
+		65362D6629CAAF6100507CCE /* RSKImageCropper in Frameworks */ = {isa = PBXBuildFile; productRef = 65362D6529CAAF6100507CCE /* RSKImageCropper */; };
+		65362D6929CAB58C00507CCE /* CropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 65362D6829CAB58C00507CCE /* CropViewController */; };
+		65362D6B29CAB58C00507CCE /* TOCropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 65362D6A29CAB58C00507CCE /* TOCropViewController */; };
 		653A0E5F29BCFE8200C8F308 /* SignInWithGoogleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653A0E5E29BCFE8200C8F308 /* SignInWithGoogleButton.swift */; };
 		65478ADD29BE6FB100861A63 /* EditEmailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65478ADC29BE6FB100861A63 /* EditEmailTableViewCell.swift */; };
 		65478ADF29BE8B4400861A63 /* EditNameTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65478ADE29BE8B4400861A63 /* EditNameTableViewCell.swift */; };
@@ -90,8 +93,11 @@
 			files = (
 				65BA545829BC273200CA3F53 /* GoogleSignInSwift in Frameworks */,
 				B4EB93FD29BCE2A7006B218F /* AWSDynamoDB in Frameworks */,
+				65362D6B29CAB58C00507CCE /* TOCropViewController in Frameworks */,
+				65362D6629CAAF6100507CCE /* RSKImageCropper in Frameworks */,
 				B4EB93FF29BCE2A7006B218F /* AWSS3 in Frameworks */,
 				65BA545629BC273200CA3F53 /* GoogleSignIn in Frameworks */,
+				65362D6929CAB58C00507CCE /* CropViewController in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,6 +286,9 @@
 				65BA545729BC273200CA3F53 /* GoogleSignInSwift */,
 				B4EB93FC29BCE2A7006B218F /* AWSDynamoDB */,
 				B4EB93FE29BCE2A7006B218F /* AWSS3 */,
+				65362D6529CAAF6100507CCE /* RSKImageCropper */,
+				65362D6829CAB58C00507CCE /* CropViewController */,
+				65362D6A29CAB58C00507CCE /* TOCropViewController */,
 			);
 			productName = "Mountain-UI-Companion";
 			productReference = 65A370D8297E594500E1D851 /* Mountain-UI-Companion.app */;
@@ -312,6 +321,8 @@
 			packageReferences = (
 				65BA545429BC273200CA3F53 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				B4EB93FB29BCE2A7006B218F /* XCRemoteSwiftPackageReference "aws-sdk-swift" */,
+				65362D6429CAAF6100507CCE /* XCRemoteSwiftPackageReference "RSKImageCropper" */,
+				65362D6729CAB58C00507CCE /* XCRemoteSwiftPackageReference "TOCropViewController" */,
 			);
 			productRefGroup = 65A370D9297E594500E1D851 /* Products */;
 			projectDirPath = "";
@@ -598,6 +609,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		65362D6429CAAF6100507CCE /* XCRemoteSwiftPackageReference "RSKImageCropper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ruslanskorb/RSKImageCropper";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+		65362D6729CAB58C00507CCE /* XCRemoteSwiftPackageReference "TOCropViewController" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TimOliver/TOCropViewController";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		65BA545429BC273200CA3F53 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -617,6 +644,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		65362D6529CAAF6100507CCE /* RSKImageCropper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65362D6429CAAF6100507CCE /* XCRemoteSwiftPackageReference "RSKImageCropper" */;
+			productName = RSKImageCropper;
+		};
+		65362D6829CAB58C00507CCE /* CropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65362D6729CAB58C00507CCE /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = CropViewController;
+		};
+		65362D6A29CAB58C00507CCE /* TOCropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65362D6729CAB58C00507CCE /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = TOCropViewController;
+		};
 		65BA545529BC273200CA3F53 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 65BA545429BC273200CA3F53 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
