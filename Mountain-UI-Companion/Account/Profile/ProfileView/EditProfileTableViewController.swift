@@ -205,6 +205,18 @@ class EditProfileTableViewController: UITableViewController
         
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch EditProfileSections(rawValue: indexPath.section) {
+        case .signOut:
+            self.profile.signOut()
+            if let vc = self.storyboard?.instantiateInitialViewController() as? LoginViewController {
+                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(vc)
+            }
+        default:
+            break
+        }
+    }
+    
 }
 
 // MARK: - Name and Email TextField Delegate

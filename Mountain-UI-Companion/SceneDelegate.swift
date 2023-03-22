@@ -17,6 +17,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+        
+        let isSignedIn = UserDefaults.standard.bool(forKey: Profile.isSignedInKey)
+        if isSignedIn {
+            let mainStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            if let tabViewController = mainStoryboard.instantiateViewController(withIdentifier: TabViewController.identifier) as? TabViewController {
+                if let profile = Profile.loadProfileFromUserDefaults() {
+    
+                    tabViewController.profile = profile
+                    
+                    window?.rootViewController = tabViewController
+                    window?.makeKeyAndVisible()
+                }
+
+            }
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -47,6 +62,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
 
+    func changeRootViewController(_ vc: UIViewController, animated: Bool = true) {
+        guard let window = self.window else {
+            return
+        }
+
+        window.rootViewController = vc
+
+        // add animation
+        UIView.transition(with: window,
+                          duration: 0.5,
+                          options: [.transitionFlipFromLeft],
+                          animations: nil,
+                          completion: nil)
+
+    }
 
 }
 
