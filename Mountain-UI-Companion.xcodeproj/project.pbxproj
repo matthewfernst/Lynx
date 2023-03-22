@@ -41,7 +41,7 @@
 		65A370F7297E6B5800E1D851 /* Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370F6297E6B5800E1D851 /* Support.swift */; };
 		65A370F9297E6B6F00E1D851 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370F8297E6B6F00E1D851 /* Constants.swift */; };
 		65AF9FF6297F355500DC59C3 /* LogBookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AF9FF5297F355500DC59C3 /* LogBookViewController.swift */; };
-		65B2E3C729CBBA2800306EAE /* Porfile+KeyChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B2E3C629CBBA2800306EAE /* Porfile+KeyChain.swift */; };
+		65B2E3C729CBBA2800306EAE /* Profile+Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B2E3C629CBBA2800306EAE /* Profile+Keychain.swift */; };
 		65BA545629BC273200CA3F53 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 65BA545529BC273200CA3F53 /* GoogleSignIn */; };
 		65BA545829BC273200CA3F53 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 65BA545729BC273200CA3F53 /* GoogleSignInSwift */; };
 		65E5ACDD29BFFE620093ECA9 /* S3Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E5ACDC29BFFE620093ECA9 /* S3Utils.swift */; };
@@ -84,7 +84,7 @@
 		65A370F6297E6B5800E1D851 /* Support.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Support.swift; sourceTree = "<group>"; };
 		65A370F8297E6B6F00E1D851 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		65AF9FF5297F355500DC59C3 /* LogBookViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogBookViewController.swift; sourceTree = "<group>"; };
-		65B2E3C629CBBA2800306EAE /* Porfile+KeyChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Porfile+KeyChain.swift"; sourceTree = "<group>"; };
+		65B2E3C629CBBA2800306EAE /* Profile+Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+Keychain.swift"; sourceTree = "<group>"; };
 		65E5ACDC29BFFE620093ECA9 /* S3Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = S3Utils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -179,7 +179,7 @@
 			children = (
 				654DEADF29820806001565A3 /* Profile.swift */,
 				65362D5D29C1512600507CCE /* Profile+Enums.swift */,
-				65B2E3C629CBBA2800306EAE /* Porfile+KeyChain.swift */,
+				65B2E3C629CBBA2800306EAE /* Profile+Keychain.swift */,
 			);
 			path = ProfileModel;
 			sourceTree = "<group>";
@@ -381,7 +381,7 @@
 				65A370F0297E5D1200E1D851 /* AccountViewController.swift in Sources */,
 				65A370F9297E6B6F00E1D851 /* Constants.swift in Sources */,
 				654DEAC52980FAB5001565A3 /* MadeWithLoveFooterView.swift in Sources */,
-				65B2E3C729CBBA2800306EAE /* Porfile+KeyChain.swift in Sources */,
+				65B2E3C729CBBA2800306EAE /* Profile+Keychain.swift in Sources */,
 				65A370DE297E594500E1D851 /* SceneDelegate.swift in Sources */,
 				65A370F7297E6B5800E1D851 /* Support.swift in Sources */,
 			);

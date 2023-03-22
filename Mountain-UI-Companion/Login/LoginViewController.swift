@@ -21,6 +21,11 @@ class LoginViewController: UIViewController
     
     lazy var loginController = LoginController(loginViewController: self)
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.signInExistingUser()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,7 +48,7 @@ class LoginViewController: UIViewController
     private func debugLogin() {
 #if DEBUG
         Logger.loginViewController.debug("DEBUG MODE!")
-        loginController.profile = Profile.sampleProfile
+        LoginController.profile = Profile.sampleProfile
         self.goToMainApp()
 #endif
     }
@@ -112,7 +117,7 @@ class LoginViewController: UIViewController
             Task {
                 let name = profile.name.components(separatedBy: " ")
                 let (firstName, lastName) = (name[0], name[1])
-                await loginController.handleCommonSignIn(uuid: uuid,
+                await LoginController.handleCommonSignIn(uuid: uuid,
                                                          firstName: firstName,
                                                          lastName: lastName,
                                                          email: profile.email,
@@ -124,7 +129,7 @@ class LoginViewController: UIViewController
     }
     
     func updateViewFromModel() {
-        guard let _ = loginController.profile else {
+        guard let _ = LoginController.profile else {
             showErrorWithSignIn()
             return
         }
@@ -135,7 +140,7 @@ class LoginViewController: UIViewController
     func goToMainApp() {
         
         if let tabBarController = self.storyboard?.instantiateViewController(withIdentifier: TabViewController.identifier) as? TabViewController {
-            tabBarController.profile = loginController.profile
+            tabBarController.profile = LoginController.profile
             tabBarController.modalTransitionStyle = .flipHorizontal
             tabBarController.modalPresentationStyle = .fullScreen
             
@@ -154,6 +159,39 @@ class LoginViewController: UIViewController
         
         present(ac, animated: true)
     }
+    
+    func signInExistingUser() {
+        let isSignedIn = UserDefaults.standard.bool(forKey: Profile.isSignedInKey)
+        
+        if isSignedIn {
+            let background = UIView(frame: self.view.frame)
+            background.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+            
+            self.view.addSubview(background)
+            
+            let activityIndicator = UIActivityIndicatorView()
+            activityIndicator.color = .white
+            activityIndicator.transform = CGAffineTransformMakeScale(2, 2)
+            activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+            
+            background.addSubview(activityIndicator)
+            
+            NSLayoutConstraint.activate([
+                activityIndicator.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                activityIndicator.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+            ])
+            
+            activityIndicator.startAnimating()
+            
+            Task {
+                await Profile.loadProfileFromKeychain { [unowned self] profile in
+                    activityIndicator.stopAnimating()
+                    
+                    self.goToMainApp()
+                }
+            }
+        }
+    }
 }
 
 
@@ -163,14 +201,14 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
         case let appleIdCredential as ASAuthorizationAppleIDCredential:
             Logger.loginViewController.debug("Sign in with Apple: Credential Sign in")
             Task {
-                await loginController.handleCommonSignIn(uuid: appleIdCredential.user,
+                await LoginController.handleCommonSignIn(uuid: appleIdCredential.user,
                                                          firstName: appleIdCredential.fullName?.givenName,
                                                          lastName: appleIdCredential.fullName?.familyName,
                                                          email: appleIdCredential.email)
                 
                 self.updateViewFromModel()
             }
-
+            
         default:
             showErrorWithSignIn()
             Swift.debugPrint("Not ready yet")

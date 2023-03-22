@@ -77,9 +77,18 @@ class Profile: NSObject, NSCoding
             completion(profile)
         }.resume()
     }
-    
-    override var description: String {
-        // For debugging purposes
+}
+
+// MARK: - Extensions
+
+extension Profile { // Constants
+    static let isSignedInKey = "isSignedIn"
+}
+
+#if DEBUG
+extension Profile
+{
+    override var debugDescription: String {
         return """
                UUID: \(self.uuid)
                firstName: \(self.firstName)
@@ -88,17 +97,7 @@ class Profile: NSObject, NSCoding
                profilePictureURL: \(String(describing: self.profilePictureURL))
                """
     }
-    
 }
-
-// MARK: - Extensions
-
-extension Profile { // Constants
-    static let isSignedInKey = "isSignedIn"
-    static let profileSignedInKey = "profileSignedIn"
-}
-
-#if DEBUG
 extension Profile {
     static var sampleProfile = Profile(uuid: "1234",
                                        firstName: "John",
