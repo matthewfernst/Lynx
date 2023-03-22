@@ -228,7 +228,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         } ?? []
     }
 
-    #warning ("TODO maybe not need?")
+    // TODO: maybe not need? 
 //    func removeBookmark(at offsets: IndexSet) {
 //        let uuids = offsets.map( { bookmarks[$0].uuid } )
 //
