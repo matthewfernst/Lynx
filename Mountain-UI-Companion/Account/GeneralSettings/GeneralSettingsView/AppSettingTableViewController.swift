@@ -87,18 +87,19 @@ class AppSettingTableViewController: UITableViewController {
     private func getThemeMenuActions() -> UIMenu {
         var menuOptions = [UIAction]()
         
-        ["System", "Dark", "Light"].forEach { title in
-            let action = UIAction(title: title) { [weak self] _ in
-                if title == "Dark" {
+        ["System", "Dark", "Light"].forEach { theme in
+            let action = UIAction(title: theme) { [weak self] _ in
+                if theme == "Dark" {
                     self?.setAppearance(.dark)
-                } else if title == "Light" {
+                } else if theme == "Light" {
                     self?.setAppearance(.light)
                 } else {
                     self?.setAppearance(.unspecified)
                 }
-                self?.profile.appTheme = title
+                self?.profile.appTheme = theme
+                self?.saveTheme(theme: theme)
             }
-            if title == self.profile.appTheme {
+            if theme == self.profile.appTheme {
                 action.state = .on
             }
             menuOptions.append(action)
@@ -110,17 +111,21 @@ class AppSettingTableViewController: UITableViewController {
     private func getUnitMenuActions() -> UIMenu {
         var menuOptions = [UIAction]()
         
-        ["Imperial", "Metric"].forEach { title in
-            let action = UIAction(title: title) { [weak self] _ in
-                self?.profile.units = title
+        ["Imperial", "Metric"].forEach { unit in
+            let action = UIAction(title: unit) { [weak self] _ in
+                self?.profile.units = unit
             }
-            if title == self.profile.units {
+            if unit == self.profile.units {
                 action.state = .on
             }
             menuOptions.append(action)
         }
         
         return UIMenu(children: menuOptions)
+    }
+    
+    func saveTheme(theme: String) {
+        UserDefaults.standard.set(theme, forKey: "theme")
     }
     
     private func setAppearance(_ style: UIUserInterfaceStyle) {
