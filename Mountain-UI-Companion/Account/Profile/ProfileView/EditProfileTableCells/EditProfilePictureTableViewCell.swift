@@ -13,13 +13,12 @@ class EditProfilePictureTableViewCell: UITableViewCell {
     static let identifier = "ProfilePictureTableViewCell"
     
     private var profile: Profile!
-    private var defaultProfilePicture: UIImage!
+    private var defaultProfilePictureLabel: UILabel!
     
     var delegate: EditProfileTableViewController?
     
     private let profilePictureImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person")
         imageView.backgroundColor = .secondarySystemFill
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
@@ -43,14 +42,16 @@ class EditProfilePictureTableViewCell: UITableViewCell {
         ac.addAction(UIAlertAction(title: "Replace", style: .default) { [weak self] _ in
             let picker = UIImagePickerController()
             picker.delegate = self
+            
             self?.delegate?.present(picker, animated: true)
         })
+        
         ac.addAction(UIAlertAction(title: "Remove", style: .destructive) { [unowned self] _ in
-            if let newPicture = defaultProfilePicture {
-                self.profilePictureImageView.image = newPicture
-                self.delegate?.handleProfilePictureChange(newProfilePicture: newPicture)
-            }
+            setupDefaultProfilePicture()
+            self.profile.profilePictureURL = nil
+            self.delegate?.handleProfilePictureChange(newProfilePicture: nil)
         })
+        
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
         self.delegate!.present(ac, animated: true)
@@ -79,16 +80,33 @@ class EditProfilePictureTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configure(withProfile profileModel: Profile, delegate: EditProfileTableViewController) {
-        defaultProfilePicture = profileModel.getDefaultProfilePicture(fontSize: 50, size: CGSize(width: 100, height: 100), move: CGPoint(x: 20, y: 20))
+    public func configure(withProfile profile: Profile, delegate: EditProfileTableViewController) {
+        self.profile = profile
         
-        profilePictureImageView.image = profileModel.profilePicture ?? defaultProfilePicture
+        if let profilePicture = profile.profilePicture {
+            self.defaultProfilePictureLabel?.removeFromSuperview()
+            profilePictureImageView.image = profilePicture
+        } else {
+            setupDefaultProfilePicture()
+        }
         
-        self.profile = profileModel
         self.delegate = delegate
         
         self.backgroundColor = .systemBackground
         self.selectionStyle = .none
+    }
+    
+    private func setupDefaultProfilePicture() {
+        defaultProfilePictureLabel = self.profile.getDefaultProfilePicture(fontSize: 55)
+        
+        profilePictureImageView.addSubview(defaultProfilePictureLabel)
+        
+        defaultProfilePictureLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            defaultProfilePictureLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
+            defaultProfilePictureLabel.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
+        ])
     }
     
     override func awakeFromNib() {
@@ -124,6 +142,7 @@ extension EditProfilePictureTableViewCell: UIImagePickerControllerDelegate, UINa
 
 extension EditProfilePictureTableViewCell: TOCropViewControllerDelegate {
     func cropViewController(_ cropViewController: TOCropViewController, didCropToCircularImage image: UIImage, with cropRect: CGRect, angle: Int) {
+        self.defaultProfilePictureLabel?.removeFromSuperview()
         self.profilePictureImageView.image = image
         self.delegate?.handleProfilePictureChange(newProfilePicture: image)
         cropViewController.dismiss(animated: true)

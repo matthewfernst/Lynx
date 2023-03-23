@@ -29,10 +29,14 @@ class Profile
         self.profilePictureURL = profilePictureURL
     }
     
-    public func getDefaultProfilePicture(fontSize: CGFloat, size: CGSize, move: CGPoint) -> UIImage {
-        return (name.initials.image(withAttributes: [
-            .font: UIFont.systemFont(ofSize: fontSize, weight: .medium),
-        ], size: size, move: move)?.withTintColor(.label))!
+    public func getDefaultProfilePicture(fontSize: CGFloat) -> UILabel {
+        let initialsLabel = UILabel()
+        
+        initialsLabel.text = name.initials
+        initialsLabel.textColor = .label
+        initialsLabel.font = UIFont.systemFont(ofSize: fontSize, weight: .medium)
+        
+        return initialsLabel
     }
     
     public static func createProfile(uuid: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {

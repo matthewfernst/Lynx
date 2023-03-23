@@ -50,7 +50,7 @@ class EditProfileTableViewController: UITableViewController
         self.navigationController?.popViewController(animated: true)
     }
     
-    func handleProfilePictureChange(newProfilePicture: UIImage) {
+    func handleProfilePictureChange(newProfilePicture: UIImage?) {
         changedProfilePicture = newProfilePicture
     }
     
@@ -87,6 +87,7 @@ class EditProfileTableViewController: UITableViewController
         
         var newProfilePictureURL = self.profile.profilePictureURL
         if let changedProfilePicture = changedProfilePicture {
+            
             do {
                 // Upload new profile picture to S3
                 try await S3Utils.uploadProfilePictureToS3(uuid: self.profile.uuid, picture: changedProfilePicture)
@@ -118,7 +119,7 @@ class EditProfileTableViewController: UITableViewController
             
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
-                activityIndicatorBackground.removeFromSuperview()
+                self.activityIndicatorBackground.removeFromSuperview()
                 self.navigationController?.popViewController(animated: true)
             }
         }

@@ -10,6 +10,8 @@ import UIKit
 class ProfileTableViewCell: UITableViewCell {
     static let identifier = "ProfileTableViewCell"
     
+    private var defaultProfilePictureLabel: UILabel!
+    
     private let profilePictureImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.tintColor = .white
@@ -68,12 +70,29 @@ class ProfileTableViewCell: UITableViewCell {
     }
     
     public func configure(withProfile profile: Profile) {
-        profilePictureImageView.image = profile.profilePicture ?? profile.getDefaultProfilePicture(fontSize: 50,
-                                                                                            size: CGSize(width: 100, height: 100),
-                                                                                            move: CGPoint(x: 20, y: 20))
+        if let profilePicture = profile.profilePicture {
+            self.defaultProfilePictureLabel?.removeFromSuperview()
+            profilePictureImageView.image = profilePicture
+        } else {
+            setupDefaultProfilePicture(profile: profile)
+        }
+        
         profilePictureImageView.backgroundColor = .systemBackground
         nameLabel.text = profile.name
         self.backgroundColor = .secondarySystemBackground
+    }
+    
+    private func setupDefaultProfilePicture(profile: Profile) {
+        defaultProfilePictureLabel = profile.getDefaultProfilePicture(fontSize: 40)
+        
+        profilePictureImageView.addSubview(defaultProfilePictureLabel)
+        
+        defaultProfilePictureLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            defaultProfilePictureLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
+            defaultProfilePictureLabel.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
+        ])
     }
     
     override func awakeFromNib() {
