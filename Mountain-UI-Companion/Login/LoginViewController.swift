@@ -150,7 +150,6 @@ class LoginViewController: UIViewController
         
     }
     
-    
     private func showErrorWithSignIn() {
         let message = """
                       It looks like we weren't able to log you in. Please try again. If the issue continues, please contact the developers.
@@ -163,7 +162,7 @@ class LoginViewController: UIViewController
     
     private func showSignInActivityIndicator() -> UIActivityIndicatorView {
         let background = UIView(frame: self.view.frame)
-        background.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        background.backgroundColor = .black.withAlphaComponent(0.5)
         
         self.view.addSubview(background)
         

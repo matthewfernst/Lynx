@@ -10,17 +10,6 @@ import Foundation
 extension Profile
 {
     
-    func encode(with coder: NSCoder) {
-        coder.encode(uuid, forKey: "uuid")
-        coder.encode(firstName, forKey: "firstName")
-        coder.encode(lastName, forKey: "lastName")
-        coder.encode(email, forKey: "email")
-        coder.encode(profilePicture, forKey: "profilePicture")
-        coder.encode(profilePictureURL, forKey: "profilePictureURL")
-        coder.encode(appTheme, forKey: "appTheme")
-        coder.encode(units, forKey: "units")
-    }
-    
     static func loadProfileFromKeychain(completion: @escaping (Profile?) -> Void) async {
         
         let query = [

@@ -20,6 +20,7 @@ class EditProfileTableViewController: UITableViewController
     var delegate: EditProfileDelegate?
     
     private let activityIndicator = UIActivityIndicatorView(style: .large)
+    private var activityIndicatorBackground: UIView!
     
     private let dynamoDBClient = DynamoDBUtils.dynamoDBClient
     private let userTable = DynamoDBUtils.usersTable
@@ -38,24 +39,12 @@ class EditProfileTableViewController: UITableViewController
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(goBackToSettings))
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveProfileChangesButtonTapped))
         
-        
         self.tableView.delaysContentTouches = true
         
         tableView.register(EditProfilePictureTableViewCell.self, forCellReuseIdentifier: EditProfilePictureTableViewCell.identifier)
         tableView.register(EditNameTableViewCell.self, forCellReuseIdentifier: EditNameTableViewCell.identifier)
         tableView.register(EditEmailTableViewCell.self, forCellReuseIdentifier: EditEmailTableViewCell.identifier)
-        
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.color = .gray
-        view.addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-        
     }
-    
     
     @objc func goBackToSettings() {
         self.navigationController?.popViewController(animated: true)
@@ -66,10 +55,29 @@ class EditProfileTableViewController: UITableViewController
     }
     
     @objc func saveProfileChangesButtonTapped() {
+        setupActivityIndicator()
         activityIndicator.startAnimating()
         Task.detached { [weak self] in
             await self?.saveProfileChanges()
         }
+    }
+    
+    func setupActivityIndicator() {
+        activityIndicatorBackground = UIView(frame: self.tabBarController!.view.frame)
+        activityIndicatorBackground.backgroundColor = .black.withAlphaComponent(0.5)
+        
+        self.tabBarController!.view.addSubview(activityIndicatorBackground)
+        
+        activityIndicator.color = .white
+        
+        self.tabBarController!.view.addSubview(activityIndicator)
+        
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
     
     private func saveProfileChanges() async {
@@ -110,6 +118,7 @@ class EditProfileTableViewController: UITableViewController
             
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
+                activityIndicatorBackground.removeFromSuperview()
                 self.navigationController?.popViewController(animated: true)
             }
         }
