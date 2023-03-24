@@ -29,6 +29,7 @@ class Profile
         self.profilePictureURL = profilePictureURL
     }
     
+    // TODO: Move out, should be UI independent
     public func getDefaultProfilePicture(fontSize: CGFloat) -> UILabel {
         let initialsLabel = UILabel()
         

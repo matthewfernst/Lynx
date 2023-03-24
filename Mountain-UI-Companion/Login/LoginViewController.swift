@@ -99,7 +99,6 @@ class LoginViewController: UIViewController
     }
     
     @objc private func handleAuthorizationGoogleButtonPress() {
-        debugLogin()
         GIDSignIn.sharedInstance.signIn(withPresenting: self) { [unowned self] signInResult, error in
             guard error == nil else {
                 showErrorWithSignIn()

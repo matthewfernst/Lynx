@@ -28,7 +28,8 @@ class EditProfileTableViewController: UITableViewController
     private var changedFirstName: String? = nil
     private var changedLastName: String? = nil
     private var changedEmail: String? = nil
-    private var changedProfilePicture: UIImage? = nil
+    private var changedProfilePicture: UIImage? = nil // TODO: Rename
+    private var removedProfilePicture: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,7 +52,11 @@ class EditProfileTableViewController: UITableViewController
     }
     
     func handleProfilePictureChange(newProfilePicture: UIImage?) {
-        changedProfilePicture = newProfilePicture
+        if newProfilePicture != nil {
+            changedProfilePicture = newProfilePicture
+        } else {
+            removedProfilePicture = true
+        }
     }
     
     @objc func saveProfileChangesButtonTapped() {
@@ -76,7 +81,7 @@ class EditProfileTableViewController: UITableViewController
         
         NSLayoutConstraint.activate([
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20)
         ])
     }
     
@@ -98,6 +103,10 @@ class EditProfileTableViewController: UITableViewController
                 // Handle error
                 print("Error uploading profile picture: \(error)")
             }
+        } else if removedProfilePicture {
+            newProfilePictureURL = nil
+            removedProfilePicture = false
+            // TODO: Remove current S3 profilePic? or it doesn't matter? @MaxRosoff
         }
         
         Task {

@@ -39,22 +39,21 @@ class EditProfilePictureTableViewCell: UITableViewCell {
     
     @objc func handleChangeProfilePicture() {
         let ac = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        ac.addAction(UIAlertAction(title: "Replace", style: .default) { [weak self] _ in
+        ac.addAction(UIAlertAction(title: "Replace", style: .default) { [unowned self] _ in
             let picker = UIImagePickerController()
             picker.delegate = self
             
-            self?.delegate?.present(picker, animated: true)
+            self.delegate?.present(picker, animated: true)
         })
         
         ac.addAction(UIAlertAction(title: "Remove", style: .destructive) { [unowned self] _ in
             setupDefaultProfilePicture()
-            self.profile.profilePictureURL = nil
             self.delegate?.handleProfilePictureChange(newProfilePicture: nil)
         })
         
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
-        self.delegate!.present(ac, animated: true)
+        self.delegate?.present(ac, animated: true)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -97,16 +96,19 @@ class EditProfilePictureTableViewCell: UITableViewCell {
     }
     
     private func setupDefaultProfilePicture() {
-        defaultProfilePictureLabel = self.profile.getDefaultProfilePicture(fontSize: 55)
-        
-        profilePictureImageView.addSubview(defaultProfilePictureLabel)
-        
-        defaultProfilePictureLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            defaultProfilePictureLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
-            defaultProfilePictureLabel.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
-        ])
+        if self.profilePictureImageView.subviews.isEmpty || !self.profilePictureImageView.subviews.contains(self.defaultProfilePictureLabel) {
+            profilePictureImageView.image = nil
+            
+            defaultProfilePictureLabel = self.profile.getDefaultProfilePicture(fontSize: 55)
+            defaultProfilePictureLabel.translatesAutoresizingMaskIntoConstraints = false
+            
+            profilePictureImageView.addSubview(defaultProfilePictureLabel)
+            
+            NSLayoutConstraint.activate([
+                defaultProfilePictureLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
+                defaultProfilePictureLabel.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
+            ])
+        }
     }
     
     override func awakeFromNib() {
@@ -142,6 +144,7 @@ extension EditProfilePictureTableViewCell: UIImagePickerControllerDelegate, UINa
 
 extension EditProfilePictureTableViewCell: TOCropViewControllerDelegate {
     func cropViewController(_ cropViewController: TOCropViewController, didCropToCircularImage image: UIImage, with cropRect: CGRect, angle: Int) {
+        print("\(self.defaultProfilePictureLabel != nil)")
         self.defaultProfilePictureLabel?.removeFromSuperview()
         self.profilePictureImageView.image = image
         self.delegate?.handleProfilePictureChange(newProfilePicture: image)
