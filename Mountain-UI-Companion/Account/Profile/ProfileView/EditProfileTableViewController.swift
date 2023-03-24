@@ -45,6 +45,11 @@ class EditProfileTableViewController: UITableViewController
         tableView.register(EditProfilePictureTableViewCell.self, forCellReuseIdentifier: EditProfilePictureTableViewCell.identifier)
         tableView.register(EditNameTableViewCell.self, forCellReuseIdentifier: EditNameTableViewCell.identifier)
         tableView.register(EditEmailTableViewCell.self, forCellReuseIdentifier: EditEmailTableViewCell.identifier)
+        
+        // Add tap gesture recognizer to allow save button to be pressed even if we are in a textField
+         let tapGesture = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
+         tapGesture.cancelsTouchesInView = false
+         self.view.addGestureRecognizer(tapGesture)
     }
     
     @objc func goBackToSettings() {
