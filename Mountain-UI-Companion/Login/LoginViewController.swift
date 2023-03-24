@@ -16,6 +16,7 @@ class LoginViewController: UIViewController
 {
     @IBOutlet var appLabel: UILabel!
     @IBOutlet var learnMoreButton: UIButton!
+    @IBOutlet var invisibleViewForCenteringSignInButtons: UIView!
     
     static let identitfier = "LoginViewController"
     
@@ -63,9 +64,9 @@ class LoginViewController: UIViewController
         
         NSLayoutConstraint.activate([
             signInWithAppleButton.centerXAnchor.constraint(equalTo: self.view.layoutMarginsGuide.centerXAnchor),
-            signInWithAppleButton.centerYAnchor.constraint(equalTo: self.appLabel.bottomAnchor, constant: 50),
-            signInWithAppleButton.widthAnchor.constraint(equalToConstant: 250),
-            signInWithAppleButton.heightAnchor.constraint(equalToConstant: 37)
+            signInWithAppleButton.bottomAnchor.constraint(equalTo: self.invisibleViewForCenteringSignInButtons.centerYAnchor, constant: -5),
+            signInWithAppleButton.widthAnchor.constraint(equalToConstant: self.invisibleViewForCenteringSignInButtons.frame.width / 1.25),
+            signInWithAppleButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
     
@@ -92,9 +93,9 @@ class LoginViewController: UIViewController
         
         NSLayoutConstraint.activate([
             signInWithGoogleButton.centerXAnchor.constraint(equalTo: self.view.layoutMarginsGuide.centerXAnchor),
-            signInWithGoogleButton.centerYAnchor.constraint(equalTo: self.appLabel.bottomAnchor, constant: 95),
-            signInWithGoogleButton.widthAnchor.constraint(equalToConstant: 250),
-            signInWithGoogleButton.heightAnchor.constraint(equalToConstant: 37)
+            signInWithGoogleButton.topAnchor.constraint(equalTo: self.invisibleViewForCenteringSignInButtons.centerYAnchor, constant: 5),
+            signInWithGoogleButton.widthAnchor.constraint(equalToConstant: self.invisibleViewForCenteringSignInButtons.frame.width / 1.25),
+            signInWithGoogleButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
     
