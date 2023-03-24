@@ -130,7 +130,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="slopesLightFolder" translatesAutoresizingMaskIntoConstraints="NO" id="0XO-Dy-70K">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="slopesFolder" translatesAutoresizingMaskIntoConstraints="NO" id="0XO-Dy-70K">
                                 <rect key="frame" x="76" y="414" width="241" height="128"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="128" id="nws-pT-4bb"/>
@@ -521,7 +521,7 @@
         <image name="chevron.right" catalog="system" width="97" height="128"/>
         <image name="person.fill" catalog="system" width="128" height="120"/>
         <image name="powerplug.fill" catalog="system" width="128" height="82"/>
-        <image name="slopesLightFolder" width="349" height="364"/>
+        <image name="slopesFolder" width="348" height="381"/>
         <image name="vecteezy_ski-lift-and-winter-activities-concept-positive-young_13489041" width="1920" height="1280"/>
         <systemColor name="labelColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
