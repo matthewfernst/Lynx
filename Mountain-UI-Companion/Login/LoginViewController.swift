@@ -33,7 +33,8 @@ class LoginViewController: UIViewController
         self.view.backgroundColor = .signBackgroundLavendar
         self.appLabel.clipsToBounds = true
         self.appLabel.layer.borderColor = UIColor.black.cgColor
-        self.learnMoreButton.addTarget(self, action: #selector(showMountainUIDisplayPage), for: .touchUpInside)
+        
+        setupLearnMoreButton()
         
         setupSignInWithAppleButton()
         setupSignInWithGoogleButton()
@@ -52,6 +53,15 @@ class LoginViewController: UIViewController
         LoginController.profile = Profile.sampleProfile
         self.goToMainApp()
 #endif
+    }
+    
+    private func setupLearnMoreButton() {
+        let learnMoreButtonTitle = NSMutableAttributedString(string: "What is Mountain UI? Learn More")
+        learnMoreButtonTitle.addAttributes([.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 11)], range: NSRange(location: 0, length: 20))
+        learnMoreButtonTitle.addAttributes([.foregroundColor: UIColor.link, .font: UIFont.systemFont(ofSize: 11)], range: NSRange(location: 21, length: 10))
+
+        self.learnMoreButton.setAttributedTitle(learnMoreButtonTitle, for: .normal)
+        self.learnMoreButton.addTarget(self, action: #selector(showMountainUIDisplayPage), for: .touchUpInside)
     }
     
     // MARK: Apple Sign In
