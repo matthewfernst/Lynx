@@ -49,10 +49,21 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         sessionSummaryTableView.register(SessionTableViewCell.self, forCellReuseIdentifier: SessionTableViewCell.identifier)
         sessionSummaryTableView.rowHeight = 66.0
         
-        let profileImage = profile.profilePicture ?? profile.getDefaultProfilePicture(fontSize: 60,
-                                                                                                size: CGSize(width: profileImageView.frame.width, height: profileImageView.frame.height),
-                                                                                                move: CGPoint(x: 20, y: 15))
-        profileImageView.image = profileImage
+        if let profilePicture = profile.profilePicture {
+            profileImageView.image = profilePicture // TODO: RENAME
+        } else {
+            let defaultProfilePicture = profile.getDefaultProfilePicture(fontSize: 60)
+            
+            profileImageView.addSubview(defaultProfilePicture)
+            
+            defaultProfilePicture.translatesAutoresizingMaskIntoConstraints = false
+            
+            NSLayoutConstraint.activate([
+                defaultProfilePicture.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor),
+                defaultProfilePicture.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor)
+            ])
+        }
+
         profileImageView.backgroundColor = .secondarySystemBackground
         profileImageView.makeRounded()
     }
@@ -61,10 +72,10 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         let message = """
                       This data comes from the Slopes app and is a way to quickly see your data being used.
-                      For more detailed information, vist your Slopes app.
+                      For more detailed information, visit your Slopes app.
                       """
         
-        let ac = UIAlertController(title: "Information Taken From Slopes", message: message, preferredStyle: .actionSheet)
+        let ac = UIAlertController(title: "Information From Slopes", message: message, preferredStyle: .actionSheet)
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         
         present(ac, animated: true)

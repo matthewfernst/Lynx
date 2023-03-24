@@ -16,6 +16,7 @@ class LoginViewController: UIViewController
 {
     @IBOutlet var appLabel: UILabel!
     @IBOutlet var learnMoreButton: UIButton!
+    @IBOutlet var invisibleViewForCenteringSignInButtons: UIView!
     
     static let identitfier = "LoginViewController"
     
@@ -32,7 +33,8 @@ class LoginViewController: UIViewController
         self.view.backgroundColor = .signBackgroundLavendar
         self.appLabel.clipsToBounds = true
         self.appLabel.layer.borderColor = UIColor.black.cgColor
-        self.learnMoreButton.addTarget(self, action: #selector(showMountainUIDisplayPage), for: .touchUpInside)
+        
+        setupLearnMoreButton()
         
         setupSignInWithAppleButton()
         setupSignInWithGoogleButton()
@@ -53,6 +55,15 @@ class LoginViewController: UIViewController
 #endif
     }
     
+    private func setupLearnMoreButton() {
+        let learnMoreButtonTitle = NSMutableAttributedString(string: "What is Mountain UI? Learn More")
+        learnMoreButtonTitle.addAttributes([.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 11)], range: NSRange(location: 0, length: 20))
+        learnMoreButtonTitle.addAttributes([.foregroundColor: UIColor.link, .font: UIFont.systemFont(ofSize: 11)], range: NSRange(location: 21, length: 10))
+
+        self.learnMoreButton.setAttributedTitle(learnMoreButtonTitle, for: .normal)
+        self.learnMoreButton.addTarget(self, action: #selector(showMountainUIDisplayPage), for: .touchUpInside)
+    }
+    
     // MARK: Apple Sign In
     private func setupSignInWithAppleButton() {
         let signInWithAppleButton = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .white)
@@ -63,9 +74,9 @@ class LoginViewController: UIViewController
         
         NSLayoutConstraint.activate([
             signInWithAppleButton.centerXAnchor.constraint(equalTo: self.view.layoutMarginsGuide.centerXAnchor),
-            signInWithAppleButton.centerYAnchor.constraint(equalTo: self.appLabel.bottomAnchor, constant: 50),
-            signInWithAppleButton.widthAnchor.constraint(equalToConstant: 250),
-            signInWithAppleButton.heightAnchor.constraint(equalToConstant: 37)
+            signInWithAppleButton.bottomAnchor.constraint(equalTo: self.invisibleViewForCenteringSignInButtons.centerYAnchor, constant: -5),
+            signInWithAppleButton.widthAnchor.constraint(equalToConstant: self.invisibleViewForCenteringSignInButtons.frame.width / 1.25),
+            signInWithAppleButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
     
@@ -92,14 +103,13 @@ class LoginViewController: UIViewController
         
         NSLayoutConstraint.activate([
             signInWithGoogleButton.centerXAnchor.constraint(equalTo: self.view.layoutMarginsGuide.centerXAnchor),
-            signInWithGoogleButton.centerYAnchor.constraint(equalTo: self.appLabel.bottomAnchor, constant: 95),
-            signInWithGoogleButton.widthAnchor.constraint(equalToConstant: 250),
-            signInWithGoogleButton.heightAnchor.constraint(equalToConstant: 37)
+            signInWithGoogleButton.topAnchor.constraint(equalTo: self.invisibleViewForCenteringSignInButtons.centerYAnchor, constant: 5),
+            signInWithGoogleButton.widthAnchor.constraint(equalToConstant: self.invisibleViewForCenteringSignInButtons.frame.width / 1.25),
+            signInWithGoogleButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
     
     @objc private func handleAuthorizationGoogleButtonPress() {
-        debugLogin()
         GIDSignIn.sharedInstance.signIn(withPresenting: self) { [unowned self] signInResult, error in
             guard error == nil else {
                 showErrorWithSignIn()
@@ -150,7 +160,6 @@ class LoginViewController: UIViewController
         
     }
     
-    
     private func showErrorWithSignIn() {
         let message = """
                       It looks like we weren't able to log you in. Please try again. If the issue continues, please contact the developers.
@@ -163,7 +172,7 @@ class LoginViewController: UIViewController
     
     private func showSignInActivityIndicator() -> UIActivityIndicatorView {
         let background = UIView(frame: self.view.frame)
-        background.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        background.backgroundColor = .black.withAlphaComponent(0.5)
         
         self.view.addSubview(background)
         
@@ -185,18 +194,19 @@ class LoginViewController: UIViewController
     }
     
     private func signInExistingUser() {
-        let isSignedIn = UserDefaults.standard.bool(forKey: Profile.isSignedInKey)
-        
-        if isSignedIn {
-            let activityIndicator = showSignInActivityIndicator()
-            Task {
-                await Profile.loadProfileFromKeychain { [unowned self] profile in
-                    activityIndicator.stopAnimating()
-                    
-                    self.goToMainApp()
-                }
-            }
-        }
+        self.debugLogin()
+//        let isSignedIn = UserDefaults.standard.bool(forKey: Profile.isSignedInKey)
+//        
+//        if isSignedIn {
+//            let activityIndicator = showSignInActivityIndicator()
+//            Task {
+//                await Profile.loadProfileFromKeychain { [unowned self] profile in
+//                    activityIndicator.stopAnimating()
+//                    
+//                    self.goToMainApp()
+//                }
+//            }
+//        }
     }
 }
 

@@ -20,6 +20,7 @@ class EditProfileTableViewController: UITableViewController
     var delegate: EditProfileDelegate?
     
     private let activityIndicator = UIActivityIndicatorView(style: .large)
+    private var activityIndicatorBackground: UIView!
     
     private let dynamoDBClient = DynamoDBUtils.dynamoDBClient
     private let userTable = DynamoDBUtils.usersTable
@@ -27,17 +28,17 @@ class EditProfileTableViewController: UITableViewController
     private var changedFirstName: String? = nil
     private var changedLastName: String? = nil
     private var changedEmail: String? = nil
-    private var changedProfilePicture: UIImage? = nil
+    private var changedProfilePicture: UIImage? = nil // TODO: Rename
+    private var removedProfilePicture: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.title = "Edit Profile"
-        self.navigationController?.navigationBar.prefersLargeTitles = false
+        self.navigationItem.largeTitleDisplayMode = .never
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(goBackToSettings))
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveProfileChangesButtonTapped))
-        
         
         self.tableView.delaysContentTouches = true
         
@@ -45,31 +46,48 @@ class EditProfileTableViewController: UITableViewController
         tableView.register(EditNameTableViewCell.self, forCellReuseIdentifier: EditNameTableViewCell.identifier)
         tableView.register(EditEmailTableViewCell.self, forCellReuseIdentifier: EditEmailTableViewCell.identifier)
         
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.color = .gray
-        view.addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-        
+        // Add tap gesture recognizer to allow save button to be pressed even if we are in a textField
+         let tapGesture = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
+         tapGesture.cancelsTouchesInView = false
+         self.view.addGestureRecognizer(tapGesture)
     }
-    
     
     @objc func goBackToSettings() {
         self.navigationController?.popViewController(animated: true)
     }
     
-    func handleProfilePictureChange(newProfilePicture: UIImage) {
-        changedProfilePicture = newProfilePicture
+    func handleProfilePictureChange(newProfilePicture: UIImage?) {
+        if newProfilePicture != nil {
+            changedProfilePicture = newProfilePicture
+        } else {
+            removedProfilePicture = true
+        }
     }
     
     @objc func saveProfileChangesButtonTapped() {
+        setupActivityIndicator()
         activityIndicator.startAnimating()
         Task.detached { [weak self] in
             await self?.saveProfileChanges()
         }
+    }
+    
+    func setupActivityIndicator() {
+        activityIndicatorBackground = UIView(frame: self.tabBarController!.view.frame)
+        activityIndicatorBackground.backgroundColor = .black.withAlphaComponent(0.5)
+        
+        self.tabBarController!.view.addSubview(activityIndicatorBackground)
+        
+        activityIndicator.color = .white
+        
+        self.tabBarController!.view.addSubview(activityIndicator)
+        
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20)
+        ])
     }
     
     private func saveProfileChanges() async {
@@ -79,6 +97,7 @@ class EditProfileTableViewController: UITableViewController
         
         var newProfilePictureURL = self.profile.profilePictureURL
         if let changedProfilePicture = changedProfilePicture {
+            
             do {
                 // Upload new profile picture to S3
                 try await S3Utils.uploadProfilePictureToS3(uuid: self.profile.uuid, picture: changedProfilePicture)
@@ -89,6 +108,10 @@ class EditProfileTableViewController: UITableViewController
                 // Handle error
                 print("Error uploading profile picture: \(error)")
             }
+        } else if removedProfilePicture {
+            newProfilePictureURL = nil
+            removedProfilePicture = false
+            // TODO: Remove current S3 profilePic? or it doesn't matter? @MaxRosoff
         }
         
         Task {
@@ -110,6 +133,7 @@ class EditProfileTableViewController: UITableViewController
             
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
+                self.activityIndicatorBackground.removeFromSuperview()
                 self.navigationController?.popViewController(animated: true)
             }
         }
