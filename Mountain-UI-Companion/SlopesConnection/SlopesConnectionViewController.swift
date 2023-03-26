@@ -143,6 +143,8 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         NSLayoutConstraint.activate([
             self.manualUploadSlopeFilesButton.centerXAnchor.constraint(equalTo: self.connectSlopesButton.centerXAnchor),
             self.manualUploadSlopeFilesButton.centerYAnchor.constraint(equalTo: self.connectSlopesButton.centerYAnchor),
+            self.manualUploadSlopeFilesButton.widthAnchor.constraint(equalToConstant: 200),
+            self.manualUploadSlopeFilesButton.heightAnchor.constraint(equalToConstant: 35),
            
             self.thumbsUpImageView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             self.thumbsUpImageView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
