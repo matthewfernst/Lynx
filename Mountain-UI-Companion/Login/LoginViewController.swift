@@ -195,18 +195,18 @@ class LoginViewController: UIViewController
     
     private func signInExistingUser() {
         self.debugLogin()
-//        let isSignedIn = UserDefaults.standard.bool(forKey: Profile.isSignedInKey)
-//        
-//        if isSignedIn {
-//            let activityIndicator = showSignInActivityIndicator()
-//            Task {
-//                await Profile.loadProfileFromKeychain { [unowned self] profile in
-//                    activityIndicator.stopAnimating()
-//                    
-//                    self.goToMainApp()
-//                }
-//            }
-//        }
+        let isSignedIn = UserDefaults.standard.bool(forKey: Profile.isSignedInKey)
+        
+        if isSignedIn {
+            let activityIndicator = showSignInActivityIndicator()
+            Task {
+                await Profile.loadProfileFromKeychain { [unowned self] profile in
+                    activityIndicator.stopAnimating()
+                    
+                    self.goToMainApp()
+                }
+            }
+        }
     }
 }
 

@@ -85,8 +85,8 @@ class EditProfileTableViewController: UITableViewController
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20)
+            activityIndicator.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
         ])
     }
     
@@ -102,7 +102,7 @@ class EditProfileTableViewController: UITableViewController
                 // Upload new profile picture to S3
                 try await S3Utils.uploadProfilePictureToS3(uuid: self.profile.uuid, picture: changedProfilePicture)
                 // Get new profile picture's Object URL
-                let objectURL = await S3Utils.getObjectURL(uuid: self.profile.uuid)
+                let objectURL = await S3Utils.getProfilePictureObjectURL(uuid: self.profile.uuid)
                 newProfilePictureURL = objectURL
             } catch {
                 // Handle error
