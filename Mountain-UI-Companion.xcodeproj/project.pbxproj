@@ -42,6 +42,7 @@
 		65A370F9297E6B6F00E1D851 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370F8297E6B6F00E1D851 /* Constants.swift */; };
 		65AF9FF6297F355500DC59C3 /* LogBookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AF9FF5297F355500DC59C3 /* LogBookViewController.swift */; };
 		65B2E3C729CBBA2800306EAE /* Profile+Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B2E3C629CBBA2800306EAE /* Profile+Keychain.swift */; };
+		65BA301229D0E45D00A6D1BF /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BA301129D0E45D00A6D1BF /* NetworkManager.swift */; };
 		65BA545629BC273200CA3F53 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 65BA545529BC273200CA3F53 /* GoogleSignIn */; };
 		65BA545829BC273200CA3F53 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 65BA545729BC273200CA3F53 /* GoogleSignInSwift */; };
 		65E5ACDD29BFFE620093ECA9 /* S3Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E5ACDC29BFFE620093ECA9 /* S3Utils.swift */; };
@@ -85,6 +86,7 @@
 		65A370F8297E6B6F00E1D851 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		65AF9FF5297F355500DC59C3 /* LogBookViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogBookViewController.swift; sourceTree = "<group>"; };
 		65B2E3C629CBBA2800306EAE /* Profile+Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+Keychain.swift"; sourceTree = "<group>"; };
+		65BA301129D0E45D00A6D1BF /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		65E5ACDC29BFFE620093ECA9 /* S3Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = S3Utils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -264,6 +266,7 @@
 			children = (
 				654DEAC2297F6720001565A3 /* SlopesConnectionViewController.swift */,
 				65E5ACDC29BFFE620093ECA9 /* S3Utils.swift */,
+				65BA301129D0E45D00A6D1BF /* NetworkManager.swift */,
 			);
 			path = SlopesConnection;
 			sourceTree = "<group>";
@@ -372,6 +375,7 @@
 				65A370E0297E594500E1D851 /* ViewController.swift in Sources */,
 				65478AE129BE972500861A63 /* DynamoDBUtils.swift in Sources */,
 				653A0E5F29BCFE8200C8F308 /* SignInWithGoogleButton.swift in Sources */,
+				65BA301229D0E45D00A6D1BF /* NetworkManager.swift in Sources */,
 				65362D5E29C1512600507CCE /* Profile+Enums.swift in Sources */,
 				65AF9FF6297F355500DC59C3 /* LogBookViewController.swift in Sources */,
 				654DEAE429824134001565A3 /* SessionTableViewCell.swift in Sources */,

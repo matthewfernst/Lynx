@@ -70,14 +70,20 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         anchorSlopeFilesUploadProgressView()
         setupThumbsUpImageViewAndManualSlopeFilesButton()
         
-        loadAllBookmarks()
-        
-        if bookmark == nil {
-           showConnectToSlopesView()
-        }
-        else {
-            Task {
-                await self.checkForNewFilesAndUpload()
+        if !NetworkManager().isInternetAvailable() {
+            showNoInternetConnectionView()
+        } else {
+            self.connectSlopesButton.isHidden = false
+            
+            loadAllBookmarks()
+            
+            if bookmark == nil {
+                showConnectToSlopesView()
+            }
+            else {
+                Task {
+                    await self.checkForNewFilesAndUpload()
+                }
             }
         }
     }
@@ -98,6 +104,22 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
             self.slopeFilesUploadProgressView.centerYAnchor.constraint(equalTo: self.slopesFolderImageView.centerYAnchor),
             self.slopeFilesUploadProgressView.widthAnchor.constraint(equalToConstant: 250)
         ])
+    }
+    
+    private func showNoInternetConnectionView() {
+        self.explanationTitleLabel.text = "You Are Not Connected to the Internet"
+        self.explanationTextView.text = "This app cannot be used currently because your device is currently offline."
+        
+        self.connectSlopesButton.isHidden = true
+        self.slopesFolderImageView.isHidden = true
+        
+        let arrayOfTabBarItems = self.tabBarController?.tabBar.items
+
+        if let barItems = arrayOfTabBarItems, barItems.count > 0 {
+            barItems[0].isEnabled = false
+            barItems[1].isEnabled = false
+            barItems[2].isEnabled = false
+        }
     }
     
     private func setupSlopeFilesUploadingView() {
@@ -340,7 +362,6 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     private func getNonUploadedSlopeFiles() async -> Set<String>? {
         guard let bookmark = bookmark else { return nil }
         var nonUploadedSlopeFiles = Set<String>()
-        // TODO: Need check for no wifi or else all are added
         do {
             let resourceValues = try bookmark.url.resourceValues(forKeys: [.isDirectoryKey])
             if resourceValues.isDirectory ?? false {
