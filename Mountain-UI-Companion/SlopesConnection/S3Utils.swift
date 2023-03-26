@@ -31,7 +31,7 @@ struct S3Utils {
     
     static func uploadProfilePictureToS3(uuid: String, picture: UIImage) async throws {
         let fileKey = "\(uuid)/profilePicture"
-        let fileData = picture.jpegData(compressionQuality: 8.0)!
+        let fileData = picture.jpegData(compressionQuality: 1.0)!
         
         do {
             try await uploadData(fileKey: fileKey, fileData: fileData, bucketName: S3BucketNames.profilePictureBucketName.rawValue)
