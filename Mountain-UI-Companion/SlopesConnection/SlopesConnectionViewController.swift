@@ -12,13 +12,6 @@ import UIKit
 import OSLog
 import UniformTypeIdentifiers
 
-extension UTType {
-    // TODO: Needed???
-    static var slopes: UTType {
-        UTType(filenameExtension: "slopes")!
-    }
-}
-
 class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate {
     @IBOutlet var explanationTitleLabel: UILabel!
     @IBOutlet var explanationTextView: UITextView!
@@ -80,23 +73,13 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         loadAllBookmarks()
         
         if bookmark == nil {
-            documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.folder], asCopy: false)
-            documentPicker.delegate = self
-            documentPicker.shouldShowFileExtensions = true
-            documentPicker.allowsMultipleSelection = true
-            
-            connectSlopesButton.addTarget(self, action: #selector(selectSlopesFiles), for: .touchUpInside)
+           showConnectToSlopesView()
         }
         else {
-            showAllSet()
+            Task {
+                await self.checkForNewFilesAndUpload()
+            }
         }
-        
-        Task {
-            // TODO: ability to press button
-            await self.checkForNewFilesAndUpload()
-        }
-        
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -186,7 +169,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         DispatchQueue.main.async { [unowned self] in
             self.explanationTitleLabel.text = "You're All Set!"
             self.explanationTitleLabel.font = UIFont.boldSystemFont(ofSize: 28)
-            self.explanationTextView.text = "Your Slopes data folder is connected. Your files will be automatically uploaded when you enter the app. If you would like to manually upload new files, tap the Upload Slope Files below."
+            self.explanationTextView.text = "Your Slopes data folder is connected. Your files will be automatically uploaded when you enter the app. If you would like to manually upload new files, tap the Upload Slope Files button below."
             self.explanationTextView.font = UIFont.systemFont(ofSize: 16)
             self.connectSlopesButton.isHidden = true
             self.slopesFolderImageView.isHidden = true
@@ -198,11 +181,11 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
             self.thumbsUpImageView.alpha = 0
             self.thumbsUpImageView.transform = .identity
             
-            UIButton.animate(withDuration: 1, delay: 0, animations: { // TODO: Move to UIImage?
+            UIImageView.animate(withDuration: 1, delay: 0, animations: {
                 self.thumbsUpImageView.alpha = 1
                 self.thumbsUpImageView.transform = CGAffineTransform(rotationAngle: -.pi / 4)
             }, completion: {_ in
-                UIButton.animate(withDuration: 2, delay: 0,  usingSpringWithDamping: 0.4, initialSpringVelocity: 0.5, animations: {
+                UIImageView.animate(withDuration: 2, delay: 0,  usingSpringWithDamping: 0.4, initialSpringVelocity: 0.5, animations: {
                     self.thumbsUpImageView.transform = .identity
                 })
             })
@@ -264,38 +247,38 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     }
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let url = urls[0]
-        
-        print("START ACCESS")
-        guard url.startAccessingSecurityScopedResource() else {
-            // Handle the failure here.
-            showFileAccessNotAllowed()
-            return
-        }
-        
-        defer { url.stopAccessingSecurityScopedResource() }
-        
-        let keys: [URLResourceKey] = [.nameKey, .isDirectoryKey]
-        
-        guard let totalNumberOfFiles = FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys)?.allObjects.count else {
-            Logger.slopesConnection.debug("*** Unable to access the contents of \(url.path) ***\n")
-            showFileAccessNotAllowed()
-            return
-        }
-        
-        guard let fileList = FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys) else {
-            Logger.slopesConnection.debug("*** Unable to access the contents of \(url.path) ***\n")
-            showFileAccessNotAllowed()
-            return
-        }
-        
-        setupSlopeFilesUploadingView()
-        var currentFileNumberBeingUploaded = 0
-        
-        for case let fileURL as URL in fileList {
-            if self.isSlopesFiles(fileURL) {
-                Logger.slopesConnection.debug("chosen file: \(fileURL.lastPathComponent)")
-                Task {
+        Task {
+            let url = urls[0]
+            
+            guard url.startAccessingSecurityScopedResource() else {
+                // Handle the failure here.
+                showFileAccessNotAllowed()
+                return
+            }
+            
+            defer { url.stopAccessingSecurityScopedResource() }
+            
+            let keys: [URLResourceKey] = [.nameKey, .isDirectoryKey]
+            
+            guard var totalNumberOfFiles = FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys)?.allObjects.count else {
+                Logger.slopesConnection.debug("*** Unable to access the contents of \(url.path) ***\n")
+                showFileAccessNotAllowed()
+                return
+            }
+            
+            guard let fileList = FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys) else {
+                Logger.slopesConnection.debug("*** Unable to access the contents of \(url.path) ***\n")
+                showFileAccessNotAllowed()
+                return
+            }
+            
+            setupSlopeFilesUploadingView()
+            var currentFileNumberBeingUploaded = 0
+            
+            for case let fileURL as URL in fileList {
+                if self.isSlopesFiles(fileURL) {
+                    Logger.slopesConnection.debug("chosen file: \(fileURL.lastPathComponent)")
+                    
                     do {
                         try await S3Utils.uploadSlopesDataToS3(uuid: self.profile.uuid, file: fileURL)
                         currentFileNumberBeingUploaded += 1
@@ -305,17 +288,20 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                         Logger.slopesConnection.debug("\(error)")
                         showErrorUploadingToS3Alert()
                     }
+                    
+                    url.stopAccessingSecurityScopedResource()
+                } else if fileURL.lastPathComponent == ".DS_Store"{
+                    totalNumberOfFiles -= 1
+                } else {
+                    showFileExtensionNotSupported(file: fileURL)
+                    Logger.slopesConnection.debug("Only slope file extensions are supported, but recieved \(fileURL.pathExtension) extension.")
                 }
-                url.stopAccessingSecurityScopedResource()
-            } else {
-                showFileExtensionNotSupported(file: fileURL)
-                Logger.slopesConnection.debug("Only slope file extensions are supported, but recieved \(fileURL.pathExtension) extension.")
             }
+            
+            saveBookmark(for: url)
+            
+            cleanUpSlopeFilesUploadView()
         }
-        
-        saveBookmark(for: url)
-        
-        cleanUpSlopeFilesUploadView()
     }
     
     // MARK: - Bookmarks
@@ -342,7 +328,6 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
             
             // Add the URL and UUID to the urls
             bookmark = (uuid, url)
-            self.viewDidLoad()
         }
         catch {
             // Handle the error here.
@@ -360,8 +345,6 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                 let keys: [URLResourceKey] = [.nameKey, .isDirectoryKey, .creationDateKey]
                 if let fileList = FileManager.default.enumerator(at: bookmark.url, includingPropertiesForKeys: keys) {
                     for case let fileURL as URL in fileList {
-                        print("LAST PATH: \(fileURL.lastPathComponent)")
-                        print("PATH EXT: \(fileURL.pathExtension)")
                         if self.isSlopesFiles(fileURL) {
                             // Check if the file was already uploaded
                             if !(await S3Utils.isFileUploadedToS3(uuid: self.profile.uuid, file: fileURL)) {
@@ -397,7 +380,6 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         if nonUploadedSlopeFiles.isEmpty {
             self.cleanUpSlopeFilesUploadView()
             return
-            
         }
         
         guard let bookmark = bookmark else {
