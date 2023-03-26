@@ -379,7 +379,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
             }
         } catch {
             // Handle the error
-            // TODO: Alert / Notification
+            self.showErrorUploadingToS3Alert()
             Logger.slopesConnection.error("Error accessing bookmarked URL: \(error)")
         }
         
@@ -430,9 +430,9 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                                     self.updateSlopeFilesProgressView(fileBeingUploaded: fileURL.lastPathComponent.replacingOccurrences(of: "%", with: " "), progress: progress)
                                 }
                             } catch {
+                                self.showErrorUploadingToS3Alert()
                                 Logger.slopesConnection.debug("\(error)")
                                 self.cleanUpSlopeFilesUploadView()
-                                self.showErrorUploadingToS3Alert()
                             }
                         }
                     }
@@ -440,6 +440,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                 
             }
         } catch {
+            self.showErrorUploadingToS3Alert()
             Logger.slopesConnection.debug("Error accessing bookmarked URL: \(error)")
             self.cleanUpSlopeFilesUploadView()
         }
