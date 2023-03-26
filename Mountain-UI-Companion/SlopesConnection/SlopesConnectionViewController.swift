@@ -29,18 +29,28 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     private var documentPicker: UIDocumentPickerViewController!
     private var bookmark: (uuid: String, url: URL)?
     
-    private let manualUploadSlopeFilesButton: UIButton = {
+    lazy private var manualUploadSlopeFilesButton: UIButton = {
         var configuration = UIButton.Configuration.filled()
         configuration.title = "Upload Slope Files"
         configuration.cornerStyle = .medium
         configuration.buttonSize = .large
         
-        configuration.automaticallyUpdateForSelection = true
-        
         let button = UIButton(configuration: configuration)
-        button.addTarget(SlopesConnectionViewController.self, action: #selector(checkForNewFilesAndUploadWrapper), for: .touchUpInside)
+        button.addSubview(manualUploadActivityIndicator)
+        
+        manualUploadActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            self.manualUploadActivityIndicator.centerXAnchor.constraint(equalTo: button.centerXAnchor),
+            self.manualUploadActivityIndicator.centerYAnchor.constraint(equalTo: button.centerYAnchor),
+        ])
         
         return button
+    }()
+    private let manualUploadActivityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.color = .white
+        return activityIndicator
     }()
     
     private let thumbsUpImageView: UIImageView = {
@@ -81,9 +91,8 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
             showAllSet()
         }
         
-        
         Task {
-            // TODO: ability to pull to refresh
+            // TODO: ability to press button
             await self.checkForNewFilesAndUpload()
         }
         
@@ -108,7 +117,9 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         ])
     }
     
-    private func setupSlopeFilesProgressViewForUpload() {
+    private func setupSlopeFilesUploadingView() {
+        self.thumbsUpImageView.isHidden = true
+        
         self.slopeFilesUploadProgressView.progress = 0
         self.slopeFilesUploadProgressView.isHidden = false
         
@@ -117,8 +128,10 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         self.slopesFolderImageView.image = nil
     }
     
-    private func cleanUpSlopeFilesProgressView() {
+    private func cleanUpSlopeFilesUploadView() {
         self.slopeFilesUploadProgressView.isHidden = true
+        self.manualUploadSlopeFilesButton.titleLabel?.isHidden = false
+        self.manualUploadActivityIndicator.stopAnimating()
         showAllSet()
     }
     
@@ -137,6 +150,9 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         self.view.addSubview(thumbsUpImageView)
         
         self.manualUploadSlopeFilesButton.isHidden = true
+        self.manualUploadSlopeFilesButton.addTarget(self, action: #selector(checkForNewFilesAndUploadWrapper), for: .touchUpInside)
+        
+        
         self.thumbsUpImageView.isHidden = true
         
         self.manualUploadSlopeFilesButton.translatesAutoresizingMaskIntoConstraints = false
@@ -144,7 +160,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         NSLayoutConstraint.activate([
             self.manualUploadSlopeFilesButton.centerXAnchor.constraint(equalTo: self.connectSlopesButton.centerXAnchor),
             self.manualUploadSlopeFilesButton.centerYAnchor.constraint(equalTo: self.connectSlopesButton.centerYAnchor),
-            
+           
             self.thumbsUpImageView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             self.thumbsUpImageView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             self.thumbsUpImageView.widthAnchor.constraint(equalToConstant: 150),
@@ -234,14 +250,15 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     }
     
     private func showFileExtensionNotSupported(file: URL) {
-        let ac = UIAlertController(title: "File Extension Not Supported", message: "Only 'slope' file extensions are supported, but recieved \(file.pathExtension) extension. Please try again.", preferredStyle: .alert)
+        let ac = UIAlertController(title: "File Extension Not Supported",
+                                   message: "Only 'slope' file extensions are supported, but recieved \(file.pathExtension) extension. Please try again.",
+                                   preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         
         present(ac, animated: true)
     }
     
     // MARK: - Document Picker
-    
     private func isSlopesFiles(_ fileURL: URL) -> Bool {
         return !fileURL.hasDirectoryPath && fileURL.pathExtension == "slopes"
     }
@@ -272,7 +289,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
             return
         }
         
-        setupSlopeFilesProgressViewForUpload()
+        setupSlopeFilesUploadingView()
         var currentFileNumberBeingUploaded = 0
         
         for case let fileURL as URL in fileList {
@@ -298,7 +315,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         
         saveBookmark(for: url)
         
-        cleanUpSlopeFilesProgressView()
+        cleanUpSlopeFilesUploadView()
     }
     
     // MARK: - Bookmarks
@@ -336,7 +353,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     private func getNonUploadedSlopeFiles() async -> Set<String>? {
         guard let bookmark = bookmark else { return nil }
         var nonUploadedSlopeFiles = Set<String>()
-        
+        // TODO: Need check for no wifi or else all are added
         do {
             let resourceValues = try bookmark.url.resourceValues(forKeys: [.isDirectoryKey])
             if resourceValues.isDirectory ?? false {
@@ -370,13 +387,26 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     }
     
     private func checkForNewFilesAndUpload() async {
-        guard let nonUploadedSlopeFiles = await getNonUploadedSlopeFiles() else { return }
-        if nonUploadedSlopeFiles.isEmpty { return }
+        self.manualUploadSlopeFilesButton.titleLabel?.isHidden = true
+        self.manualUploadActivityIndicator.startAnimating()
         
-        guard let bookmark = bookmark else { return }
+        guard let nonUploadedSlopeFiles = await getNonUploadedSlopeFiles() else {
+            self.cleanUpSlopeFilesUploadView()
+            return
+        }
+        if nonUploadedSlopeFiles.isEmpty {
+            self.cleanUpSlopeFilesUploadView()
+            return
+            
+        }
+        
+        guard let bookmark = bookmark else {
+            self.cleanUpSlopeFilesUploadView()
+            return
+        }
         
         DispatchQueue.main.async {
-            self.setupSlopeFilesProgressViewForUpload()
+            self.setupSlopeFilesUploadingView()
         }
         
         var currentFileNumberBeingUploaded = 0
@@ -396,7 +426,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                                 }
                             } catch {
                                 Logger.slopesConnection.debug("\(error)")
-                                self.cleanUpSlopeFilesProgressView()
+                                self.cleanUpSlopeFilesUploadView()
                                 self.showErrorUploadingToS3Alert()
                             }
                         }
@@ -406,11 +436,10 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
             }
         } catch {
             Logger.slopesConnection.debug("Error accessing bookmarked URL: \(error)")
-            self.cleanUpSlopeFilesProgressView()
+            self.cleanUpSlopeFilesUploadView()
         }
         
-        
-        self.cleanUpSlopeFilesProgressView()
+        self.cleanUpSlopeFilesUploadView()
     }
     
     
@@ -440,10 +469,8 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
             }
         } ?? []
         
-        if !bookmarks.isEmpty {
-            // TODO: Clean up
-            self.bookmark = bookmarks.first as? (uuid: String, url: URL)
-        }
+        self.bookmark = bookmarks.first as? (uuid: String, url: URL)
+        
     }
     
 }
