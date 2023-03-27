@@ -169,6 +169,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
                 
             case .notifications:
                 if let notificationViewController = self.storyboard?.instantiateViewController(withIdentifier: NotificationSettingsTableViewController.identifier) as? NotificationSettingsTableViewController {
+                    notificationViewController.profile = profile
                     self.navigationController?.pushViewController(notificationViewController, animated: true)
                 }
                 

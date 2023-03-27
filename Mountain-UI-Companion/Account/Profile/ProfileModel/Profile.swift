@@ -19,6 +19,7 @@ class Profile
     var profilePictureURL: String?
     var appTheme: String = "System"
     var units: String = "Imperial"
+    var notificationsAllowed: Bool?
     
     init(uuid: String, firstName: String, lastName: String, email: String, profilePicture: UIImage? = nil, profilePictureURL: String? = "") {
         self.uuid = uuid

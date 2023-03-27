@@ -38,6 +38,44 @@ class LoginViewController: UIViewController
         
         setupSignInWithAppleButton()
         setupSignInWithGoogleButton()
+        
+        scheduleNotificationsForRemindingToUpload()
+    }
+    
+    // MARK: - Notifications
+    private func registerLocal() {
+        // request permission
+        let center = UNUserNotificationCenter.current()
+        
+        center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            if granted {
+                Logger.loginViewController.debug("Notifications granted")
+            } else {
+                Logger.loginViewController.debug("User has defined notificaitons")
+            }
+        }
+    }
+    
+    private func scheduleNotificationsForRemindingToUpload() {
+        registerLocal()
+        let center = UNUserNotificationCenter.current()
+        center.removeAllPendingNotificationRequests()
+        
+        let content = UNMutableNotificationContent()
+        content.title = "It's been a minute"
+        content.body = "Just a little reminder to come back and upload your Slope data files."
+        content.categoryIdentifier = "recall"
+        content.userInfo = ["cusomData": "foobar"]
+        content.sound = .default
+        
+        var dateComponents = DateComponents()
+        dateComponents.hour = 2
+        dateComponents.month = 1
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        center.add(request)
     }
     
     @objc private func showMountainUIDisplayPage() {
@@ -59,7 +97,7 @@ class LoginViewController: UIViewController
         let learnMoreButtonTitle = NSMutableAttributedString(string: "What is Mountain UI? Learn More")
         learnMoreButtonTitle.addAttributes([.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 11)], range: NSRange(location: 0, length: 20))
         learnMoreButtonTitle.addAttributes([.foregroundColor: UIColor.link, .font: UIFont.systemFont(ofSize: 11)], range: NSRange(location: 21, length: 10))
-
+        
         self.learnMoreButton.setAttributedTitle(learnMoreButtonTitle, for: .normal)
         self.learnMoreButton.addTarget(self, action: #selector(showMountainUIDisplayPage), for: .touchUpInside)
     }
@@ -149,15 +187,22 @@ class LoginViewController: UIViewController
     }
     
     private func goToMainApp() {
-        
         if let tabBarController = self.storyboard?.instantiateViewController(withIdentifier: TabViewController.identifier) as? TabViewController {
+            
+            let defaults = UserDefaults.standard
+            if defaults.object(forKey: UserDefaultsKeys.notificationsTurnedOnOrOff) == nil {
+                let center = UNUserNotificationCenter.current()
+                center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
+                    defaults.set(granted, forKey: UserDefaultsKeys.notificationsTurnedOnOrOff)
+                }
+            }
+            
             tabBarController.profile = LoginController.profile
             tabBarController.modalTransitionStyle = .flipHorizontal
             tabBarController.modalPresentationStyle = .fullScreen
             
             self.present(tabBarController, animated: true)
         }
-        
     }
     
     private func showErrorWithSignIn() {
@@ -184,6 +229,7 @@ class LoginViewController: UIViewController
         background.addSubview(activityIndicator)
         
         NSLayoutConstraint.activate([
+            
             activityIndicator.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
         ])
