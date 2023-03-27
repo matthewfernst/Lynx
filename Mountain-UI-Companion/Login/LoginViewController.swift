@@ -38,6 +38,45 @@ class LoginViewController: UIViewController
         
         setupSignInWithAppleButton()
         setupSignInWithGoogleButton()
+        
+        scheduleNotificationsForRemindingToUpload()
+    }
+    
+    // MARK: - Notifications
+    private func registerLocal() {
+        // request permission
+        let center = UNUserNotificationCenter.current()
+
+        center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            if granted {
+                // TODO: Add notifications error -> go to settings
+                Logger.loginViewController.debug("Notifications granted")
+            } else {
+                Logger.loginViewController.debug("User has defined notificaitons")
+            }
+        }
+    }
+    
+    private func scheduleNotificationsForRemindingToUpload() {
+        registerLocal()
+        let center = UNUserNotificationCenter.current()
+        center.removeAllPendingNotificationRequests()
+        
+        let content = UNMutableNotificationContent()
+        content.title = "It's been a minute"
+        content.body = "Just a little reminder to come back and upload your Slope data files."
+        content.categoryIdentifier = "recall"
+        content.userInfo = ["cusomData": "foobar"]
+        content.sound = .default
+        
+        var dateComponents = DateComponents()
+        dateComponents.hour = 2
+        dateComponents.month = 1
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+
+        center.add(request)
     }
     
     @objc private func showMountainUIDisplayPage() {
@@ -149,7 +188,6 @@ class LoginViewController: UIViewController
     }
     
     private func goToMainApp() {
-        
         if let tabBarController = self.storyboard?.instantiateViewController(withIdentifier: TabViewController.identifier) as? TabViewController {
             tabBarController.profile = LoginController.profile
             tabBarController.modalTransitionStyle = .flipHorizontal
@@ -157,7 +195,6 @@ class LoginViewController: UIViewController
             
             self.present(tabBarController, animated: true)
         }
-        
     }
     
     private func showErrorWithSignIn() {
@@ -184,6 +221,7 @@ class LoginViewController: UIViewController
         background.addSubview(activityIndicator)
         
         NSLayoutConstraint.activate([
+            
             activityIndicator.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
         ])
