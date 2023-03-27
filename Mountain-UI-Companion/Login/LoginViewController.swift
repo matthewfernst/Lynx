@@ -49,11 +49,9 @@ class LoginViewController: UIViewController
         
         center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             if granted {
-                LoginController.profile?.notificationsAllowed = true
                 Logger.loginViewController.debug("Notifications granted")
             } else {
                 // TODO: Add notifications error -> go to settings
-                LoginController.profile?.notificationsAllowed = false
                 Logger.loginViewController.debug("User has defined notificaitons")
             }
         }
@@ -191,6 +189,15 @@ class LoginViewController: UIViewController
     
     private func goToMainApp() {
         if let tabBarController = self.storyboard?.instantiateViewController(withIdentifier: TabViewController.identifier) as? TabViewController {
+            
+            let defaults = UserDefaults.standard
+            if defaults.object(forKey: UserDefaultsKeys.notificationsAllowed) == nil {
+                let center = UNUserNotificationCenter.current()
+                center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
+                    defaults.set(granted, forKey: UserDefaultsKeys.notificationsAllowed)
+                }
+            }
+            
             tabBarController.profile = LoginController.profile
             tabBarController.modalTransitionStyle = .flipHorizontal
             tabBarController.modalPresentationStyle = .fullScreen

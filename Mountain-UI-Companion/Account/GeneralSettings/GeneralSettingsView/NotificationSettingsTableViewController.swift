@@ -20,8 +20,8 @@ class NotificationSettingsTableViewController: UITableViewController
         
         createNotificationSwitch()
         
-        // save switch based on profile.
-        updateNotificationSwitch(switchIsOn: profile.notificationsAllowed)
+        let notificationsAllowed = UserDefaults.standard.bool(forKey: UserDefaultsKeys.notificationsAllowed)
+        updateNotificationSwitch(switchIsOn: notificationsAllowed)
     }
 
     func createNotificationSwitch() {
@@ -40,6 +40,8 @@ class NotificationSettingsTableViewController: UITableViewController
     
     func updateNotificationSwitch(switchIsOn: Bool) {
         profile.notificationsAllowed = switchIsOn
+        UserDefaults.standard.set(switchIsOn, forKey: UserDefaultsKeys.notificationsAllowed)
+        
         let center = UNUserNotificationCenter.current()
         center.getNotificationSettings { settings in
             DispatchQueue.main.async {
@@ -71,11 +73,10 @@ class NotificationSettingsTableViewController: UITableViewController
                     print("Error requesting notification authorization: \(error.localizedDescription)")
                 } else if granted {
                     print("User granted notification authorization")
+                    self.updateNotificationSwitch(switchIsOn: true)
                 } else {
                     print("User denied notification authorization")
                 }
-                print("Turning on notifications")
-                self.updateNotificationSwitch(switchIsOn: true)
             }
         } else {
             center.removeAllPendingNotificationRequests() // remove pending notifications when switch is turned off

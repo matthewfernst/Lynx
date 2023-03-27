@@ -41,6 +41,7 @@
 		65A370F7297E6B5800E1D851 /* Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370F6297E6B5800E1D851 /* Support.swift */; };
 		65A370F9297E6B6F00E1D851 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370F8297E6B6F00E1D851 /* Constants.swift */; };
 		65AF9FF6297F355500DC59C3 /* LogBookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AF9FF5297F355500DC59C3 /* LogBookViewController.swift */; };
+		65AFF4E929D163E200C0F8C0 /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AFF4E829D163E200C0F8C0 /* UserDefaultsKeys.swift */; };
 		65B2E3C729CBBA2800306EAE /* Profile+Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B2E3C629CBBA2800306EAE /* Profile+Keychain.swift */; };
 		65BA301229D0E45D00A6D1BF /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BA301129D0E45D00A6D1BF /* NetworkManager.swift */; };
 		65BA545629BC273200CA3F53 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 65BA545529BC273200CA3F53 /* GoogleSignIn */; };
@@ -85,6 +86,7 @@
 		65A370F6297E6B5800E1D851 /* Support.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Support.swift; sourceTree = "<group>"; };
 		65A370F8297E6B6F00E1D851 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		65AF9FF5297F355500DC59C3 /* LogBookViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogBookViewController.swift; sourceTree = "<group>"; };
+		65AFF4E829D163E200C0F8C0 /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		65B2E3C629CBBA2800306EAE /* Profile+Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+Keychain.swift"; sourceTree = "<group>"; };
 		65BA301129D0E45D00A6D1BF /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		65E5ACDC29BFFE620093ECA9 /* S3Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = S3Utils.swift; sourceTree = "<group>"; };
@@ -248,6 +250,7 @@
 				65478AE029BE972500861A63 /* DynamoDBUtils.swift */,
 				65A370F8297E6B6F00E1D851 /* Constants.swift */,
 				654DEABE297F5E8C001565A3 /* Extension.swift */,
+				65AFF4E829D163E200C0F8C0 /* UserDefaultsKeys.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -361,6 +364,7 @@
 				65478ADF29BE8B4400861A63 /* EditNameTableViewCell.swift in Sources */,
 				654DEAD82981CB3F001565A3 /* PopoverButtonTableViewCell.swift in Sources */,
 				654DEAD22981BF6D001565A3 /* EditProfileTableViewController.swift in Sources */,
+				65AFF4E929D163E200C0F8C0 /* UserDefaultsKeys.swift in Sources */,
 				65362D5A29C1037600507CCE /* LoginController.swift in Sources */,
 				654DEAC3297F6720001565A3 /* SlopesConnectionViewController.swift in Sources */,
 				654DEACA2981B006001565A3 /* AppSettingTableViewController.swift in Sources */,
