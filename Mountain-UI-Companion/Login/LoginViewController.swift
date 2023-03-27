@@ -46,12 +46,14 @@ class LoginViewController: UIViewController
     private func registerLocal() {
         // request permission
         let center = UNUserNotificationCenter.current()
-
+        
         center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             if granted {
-                // TODO: Add notifications error -> go to settings
+                LoginController.profile?.notificationsAllowed = true
                 Logger.loginViewController.debug("Notifications granted")
             } else {
+                // TODO: Add notifications error -> go to settings
+                LoginController.profile?.notificationsAllowed = false
                 Logger.loginViewController.debug("User has defined notificaitons")
             }
         }
@@ -73,9 +75,9 @@ class LoginViewController: UIViewController
         dateComponents.hour = 2
         dateComponents.month = 1
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-
+        
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-
+        
         center.add(request)
     }
     
@@ -98,7 +100,7 @@ class LoginViewController: UIViewController
         let learnMoreButtonTitle = NSMutableAttributedString(string: "What is Mountain UI? Learn More")
         learnMoreButtonTitle.addAttributes([.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 11)], range: NSRange(location: 0, length: 20))
         learnMoreButtonTitle.addAttributes([.foregroundColor: UIColor.link, .font: UIFont.systemFont(ofSize: 11)], range: NSRange(location: 21, length: 10))
-
+        
         self.learnMoreButton.setAttributedTitle(learnMoreButtonTitle, for: .normal)
         self.learnMoreButton.addTarget(self, action: #selector(showMountainUIDisplayPage), for: .touchUpInside)
     }

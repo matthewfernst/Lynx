@@ -8,7 +8,8 @@
 import Foundation
 import SystemConfiguration
 
-class NetworkManager {
+class NetworkManager
+{
     static let shared = NetworkManager()
     
     private let reachability = SCNetworkReachabilityCreateWithName(nil, "www.apple.com")
