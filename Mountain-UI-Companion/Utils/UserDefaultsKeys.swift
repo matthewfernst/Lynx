@@ -11,5 +11,5 @@ enum UserDefaultsKeys {
     
     // TODO: Add profiles and refactor
     
-    static var notificationsAllowed = "notificationsAllowed"
+    static var notificationsTurnedOnOrOff = "notificationsAllowed"
 }

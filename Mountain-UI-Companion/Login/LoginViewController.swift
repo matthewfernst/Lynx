@@ -51,7 +51,6 @@ class LoginViewController: UIViewController
             if granted {
                 Logger.loginViewController.debug("Notifications granted")
             } else {
-                // TODO: Add notifications error -> go to settings
                 Logger.loginViewController.debug("User has defined notificaitons")
             }
         }
@@ -191,10 +190,10 @@ class LoginViewController: UIViewController
         if let tabBarController = self.storyboard?.instantiateViewController(withIdentifier: TabViewController.identifier) as? TabViewController {
             
             let defaults = UserDefaults.standard
-            if defaults.object(forKey: UserDefaultsKeys.notificationsAllowed) == nil {
+            if defaults.object(forKey: UserDefaultsKeys.notificationsTurnedOnOrOff) == nil {
                 let center = UNUserNotificationCenter.current()
                 center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
-                    defaults.set(granted, forKey: UserDefaultsKeys.notificationsAllowed)
+                    defaults.set(granted, forKey: UserDefaultsKeys.notificationsTurnedOnOrOff)
                 }
             }
             
