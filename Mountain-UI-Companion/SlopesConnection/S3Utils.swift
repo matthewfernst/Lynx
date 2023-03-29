@@ -10,12 +10,14 @@ import ClientRuntime
 import Foundation
 import UIKit
 
-enum S3BucketNames: String {
+enum S3BucketNames: String
+{
     case zippedSlopesBucketName = "mountain-ui-app-slopes-zipped"
     case profilePictureBucketName = "mountain-ui-users-profile-pictures"
 }
 
-struct S3Utils {
+struct S3Utils
+{
     private static let s3Client = try! S3Client(region: "us-east-1")
     
     static func uploadSlopesDataToS3(uuid: String, file: URL) async throws {
@@ -45,20 +47,10 @@ struct S3Utils {
     }
     
     static func getProfilePictureObjectURL(uuid: String) async -> String {
-        let fileKey = "\(uuid)/profilePicture"
-        
-        // TODO: Not needed??
-        do {
-            let inputObject = GetObjectInput(bucket: S3BucketNames.profilePictureBucketName.rawValue, key: fileKey)
-            let _ = try await s3Client.getObject(input: inputObject)
-        } catch {
-            dump(error)
-        }
-        
         let s3BucketURL = "https://mountain-ui-users-profile-pictures.s3.amazonaws.com"
-        let objectURL = "\(s3BucketURL)/\(fileKey)"
-        
-        return objectURL
+        let fileKey = "\(uuid)/profilePicture"
+
+        return "\(s3BucketURL)/\(fileKey)"
     }
     
     static func getSlopesDataFiles(uuid: String) async -> [String] {

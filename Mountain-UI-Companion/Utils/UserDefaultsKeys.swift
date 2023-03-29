@@ -7,9 +7,14 @@
 
 import Foundation
 
-enum UserDefaultsKeys {
+enum UserDefaultsKeys
+{
+    //TabViewController
+    static var theme = "theme"
     
-    // TODO: Add profiles and refactor
+    //Profile
+    static let profileIsSignedInKey = "isSignedIn"
     
+    // NotificationSettingsTableViewController
     static var notificationsTurnedOnOrOff = "notificationsAllowed"
 }

@@ -7,7 +7,8 @@
 
 import UIKit
 
-class PopoverButtonTableViewCell: UITableViewCell {
+class PopoverButtonTableViewCell: UITableViewCell
+{
     
     var buttonTapCallback: () -> ()  = { }
         

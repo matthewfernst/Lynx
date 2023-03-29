@@ -8,7 +8,8 @@
 import Foundation
 import UIKit
 
-struct Setting {
+struct Setting
+{
     var id = UUID()
     let name: String
     let iconImage: UIImage!
@@ -16,7 +17,8 @@ struct Setting {
 }
 
 
-extension Setting {
+extension Setting
+{
     static let settingOptions: [Setting] = [
         .init(name: "General", iconImage: UIImage(systemName: "gear"), backgroundColor: .lightGray),
         .init(name: "Notifications", iconImage: UIImage(systemName: "bell.badge.fill"), backgroundColor: .red),

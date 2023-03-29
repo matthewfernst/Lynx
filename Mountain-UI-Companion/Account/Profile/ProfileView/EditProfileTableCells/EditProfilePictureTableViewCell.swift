@@ -8,7 +8,8 @@
 import UIKit
 import TOCropViewController
 
-class EditProfilePictureTableViewCell: UITableViewCell {
+class EditProfilePictureTableViewCell: UITableViewCell
+{
     
     static let identifier = "ProfilePictureTableViewCell"
     
@@ -124,7 +125,8 @@ class EditProfilePictureTableViewCell: UITableViewCell {
     
 }
 
-extension EditProfilePictureTableViewCell: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension EditProfilePictureTableViewCell: UIImagePickerControllerDelegate, UINavigationControllerDelegate
+{
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true, completion: nil)
         if let image = info[.originalImage] as? UIImage {
@@ -142,7 +144,8 @@ extension EditProfilePictureTableViewCell: UIImagePickerControllerDelegate, UINa
     }
 }
 
-extension EditProfilePictureTableViewCell: TOCropViewControllerDelegate {
+extension EditProfilePictureTableViewCell: TOCropViewControllerDelegate
+{
     func cropViewController(_ cropViewController: TOCropViewController, didCropToCircularImage image: UIImage, with cropRect: CGRect, angle: Int) {
         print("\(self.defaultProfilePictureLabel != nil)")
         self.defaultProfilePictureLabel?.removeFromSuperview()

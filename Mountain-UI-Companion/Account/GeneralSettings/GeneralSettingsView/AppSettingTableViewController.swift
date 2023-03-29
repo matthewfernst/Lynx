@@ -7,12 +7,14 @@
 
 import UIKit
 
-enum AppSettingSections: Int, CaseIterable {
+enum AppSettingSections: Int, CaseIterable
+{
     case units = 0
     case theme = 1
 }
 
-class AppSettingTableViewController: UITableViewController {
+class AppSettingTableViewController: UITableViewController
+{
     
     static var identitifer = "AppSettingTableView"
     
@@ -125,7 +127,7 @@ class AppSettingTableViewController: UITableViewController {
     }
     
     func saveTheme(theme: String) {
-        UserDefaults.standard.set(theme, forKey: "theme")
+        UserDefaults.standard.set(theme, forKey: UserDefaultsKeys.theme)
     }
     
     private func setAppearance(_ style: UIUserInterfaceStyle) {

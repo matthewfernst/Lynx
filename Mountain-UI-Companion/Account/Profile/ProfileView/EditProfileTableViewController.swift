@@ -7,7 +7,8 @@
 
 import UIKit
 
-protocol EditProfileDelegate {
+protocol EditProfileDelegate
+{
     func editProfileCompletionHandler(profile: Profile)
 }
 
@@ -28,7 +29,7 @@ class EditProfileTableViewController: UITableViewController
     private var changedFirstName: String? = nil
     private var changedLastName: String? = nil
     private var changedEmail: String? = nil
-    private var changedProfilePicture: UIImage? = nil // TODO: Rename
+    private var changedProfilePicture: UIImage? = nil
     private var removedProfilePicture: Bool = false
     
     override func viewDidLoad() {
@@ -244,7 +245,8 @@ class EditProfileTableViewController: UITableViewController
 }
 
 // MARK: - Name and Email TextField Delegate
-extension EditProfileTableViewController: UITextFieldDelegate {
+extension EditProfileTableViewController: UITextFieldDelegate
+{
     
     private func setTextForProfile(text: String, tag: Int) {
         switch EditProfileTextFieldTags(rawValue: tag) {

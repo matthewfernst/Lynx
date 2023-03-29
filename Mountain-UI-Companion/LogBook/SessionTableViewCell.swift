@@ -7,7 +7,8 @@
 
 import UIKit
 
-class SessionTableViewCell: UITableViewCell {
+class SessionTableViewCell: UITableViewCell
+{
     
     static var identifier = "SessionTableViewCell"
     

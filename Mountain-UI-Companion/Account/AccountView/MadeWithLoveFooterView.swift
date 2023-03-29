@@ -7,7 +7,8 @@
 
 import UIKit
 
-class MadeWithLoveFooterView: UITableViewHeaderFooterView {
+class MadeWithLoveFooterView: UITableViewHeaderFooterView
+{
     static var identifier = "MadeWithLoverFooterView"
     
     let madeWithLoveLabel = UILabel()

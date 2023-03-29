@@ -70,12 +70,7 @@ class Profile
     }
 }
 
-// MARK: - Extensions
-
-extension Profile { // Constants
-    static let isSignedInKey = "isSignedIn"
-}
-
+// MARK: - Extensions for Debugging
 #if DEBUG
 extension Profile: CustomDebugStringConvertible
 {

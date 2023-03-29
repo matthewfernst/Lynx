@@ -90,7 +90,7 @@ class LoginController
         
         if let profile = createdProfile {
             LoginController.profile = profile
-            UserDefaults.standard.set(true, forKey: Profile.isSignedInKey)
+            UserDefaults.standard.set(true, forKey: UserDefaultsKeys.profileIsSignedInKey)
             profile.saveToKeychain()
         }
     }
@@ -98,7 +98,8 @@ class LoginController
 }
 
 // MARK: - ProfileAttributes
-struct ProfileAttributes {
+struct ProfileAttributes
+{
     var uuid: String
     var firstName: String
     var lastName: String

@@ -26,7 +26,7 @@ class TabViewController: UITabBarController
     }
     
     private func loadTheme() -> String? {
-        return UserDefaults.standard.string(forKey: "theme")
+        return UserDefaults.standard.string(forKey: UserDefaultsKeys.theme)
     }
     
 }

@@ -8,7 +8,8 @@
 import Foundation
 import AWSDynamoDB
 
-enum Constants {
+enum Constants
+{
     // Settings
     static let twitter = "https://twitter.com/ErnstMatthew"
     static let github = "https://github.com/matthewfernst/Mountain-UI-Companion-App"
