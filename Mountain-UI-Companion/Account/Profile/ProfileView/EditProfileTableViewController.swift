@@ -26,11 +26,7 @@ class EditProfileTableViewController: UITableViewController
     private let dynamoDBClient = DynamoDBUtils.dynamoDBClient
     private let userTable = DynamoDBUtils.usersTable
     
-    private var changedFirstName: String? = nil
-    private var changedLastName: String? = nil
-    private var changedEmail: String? = nil
-    private var changedProfilePicture: UIImage? = nil
-    private var removedProfilePicture: Bool = false
+    private var profileChanges: [String: Any] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,9 +55,9 @@ class EditProfileTableViewController: UITableViewController
     
     func handleProfilePictureChange(newProfilePicture: UIImage?) {
         if newProfilePicture != nil {
-            changedProfilePicture = newProfilePicture
+            profileChanges[ProfileChangesKeys.profilePicture.rawValue] = newProfilePicture
         } else {
-            removedProfilePicture = true
+            profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] = true
         }
     }
     
@@ -92,12 +88,12 @@ class EditProfileTableViewController: UITableViewController
     }
     
     private func saveProfileChanges() async {
-        let newFirstName = changedFirstName ?? self.profile.firstName
-        let newLastName = changedLastName ?? self.profile.lastName
-        let newEmail = changedEmail ?? self.profile.email
+        let newFirstName = profileChanges[ProfileChangesKeys.firstName.rawValue] as? String ?? self.profile.firstName
+        let newLastName = profileChanges[ProfileChangesKeys.lastName.rawValue] as? String ?? self.profile.lastName
+        let newEmail = profileChanges[ProfileChangesKeys.email.rawValue] as? String ?? self.profile.email
         
         var newProfilePictureURL = self.profile.profilePictureURL
-        if let changedProfilePicture = changedProfilePicture {
+        if let changedProfilePicture = profileChanges[ProfileChangesKeys.profilePicture.rawValue] as? UIImage {
             
             do {
                 // Upload new profile picture to S3
@@ -109,9 +105,9 @@ class EditProfileTableViewController: UITableViewController
                 // Handle error
                 print("Error uploading profile picture: \(error)")
             }
-        } else if removedProfilePicture {
+        } else if let _ = profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] as? Bool {
             newProfilePictureURL = nil
-            removedProfilePicture = false
+            profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] = false
             // TODO: Remove current S3 profilePic? or it doesn't matter? @MaxRosoff
         }
         
@@ -251,11 +247,11 @@ extension EditProfileTableViewController: UITextFieldDelegate
     private func setTextForProfile(text: String, tag: Int) {
         switch EditProfileTextFieldTags(rawValue: tag) {
         case .firstName:
-            changedFirstName = text
+            profileChanges[ProfileChangesKeys.firstName.rawValue] = text
         case .lastName:
-            changedLastName = text
+            profileChanges[ProfileChangesKeys.lastName.rawValue] = text
         case .email:
-            changedEmail = text
+            profileChanges[ProfileChangesKeys.email.rawValue] = text
         default:
             break
         }
@@ -277,5 +273,17 @@ extension EditProfileTableViewController: UITextFieldDelegate
         setTextForProfile(text: text, tag: textField.tag)
         
         return true
+    }
+}
+
+extension EditProfileTableViewController
+{
+    enum ProfileChangesKeys: String
+    {
+        case firstName = "firstName"
+        case lastName = "lastName"
+        case email = "email"
+        case profilePicture = "profilePicture"
+        case removedProfilePicture = "removedProfilePicture"
     }
 }
