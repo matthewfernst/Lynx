@@ -7,12 +7,14 @@
 
 import UIKit
 
-enum AppSettingSections: Int, CaseIterable {
+enum AppSettingSections: Int, CaseIterable
+{
     case units = 0
     case theme = 1
 }
 
-class AppSettingTableViewController: UITableViewController {
+class AppSettingTableViewController: UITableViewController
+{
     
     static var identitifer = "AppSettingTableView"
     

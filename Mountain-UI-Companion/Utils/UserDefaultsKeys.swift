@@ -7,7 +7,8 @@
 
 import Foundation
 
-enum UserDefaultsKeys {
+enum UserDefaultsKeys
+{
     
     // TODO: Add profiles and refactor
     

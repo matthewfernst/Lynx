@@ -7,12 +7,14 @@
 
 import UIKit
 
-enum SessionSection: Int, CaseIterable {
+enum SessionSection: Int, CaseIterable
+{
     case seasonSummary = 0
     case sessionSummary = 1
 }
 
-class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
+{
     
     @IBOutlet var profileImageView: UIImageView!
     @IBOutlet var lifetimeTotalVerticalFeet: UILabel!

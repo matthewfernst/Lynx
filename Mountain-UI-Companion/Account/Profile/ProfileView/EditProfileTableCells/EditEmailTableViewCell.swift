@@ -7,7 +7,8 @@
 
 import UIKit
 
-class EditEmailTableViewCell: UITableViewCell {
+class EditEmailTableViewCell: UITableViewCell
+{
     
     static let identifier = "EmailTableViewCell"
     

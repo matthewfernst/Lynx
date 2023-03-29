@@ -7,7 +7,8 @@
 
 import UIKit
 
-protocol EditProfileDelegate {
+protocol EditProfileDelegate
+{
     func editProfileCompletionHandler(profile: Profile)
 }
 
@@ -244,7 +245,8 @@ class EditProfileTableViewController: UITableViewController
 }
 
 // MARK: - Name and Email TextField Delegate
-extension EditProfileTableViewController: UITextFieldDelegate {
+extension EditProfileTableViewController: UITextFieldDelegate
+{
     
     private func setTextForProfile(text: String, tag: Int) {
         switch EditProfileTextFieldTags(rawValue: tag) {

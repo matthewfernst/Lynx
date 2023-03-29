@@ -10,12 +10,14 @@ import ClientRuntime
 import Foundation
 import UIKit
 
-enum S3BucketNames: String {
+enum S3BucketNames: String
+{
     case zippedSlopesBucketName = "mountain-ui-app-slopes-zipped"
     case profilePictureBucketName = "mountain-ui-users-profile-pictures"
 }
 
-struct S3Utils {
+struct S3Utils
+{
     private static let s3Client = try! S3Client(region: "us-east-1")
     
     static func uploadSlopesDataToS3(uuid: String, file: URL) async throws {

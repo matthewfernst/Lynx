@@ -9,7 +9,8 @@ import Foundation
 import AWSDynamoDB
 import ClientRuntime
 
-struct DynamoDBUtils {
+struct DynamoDBUtils
+{
     static let usersTable = "mountain-ui-app-users"
     static let dynamoDBClient = try! DynamoDBClient(region: "us-west-2")
     

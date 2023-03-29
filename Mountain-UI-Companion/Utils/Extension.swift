@@ -9,7 +9,8 @@ import Foundation
 import UIKit
 import OSLog
 
-extension UIImage {
+extension UIImage
+{
     func scalePreservingAspectRatio(targetSize: CGSize) -> UIImage {
         // Determine the scale factor that preserves aspect ratio
         let widthRatio = targetSize.width / size.width
@@ -40,7 +41,8 @@ extension UIImage {
     
 }
 
-extension UIImageView {
+extension UIImageView
+{
     
     func makeRounded() {
         layer.masksToBounds = false
@@ -49,7 +51,8 @@ extension UIImageView {
     }
 }
 
-extension String {
+extension String
+{
     
     /// Generates a `UIImage` instance from this string using a specified
     /// attributes and size.
@@ -80,7 +83,8 @@ extension String {
     
 }
 
-extension UIColor {
+extension UIColor
+{
     
     static var signBackgroundLavendar: UIColor {
         return UIColor(red: 226 / 255, green: 232 / 255, blue: 247 / 255, alpha: 1)
@@ -95,7 +99,8 @@ extension UIColor {
     }
 }
 
-extension Logger {
+extension Logger
+{
     private static var subsystem = Bundle.main.bundleIdentifier!
     
     static let loginController = Logger(subsystem: subsystem, category: "UserInfo")

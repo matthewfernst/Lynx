@@ -7,12 +7,14 @@
 
 import UIKit
 
-enum NameTextFieldTags: Int, CaseIterable {
+enum NameTextFieldTags: Int, CaseIterable
+{
     case firstName = 0
     case lastName = 1
 }
 
-class EditNameTableViewCell: UITableViewCell {
+class EditNameTableViewCell: UITableViewCell
+{
     
     static let identifier = "NameTableViewCell"
     

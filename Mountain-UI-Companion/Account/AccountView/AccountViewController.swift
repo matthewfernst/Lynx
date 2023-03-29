@@ -9,13 +9,15 @@ import UIKit
 import AWSDynamoDB
 import ClientRuntime
 
-enum AllSettingsSections: Int, CaseIterable {
+enum AllSettingsSections: Int, CaseIterable
+{
     case profile = 0
     case general = 1
     case support = 2
 }
 
-enum GeneralSettinsSections: Int, CaseIterable {
+enum GeneralSettinsSections: Int, CaseIterable
+{
     case app = 0
     case notifications = 1
 }

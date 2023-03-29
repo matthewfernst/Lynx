@@ -12,7 +12,8 @@ import UIKit
 import OSLog
 import UniformTypeIdentifiers
 
-class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate {
+class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
+{
     @IBOutlet var explanationTitleLabel: UILabel!
     @IBOutlet var explanationTextView: UITextView!
     @IBOutlet var slopesFolderImageView: UIImageView!

@@ -7,7 +7,8 @@
 import Foundation
 import UIKit
 
-func getSignInWithGoogleButton() -> UIButton {
+func getSignInWithGoogleButton() -> UIButton
+{
     var config = UIButton.Configuration.filled()
     
     config.cornerStyle = .medium
