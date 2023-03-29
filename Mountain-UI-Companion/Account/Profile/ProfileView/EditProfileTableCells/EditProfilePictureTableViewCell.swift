@@ -100,7 +100,7 @@ class EditProfilePictureTableViewCell: UITableViewCell
         if self.profilePictureImageView.subviews.isEmpty || !self.profilePictureImageView.subviews.contains(self.defaultProfilePictureLabel) {
             profilePictureImageView.image = nil
             
-            defaultProfilePictureLabel = self.profile.getDefaultProfilePicture(fontSize: 55)
+            defaultProfilePictureLabel = ProfilePictureUtils.getDefaultProfilePicture(name: profile.name, fontSize: 55)
             defaultProfilePictureLabel.translatesAutoresizingMaskIntoConstraints = false
             
             profilePictureImageView.addSubview(defaultProfilePictureLabel)

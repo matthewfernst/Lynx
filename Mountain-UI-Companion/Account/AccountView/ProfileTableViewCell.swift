@@ -87,7 +87,7 @@ class ProfileTableViewCell: UITableViewCell
     private func setupDefaultProfilePicture(profile: Profile) {
         profilePictureImageView.image = nil
         
-        defaultProfilePictureLabel = profile.getDefaultProfilePicture(fontSize: 40)
+        defaultProfilePictureLabel = ProfilePictureUtils.getDefaultProfilePicture(name: profile.name, fontSize: 40)
         
         profilePictureImageView.addSubview(defaultProfilePictureLabel)
         
