@@ -127,7 +127,7 @@ class AppSettingTableViewController: UITableViewController
     }
     
     func saveTheme(theme: String) {
-        UserDefaults.standard.set(theme, forKey: "theme")
+        UserDefaults.standard.set(theme, forKey: UserDefaultsKeys.theme)
     }
     
     private func setAppearance(_ style: UIUserInterfaceStyle) {

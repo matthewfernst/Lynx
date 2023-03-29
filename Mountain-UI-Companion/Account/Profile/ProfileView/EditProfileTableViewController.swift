@@ -29,7 +29,7 @@ class EditProfileTableViewController: UITableViewController
     private var changedFirstName: String? = nil
     private var changedLastName: String? = nil
     private var changedEmail: String? = nil
-    private var changedProfilePicture: UIImage? = nil // TODO: Rename
+    private var changedProfilePicture: UIImage? = nil
     private var removedProfilePicture: Bool = false
     
     override func viewDidLoad() {

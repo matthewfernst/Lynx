@@ -241,7 +241,7 @@ class LoginViewController: UIViewController
     
     private func signInExistingUser() {
         self.debugLogin()
-        let isSignedIn = UserDefaults.standard.bool(forKey: Profile.isSignedInKey)
+        let isSignedIn = UserDefaults.standard.bool(forKey: UserDefaultsKeys.profileIsSignedInKey)
         
         if isSignedIn {
             let activityIndicator = showSignInActivityIndicator()

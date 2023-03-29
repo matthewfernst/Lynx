@@ -16,7 +16,7 @@ enum SessionSection: Int, CaseIterable
 class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
     
-    @IBOutlet var profileImageView: UIImageView!
+    @IBOutlet var profilePictureImageView: UIImageView!
     @IBOutlet var lifetimeTotalVerticalFeet: UILabel!
     @IBOutlet var lifetimeDaysOnMountainLabel: UILabel!
     @IBOutlet var lifetimeRunsTimeLabel: UILabel!
@@ -52,22 +52,22 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         sessionSummaryTableView.rowHeight = 66.0
         
         if let profilePicture = profile.profilePicture {
-            profileImageView.image = profilePicture // TODO: RENAME
+            profilePictureImageView.image = profilePicture
         } else {
             let defaultProfilePicture = profile.getDefaultProfilePicture(fontSize: 60)
             
-            profileImageView.addSubview(defaultProfilePicture)
+            profilePictureImageView.addSubview(defaultProfilePicture)
             
             defaultProfilePicture.translatesAutoresizingMaskIntoConstraints = false
             
             NSLayoutConstraint.activate([
-                defaultProfilePicture.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor),
-                defaultProfilePicture.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor)
+                defaultProfilePicture.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
+                defaultProfilePicture.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
             ])
         }
 
-        profileImageView.backgroundColor = .secondarySystemBackground
-        profileImageView.makeRounded()
+        profilePictureImageView.backgroundColor = .secondarySystemBackground
+        profilePictureImageView.makeRounded()
     }
     
     @objc func explainMoreWithSlopes() {

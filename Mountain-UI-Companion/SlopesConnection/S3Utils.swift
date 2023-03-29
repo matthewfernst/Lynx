@@ -47,20 +47,10 @@ struct S3Utils
     }
     
     static func getProfilePictureObjectURL(uuid: String) async -> String {
-        let fileKey = "\(uuid)/profilePicture"
-        
-        // TODO: Not needed??
-        do {
-            let inputObject = GetObjectInput(bucket: S3BucketNames.profilePictureBucketName.rawValue, key: fileKey)
-            let _ = try await s3Client.getObject(input: inputObject)
-        } catch {
-            dump(error)
-        }
-        
         let s3BucketURL = "https://mountain-ui-users-profile-pictures.s3.amazonaws.com"
-        let objectURL = "\(s3BucketURL)/\(fileKey)"
-        
-        return objectURL
+        let fileKey = "\(uuid)/profilePicture"
+
+        return "\(s3BucketURL)/\(fileKey)"
     }
     
     static func getSlopesDataFiles(uuid: String) async -> [String] {
