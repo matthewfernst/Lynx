@@ -48,7 +48,12 @@ class EditProfilePictureTableViewCell: UITableViewCell
         })
         
         ac.addAction(UIAlertAction(title: "Remove", style: .destructive) { [unowned self] _ in
-            setupDefaultProfilePicture()
+            if let defaultLabel = ProfilePictureUtils.setupDefaultProfilePicture(profile: profile,
+                                                                                 profilePictureImageView: profilePictureImageView,
+                                                                                 defaultProfilePictureLabel: defaultProfilePictureLabel,
+                                                                                 fontSize: 55) {
+                defaultProfilePictureLabel = defaultLabel
+            }
             self.delegate?.handleProfilePictureChange(newProfilePicture: nil)
         })
         
@@ -87,29 +92,18 @@ class EditProfilePictureTableViewCell: UITableViewCell
             self.defaultProfilePictureLabel?.removeFromSuperview()
             profilePictureImageView.image = profilePicture
         } else {
-            setupDefaultProfilePicture()
+            if let defaultLabel = ProfilePictureUtils.setupDefaultProfilePicture(profile: profile,
+                                                                                 profilePictureImageView: profilePictureImageView,
+                                                                                 defaultProfilePictureLabel: defaultProfilePictureLabel,
+                                                                                 fontSize: 55) {
+                defaultProfilePictureLabel = defaultLabel
+            }
         }
         
         self.delegate = delegate
         
         self.backgroundColor = .systemBackground
         self.selectionStyle = .none
-    }
-    
-    private func setupDefaultProfilePicture() {
-        if self.profilePictureImageView.subviews.isEmpty || !self.profilePictureImageView.subviews.contains(self.defaultProfilePictureLabel) {
-            profilePictureImageView.image = nil
-            
-            defaultProfilePictureLabel = ProfilePictureUtils.getDefaultProfilePicture(name: profile.name, fontSize: 55)
-            defaultProfilePictureLabel.translatesAutoresizingMaskIntoConstraints = false
-            
-            profilePictureImageView.addSubview(defaultProfilePictureLabel)
-            
-            NSLayoutConstraint.activate([
-                defaultProfilePictureLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
-                defaultProfilePictureLabel.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
-            ])
-        }
     }
     
     override func awakeFromNib() {

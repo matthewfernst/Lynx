@@ -19,4 +19,24 @@ struct ProfilePictureUtils
         
         return initialsLabel
     }
+    
+    public static func setupDefaultProfilePicture(profile: Profile, profilePictureImageView: UIImageView, defaultProfilePictureLabel: UILabel?, fontSize: CGFloat) -> UILabel? {
+        if defaultProfilePictureLabel == nil {
+            profilePictureImageView.image = nil
+            
+            let defaultProfilePictureLabel = ProfilePictureUtils.getDefaultProfilePicture(name: profile.name, fontSize: fontSize)
+            
+            profilePictureImageView.addSubview(defaultProfilePictureLabel)
+            
+            defaultProfilePictureLabel.translatesAutoresizingMaskIntoConstraints = false
+            
+            NSLayoutConstraint.activate([
+                defaultProfilePictureLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
+                defaultProfilePictureLabel.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
+            ])
+            return defaultProfilePictureLabel
+        }
+        return nil
+    }
+
 }

@@ -75,28 +75,17 @@ class ProfileTableViewCell: UITableViewCell
             self.defaultProfilePictureLabel?.removeFromSuperview()
             profilePictureImageView.image = profilePicture
         } else {
-            setupDefaultProfilePicture(profile: profile)
+            if let defaultLabel = ProfilePictureUtils.setupDefaultProfilePicture(profile: profile,
+                                                                                 profilePictureImageView: profilePictureImageView,
+                                                                                 defaultProfilePictureLabel: defaultProfilePictureLabel,
+                                                                                 fontSize: 40) {
+                defaultProfilePictureLabel = defaultLabel
+            }
         }
         
         profilePictureImageView.backgroundColor = .systemBackground
         nameLabel.text = profile.name
         self.backgroundColor = .secondarySystemBackground
-    }
-    
-    // TODO: Make one common function? Also in EditProfilePictureTableViewCell L: 98
-    private func setupDefaultProfilePicture(profile: Profile) {
-        profilePictureImageView.image = nil
-        
-        defaultProfilePictureLabel = ProfilePictureUtils.getDefaultProfilePicture(name: profile.name, fontSize: 40)
-        
-        profilePictureImageView.addSubview(defaultProfilePictureLabel)
-        
-        defaultProfilePictureLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            defaultProfilePictureLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
-            defaultProfilePictureLabel.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
-        ])
     }
     
     override func awakeFromNib() {
