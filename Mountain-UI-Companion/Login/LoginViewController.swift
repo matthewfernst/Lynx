@@ -153,7 +153,7 @@ class LoginViewController: UIViewController
                 showErrorWithSignIn()
                 return
             }
-            guard let uuid = signInResult?.user.userID else {
+            guard let id = signInResult?.user.userID else {
                 showErrorWithSignIn()
                 return
             }
@@ -166,7 +166,7 @@ class LoginViewController: UIViewController
                 let name = profile.name.components(separatedBy: " ")
                 let (firstName, lastName) = (name[0], name[1])
                 let activityIndicator = self.showSignInActivityIndicator()
-                await LoginController.handleCommonSignIn(uuid: uuid,
+                await LoginController.handleCommonSignIn(id: id,
                                                          firstName: firstName,
                                                          lastName: lastName,
                                                          email: profile.email,
@@ -264,7 +264,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             Logger.loginViewController.debug("Sign in with Apple: Credential Sign in")
             Task {
                 let activityIndicator = self.showSignInActivityIndicator()
-                await LoginController.handleCommonSignIn(uuid: appleIdCredential.user,
+                await LoginController.handleCommonSignIn(id: appleIdCredential.user,
                                                          firstName: appleIdCredential.fullName?.givenName,
                                                          lastName: appleIdCredential.fullName?.familyName,
                                                          email: appleIdCredential.email)

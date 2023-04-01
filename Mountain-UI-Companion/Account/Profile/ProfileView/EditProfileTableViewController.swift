@@ -101,9 +101,9 @@ class EditProfileTableViewController: UITableViewController
             
             do {
                 // Upload new profile picture to S3
-                try await S3Utils.uploadProfilePictureToS3(uuid: self.profile.uuid, picture: changedProfilePicture)
+                try await S3Utils.uploadProfilePictureToS3(id: self.profile.id, picture: changedProfilePicture)
                 // Get new profile picture's Object URL
-                let objectURL = await S3Utils.getProfilePictureObjectURL(uuid: self.profile.uuid)
+                let objectURL = await S3Utils.getProfilePictureObjectURL(id: self.profile.id)
                 newProfilePictureURL = objectURL
             } catch {
                 // Handle error
@@ -117,14 +117,14 @@ class EditProfileTableViewController: UITableViewController
         
         Task {
             // Update Dynamo
-            await DynamoDBUtils.updateDynamoDBItem(uuid: self.profile.uuid,
+            await DynamoDBUtils.updateDynamoDBItem(id: self.profile.id,
                                                    newFirstName: newFirstName,
                                                    newLastName: newLastName,
                                                    newEmail: newEmail,
                                                    newProfilePictureURL: newProfilePictureURL ?? "")
         }
         
-        Profile.createProfile(uuid: profile.uuid,
+        Profile.createProfile(id: profile.id,
                               firstName: newFirstName,
                               lastName: newLastName,
                               email: newEmail,

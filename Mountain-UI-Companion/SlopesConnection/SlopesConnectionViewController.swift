@@ -21,7 +21,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     @IBOutlet var slopeFilesUploadProgressView: UIProgressView!
     
     private var documentPicker: UIDocumentPickerViewController!
-    private var bookmark: (uuid: String, url: URL)?
+    private var bookmark: (id: String, url: URL)?
     
     lazy private var manualUploadSlopeFilesButton: UIButton = {
         var configuration = UIButton.Configuration.filled()
@@ -305,7 +305,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                     Logger.slopesConnection.debug("chosen file: \(fileURL.lastPathComponent)")
                     
                     do {
-                        try await S3Utils.uploadSlopesDataToS3(uuid: self.profile.uuid, file: fileURL)
+                        try await S3Utils.uploadSlopesDataToS3(id: self.profile.id, file: fileURL)
                         currentFileNumberBeingUploaded += 1
                         self.updateSlopeFilesProgressView(fileBeingUploaded: fileURL.lastPathComponent.replacingOccurrences(of: "%", with: " "),
                                                           progress: Float(currentFileNumberBeingUploaded) / Float(totalNumberOfFiles))
@@ -344,15 +344,15 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
             defer { url.stopAccessingSecurityScopedResource() }
             
             // Generate a UUID
-            let uuid = UUID().uuidString
+            let id = UUID().uuidString
             
             // Convert URL to bookmark
             let bookmarkData = try url.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
             // Save the bookmark into a file (the name of the file is the UUID)
-            try bookmarkData.write(to: getAppSandboxDirectory().appendingPathComponent(uuid))
+            try bookmarkData.write(to: getAppSandboxDirectory().appendingPathComponent(id))
             
             // Add the URL and UUID to the urls
-            bookmark = (uuid, url)
+            bookmark = (id, url)
         }
         catch {
             // Handle the error here.
@@ -371,7 +371,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                     for case let fileURL as URL in fileList {
                         if self.isSlopesFiles(fileURL) {
                             // Check if the file was already uploaded
-                            if !(await S3Utils.isFileUploadedToS3(uuid: self.profile.uuid, file: fileURL)) {
+                            if !(await S3Utils.isFileUploadedToS3(id: self.profile.id, file: fileURL)) {
                                 nonUploadedSlopeFiles.insert(fileURL.lastPathComponent)
                             }
                         }
@@ -425,7 +425,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                         if self.isSlopesFiles(fileURL) {
                             do {
                                 if nonUploadedSlopeFiles.contains(fileURL.lastPathComponent) {
-                                    try await S3Utils.uploadSlopesDataToS3(uuid: self.profile.uuid, file: fileURL)
+                                    try await S3Utils.uploadSlopesDataToS3(id: self.profile.id, file: fileURL)
                                     currentFileNumberBeingUploaded += 1
                                     let progress = Float(currentFileNumberBeingUploaded) / Float(nonUploadedSlopeFiles.count)
                                     self.updateSlopeFilesProgressView(fileBeingUploaded: fileURL.lastPathComponent.replacingOccurrences(of: "%", with: " "), progress: progress)
@@ -476,7 +476,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
             }
         } ?? []
         
-        self.bookmark = bookmarks.first as? (uuid: String, url: URL)
+        self.bookmark = bookmarks.first as? (id: String, url: URL)
         
     }
     

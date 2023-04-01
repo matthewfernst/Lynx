@@ -1,0 +1,85 @@
+service: mountain-ui-api
+frameworkVersion: "3"
+
+plugins:
+  - serverless-prune-plugin
+  - serverless-dotenv-plugin
+  - serverless-plugin-typescript
+  - serverless-dynamodb-local
+  - serverless-offline-ses
+  - serverless-offline
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  serverlessPluginTypescript:
+    tsConfigFileLocation: "./tsconfig.lambda.json"
+  dynamodb:
+    stages:
+      - ${opt:stage, self:provider.stage}
+    start:
+      port: 8080
+      inMemory: false
+      migrate: true
+  serverless-offline:
+    httpPort: 8000
+    websocketPort: 8001
+    lambdaPort: 8002
+    useWorkerThreads: true
+  ses:
+    stages:
+      - dev
+    clean: true
+    outputDir: "./.build/ses_output"
+
+provider:
+  name: aws
+  stage: dev
+  region: us-west-2
+  runtime: nodejs18.x
+  memorySize: 512
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+          Resource:
+            - arn:aws:s3:::mountain-ui-app-slopes-unzipped
+            - arn:aws:s3:::mountain-ui-app-slopes-unzipped/*
+
+functions:
+  graphql:
+    description: GraphQL API
+    handler: ./src/index.handler
+    events:
+      - http:
+          path: /graphql
+          method: post
+          cors: true
+
+package:
+  patterns:
+    - schema.graphql
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: mountain-ui-app-users
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: email
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: email
+            KeySchema:
+              - AttributeName: email
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
