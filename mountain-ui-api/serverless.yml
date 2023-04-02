@@ -34,7 +34,7 @@ custom:
 provider:
   name: aws
   stage: dev
-  region: us-west-2
+  region: us-west-1
   runtime: nodejs18.x
   memorySize: 512
   iam:
