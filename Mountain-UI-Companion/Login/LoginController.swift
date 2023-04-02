@@ -94,12 +94,13 @@ class LoginController
             profile.saveToKeychain()
         }
     }
-
+    
 }
 
 // MARK: - ProfileAttributes
-struct ProfileAttributes
+struct ProfileAttributes: CustomDebugStringConvertible
 {
+    
     var id: String
     var firstName: String
     var lastName: String
@@ -120,5 +121,15 @@ struct ProfileAttributes
         self.lastName = ""
         self.email = ""
         self.profilePictureURL = ""
+    }
+    
+    var debugDescription: String {
+       """
+       id: \(self.id)
+       firstName: \(self.firstName)
+       lastName: \(self.lastName)
+       email: \(self.email)
+       profilePictureURL: \(String(describing: self.profilePictureURL))
+       """
     }
 }

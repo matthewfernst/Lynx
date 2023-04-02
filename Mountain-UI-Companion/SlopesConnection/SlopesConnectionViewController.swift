@@ -474,10 +474,9 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                 print(error)
                 return nil
             }
-        } ?? []
+        } ?? Array<(id: String, url: URL)>()
         
-        self.bookmark = bookmarks.first as? (id: String, url: URL)
-        
+        self.bookmark = bookmarks.first
     }
     
 }

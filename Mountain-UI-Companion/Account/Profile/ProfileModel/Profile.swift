@@ -30,7 +30,7 @@ class Profile
         self.profilePictureURL = profilePictureURL
     }
     
-    public static func createProfile(uuid: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
+    public static func createProfile(id: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
         guard let profilePictureURL = URL(string: profilePictureURL ?? "") else {
             completion(Profile(id: id, firstName: firstName, lastName: lastName, email: email))
             return
@@ -64,13 +64,13 @@ class Profile
 extension Profile: CustomDebugStringConvertible
 {
     var debugDescription: String {
-        return """
-               id: \(self.id)
-               firstName: \(self.firstName)
-               lastName: \(self.lastName)
-               email: \(self.email)
-               profilePictureURL: \(String(describing: self.profilePictureURL))
-               """
+        """
+        id: \(self.id)
+        firstName: \(self.firstName)
+        lastName: \(self.lastName)
+        email: \(self.email)
+        profilePictureURL: \(String(describing: self.profilePictureURL))
+        """
     }
 }
 extension Profile {
