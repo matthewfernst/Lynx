@@ -11,7 +11,7 @@ import UIKit
 
 class Profile
 {
-    var uuid: String
+    var id: String
     var firstName, lastName: String
     var name: String { firstName + " " + lastName }
     var email: String
@@ -21,8 +21,8 @@ class Profile
     var units: String = "Imperial"
     var notificationsAllowed: Bool?
     
-    init(uuid: String, firstName: String, lastName: String, email: String, profilePicture: UIImage? = nil, profilePictureURL: String? = "") {
-        self.uuid = uuid
+    init(id: String, firstName: String, lastName: String, email: String, profilePicture: UIImage? = nil, profilePictureURL: String? = "") {
+        self.id = id
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
@@ -41,25 +41,25 @@ class Profile
         return initialsLabel
     }
     
-    public static func createProfile(uuid: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
+    public static func createProfile(id: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
         guard let profilePictureURL = URL(string: profilePictureURL ?? "") else {
-            completion(Profile(uuid: uuid, firstName: firstName, lastName: lastName, email: email))
+            completion(Profile(id: id, firstName: firstName, lastName: lastName, email: email))
             return
         }
         
         URLSession.shared.dataTask(with: profilePictureURL) { (data, response, error) in
             if let error = error {
                 print("Error downloading profile picture: \(error.localizedDescription)")
-                completion(Profile(uuid: uuid, firstName: firstName, lastName: lastName, email: email))
+                completion(Profile(id: id, firstName: firstName, lastName: lastName, email: email))
                 return
             }
             
             guard let data = data, let profilePicture = UIImage(data: data) else {
-                completion(Profile(uuid: uuid, firstName: firstName, lastName: lastName, email: email))
+                completion(Profile(id: id, firstName: firstName, lastName: lastName, email: email))
                 return
             }
             
-            let profile = Profile(uuid: uuid,
+            let profile = Profile(id: id,
                                   firstName: firstName,
                                   lastName: lastName,
                                   email: email,
@@ -76,7 +76,7 @@ extension Profile: CustomDebugStringConvertible
 {
     var debugDescription: String {
         return """
-               UUID: \(self.uuid)
+               id: \(self.id)
                firstName: \(self.firstName)
                lastName: \(self.lastName)
                email: \(self.email)
@@ -85,7 +85,7 @@ extension Profile: CustomDebugStringConvertible
     }
 }
 extension Profile {
-    static var sampleProfile = Profile(uuid: "1234",
+    static var sampleProfile = Profile(id: "1234",
                                        firstName: "John",
                                        lastName: "AppleSeed",
                                        email: "johnappleseed@icloud.com")

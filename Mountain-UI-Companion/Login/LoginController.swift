@@ -17,11 +17,11 @@ class LoginController
         self.loginViewController = loginViewController
     }
     
-    static func handleCommonSignIn(uuid: String, firstName: String? = nil, lastName: String? = nil, email: String? = nil, profilePictureURL: String = "") async {
-        if let profileAttributes = try? await self.getExistingUser(uuid: uuid) {
+    static func handleCommonSignIn(id: String, firstName: String? = nil, lastName: String? = nil, email: String? = nil, profilePictureURL: String = "") async {
+        if let profileAttributes = try? await self.getExistingUser(id: id) {
             loginUser(profileAttributes: profileAttributes)
         } else if let firstName = firstName, let lastName = lastName, let email = email {
-            await self.createNewUser(profileAttributes: ProfileAttributes(uuid: uuid,
+            await self.createNewUser(profileAttributes: ProfileAttributes(id: id,
                                                                           firstName: firstName,
                                                                           lastName: lastName,
                                                                           email: email,
@@ -29,14 +29,14 @@ class LoginController
         }
     }
     
-    private static func getExistingUser(uuid: String) async throws -> ProfileAttributes? {
-        if let dynamoDBUserInfo = await DynamoDBUtils.getDynamoDBItem(uuid: uuid) {
+    private static func getExistingUser(id: String) async throws -> ProfileAttributes? {
+        if let dynamoDBUserInfo = await DynamoDBUtils.getDynamoDBItem(id: id) {
             var profileAttributes = ProfileAttributes()
             for (key, value) in dynamoDBUserInfo {
                 if case let .s(value) = value {
                     switch key {
-                    case "uuid":
-                        profileAttributes.uuid = value
+                    case "id":
+                        profileAttributes.id = value
                     case "firstName":
                         profileAttributes.firstName = value
                     case "lastName":
@@ -77,7 +77,7 @@ class LoginController
         
         group.enter()
         
-        Profile.createProfile(uuid: profileAttributes.uuid,
+        Profile.createProfile(id: profileAttributes.id,
                               firstName: profileAttributes.firstName,
                               lastName: profileAttributes.lastName,
                               email: profileAttributes.email,
@@ -100,14 +100,14 @@ class LoginController
 // MARK: - ProfileAttributes
 struct ProfileAttributes
 {
-    var uuid: String
+    var id: String
     var firstName: String
     var lastName: String
     var email: String
     var profilePictureURL: String
     
-    init(uuid: String, firstName: String, lastName: String, email: String, profilePictureURL: String = "") {
-        self.uuid = uuid
+    init(id: String, firstName: String, lastName: String, email: String, profilePictureURL: String = "") {
+        self.id = id
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
@@ -115,7 +115,7 @@ struct ProfileAttributes
     }
     
     init() {
-        self.uuid = ""
+        self.id = ""
         self.firstName = ""
         self.lastName = ""
         self.email = ""

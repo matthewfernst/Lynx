@@ -16,7 +16,7 @@ struct DynamoDBUtils
     
     static func putDynamoDBItem(profileAttributes: ProfileAttributes) async {
         let itemValues = [
-            "uuid": DynamoDBClientTypes.AttributeValue.s(profileAttributes.uuid),
+            "id": DynamoDBClientTypes.AttributeValue.s(profileAttributes.id),
             "firstName": DynamoDBClientTypes.AttributeValue.s(profileAttributes.firstName),
             "lastName": DynamoDBClientTypes.AttributeValue.s(profileAttributes.lastName),
             "email": DynamoDBClientTypes.AttributeValue.s(profileAttributes.email),
@@ -30,8 +30,8 @@ struct DynamoDBUtils
         }
     }
     
-    static func getDynamoDBItem(uuid: String) async -> [String : DynamoDBClientTypes.AttributeValue]? {
-        let keyToGet = ["uuid" : DynamoDBClientTypes.AttributeValue.s(uuid)]
+    static func getDynamoDBItem(id: String) async -> [String : DynamoDBClientTypes.AttributeValue]? {
+        let keyToGet = ["id" : DynamoDBClientTypes.AttributeValue.s(id)]
         let input = GetItemInput(key: keyToGet, tableName: usersTable)
         do {
             return try await dynamoDBClient.getItem(input: input).item
@@ -41,12 +41,12 @@ struct DynamoDBUtils
         return nil
     }
     
-    static func updateDynamoDBItem(uuid: String,
+    static func updateDynamoDBItem(id: String,
                                    newFirstName: String,
                                    newLastName: String,
                                    newEmail: String,
                                    newProfilePictureURL: String) async {
-        let itemKey = ["uuid" : DynamoDBClientTypes.AttributeValue.s(uuid)]
+        let itemKey = ["id" : DynamoDBClientTypes.AttributeValue.s(id)]
         let updatedValues = [
             "firstName": DynamoDBClientTypes.AttributeValueUpdate(action: .put, value: DynamoDBClientTypes.AttributeValue.s(newFirstName)),
             "lastName": DynamoDBClientTypes.AttributeValueUpdate(action: .put, value: DynamoDBClientTypes.AttributeValue.s(newLastName)),
@@ -61,8 +61,8 @@ struct DynamoDBUtils
         }
     }
     
-    static func deleteDynamoDBItem(uuid: String) async {
-        let keyToDelete = ["uuid" : DynamoDBClientTypes.AttributeValue.s(uuid)]
+    static func deleteDynamoDBItem(id: String) async {
+        let keyToDelete = ["id" : DynamoDBClientTypes.AttributeValue.s(id)]
         
         do {
             let _ = try await dynamoDBClient.deleteItem(input: DeleteItemInput(key: keyToDelete,

@@ -1,4 +1,9 @@
 {
+    "name": "mountain-ui-slopes-unzipper",
+    "version": "1.0.0",
+    "description": "A lambda to unzip slopes data files into S3",
+    "repository": "https://github.com/matthewfernst/Mountain-UI-Companion-App",
+    "license": "MIT",
     "main": "index.js",
     "scripts": {
         "deploy": "serverless deploy --stage production"

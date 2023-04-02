@@ -1,0 +1,25 @@
+type User {
+    id: String!
+    email: String!
+    firstName: String
+    lastName: String
+    profilePictureUrl: String
+    runRecords: [RunRecord!]!
+}
+
+type RunRecord {
+    id: String!
+    conditions: String!
+    distance: Float!
+    duration: Float!
+    start: String!
+    end: String!
+    locationName: String!
+    runCount: String!
+    topSpeed: Float!
+    vertical: Float!
+}
+
+type Query {
+    selfLookup: User
+}

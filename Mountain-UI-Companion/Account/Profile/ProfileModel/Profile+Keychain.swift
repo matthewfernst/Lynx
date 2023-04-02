@@ -23,8 +23,8 @@ extension Profile
         let status: OSStatus = SecItemCopyMatching(query, &dataTypeRef)
         if status == errSecSuccess {
             if let data = dataTypeRef as? Data,
-               let uuid = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? String {
-                await LoginController.handleCommonSignIn(uuid: uuid)
+               let id = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? String {
+                await LoginController.handleCommonSignIn(id: id)
                 DispatchQueue.main.async {
                     completion(LoginController.profile)
                 }
@@ -39,7 +39,7 @@ extension Profile
     
     
     public func saveToKeychain() {
-        let data = try? NSKeyedArchiver.archivedData(withRootObject: self.uuid, requiringSecureCoding: false)
+        let data = try? NSKeyedArchiver.archivedData(withRootObject: self.id, requiringSecureCoding: false)
         
         let query = [
             kSecClass as String: kSecClassGenericPassword as String,

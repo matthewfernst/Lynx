@@ -20,8 +20,8 @@ struct S3Utils
 {
     private static let s3Client = try! S3Client(region: "us-east-1")
     
-    static func uploadSlopesDataToS3(uuid: String, file: URL) async throws {
-        let fileKey = "\(uuid)/\(file.lastPathComponent)"
+    static func uploadSlopesDataToS3(id: String, file: URL) async throws {
+        let fileKey = "\(id)/\(file.lastPathComponent)"
         let fileData = try Data(contentsOf: file)
         
         do {
@@ -31,8 +31,8 @@ struct S3Utils
         }
     }
     
-    static func uploadProfilePictureToS3(uuid: String, picture: UIImage) async throws {
-        let fileKey = "\(uuid)/profilePicture"
+    static func uploadProfilePictureToS3(id: String, picture: UIImage) async throws {
+        let fileKey = "\(id)/profilePicture"
         let fileData = picture.jpegData(compressionQuality: 1.0)!
         
         do {
@@ -46,17 +46,17 @@ struct S3Utils
         let _ = try await createFile(key: fileKey, data: fileData, bucketName: bucketName)
     }
     
-    static func getProfilePictureObjectURL(uuid: String) async -> String {
+    static func getProfilePictureObjectURL(id: String) async -> String {
         let s3BucketURL = "https://mountain-ui-users-profile-pictures.s3.amazonaws.com"
-        let fileKey = "\(uuid)/profilePicture"
+        let fileKey = "\(id)/profilePicture"
 
         return "\(s3BucketURL)/\(fileKey)"
     }
     
-    static func getSlopesDataFiles(uuid: String) async -> [String] {
+    static func getSlopesDataFiles(id: String) async -> [String] {
         var files: [String] = []
         let bucketName = S3BucketNames.zippedSlopesBucketName.rawValue
-        let prefix = "\(uuid)/"
+        let prefix = "\(id)/"
         
         do {
             let input = ListObjectsV2Input(bucket: bucketName, prefix: prefix)
@@ -72,8 +72,8 @@ struct S3Utils
         return files
     }
     
-    static func isFileUploadedToS3(uuid: String, file: URL) async -> Bool {
-        let fileKey = "\(uuid)/\(file.lastPathComponent)"
+    static func isFileUploadedToS3(id: String, file: URL) async -> Bool {
+        let fileKey = "\(id)/\(file.lastPathComponent)"
         let inputObject = HeadObjectInput(bucket: S3BucketNames.zippedSlopesBucketName.rawValue, key: fileKey)
         do {
             let _ = try await s3Client.headObject(input: inputObject)
