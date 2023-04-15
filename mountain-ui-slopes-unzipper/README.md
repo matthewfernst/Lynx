@@ -11,7 +11,7 @@ $ serverless deploy
 After running deploy, you should see output similar to:
 
 ```bash
-Deploying mountain-ui-slopes-unzipper to stage dev (us-east-1)
+Deploying mountain-ui-slopes-unzipper to stage dev (us-west-1)
 
 ✔ Service deployed to stack mountain-ui-slopes-unzipper-dev (112s)
 

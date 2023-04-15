@@ -2,7 +2,7 @@ import { S3 } from "aws-sdk";
 import { ParseOne } from "unzipper";
 
 export async function handler(event, context) {
-    const s3Client = new S3({ region: "us-east-1" });
+    const s3Client = new S3({ region: "us-west-1" });
 
     for (const record of event.Records) {
         const bucket = decodeURIComponent(record.s3.bucket.name);
