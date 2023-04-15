@@ -5,10 +5,13 @@ const createS3Client = (): S3Client => {
     return new S3Client({ region: process.env.AWS_REGION });
 };
 
-export const getRecordsFromBucket = async (bucketName: string): Promise<string[]> => {
+export const getRecordsFromBucket = async (
+    bucketName: string,
+    path: string = ""
+): Promise<string[]> => {
     const s3Client = createS3Client();
     try {
-        const listObjectsRequest = new ListObjectsCommand({ Bucket: bucketName });
+        const listObjectsRequest = new ListObjectsCommand({ Bucket: bucketName, Prefix: path });
         const listObjectsResponse = await s3Client.send(listObjectsRequest);
         if (!listObjectsResponse.Contents) {
             throw new Error("Error retrieving contents of bucket");

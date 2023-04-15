@@ -8,7 +8,7 @@ const runRecords = async (
     context: Context,
     info: any
 ): Promise<RunRecord[]> => {
-    const records = await getRecordsFromBucket("mountain-ui-app-slopes-unzipped");
+    const records = await getRecordsFromBucket("mountain-ui-app-slopes-unzipped", parent.id);
     return records.map((record) => JSON.parse(record));
 };
 
