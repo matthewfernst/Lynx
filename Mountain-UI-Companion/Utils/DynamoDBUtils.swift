@@ -12,7 +12,7 @@ import ClientRuntime
 struct DynamoDBUtils
 {
     static let usersTable = "mountain-ui-app-users"
-    static let dynamoDBClient = try! DynamoDBClient(region: "us-west-2")
+    static let dynamoDBClient = try! DynamoDBClient(region: "us-west-1")
     
     static func putDynamoDBItem(profileAttributes: ProfileAttributes) async {
         let itemValues = [
