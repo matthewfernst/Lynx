@@ -1,5 +1,5 @@
 type User {
-    id: String!
+    id: ID!
     email: String!
     firstName: String
     lastName: String
@@ -8,7 +8,7 @@ type User {
 }
 
 type RunRecord {
-    id: String!
+    id: ID!
     conditions: String!
     distance: Float!
     duration: Float!
@@ -20,6 +20,12 @@ type RunRecord {
     vertical: Float!
 }
 
+scalar AuthorizationToken
+
 type Query {
     selfLookup: User
+}
+
+type Mutation {
+    loginUser(id: ID!): AuthorizationToken
 }
