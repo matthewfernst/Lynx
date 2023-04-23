@@ -1,6 +1,9 @@
 import { S3 } from "aws-sdk";
 import { ParseOne } from "unzipper";
 
+export const fromBucket = "mountain-ui-app-slopes-zipped";
+export const targetBucket = "mountain-ui-app-slopes-unzipped";
+
 export async function handler(event, context) {
     const s3Client = new S3({ region: "us-west-1" });
 
@@ -16,7 +19,6 @@ export async function handler(event, context) {
             .createReadStream()
             .pipe(ParseOne("Metadata.xml", { forceStream: true }));
 
-        const targetBucket = "mountain-ui-app-slopes-unzipped";
         const targetFile = `${fileName.split("/")[0]}/${fileName
             .split("/")[1]
             .split("-")[0]

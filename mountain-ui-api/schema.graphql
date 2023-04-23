@@ -20,6 +20,11 @@ type RunRecord {
     vertical: Float!
 }
 
+input KeyValuePair {
+    key: String!
+    value: String!
+}
+
 scalar AuthorizationToken
 
 type Query {
@@ -27,5 +32,8 @@ type Query {
 }
 
 type Mutation {
+    createUser(email: String!, username: String!, password: String!): AuthorizationToken!
     loginUser(id: ID!): AuthorizationToken
+    editUser(userPairs: [KeyValuePair!]!): User!
+    createUserRecordUploadUrl(): String[]!
 }

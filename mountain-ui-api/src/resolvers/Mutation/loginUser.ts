@@ -1,9 +1,8 @@
 import { UserInputError } from "apollo-server-express";
 
 import { generateToken } from "../../auth";
-import { getItem, getItemFromDynamoDBResult } from "../../db";
+import { getItem, getItemFromDynamoDBResult } from "../../aws/dynamodb";
 import { Context } from "../../index";
-import { User } from "../../../types";
 
 interface Args {
     id: string;
@@ -11,11 +10,11 @@ interface Args {
 
 const loginUser = async (_: any, args: Args, context: Context, info: any): Promise<string> => {
     const queryOutput = await getItem("quaesta-users", args.id);
-    const userRecord = getItemFromDynamoDBResult(queryOutput) as User | null;
+    const userRecord = getItemFromDynamoDBResult(queryOutput);
     if (!userRecord) {
         throw new UserInputError("User Not Found");
     }
-    return generateToken(userRecord.id.toString());
+    return generateToken(userRecord.id);
 };
 
 export default loginUser;

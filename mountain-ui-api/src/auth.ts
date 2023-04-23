@@ -5,7 +5,8 @@ import { APIGatewayEvent } from "aws-lambda";
 
 import jwt from "jsonwebtoken";
 
-import { User } from "../types";
+import { Context } from "./index";
+import { User } from "./types";
 
 export const generateToken = (id: string): string => {
     console.log(`Generating token for user with id ${id}`);
@@ -30,5 +31,11 @@ export const authenticateHTTPAccessToken = (
         return decryptToken(token).id;
     } catch (err) {
         throw new AuthenticationError("Invalid Authentication Token");
+    }
+};
+
+export const checkIsLoggedIn = async (context: Context): Promise<void> => {
+    if (!context.userId) {
+        throw new AuthenticationError("Must Be Logged In");
     }
 };
