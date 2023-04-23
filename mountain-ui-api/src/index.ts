@@ -5,7 +5,6 @@ import { ApolloServer } from "apollo-server-lambda";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
 import { authenticateHTTPAccessToken } from "./auth";
-import mocks from "./mocking";
 import { typeDefs, resolvers } from "./schema";
 
 export interface Context {
@@ -14,7 +13,6 @@ export interface Context {
 
 const server = new ApolloServer({
     schema: makeExecutableSchema({ typeDefs, resolvers }),
-    mocks: process.env.MOCK ? mocks : undefined,
     formatError: (err) => {
         if (!err.extensions) {
             throw Error("Extensions Object Does Not Exist On Error");

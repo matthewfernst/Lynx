@@ -1,6 +1,6 @@
 import { Context } from "../../index";
-import { getItem, getItemFromDynamoDBResult } from "../../db";
-import { User } from "../../../types";
+import { getItem, getItemFromDynamoDBResult } from "../../aws/dynamodb";
+import { User } from "../../types";
 
 const selfLookup = async (_: any, args: {}, context: Context, info: any): Promise<User | null> => {
     if (!context.userId) return null;

@@ -1,6 +1,6 @@
 import { Context } from "../../index";
-import { RunRecord } from "../../../types";
-import { getRecordsFromBucket } from "../../s3";
+import { RunRecord } from "../../types";
+import { getRecordsFromBucket } from "../../aws/s3";
 
 const runRecords = async (
     parent: any,
