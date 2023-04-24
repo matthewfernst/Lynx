@@ -31,6 +31,10 @@ custom:
     clean: true
     outputDir: "./.build/ses_output"
 
+package:
+  patterns:
+    - schema.graphql
+    
 provider:
   name: aws
   stage: dev
