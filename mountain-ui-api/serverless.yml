@@ -50,6 +50,12 @@ provider:
           Resource:
             - arn:aws:s3:::mountain-ui-app-slopes-unzipped
             - arn:aws:s3:::mountain-ui-app-slopes-unzipped/*
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+          Resource:
+            - arn:aws:dynamodb:::table/mountain-ui-app-users
+            - arn:aws:dynamodb:::table/mountain-ui-app-users/*
 
 functions:
   graphql:
