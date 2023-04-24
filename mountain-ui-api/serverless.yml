@@ -34,7 +34,7 @@ custom:
 package:
   patterns:
     - schema.graphql
-    
+
 provider:
   name: aws
   stage: dev
@@ -60,10 +60,6 @@ functions:
           path: /graphql
           method: post
           cors: true
-
-package:
-  patterns:
-    - schema.graphql
 
 resources:
   Resources:
