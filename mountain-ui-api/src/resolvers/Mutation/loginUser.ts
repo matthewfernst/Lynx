@@ -9,7 +9,7 @@ interface Args {
 }
 
 const loginUser = async (_: any, args: Args, context: Context, info: any): Promise<string> => {
-    const queryOutput = await getItem("quaesta-users", args.id);
+    const queryOutput = await getItem("mountain-ui-app-users", args.id);
     const userRecord = getItemFromDynamoDBResult(queryOutput);
     if (!userRecord) {
         throw new UserInputError("User Not Found");
