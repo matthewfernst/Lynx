@@ -17,13 +17,13 @@ extension Profile
             kSecAttrService as String: Constants.bundleID,
             kSecReturnData as String: kCFBooleanTrue!,
             kSecMatchLimit as String: kSecMatchLimitOne
-        ] as CFDictionary
+        ] as [String : Any] as CFDictionary
         
         var dataTypeRef: AnyObject?
         let status: OSStatus = SecItemCopyMatching(query, &dataTypeRef)
         if status == errSecSuccess {
             if let data = dataTypeRef as? Data,
-               let id = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? String {
+               let id = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSString.self, from: data) as? String {
                 await LoginController.handleCommonSignIn(id: id)
                 DispatchQueue.main.async {
                     completion(LoginController.profile)
@@ -45,7 +45,7 @@ extension Profile
             kSecClass as String: kSecClassGenericPassword as String,
             kSecAttrService as String: Constants.bundleID,
             kSecValueData as String: data!
-        ] as CFDictionary
+        ] as [String : Any] as CFDictionary
         
         SecItemDelete(query) // Delete any existing item
         

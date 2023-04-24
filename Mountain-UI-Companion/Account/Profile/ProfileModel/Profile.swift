@@ -30,17 +30,6 @@ class Profile
         self.profilePictureURL = profilePictureURL
     }
     
-    // TODO: Move out, should be UI independent
-    public func getDefaultProfilePicture(fontSize: CGFloat) -> UILabel {
-        let initialsLabel = UILabel()
-        
-        initialsLabel.text = name.initials
-        initialsLabel.textColor = .label
-        initialsLabel.font = UIFont.systemFont(ofSize: fontSize, weight: .medium)
-        
-        return initialsLabel
-    }
-    
     public static func createProfile(id: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
         guard let profilePictureURL = URL(string: profilePictureURL ?? "") else {
             completion(Profile(id: id, firstName: firstName, lastName: lastName, email: email))
@@ -75,13 +64,13 @@ class Profile
 extension Profile: CustomDebugStringConvertible
 {
     var debugDescription: String {
-        return """
-               id: \(self.id)
-               firstName: \(self.firstName)
-               lastName: \(self.lastName)
-               email: \(self.email)
-               profilePictureURL: \(String(describing: self.profilePictureURL))
-               """
+        """
+        id: \(self.id)
+        firstName: \(self.firstName)
+        lastName: \(self.lastName)
+        email: \(self.email)
+        profilePictureURL: \(String(describing: self.profilePictureURL))
+        """
     }
 }
 extension Profile {

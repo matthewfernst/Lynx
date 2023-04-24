@@ -54,7 +54,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         if let profilePicture = profile.profilePicture {
             profilePictureImageView.image = profilePicture
         } else {
-            let defaultProfilePicture = profile.getDefaultProfilePicture(fontSize: 60)
+            let defaultProfilePicture = ProfilePictureUtils.getDefaultProfilePicture(name: profile.name, fontSize: 60)
             
             profilePictureImageView.addSubview(defaultProfilePicture)
             

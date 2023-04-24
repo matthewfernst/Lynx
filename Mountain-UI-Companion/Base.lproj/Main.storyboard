@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="1q6-pJ-EvQ">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Image references" minToolsVersion="12.0"/>
@@ -13,26 +14,26 @@
             <objects>
                 <viewController storyboardIdentifier="LoginViewController" id="1q6-pJ-EvQ" customClass="LoginViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Vt7-M1-c0P">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="vecteezy_ski-lift-and-winter-activities-concept-positive-young_13489041" translatesAutoresizingMaskIntoConstraints="NO" id="EzZ-7f-TgO">
-                                <rect key="frame" x="0.0" y="-77" width="626" height="625"/>
+                                <rect key="frame" x="0.0" y="-18" width="423" height="625"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="625" id="qZ7-XQ-A5U"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Mountain-UI Companion App" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="30o-R3-J92">
-                                <rect key="frame" x="20" y="617.66666666666663" width="560" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mountain-UI Companion App" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="30o-R3-J92">
+                                <rect key="frame" x="16" y="617.66666666666663" width="361" height="30"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aZt-lh-lRI">
-                                <rect key="frame" x="20" y="649" width="560" height="134.66666666666663"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aZt-lh-lRI">
+                                <rect key="frame" x="16" y="649" width="361" height="134.66666666666663"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QxK-Ba-fvh">
-                                <rect key="frame" x="96" y="791" width="408" height="27"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QxK-Ba-fvh">
+                                <rect key="frame" x="96" y="791" width="201" height="27"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="What is Mountain UI? Learn More">
                                     <fontDescription key="titleFontDescription" type="system" pointSize="11"/>
@@ -116,11 +117,11 @@
             <objects>
                 <viewController storyboardIdentifier="SlopesConnection" id="uel-YM-gdd" customClass="SlopesConnectionViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mzZ-ta-53v">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="QAS-4o-LNN">
-                                <rect key="frame" x="20" y="145" width="560" height="43"/>
+                                <rect key="frame" x="16" y="204" width="361" height="202"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <string key="text">The Mountain-UI Companion App works together with the Slopes App by Breakpoint Studios. Slopes is able to track a skier or snowboarder while they shred it down the mountain. Slopes can track things such as average speed, total vertical feet, and more. The Mountain-UI Companion App, uses the data stored by Slopes and sends it to your Mountain-UI display. In order to get started, tap the "Connect Slopes" button and select the Slopes folder in your Files directory. The Slopes directory is shown below for reference.</string>
                                 <color key="textColor" systemColor="labelColor"/>
@@ -128,18 +129,18 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="slopesFolder" translatesAutoresizingMaskIntoConstraints="NO" id="0XO-Dy-70K">
-                                <rect key="frame" x="76" y="196" width="448" height="128"/>
+                                <rect key="frame" x="76" y="414" width="241" height="128"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="128" id="nws-pT-4bb"/>
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g7e-gT-Rnm">
-                                <rect key="frame" x="227.66666666666669" y="393" width="144.66666666666669" height="35"/>
+                                <rect key="frame" x="124.33333333333333" y="611" width="144.66666666666669" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Connect Slopes"/>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Connecting to Slopes Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QAY-up-5qW">
-                                <rect key="frame" x="16" y="113" width="568" height="24"/>
+                                <rect key="frame" x="16" y="172" width="361" height="24"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -185,23 +186,23 @@
             <objects>
                 <viewController storyboardIdentifier="LogBook" id="Yqy-EV-f8Y" customClass="LogBookViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="z9n-BO-We8">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="100.5k" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hPG-Db-aC7">
-                                <rect key="frame" x="199" y="79" width="575.66666666666663" height="40"/>
+                                <rect key="frame" x="199" y="138" width="161.66666666666663" height="40"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="32"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="lifetime vertical ft" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JhK-39-ffW">
-                                <rect key="frame" x="417.66666666666669" y="116" width="138.33333333333331" height="25"/>
+                                <rect key="frame" x="210.66666666666663" y="175" width="138.33333333333337" height="25"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0G2-5v-GzR">
-                                <rect key="frame" x="16" y="197" width="100" height="34"/>
+                                <rect key="frame" x="16" y="256" width="100" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="hg4-xB-Gwh"/>
                                     <constraint firstAttribute="height" constant="34" id="zqR-eL-aCw"/>
@@ -211,13 +212,13 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="days" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bWa-P7-9ls">
-                                <rect key="frame" x="45" y="231" width="42" height="21"/>
+                                <rect key="frame" x="45" y="290" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1H" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uco-b4-Mxn">
-                                <rect key="frame" x="252.66666666666666" y="197" width="94.666666666666657" height="34"/>
+                                <rect key="frame" x="149.33333333333334" y="256" width="94.666666666666657" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="TQx-BJ-NUW"/>
                                 </constraints>
@@ -226,7 +227,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2o5-lC-ZR2">
-                                <rect key="frame" x="482" y="197" width="100" height="34"/>
+                                <rect key="frame" x="275" y="256" width="100" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="Ead-dT-grf"/>
                                     <constraint firstAttribute="height" constant="34" id="QQ3-jd-fLd"/>
@@ -236,19 +237,19 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="runs" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ai6-hh-bgx">
-                                <rect key="frame" x="515.33333333333337" y="231" width="33.666666666666629" height="21"/>
+                                <rect key="frame" x="308.33333333333331" y="290" width="33.666666666666686" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="time on runs" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lTb-eQ-eSC">
-                                <rect key="frame" x="252.66666666666666" y="231" width="94.666666666666657" height="21"/>
+                                <rect key="frame" x="149.33333333333334" y="290" width="94.666666666666657" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="igE-YC-QPB">
-                                <rect key="frame" x="202.33333333333337" y="260" width="169.66666666666663" height="35"/>
+                                <rect key="frame" x="202.33333333333337" y="319" width="169.66666666666663" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" imagePlacement="trailing" title="All Lifetime Stats" imagePadding="8" titleAlignment="leading">
                                     <imageReference key="image" image="chevron.right" catalog="system" symbolScale="small"/>
@@ -256,25 +257,25 @@
                                 </buttonConfiguration>
                             </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="iaM-1U-51x">
-                                <rect key="frame" x="0.0" y="295" width="600" height="256"/>
+                                <rect key="frame" x="0.0" y="354" width="393" height="415"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SeasonSummaryCell" textLabel="gcF-Vo-g43" detailTextLabel="BDm-Iw-Uvm" rowHeight="80" style="IBUITableViewCellStyleSubtitle" id="bjX-GJ-qJ7">
-                                        <rect key="frame" x="16" y="55.333332061767578" width="568" height="80"/>
+                                        <rect key="frame" x="20" y="55.333332061767578" width="353" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bjX-GJ-qJ7" id="on8-EV-CmK">
-                                            <rect key="frame" x="0.0" y="0.0" width="541.66666666666663" height="80"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="322.66666666666669" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Season Summary" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gcF-Vo-g43">
-                                                    <rect key="frame" x="16" y="18.666666666666664" width="144.33333333333334" height="21.666666666666668"/>
+                                                    <rect key="frame" x="20" y="18.666666666666664" width="144.33333333333334" height="21.666666666666668"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="BDm-Iw-Uvm">
-                                                    <rect key="frame" x="16.000000000000004" y="43.666666666666671" width="45.333333333333336" height="14.333333333333334"/>
+                                                    <rect key="frame" x="20.000000000000004" y="43.666666666666671" width="45.333333333333336" height="14.333333333333334"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="0.0"/>
                                                     <nil key="textColor"/>
@@ -284,21 +285,21 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="2" indentationWidth="0.0" reuseIdentifier="SessionCell" textLabel="KmQ-nx-WaS" detailTextLabel="V2q-4i-bAO" rowHeight="80" style="IBUITableViewCellStyleSubtitle" id="jHn-c3-ywY">
-                                        <rect key="frame" x="16" y="135.33333206176758" width="568" height="80"/>
+                                        <rect key="frame" x="20" y="135.33333206176758" width="353" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jHn-c3-ywY" id="YOo-5d-zYQ">
-                                            <rect key="frame" x="0.0" y="0.0" width="541.66666666666663" height="80"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="322.66666666666669" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Steamboat Ski Resort" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KmQ-nx-WaS">
-                                                    <rect key="frame" x="16" y="18.666666666666664" width="178.33333333333334" height="21.666666666666668"/>
+                                                    <rect key="frame" x="20" y="18.666666666666664" width="178.33333333333334" height="21.666666666666668"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="V2q-4i-bAO">
-                                                    <rect key="frame" x="16.000000000000004" y="43.666666666666671" width="45.333333333333336" height="14.333333333333334"/>
+                                                    <rect key="frame" x="20.000000000000004" y="43.666666666666671" width="45.333333333333336" height="14.333333333333334"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="0.0"/>
                                                     <nil key="textColor"/>
@@ -310,7 +311,7 @@
                                 </prototypes>
                             </tableView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zeA-Vy-F4b">
-                                <rect key="frame" x="45" y="58" width="110" height="110"/>
+                                <rect key="frame" x="45" y="117" width="110" height="110"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="110" id="Lm6-gc-C3L"/>
                                     <constraint firstAttribute="height" constant="110" id="mod-h2-GiO"/>
@@ -373,15 +374,15 @@
             <objects>
                 <tableViewController storyboardIdentifier="AccountSettingsViewController" id="gPG-GZ-bTH" customClass="AccountViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="pme-gA-aMg">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="Setting" id="hPT-5r-rwx">
-                                <rect key="frame" x="20" y="55.333332061767578" width="560" height="43.666667938232422"/>
+                                <rect key="frame" x="20" y="55.333332061767578" width="353" height="43.666667938232422"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hPT-5r-rwx" id="wxx-zP-uFX">
-                                    <rect key="frame" x="0.0" y="0.0" width="533.66666666666663" height="43.666667938232422"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="322.66666666666669" height="43.666667938232422"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -404,15 +405,15 @@
             <objects>
                 <tableViewController storyboardIdentifier="NotificationSettingsTableView" id="DdR-FY-qm6" customClass="NotificationSettingsTableViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="Dru-xe-dZh">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="NotificationCell" id="wgA-r4-6gL">
-                                <rect key="frame" x="20" y="55.333332061767578" width="560" height="43.666667938232422"/>
+                                <rect key="frame" x="20" y="55.333332061767578" width="353" height="43.666667938232422"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="wgA-r4-6gL" id="vRv-vS-pl7">
-                                    <rect key="frame" x="0.0" y="0.0" width="560" height="43.666667938232422"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="353" height="43.666667938232422"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -432,15 +433,15 @@
             <objects>
                 <tableViewController storyboardIdentifier="EditProfileTableViewController" id="jP0-8J-KQP" customClass="EditProfileTableViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="Dww-vB-K1K">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ProfileCell" id="G1P-cD-Edb">
-                                <rect key="frame" x="20" y="55.333332061767578" width="560" height="43.666667938232422"/>
+                                <rect key="frame" x="20" y="55.333332061767578" width="353" height="43.666667938232422"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="G1P-cD-Edb" id="ssg-Xy-4Hf">
-                                    <rect key="frame" x="0.0" y="0.0" width="560" height="43.666667938232422"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="353" height="43.666667938232422"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -460,15 +461,15 @@
             <objects>
                 <tableViewController storyboardIdentifier="AppSettingTableView" id="e3r-bn-8pd" customClass="AppSettingTableViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="Req-YV-Hrf">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AppSettingCell" id="6bT-Ou-DSw">
-                                <rect key="frame" x="20" y="55.333332061767578" width="560" height="43.666667938232422"/>
+                                <rect key="frame" x="20" y="55.333332061767578" width="353" height="43.666667938232422"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="6bT-Ou-DSw" id="wKk-vR-Mce">
-                                    <rect key="frame" x="0.0" y="0.0" width="560" height="43.666667938232422"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="353" height="43.666667938232422"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
