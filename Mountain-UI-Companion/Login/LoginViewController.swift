@@ -65,7 +65,6 @@ class LoginViewController: UIViewController
         content.title = "It's been a minute"
         content.body = "Just a little reminder to come back and upload your Slope data files."
         content.categoryIdentifier = "recall"
-        content.userInfo = ["cusomData": "foobar"]
         content.sound = .default
         
         var dateComponents = DateComponents()

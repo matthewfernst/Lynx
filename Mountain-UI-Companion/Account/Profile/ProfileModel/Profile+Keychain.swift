@@ -37,40 +37,6 @@ extension Profile
         
     }
     
-//    static func loadProfileFromKeychain(completion: @escaping (Profile?) -> Void) async {
-//
-//        let query = [
-//            kSecClass as String: kSecClassGenericPassword as String,
-//            kSecAttrService as String: Constants.bundleID,
-//            kSecReturnData as String: kCFBooleanTrue!,
-//            kSecMatchLimit as String: kSecMatchLimitOne
-//        ] as [String : Any] as CFDictionary
-//
-//        var dataTypeRef: AnyObject?
-//        let status: OSStatus = SecItemCopyMatching(query, &dataTypeRef)
-//        if status == errSecSuccess {
-//            if let data = dataTypeRef as? Data {
-//                do {
-//                    let unarchivedObject = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSString.self, from: data)
-//                    guard let id = unarchivedObject else {
-//                        throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to unarchive object"])
-//                    }
-//                    print(String(describing: id))
-//                    await LoginController.handleCommonSignIn(id: String(describing: id))
-//                    DispatchQueue.main.async {
-//                        completion(LoginController.profile)
-//                    }
-//                    return
-//                } catch {
-//                    print("Failed to unarchive object:", error)
-//                }
-//            }
-//        }
-//        DispatchQueue.main.async {
-//            completion(nil)
-//        }
-//    }
-    
     
     public func saveToKeychain() {
         let data = try? NSKeyedArchiver.archivedData(withRootObject: self.id, requiringSecureCoding: false)
