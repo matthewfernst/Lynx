@@ -2,7 +2,11 @@ import { UserInputError } from "apollo-server-errors";
 
 import { Context } from "../../index";
 import { checkIsLoggedIn } from "../../auth";
-import { getItemFromDynamoDBResult, getItemsByIndex, updateItem } from "../../aws/dynamodb";
+import {
+    DYNAMODB_TABLE_NAME_USERS,
+    getItemFromDynamoDBResult,
+    updateItem
+} from "../../aws/dynamodb";
 
 interface Args {
     userPairs: {
@@ -16,7 +20,7 @@ const editUser = async (_: any, args: Args, context: Context, info: any) => {
     let queryOutput;
     for (const userValue of args.userPairs) {
         queryOutput = await updateItem(
-            "mountain-ui-app-users",
+            DYNAMODB_TABLE_NAME_USERS,
             context.userId as string,
             userValue.key,
             userValue.value

@@ -4,13 +4,13 @@ import { checkIsLoggedIn } from "../../auth";
 import { fromBucket } from "../../../../mountain-ui-slopes-unzipper";
 
 interface Args {
-    files: string[];
+    requestedPaths: string[];
 }
 
 const createUserRecordUploadUrl = async (_: any, args: Args, context: Context, info: any) => {
     await checkIsLoggedIn(context);
-    return args.files.map((file) => {
-        createSignedUploadUrl(fromBucket, `${context.userId}/${file}`);
+    return args.requestedPaths.map((requestedPath) => {
+        createSignedUploadUrl(fromBucket, `${context.userId}/${requestedPath}`);
     });
 };
 
