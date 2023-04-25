@@ -66,7 +66,7 @@ const oauthLogin = async (
             ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
         });
         console.log(`Sending Account Created Email to ${email}`);
-        // await sendAccountCreatedEmail(email);
+        await sendAccountCreatedEmail(email);
     }
 
     return generateToken(mountainAppId);
