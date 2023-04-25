@@ -1,8 +1,7 @@
 import { S3 } from "aws-sdk";
 import { ParseOne } from "unzipper";
 
-export const fromBucket = "mountain-ui-app-slopes-zipped";
-export const targetBucket = "mountain-ui-app-slopes-unzipped";
+const targetBucket = "mountain-ui-app-slopes-unzipped";
 
 export async function handler(event, context) {
     const s3Client = new S3({ region: "us-west-1" });

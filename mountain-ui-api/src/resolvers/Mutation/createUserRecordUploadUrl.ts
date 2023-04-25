@@ -1,7 +1,8 @@
 import { createSignedUploadUrl } from "../../aws/s3";
 import { Context } from "../../index";
 import { checkIsLoggedIn } from "../../auth";
-import { fromBucket } from "../../../../mountain-ui-slopes-unzipper";
+
+const fromBucket = "mountain-ui-app-slopes-zipped";
 
 interface Args {
     requestedPaths: string[];
