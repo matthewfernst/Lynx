@@ -78,13 +78,21 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: email
+          - AttributeName: appleId
+            AttributeType: S
+          - AttributeName: googleId
             AttributeType: S
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
-          - IndexName: email
+          - IndexName: appleId
             KeySchema:
-              - AttributeName: email
+              - AttributeName: appleId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          - IndexName: googleId
+            KeySchema:
+              - AttributeName: googleId
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
