@@ -79,7 +79,7 @@ export const putItem = async (table: string, item: Object): Promise<PutItemOutpu
             TableName: table,
             Item: Object.assign(
                 {},
-                ...Object.keys(item).map((key) => ({
+                ...Object.keys(item).map((key: string) => ({
                     [key]: {
                         S: item[key]
                     }

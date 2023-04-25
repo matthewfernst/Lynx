@@ -21,7 +21,7 @@ interface Args {
     userData: {
         key: string;
         value: string;
-    };
+    }[];
 }
 
 const createUserOrSignIn = async (
@@ -47,7 +47,7 @@ const oauthLogin = async (
     idFieldName: string,
     id: string,
     email: string | undefined,
-    userData: Object
+    userData: { key: string; value: string }[]
 ) => {
     const dynamodbResult = await getItemsByIndex(DYNAMODB_TABLE_NAME_USERS, idFieldName, id);
     const user = await getItemFromDynamoDBResult(dynamodbResult);
@@ -63,10 +63,10 @@ const oauthLogin = async (
             id: mountainAppId,
             [idFieldName]: id,
             email,
-            ...userData
+            ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
         });
         console.log(`Sending Account Created Email to ${email}`);
-        await sendAccountCreatedEmail(email);
+        // await sendAccountCreatedEmail(email);
     }
 
     return generateToken(mountainAppId);

@@ -47,5 +47,6 @@ type Mutation {
         userData: [KeyValuePair!]
     ): AuthorizationToken
     editUser(userPairs: [KeyValuePair!]!): User!
+    createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
 }

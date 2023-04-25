@@ -12,12 +12,18 @@ export const gqlSchema = buildSchema(schema);
 import selfLookup from "./resolvers/Query/selfLookup";
 import createUserOrSignIn from "./resolvers/Mutation/createUserOrSignIn";
 import editUser from "./resolvers/Mutation/editUser";
+import createUserProfilePictureUploadUrl from "./resolvers/Mutation/createUserProfilePictureUploadUrl";
 import createUserRecordUploadUrl from "./resolvers/Mutation/createUserRecordUploadUrl";
 import runRecords from "./resolvers/User/runRecords";
 
 export const resolvers = {
     Query: { selfLookup },
-    Mutation: { createUserOrSignIn, editUser, createUserRecordUploadUrl },
+    Mutation: {
+        createUserOrSignIn,
+        editUser,
+        createUserProfilePictureUploadUrl,
+        createUserRecordUploadUrl
+    },
     User: { runRecords },
     RunRecord: {}
 };
