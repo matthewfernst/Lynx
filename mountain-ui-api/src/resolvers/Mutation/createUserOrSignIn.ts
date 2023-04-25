@@ -9,6 +9,7 @@ import {
     putItem
 } from "../../aws/dynamodb";
 import { sendAccountCreatedEmail } from "../../aws/ses";
+import { UserInputError } from "apollo-server-lambda";
 
 type LoginType = "APPLE" | "GOOGLE";
 
@@ -54,6 +55,9 @@ const oauthLogin = async (
     if (user) {
         mountainAppId = generateToken(user.id.toString());
     } else {
+        if (!email) {
+            throw new UserInputError("Must Provide Email On Account Creation");
+        }
         mountainAppId = uuid();
         await putItem(DYNAMODB_TABLE_NAME_USERS, {
             id: mountainAppId,
