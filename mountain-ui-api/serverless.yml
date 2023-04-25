@@ -55,6 +55,7 @@ provider:
             - dynamodb:*
           Resource:
             - arn:aws:dynamodb:*:${env:AWS_ACCOUNT_ID}:table/mountain-ui-app-users
+            - arn:aws:dynamodb:*:${env:AWS_ACCOUNT_ID}:table/mountain-ui-app-users/index/*
 
 functions:
   graphql:

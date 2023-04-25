@@ -24,7 +24,7 @@ type DynamoDBResult =
     | UpdateItemOutput
     | DeleteItemOutput;
 
-export const DYNAMODB_TABLE_NAME_USERS = "moutain-ui-app-users";
+export const DYNAMODB_TABLE_NAME_USERS = "mountain-ui-app-users";
 
 const createDocumentClient = (): DynamoDBClient => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
