@@ -97,3 +97,10 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
+  MountainUIProfilePictureBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: mountain-ui-app-profile-pictures
+        OwnershipControls:
+          Rules:
+            - ObjectOwnership: BucketOwnerEnforced
