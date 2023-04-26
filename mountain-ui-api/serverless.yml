@@ -97,7 +97,7 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
-  MountainUIProfilePictureBucket:
+    MountainUIProfilePictureBucket:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: mountain-ui-app-profile-pictures
