@@ -1,7 +1,8 @@
 import {
     S3Client,
-    ListObjectsCommand,
     GetObjectCommand,
+    HeadObjectCommand,
+    ListObjectsCommand,
     PutObjectCommand
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -19,6 +20,20 @@ export const createSignedUploadUrl = async (bucketName: string, path: string) =>
     } catch (err) {
         console.error(err);
         throw Error("Error creating url for file upload");
+    }
+};
+
+export const checkIfObjectInBucket = async (bucketName: string, path: string) => {
+    const s3Client = createS3Client();
+    try {
+        const headObjectRequest = new HeadObjectCommand({
+            Bucket: bucketName,
+            Key: path
+        });
+        await s3Client.send(headObjectRequest);
+        return true;
+    } catch (error) {
+        return false;
     }
 };
 
