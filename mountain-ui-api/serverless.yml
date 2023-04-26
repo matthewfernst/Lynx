@@ -113,3 +113,20 @@ resources:
         OwnershipControls:
           Rules:
             - ObjectOwnership: BucketOwnerEnforced
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
+    MountainUIProfilePictureBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: mountain-ui-app-profile-pictures
+        PolicyDocument:
+          Statement:
+            - Action:
+                - 's3:GetObject'
+              Effect: Allow
+              Resource:
+                - arn:aws:s3:::mountain-ui-app-profile-pictures/*
+              Principal: '*'
