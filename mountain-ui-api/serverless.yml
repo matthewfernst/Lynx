@@ -56,6 +56,15 @@ provider:
           Resource:
             - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/mountain-ui-app-users
             - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/mountain-ui-app-users/index/*
+        - Effect: Allow
+          Action: 
+            - "s3:ListObjects"
+            - "s3:GetObject"
+            - "s3:GetObjectVersion"
+            - "s3:PutObject"
+          Resource:
+            - arn:aws:s3:::mountain-ui-app-profile-pictures
+            - arn:aws:s3:::mountain-ui-app-profile-pictures/*
 
 functions:
   graphql:
