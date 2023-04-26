@@ -13,7 +13,8 @@ const createUserProfilePictureUploadUrl = async (
     info: any
 ) => {
     await checkIsLoggedIn(context);
-    return createSignedUploadUrl(fromBucket, `${context.userId}-profile-picture`);
+    console.log(`Creating Profile Picture Upload URL For User ID ${context.userId}`)
+    return createSignedUploadUrl(fromBucket, context.userId as string);
 };
 
 export default createUserProfilePictureUploadUrl;
