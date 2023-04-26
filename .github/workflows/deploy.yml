@@ -70,6 +70,15 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm install --prefix mountain-ui-api
 
+      - name: Create Mountain-UI .env File
+        uses: iamsauravsharma/create-dotenv@v1.2.1
+        with:
+          env-prefix: 'ENV_'
+        env:
+          ENV_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          ENV_APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
+          ENV_AUTH_KEY: ${{ secrets.AUTH_KEY }}
+
       - name: Deploy
         run: npm run --prefix mountain-ui-api deploy
         env:
