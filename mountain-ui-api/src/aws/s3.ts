@@ -1,4 +1,4 @@
-import { S3Client, ListObjectsCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, ListObjectsCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const createS3Client = (): S3Client => {
@@ -9,7 +9,7 @@ const createS3Client = (): S3Client => {
 export const createSignedUploadUrl = async (bucketName: string, path: string) => {
     const s3Client = createS3Client();
     try {
-        const command = new GetObjectCommand({ Bucket: bucketName, Key: path });
+        const command = new PutObjectCommand({ Bucket: bucketName, Key: path });
         return getSignedUrl(s3Client, command);
     } catch (err) {
         console.error(err);
