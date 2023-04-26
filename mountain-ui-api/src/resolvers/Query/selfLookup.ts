@@ -1,12 +1,10 @@
-import { UserInputError } from "apollo-server-lambda";
-
 import { Context } from "../../index";
 import { User } from "../../types";
 import { DYNAMODB_TABLE_NAME_USERS, getItem, getItemFromDynamoDBResult } from "../../aws/dynamodb";
 
 const selfLookup = async (_: any, args: {}, context: Context, info: any): Promise<User | null> => {
     if (!context.userId) {
-        throw new UserInputError("User ID Not Found");
+        return null;
     }
     const queryOutput = await getItem(DYNAMODB_TABLE_NAME_USERS, context.userId);
     return getItemFromDynamoDBResult(queryOutput);

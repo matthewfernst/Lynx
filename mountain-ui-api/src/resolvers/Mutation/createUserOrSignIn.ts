@@ -8,7 +8,6 @@ import {
     getItemsByIndex,
     putItem
 } from "../../aws/dynamodb";
-import { sendAccountCreatedEmail } from "../../aws/ses";
 import { UserInputError } from "apollo-server-lambda";
 
 type LoginType = "APPLE" | "GOOGLE";
@@ -65,10 +64,7 @@ const oauthLogin = async (
             email,
             ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
         });
-        console.log(`Sending Account Created Email to ${email}`);
-        await sendAccountCreatedEmail(email);
     }
-
     return generateToken(mountainAppId);
 };
 

@@ -26,7 +26,6 @@ const editUser = async (_: any, args: Args, context: Context, info: any) => {
             userValue.value
         );
     }
-
     return queryOutput ? getItemFromDynamoDBResult(queryOutput) : null;
 };
 
