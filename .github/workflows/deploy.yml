@@ -74,6 +74,7 @@ jobs:
         uses: iamsauravsharma/create-dotenv@v1.2.1
         with:
           env-prefix: 'ENV_'
+          directory: 'mountain-ui-api/'
         env:
           ENV_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           ENV_APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
