@@ -1,4 +1,6 @@
 import { v4 as uuid } from "uuid";
+import AppleSignIn from "apple-signin-auth";
+import { OAuth2Client } from "google-auth-library";
 
 import { generateToken } from "../../auth";
 import { Context } from "../../index";
@@ -39,8 +41,22 @@ const createUserOrSignIn = async (
     }
 };
 
-const verifyAppleToken = async (id: string, token: string) => {};
-const verifyGoogleToken = async (id: string, token: string) => {};
+const verifyAppleToken = async (id: string, token: string) => {
+    const { sub } = await AppleSignIn.verifyIdToken(token, {
+        audience: process.env.APPLE_CLIENT_ID,
+        ignoreExpiration: true
+    });
+    return sub === id;
+};
+
+const verifyGoogleToken = async (id: string, token: string) => {
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID
+    });
+    return ticket.getUserId() === id;
+};
 
 const oauthLogin = async (
     idFieldName: string,
