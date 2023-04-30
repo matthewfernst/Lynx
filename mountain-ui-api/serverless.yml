@@ -125,8 +125,8 @@ resources:
         PolicyDocument:
           Statement:
             - Action:
-                - 's3:GetObject'
+                - s3:GetObject
               Effect: Allow
               Resource:
                 - arn:aws:s3:::mountain-ui-app-profile-pictures/*
-              Principal: '*'
+              Principal: "*"

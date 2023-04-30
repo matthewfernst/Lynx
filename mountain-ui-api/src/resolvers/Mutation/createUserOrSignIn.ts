@@ -45,8 +45,8 @@ const verifyGoogleToken = async (id: string, token: string) => {};
 const oauthLogin = async (
     idFieldName: string,
     id: string,
-    email: string | undefined,
-    userData: { key: string; value: string }[]
+    email?: string,
+    userData?: { key: string; value: string }[]
 ) => {
     const dynamodbResult = await getItemsByIndex(DYNAMODB_TABLE_NAME_USERS, idFieldName, id);
     const user = await getItemFromDynamoDBResult(dynamodbResult);
@@ -54,8 +54,8 @@ const oauthLogin = async (
     if (user) {
         mountainAppId = generateToken(user.id.toString());
     } else {
-        if (!email) {
-            throw new UserInputError("Must Provide Email On Account Creation");
+        if (!email || !userData) {
+            throw new UserInputError("Must Provide Email And UserData On Account Creation");
         }
         mountainAppId = uuid();
         await putItem(DYNAMODB_TABLE_NAME_USERS, {
