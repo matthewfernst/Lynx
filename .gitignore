@@ -21,3 +21,4 @@ var/
 .dynamodb/
 .build/
 .env
+.vscode
