@@ -66,22 +66,21 @@ const oauthLogin = async (
 ) => {
     const dynamodbResult = await getItemsByIndex(DYNAMODB_TABLE_NAME_USERS, idFieldName, id);
     const user = await getItemFromDynamoDBResult(dynamodbResult);
-    let mountainAppId;
     if (user) {
-        mountainAppId = generateToken(user.id.toString());
+        return generateToken(user.id);
     } else {
         if (!email || !userData) {
             throw new UserInputError("Must Provide Email And UserData On Account Creation");
         }
-        mountainAppId = uuid();
+        const mountainAppId = uuid();
         await putItem(DYNAMODB_TABLE_NAME_USERS, {
             id: mountainAppId,
             [idFieldName]: id,
             email,
             ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
         });
+        return generateToken(mountainAppId);
     }
-    return generateToken(mountainAppId);
 };
 
 export default createUserOrSignIn;
