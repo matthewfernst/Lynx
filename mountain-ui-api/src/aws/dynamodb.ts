@@ -1,19 +1,15 @@
 import "dotenv/config";
 
 import {
-    DynamoDBClient,
     DynamoDBClientConfig,
     DeleteItemOutput,
-    GetItemCommand,
     GetItemOutput,
     PutItemOutput,
     QueryOutput,
     UpdateItemOutput,
-    QueryCommand,
-    PutItemCommand,
-    UpdateItemCommand,
-    DeleteItemCommand
+    DynamoDBClient
 } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, DeleteCommand, GetCommand, UpdateCommand, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 import { User } from "../types";
 
@@ -26,7 +22,7 @@ type DynamoDBResult =
 
 export const DYNAMODB_TABLE_NAME_USERS = "mountain-ui-app-users";
 
-const createDocumentClient = (): DynamoDBClient => {
+const createDocumentClient = (): DynamoDBDocumentClient => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
 
     const serviceConfigOptions: DynamoDBClientConfig = {
@@ -34,14 +30,15 @@ const createDocumentClient = (): DynamoDBClient => {
         ...(process.env.IS_OFFLINE && { endpoint: "http://localhost:8080" })
     };
 
-    return new DynamoDBClient(serviceConfigOptions);
+    const dynamodbClient = new DynamoDBClient(serviceConfigOptions);
+    return DynamoDBDocumentClient.from(dynamodbClient);
 };
 
 export const getItem = async (table: string, id: string): Promise<GetItemOutput> => {
     const documentClient = createDocumentClient();
     try {
         console.log(`Getting item from table ${table} with id ${id}`);
-        const getItemRequest = new GetItemCommand({ TableName: table, Key: { id: { S: id } } });
+        const getItemRequest = new GetCommand({ TableName: table, Key: { id } });
         return await documentClient.send(getItemRequest);
     } catch (err) {
         console.error(err);
@@ -62,7 +59,7 @@ export const getItemsByIndex = async (
             IndexName: key,
             KeyConditionExpression: "#indexKey = :value",
             ExpressionAttributeNames: { "#indexKey": key },
-            ExpressionAttributeValues: { ":value": { S: value } }
+            ExpressionAttributeValues: { ":value": value }
         });
         return await documentClient.send(queryRequest);
     } catch (err) {
@@ -75,16 +72,9 @@ export const putItem = async (table: string, item: Object): Promise<PutItemOutpu
     const documentClient = createDocumentClient();
     try {
         console.log(`Putting item into table ${table}`);
-        const putItemRequest = new PutItemCommand({
+        const putItemRequest = new PutCommand({
             TableName: table,
-            Item: Object.assign(
-                {},
-                ...Object.keys(item).map((key: string) => ({
-                    [key]: {
-                        S: item[key]
-                    }
-                }))
-            ),
+            Item: item,
             ReturnValues: "ALL_OLD"
         });
         return await documentClient.send(putItemRequest);
@@ -103,12 +93,12 @@ export const updateItem = async (
     const documentClient = createDocumentClient();
     try {
         console.log(`Updating item in table ${table} with id ${id}. New ${key} is ${value}`);
-        const updateItemRequest = new UpdateItemCommand({
+        const updateItemRequest = new UpdateCommand({
             TableName: table,
-            Key: { id: { S: id } },
+            Key: { id },
             UpdateExpression: "set #updateKey = :value",
             ExpressionAttributeNames: { "#updateKey": key },
-            ExpressionAttributeValues: { ":value": { S: value } },
+            ExpressionAttributeValues: { ":value": value },
             ReturnValues: "ALL_NEW"
         });
         return await documentClient.send(updateItemRequest);
@@ -122,9 +112,9 @@ export const deleteItem = async (table: string, id: string): Promise<DeleteItemO
     const documentClient = createDocumentClient();
     try {
         console.log(`Deleting item from table ${table} with id ${id}`);
-        const deleteItemRequest = new DeleteItemCommand({
+        const deleteItemRequest = new DeleteCommand({
             TableName: table,
-            Key: { id: { S: id } },
+            Key: { id },
             ReturnValues: "ALL_OLD"
         });
         return await documentClient.send(deleteItemRequest);

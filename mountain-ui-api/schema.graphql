@@ -1,10 +1,10 @@
 type User {
     id: ID!
-    appleId: ID!
-    googleId: ID!
+    appleId: ID
+    googleId: ID
     email: String!
-    firstName: String
-    lastName: String
+    firstName: String!
+    lastName: String!
     profilePictureUrl: String
     runRecords: [RunRecord!]!
 }
