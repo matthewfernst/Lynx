@@ -6,6 +6,7 @@ type User {
     firstName: String!
     lastName: String!
     profilePictureUrl: String
+    friends: [User!]!
     runRecords: [RunRecord!]!
 }
 
@@ -22,6 +23,11 @@ type RunRecord {
     vertical: Float!
 }
 
+type AuthorizationToken {
+    token: ID!
+    expiryDate: String!
+}
+
 enum LoginType {
     APPLE
     GOOGLE
@@ -32,10 +38,9 @@ input KeyValuePair {
     value: String!
 }
 
-scalar AuthorizationToken
-
 type Query {
     selfLookup: User
+    userLookup(id: ID!): User
 }
 
 type Mutation {
@@ -46,7 +51,7 @@ type Mutation {
         email: String,
         userData: [KeyValuePair!]
     ): AuthorizationToken
-    editUser(userPairs: [KeyValuePair!]!): User!
+    editUser(userData: [KeyValuePair!]!): User!
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
 }

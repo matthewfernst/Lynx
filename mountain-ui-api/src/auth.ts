@@ -10,7 +10,7 @@ import { User } from "./types";
 
 export const generateToken = (id: string): string => {
     console.log(`Generating token for user with id ${id}`);
-    return jwt.sign({ id }, process.env.AUTH_KEY || "AUTH");
+    return jwt.sign({ id }, process.env.AUTH_KEY || "AUTH", { expiresIn: "1h" });
 };
 
 export const decryptToken = (token: string): User => {

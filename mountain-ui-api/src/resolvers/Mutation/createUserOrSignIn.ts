@@ -1,6 +1,8 @@
 import { v4 as uuid } from "uuid";
+import { DateTime } from "luxon";
 import AppleSignIn from "apple-signin-auth";
 import { OAuth2Client } from "google-auth-library";
+import { UserInputError } from "apollo-server-lambda";
 
 import { generateToken } from "../../auth";
 import { Context } from "../../index";
@@ -10,7 +12,6 @@ import {
     getItemsByIndex,
     putItem
 } from "../../aws/dynamodb";
-import { UserInputError } from "apollo-server-lambda";
 
 type LoginType = "APPLE" | "GOOGLE";
 
@@ -25,12 +26,17 @@ interface Args {
     }[];
 }
 
+interface AuthorizationToken {
+    token: string;
+    expiryDate: string;
+}
+
 const createUserOrSignIn = async (
     _: any,
     args: Args,
     context: Context,
     info: any
-): Promise<string> => {
+): Promise<AuthorizationToken> => {
     switch (args.type) {
         case "APPLE":
             await verifyAppleToken(args.id, args.token);
@@ -63,11 +69,12 @@ const oauthLogin = async (
     id: string,
     email?: string,
     userData?: { key: string; value: string }[]
-) => {
+): Promise<AuthorizationToken> => {
     const dynamodbResult = await getItemsByIndex(DYNAMODB_TABLE_NAME_USERS, idFieldName, id);
     const user = await getItemFromDynamoDBResult(dynamodbResult);
+    const oneHourFromNow = DateTime.now().plus({ hours: 1 }).toMillis().toString();
     if (user) {
-        return generateToken(user.id);
+        return { token: generateToken(user.id), expiryDate: oneHourFromNow };
     } else {
         if (!email || !userData) {
             throw new UserInputError("Must Provide Email And UserData On Account Creation");
@@ -79,7 +86,10 @@ const oauthLogin = async (
             email,
             ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
         });
-        return generateToken(mountainAppId);
+        return {
+            token: generateToken(mountainAppId),
+            expiryDate: oneHourFromNow
+        };
     }
 };
 

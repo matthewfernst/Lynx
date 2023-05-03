@@ -9,7 +9,14 @@ import {
     UpdateItemOutput,
     DynamoDBClient
 } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, DeleteCommand, GetCommand, UpdateCommand, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import {
+    DynamoDBDocumentClient,
+    DeleteCommand,
+    GetCommand,
+    UpdateCommand,
+    PutCommand,
+    QueryCommand
+} from "@aws-sdk/lib-dynamodb";
 
 import { User } from "../types";
 
