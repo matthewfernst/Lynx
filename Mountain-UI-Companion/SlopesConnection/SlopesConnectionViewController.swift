@@ -300,28 +300,28 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
             setupSlopeFilesUploadingView()
             var currentFileNumberBeingUploaded = 0
             
-            for case let fileURL as URL in fileList {
-                if self.isSlopesFiles(fileURL) {
-                    Logger.slopesConnection.debug("chosen file: \(fileURL.lastPathComponent)")
-                    
-                    do {
-                        try await S3Utils.uploadSlopesDataToS3(id: self.profile.id, file: fileURL)
-                        currentFileNumberBeingUploaded += 1
-                        self.updateSlopeFilesProgressView(fileBeingUploaded: fileURL.lastPathComponent.replacingOccurrences(of: "%", with: " "),
-                                                          progress: Float(currentFileNumberBeingUploaded) / Float(totalNumberOfFiles))
-                    } catch {
-                        Logger.slopesConnection.debug("\(error)")
-                        showErrorUploadingToS3Alert()
-                    }
-                    
-                    url.stopAccessingSecurityScopedResource()
-                } else if fileURL.lastPathComponent == ".DS_Store"{
-                    totalNumberOfFiles -= 1
-                } else {
-                    showFileExtensionNotSupported(file: fileURL)
-                    Logger.slopesConnection.debug("Only slope file extensions are supported, but recieved \(fileURL.pathExtension) extension.")
-                }
-            }
+//            for case let fileURL as URL in fileList {
+//                if self.isSlopesFiles(fileURL) {
+//                    Logger.slopesConnection.debug("chosen file: \(fileURL.lastPathComponent)")
+//                    
+//                    do {
+//                        try await S3Utils.uploadSlopesDataToS3(id: self.profile.id, file: fileURL)
+//                        currentFileNumberBeingUploaded += 1
+//                        self.updateSlopeFilesProgressView(fileBeingUploaded: fileURL.lastPathComponent.replacingOccurrences(of: "%", with: " "),
+//                                                          progress: Float(currentFileNumberBeingUploaded) / Float(totalNumberOfFiles))
+//                    } catch {
+//                        Logger.slopesConnection.debug("\(error)")
+//                        showErrorUploadingToS3Alert()
+//                    }
+//                    
+//                    url.stopAccessingSecurityScopedResource()
+//                } else if fileURL.lastPathComponent == ".DS_Store"{
+//                    totalNumberOfFiles -= 1
+//                } else {
+//                    showFileExtensionNotSupported(file: fileURL)
+//                    Logger.slopesConnection.debug("Only slope file extensions are supported, but recieved \(fileURL.pathExtension) extension.")
+//                }
+//            }
             
             saveBookmark(for: url)
             
@@ -371,9 +371,9 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                     for case let fileURL as URL in fileList {
                         if self.isSlopesFiles(fileURL) {
                             // Check if the file was already uploaded
-                            if !(await S3Utils.isFileUploadedToS3(id: self.profile.id, file: fileURL)) {
-                                nonUploadedSlopeFiles.insert(fileURL.lastPathComponent)
-                            }
+//                            if !(await S3Utils.isFileUploadedToS3(id: self.profile.id, file: fileURL)) {
+//                                nonUploadedSlopeFiles.insert(fileURL.lastPathComponent)
+//                            }
                         }
                     }
                 }
@@ -416,35 +416,35 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         }
         
         var currentFileNumberBeingUploaded = 0
-        do {
-            let resourceValues = try bookmark.url.resourceValues(forKeys: [.isDirectoryKey])
-            if resourceValues.isDirectory ?? false {
-                let keys: [URLResourceKey] = [.nameKey, .isDirectoryKey, .creationDateKey]
-                if let fileList = FileManager.default.enumerator(at: bookmark.url, includingPropertiesForKeys: keys) {
-                    for case let fileURL as URL in fileList {
-                        if self.isSlopesFiles(fileURL) {
-                            do {
-                                if nonUploadedSlopeFiles.contains(fileURL.lastPathComponent) {
-                                    try await S3Utils.uploadSlopesDataToS3(id: self.profile.id, file: fileURL)
-                                    currentFileNumberBeingUploaded += 1
-                                    let progress = Float(currentFileNumberBeingUploaded) / Float(nonUploadedSlopeFiles.count)
-                                    self.updateSlopeFilesProgressView(fileBeingUploaded: fileURL.lastPathComponent.replacingOccurrences(of: "%", with: " "), progress: progress)
-                                }
-                            } catch {
-                                self.showErrorUploadingToS3Alert()
-                                Logger.slopesConnection.debug("\(error)")
-                                self.cleanUpSlopeFilesUploadView()
-                            }
-                        }
-                    }
-                }
-                
-            }
-        } catch {
-            self.showErrorUploadingToS3Alert()
-            Logger.slopesConnection.debug("Error accessing bookmarked URL: \(error)")
-            self.cleanUpSlopeFilesUploadView()
-        }
+//        do {
+//            let resourceValues = try bookmark.url.resourceValues(forKeys: [.isDirectoryKey])
+//            if resourceValues.isDirectory ?? false {
+//                let keys: [URLResourceKey] = [.nameKey, .isDirectoryKey, .creationDateKey]
+//                if let fileList = FileManager.default.enumerator(at: bookmark.url, includingPropertiesForKeys: keys) {
+//                    for case let fileURL as URL in fileList {
+//                        if self.isSlopesFiles(fileURL) {
+//                            do {
+//                                if nonUploadedSlopeFiles.contains(fileURL.lastPathComponent) {
+//                                    try await S3Utils.uploadSlopesDataToS3(id: self.profile.id, file: fileURL)
+//                                    currentFileNumberBeingUploaded += 1
+//                                    let progress = Float(currentFileNumberBeingUploaded) / Float(nonUploadedSlopeFiles.count)
+//                                    self.updateSlopeFilesProgressView(fileBeingUploaded: fileURL.lastPathComponent.replacingOccurrences(of: "%", with: " "), progress: progress)
+//                                }
+//                            } catch {
+//                                self.showErrorUploadingToS3Alert()
+//                                Logger.slopesConnection.debug("\(error)")
+//                                self.cleanUpSlopeFilesUploadView()
+//                            }
+//                        }
+//                    }
+//                }
+//                
+//            }
+//        } catch {
+//            self.showErrorUploadingToS3Alert()
+//            Logger.slopesConnection.debug("Error accessing bookmarked URL: \(error)")
+//            self.cleanUpSlopeFilesUploadView()
+//        }
         
         self.cleanUpSlopeFilesUploadView()
     }

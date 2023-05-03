@@ -23,8 +23,8 @@ class EditProfileTableViewController: UITableViewController
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var activityIndicatorBackground: UIView!
     
-    private let dynamoDBClient = DynamoDBUtils.dynamoDBClient
-    private let userTable = DynamoDBUtils.usersTable
+//    private let dynamoDBClient = DynamoDBUtils.dynamoDBClient
+//    private let userTable = DynamoDBUtils.usersTable
     
     private var profileChanges: [String: Any] = [:]
     
@@ -97,10 +97,10 @@ class EditProfileTableViewController: UITableViewController
             
             do {
                 // Upload new profile picture to S3
-                try await S3Utils.uploadProfilePictureToS3(id: self.profile.id, picture: changedProfilePicture)
+//                try await S3Utils.uploadProfilePictureToS3(id: self.profile.id, picture: changedProfilePicture)
                 // Get new profile picture's Object URL
-                let objectURL = await S3Utils.getProfilePictureObjectURL(id: self.profile.id)
-                newProfilePictureURL = objectURL
+//                let objectURL = await S3Utils.getProfilePictureObjectURL(id: self.profile.id)
+//                newProfilePictureURL = objectURL
             } catch {
                 // Handle error
                 print("Error uploading profile picture: \(error)")
@@ -113,11 +113,11 @@ class EditProfileTableViewController: UITableViewController
         
         Task {
             // Update Dynamo
-            await DynamoDBUtils.updateDynamoDBItem(id: self.profile.id,
-                                                   newFirstName: newFirstName,
-                                                   newLastName: newLastName,
-                                                   newEmail: newEmail,
-                                                   newProfilePictureURL: newProfilePictureURL ?? "")
+//            await DynamoDBUtils.updateDynamoDBItem(id: self.profile.id,
+//                                                   newFirstName: newFirstName,
+//                                                   newLastName: newLastName,
+//                                                   newEmail: newEmail,
+//                                                   newProfilePictureURL: newProfilePictureURL ?? "")
         }
         
         Profile.createProfile(id: profile.id,

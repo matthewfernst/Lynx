@@ -1,0 +1,60 @@
+type User {
+    id: ID!
+    appleId: ID
+    googleId: ID
+    email: String!
+    firstName: String!
+    lastName: String!
+    profilePictureUrl: String
+    friends: [User!]!
+    runRecords: [RunRecord!]!
+}
+
+type RunRecord {
+    id: ID!
+    conditions: String!
+    distance: Float!
+    duration: Float!
+    start: String!
+    end: String!
+    locationName: String!
+    runCount: String!
+    topSpeed: Float!
+    vertical: Float!
+}
+
+type AuthorizationToken {
+    token: ID!
+    expiryDate: String!
+}
+
+enum LoginType {
+    APPLE
+    GOOGLE
+}
+
+input KeyValuePair {
+    key: String!
+    value: String!
+}
+
+type Query {
+    selfLookup: User
+    userLookup(id: ID!): User
+}
+
+type Mutation {
+    createUserOrSignIn(
+        type: LoginType!
+        id: ID!,
+        token: ID!,
+        email: String,
+        userData: [KeyValuePair!]
+    ): AuthorizationToken
+    createUserProfilePictureUploadUrl: String!
+    createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
+    deleteUser: User
+    editUser(userData: [KeyValuePair!]!): User!
+    requestFriend(friendId: ID!): User
+    resolveRequestFriend(friendId: String!, choice: Boolean!): User
+}

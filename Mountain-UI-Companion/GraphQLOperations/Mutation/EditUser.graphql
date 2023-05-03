@@ -1,0 +1,23 @@
+mutation EditUser($userPairs: [KeyValuePair!]!) {
+  editUser(userPairs: $userPairs) {
+    id
+    appleId
+    googleId
+    email
+    firstName
+    lastName
+    profilePictureUrl
+    runRecords {
+      id
+      conditions
+      distance
+      duration
+      start
+      end
+      locationName
+      runCount
+      topSpeed
+      vertical
+    }
+  }
+}

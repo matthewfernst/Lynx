@@ -17,58 +17,42 @@ class LoginController
         self.loginViewController = loginViewController
     }
     
-    static func handleCommonSignIn(id: String, firstName: String? = nil, lastName: String? = nil, email: String? = nil, profilePictureURL: String = "") async {
-        if let profileAttributes = try? await self.getExistingUser(id: id) {
-            loginUser(profileAttributes: profileAttributes)
-        } else if let firstName = firstName, let lastName = lastName, let email = email {
-            await self.createNewUser(profileAttributes: ProfileAttributes(id: id,
-                                                                          firstName: firstName,
-                                                                          lastName: lastName,
-                                                                          email: email,
-                                                                          profilePictureURL: profilePictureURL))
-        }
-    }
-    
-    private static func getExistingUser(id: String) async throws -> ProfileAttributes? {
-        if let dynamoDBUserInfo = await DynamoDBUtils.getDynamoDBItem(id: id) {
-            var profileAttributes = ProfileAttributes()
-            for (key, value) in dynamoDBUserInfo {
-                if case let .s(value) = value {
-                    switch key {
-                    case "id":
-                        profileAttributes.id = value
-                    case "firstName":
-                        profileAttributes.firstName = value
-                    case "lastName":
-                        profileAttributes.lastName = value
-                    case "email":
-                        profileAttributes.email = value
-                    case "profilePictureURL":
-                        profileAttributes.profilePictureURL = value
-                    default:
-                        break
-                    }
-                }
+    static func handleCommonSignIn(type: String, id: String, token: String, email: String? = nil, firstName: String? = nil, lastName: String? = nil, profilePictureURL: String = "", completion: @escaping (Result<Void, Error>) -> Void) {
+        
+        ApolloMountainUIClient.loginOrCreateUser(type: type,
+                                                 id: id,
+                                                 token: token,
+                                                 email: email,
+                                                 firstName: firstName,
+                                                 lastName: lastName) { result in
+            switch result {
+            case .success(let token):
+                Logger.loginController.info("Token successfully recieved.")
+                UserManager.shared.token = ExpirableAuthorizationToken(token: token)
+                
+                // TODO: createProfile
+                self.loginUser()
+                completion(.success(()))
+            case .failure(let error):
+                Logger.loginController.error("\(error)")
+                completion(.failure(UserError.noAuthorizationTokenReturned))
             }
-            Logger.dynamoDB.debug("Profile Attributes being returned.")
-            return profileAttributes
         }
-        Logger.dynamoDB.debug("Nil being returned for user info")
-        return nil
     }
     
-    private static func loginUser(profileAttributes: ProfileAttributes) {
-        Logger.loginController.info("Existing user found.")
-        self.signInUser(profileAttributes: profileAttributes)
+    
+    private static func loginUser() {
+        ApolloMountainUIClient.getProfileInformation() { result in
+            switch result {
+            case .success(let profileAttributes):
+                self.signInUser(profileAttributes: profileAttributes)
+            case .failure(let error):
+                Logger.loginController.error("No profile attributes returned. \(error)")
+            }
+            
+        }
     }
     
-    private static func createNewUser(profileAttributes: ProfileAttributes) async {
-        Logger.loginController.info("User does not exist. Creating User.")
-        
-        self.signInUser(profileAttributes: profileAttributes)
-        
-        await DynamoDBUtils.putDynamoDBItem(profileAttributes: profileAttributes)
-    }
     
     private static func signInUser(profileAttributes: ProfileAttributes) {
         let group = DispatchGroup()
@@ -97,39 +81,3 @@ class LoginController
     
 }
 
-// MARK: - ProfileAttributes
-struct ProfileAttributes: CustomDebugStringConvertible
-{
-    
-    var id: String
-    var firstName: String
-    var lastName: String
-    var email: String
-    var profilePictureURL: String
-    
-    init(id: String, firstName: String, lastName: String, email: String, profilePictureURL: String = "") {
-        self.id = id
-        self.firstName = firstName
-        self.lastName = lastName
-        self.email = email
-        self.profilePictureURL = profilePictureURL
-    }
-    
-    init() {
-        self.id = ""
-        self.firstName = ""
-        self.lastName = ""
-        self.email = ""
-        self.profilePictureURL = ""
-    }
-    
-    var debugDescription: String {
-       """
-       id: \(self.id)
-       firstName: \(self.firstName)
-       lastName: \(self.lastName)
-       email: \(self.email)
-       profilePictureURL: \(String(describing: self.profilePictureURL))
-       """
-    }
-}

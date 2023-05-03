@@ -1,0 +1,9 @@
+query GetProfileInformation {
+  selfLookup {
+     id
+     email
+     firstName
+     lastName
+     profilePictureUrl
+  }
+}

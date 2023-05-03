@@ -86,9 +86,9 @@ class LoginViewController: UIViewController
     // MARK: DEBUG login for working on other parts of the app and bypassing login
     private func debugLogin() {
 #if DEBUG
-        Logger.loginViewController.debug("DEBUG MODE!")
-        LoginController.profile = Profile.sampleProfile
-        self.goToMainApp()
+        //        Logger.loginViewController.debug("DEBUG MODE!")
+        //        LoginController.profile = Profile.sampleProfile
+        //        self.goToMainApp()
 #endif
     }
     
@@ -160,18 +160,35 @@ class LoginViewController: UIViewController
                 showErrorWithSignIn()
                 return
             }
+            guard let token = signInResult?.user.idToken?.tokenString else {
+                showErrorWithSignIn()
+                return
+            }
             
             Task {
                 let name = profile.name.components(separatedBy: " ")
                 let (firstName, lastName) = (name[0], name[1])
+                let email = profile.email
                 let activityIndicator = self.showSignInActivityIndicator()
-                await LoginController.handleCommonSignIn(id: id,
-                                                         firstName: firstName,
-                                                         lastName: lastName,
-                                                         email: profile.email,
-                                                         profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "")
-                activityIndicator.stopAnimating()
-                self.updateViewFromModel()
+                
+                LoginController.handleCommonSignIn(type: "GOOGLE",
+                                                   id: id,
+                                                   token: token,
+                                                   email: email,
+                                                   firstName: firstName,
+                                                   lastName: lastName,
+                                                   profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "") { result in
+                    activityIndicator.startAnimating()
+                    self.updateViewFromModel()
+                    
+                    switch result {
+                    case .success:
+                        self.goToMainApp()
+                    case .failure:
+                        self.showErrorWithSignIn()
+                    }
+                }
+                
             }
         }
     }
@@ -242,16 +259,16 @@ class LoginViewController: UIViewController
         self.debugLogin()
         let isSignedIn = UserDefaults.standard.bool(forKey: UserDefaultsKeys.profileIsSignedInKey)
         
-        if isSignedIn {
-            let activityIndicator = showSignInActivityIndicator()
-            Task {
-                await Profile.loadProfileFromKeychain { [unowned self] profile in
-                    activityIndicator.stopAnimating()
-                    
-                    self.goToMainApp()
-                }
-            }
-        }
+        //        if isSignedIn {
+        //            let activityIndicator = showSignInActivityIndicator()
+        //            Task {
+        //                await Profile.loadProfileFromKeychain { [unowned self] profile in
+        //                    activityIndicator.stopAnimating()
+        //
+        //                    self.goToMainApp()
+        //                }
+        //            }
+        //        }
     }
 }
 
@@ -263,17 +280,27 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             Logger.loginViewController.debug("Sign in with Apple: Credential Sign in")
             Task {
                 let activityIndicator = self.showSignInActivityIndicator()
-                await LoginController.handleCommonSignIn(id: appleIdCredential.user,
-                                                         firstName: appleIdCredential.fullName?.givenName,
-                                                         lastName: appleIdCredential.fullName?.familyName,
-                                                         email: appleIdCredential.email)
-                activityIndicator.stopAnimating()
-                self.updateViewFromModel()
+                LoginController.handleCommonSignIn(type: "APPLE",
+                                                   id: appleIdCredential.user,
+                                                   token: appleIdCredential.authorizationCode!.description,
+                                                   email: appleIdCredential.email,
+                                                   firstName: appleIdCredential.fullName?.givenName,
+                                                   lastName: appleIdCredential.fullName?.familyName) { result -> Void in
+                    activityIndicator.stopAnimating()
+                    self.updateViewFromModel()
+                    
+                    switch result {
+                    case .success:
+                        self.goToMainApp()
+                    case .failure:
+                        self.showErrorWithSignIn()
+                    }
+                }
             }
             
         default:
-            showErrorWithSignIn()
-            Swift.debugPrint("Not ready yet")
+            self.showErrorWithSignIn()
+            
         }
     }
     

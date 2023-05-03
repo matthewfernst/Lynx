@@ -24,7 +24,7 @@ extension Profile
         if status == errSecSuccess {
             if let data = dataTypeRef as? Data,
                let id = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSString.self, from: data) as? String {
-                await LoginController.handleCommonSignIn(id: id)
+//                await LoginController.handleCommonSignIn(id: id)
                 DispatchQueue.main.async {
                     completion(LoginController.profile)
                 }

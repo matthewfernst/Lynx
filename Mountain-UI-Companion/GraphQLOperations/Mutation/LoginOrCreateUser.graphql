@@ -1,0 +1,9 @@
+mutation LoginOrCreateUser($type: LoginType!, $id: ID!, $token: ID!, $email: String, $userData: [KeyValuePair!]) {
+  createUserOrSignIn(
+    type: $type,
+    id: $id,
+    token: $token,
+    email: $email,
+    userData: $userData
+  )
+}
