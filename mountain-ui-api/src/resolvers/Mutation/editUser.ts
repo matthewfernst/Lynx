@@ -1,5 +1,3 @@
-import { UserInputError } from "apollo-server-errors";
-
 import { Context } from "../../index";
 import { checkIsLoggedIn } from "../../auth";
 import {

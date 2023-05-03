@@ -51,7 +51,10 @@ type Mutation {
         email: String,
         userData: [KeyValuePair!]
     ): AuthorizationToken
-    editUser(userData: [KeyValuePair!]!): User!
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
+    deleteUser: User
+    editUser(userData: [KeyValuePair!]!): User!
+    requestFriend(friendId: ID!): User
+    resolveRequestFriend(friendId: String!, choice: Boolean!): User
 }

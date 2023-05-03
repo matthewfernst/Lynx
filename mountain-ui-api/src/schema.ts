@@ -9,21 +9,30 @@ const schema = fs.readFileSync(path.join(__dirname, "../schema.graphql"), "utf8"
 export const typeDefs = gql(schema);
 export const gqlSchema = buildSchema(schema);
 
-import selfLookup from "./resolvers/Query/selfLookup";
 import createUserOrSignIn from "./resolvers/Mutation/createUserOrSignIn";
-import editUser from "./resolvers/Mutation/editUser";
 import createUserProfilePictureUploadUrl from "./resolvers/Mutation/createUserProfilePictureUploadUrl";
 import createUserRecordUploadUrl from "./resolvers/Mutation/createUserRecordUploadUrl";
+import deleteUser from "./resolvers/Mutation/deleteUser";
+import editUser from "./resolvers/Mutation/editUser";
+import requestFriend from "./resolvers/Mutation/requestFriend";
+import resolveRequestFriend from "./resolvers/Mutation/resolveRequestFriend";
+import selfLookup from "./resolvers/Query/selfLookup";
+import userLookup from "./resolvers/Query/userLookup";
+import email from "./resolvers/User/email";
+import friends from "./resolvers/User/friends";
+import profilePictureUrl from "./resolvers/User/profilePictureUrl";
 import runRecords from "./resolvers/User/runRecords";
 
 export const resolvers = {
-    Query: { selfLookup },
+    Query: { selfLookup, userLookup },
     Mutation: {
         createUserOrSignIn,
-        editUser,
         createUserProfilePictureUploadUrl,
-        createUserRecordUploadUrl
+        createUserRecordUploadUrl,
+        deleteUser,
+        editUser,
+        requestFriend,
+        resolveRequestFriend
     },
-    User: { runRecords },
-    RunRecord: {}
+    User: { email, friends, profilePictureUrl, runRecords }
 };
