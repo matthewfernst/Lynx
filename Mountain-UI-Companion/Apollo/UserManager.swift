@@ -14,10 +14,11 @@ class UserManager {
     
     var token: ExpirableAuthorizationToken? {
         get {
-            guard let savedToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.authorizationToken) else {
+            guard let savedToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.authorizationToken),
+                  let savedExpireDate = UserDefaults.standard.object(forKey: UserDefaultsKeys.authorizationTokenExpirationDate) as? Date else {
                 return nil
             }
-            return ExpirableAuthorizationToken(token: savedToken)
+            return ExpirableAuthorizationToken(token: savedToken, expirationDate: savedExpireDate)
         }
         set {
             UserDefaults.standard.set(newValue?.token, forKey: UserDefaultsKeys.authorizationToken)
@@ -25,18 +26,17 @@ class UserManager {
         }
     }
     
-    func renewToken(completion: @escaping (Result<ExpirableAuthorizationToken, Error>) -> Void) {
-         ApolloMountainUIClient.loginOrCreateUser(type: "APPLE",
+    func renewToken(completion: @escaping (Result<String, Error>) -> Void) {
+        //TODO: Add Profile!
+        ApolloMountainUIClient.loginOrCreateUser(type: "APPLE",
                                                  id: "9702145508",
                                                  token: "1234",
                                                  email: "sully@apple.com",
                                                  firstName: "Sully",
                                                  lastName: "Perich") { result in
             switch result {
-            case .success(let token):
-                let expirableToken = ExpirableAuthorizationToken(token: token)
-                self.token = expirableToken
-                completion(.success(expirableToken))
+            case .success:
+                completion(.success((UserManager.shared.token!.value)))
                 
             case .failure(let error):
                 completion(.failure(error))
@@ -48,15 +48,6 @@ class UserManager {
 struct ExpirableAuthorizationToken {
     let token: String
     let expirationDate: Date
-    
-    init(token: String) {
-        self.token = token
-        
-        let currentDate = Date()
-        let expirationDate = Calendar.current.date(byAdding: .day, value: 3, to: currentDate)!
-        
-        self.expirationDate = expirationDate
-    }
     
     var isExpired: Bool {
         return Date() >= expirationDate

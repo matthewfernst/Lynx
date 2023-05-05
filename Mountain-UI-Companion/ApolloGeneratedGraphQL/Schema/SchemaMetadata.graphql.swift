@@ -31,9 +31,10 @@ public extension ApolloGeneratedGraphQL {
 
     public static func objectType(forTypename typename: String) -> Object? {
       switch typename {
+      case "Query": return ApolloGeneratedGraphQL.Objects.Query
+      case "User": return ApolloGeneratedGraphQL.Objects.User
       case "Mutation": return ApolloGeneratedGraphQL.Objects.Mutation
       case "AuthorizationToken": return ApolloGeneratedGraphQL.Objects.AuthorizationToken
-      case "User": return ApolloGeneratedGraphQL.Objects.User
       case "RunRecord": return ApolloGeneratedGraphQL.Objects.RunRecord
       default: return nil
       }

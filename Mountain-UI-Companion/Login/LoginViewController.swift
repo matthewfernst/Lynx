@@ -171,13 +171,15 @@ class LoginViewController: UIViewController
                 let email = profile.email
                 let activityIndicator = self.showSignInActivityIndicator()
                 
-                LoginController.handleCommonSignIn(type: "GOOGLE",
-                                                   id: id,
-                                                   token: token,
-                                                   email: email,
-                                                   firstName: firstName,
-                                                   lastName: lastName,
-                                                   profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "") { result in
+                
+                
+                await LoginController.handleCommonSignIn(type: "GOOGLE",
+                                                         id: id,
+                                                         token: token,
+                                                         email: email,
+                                                         firstName: firstName,
+                                                         lastName: lastName,
+                                                         profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "") { result in
                     activityIndicator.startAnimating()
                     self.updateViewFromModel()
                     
@@ -187,7 +189,10 @@ class LoginViewController: UIViewController
                     case .failure:
                         self.showErrorWithSignIn()
                     }
+                    
+                    
                 }
+                
                 
             }
         }
@@ -280,12 +285,12 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             Logger.loginViewController.debug("Sign in with Apple: Credential Sign in")
             Task {
                 let activityIndicator = self.showSignInActivityIndicator()
-                LoginController.handleCommonSignIn(type: "APPLE",
-                                                   id: appleIdCredential.user,
-                                                   token: appleIdCredential.authorizationCode!.description,
-                                                   email: appleIdCredential.email,
-                                                   firstName: appleIdCredential.fullName?.givenName,
-                                                   lastName: appleIdCredential.fullName?.familyName) { result -> Void in
+                await LoginController.handleCommonSignIn(type: "APPLE",
+                                                         id: appleIdCredential.user,
+                                                         token: appleIdCredential.authorizationCode!.description,
+                                                         email: appleIdCredential.email,
+                                                         firstName: appleIdCredential.fullName?.givenName,
+                                                         lastName: appleIdCredential.fullName?.familyName) { result -> Void in
                     activityIndicator.stopAnimating()
                     self.updateViewFromModel()
                     

@@ -56,7 +56,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "709D0EF7-A823-4DF3-B907-E590B4F2F04D"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Mountain-UI-Companion/Apollo/UserManagementInterceptor.swift"
@@ -145,6 +145,21 @@
                   endingLineNumber = "29"
                   offsetFromSymbolStart = "484">
                </Location>
+               <Location
+                  uuid = "575A7C04-2226-49D1-BA01-23458C6694FA - d55bfd1f01eabce8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in static Mountain_UI_Companion.LoginController.handleCommonSignIn(type: Swift.String, id: Swift.String, token: Swift.String, email: Swift.Optional&lt;Swift.String&gt;, firstName: Swift.Optional&lt;Swift.String&gt;, lastName: Swift.Optional&lt;Swift.String&gt;, profilePictureURL: Swift.String, completion: (Swift.Result&lt;(), Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "Mountain-UI-Companion"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Login/LoginController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "29"
+                  endingLineNumber = "29"
+                  offsetFromSymbolStart = "320">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -158,72 +173,40 @@
             filePath = "Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "40"
-            endingLineNumber = "40"
+            startingLineNumber = "41"
+            endingLineNumber = "41"
             landmarkName = "getProfileInformation(completion:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "08F7A1D2-42E5-4BB4-BFAA-AE5DD43730A8"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Mountain-UI-Companion/Apollo/UserManagementInterceptor.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "26"
-            endingLineNumber = "26"
-            landmarkName = "addTokenAndProceed(_:to:chain:response:completion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "7B3E404F-4B03-48D2-AAFA-B959CF4948CE"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
-            landmarkName = "loginOrCreateUser(type:id:token:email:firstName:lastName:completion:)"
-            landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "7B3E404F-4B03-48D2-AAFA-B959CF4948CE - 2b1ed29af6b3d131"
+                  uuid = "0C00F4FE-7685-4359-A996-66441494EB73 - eddcbf455c9403cf"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "static Mountain_UI_Companion.ApolloMountainUIClient.loginOrCreateUser(type: Swift.String, id: Swift.String, token: Swift.String, email: Swift.Optional&lt;Swift.String&gt;, firstName: Swift.Optional&lt;Swift.String&gt;, lastName: Swift.Optional&lt;Swift.String&gt;, completion: (Swift.Result&lt;Swift.String, Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Mountain_UI_Companion.ApolloGeneratedGraphQL.GetProfileInformationQuery.Data&gt;, Swift.Error&gt;) -&gt; () in static Mountain_UI_Companion.ApolloMountainUIClient.getProfileInformation(completion: (Swift.Result&lt;Mountain_UI_Companion.ProfileAttributes, Swift.Error&gt;) -&gt; ()) -&gt; ()"
                   moduleName = "Mountain-UI-Companion"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "95"
-                  endingLineNumber = "95"
-                  offsetFromSymbolStart = "8872">
+                  startingLineNumber = "40"
+                  endingLineNumber = "40"
+                  offsetFromSymbolStart = "376">
                </Location>
                <Location
-                  uuid = "7B3E404F-4B03-48D2-AAFA-B959CF4948CE - da9167310fe2570e"
+                  uuid = "0C00F4FE-7685-4359-A996-66441494EB73 - eddcbf455c9403ac"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Mountain_UI_Companion.ApolloGeneratedGraphQL.LoginOrCreateUserMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Mountain_UI_Companion.ApolloMountainUIClient.loginOrCreateUser(type: Swift.String, id: Swift.String, token: Swift.String, email: Swift.Optional&lt;Swift.String&gt;, firstName: Swift.Optional&lt;Swift.String&gt;, lastName: Swift.Optional&lt;Swift.String&gt;, completion: (Swift.Result&lt;Swift.String, Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Mountain_UI_Companion.ApolloGeneratedGraphQL.GetProfileInformationQuery.Data&gt;, Swift.Error&gt;) -&gt; () in static Mountain_UI_Companion.ApolloMountainUIClient.getProfileInformation(completion: (Swift.Result&lt;Mountain_UI_Companion.ProfileAttributes, Swift.Error&gt;) -&gt; ()) -&gt; ()"
                   moduleName = "Mountain-UI-Companion"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "95"
-                  endingLineNumber = "95"
-                  offsetFromSymbolStart = "68">
+                  startingLineNumber = "41"
+                  endingLineNumber = "41"
+                  offsetFromSymbolStart = "376">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -231,49 +214,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "FF7D8E7B-C8D4-421C-A154-3A3DC36B0DB3"
+            uuid = "60FDEC73-03F1-4EF1-B524-5C2BB8A1BC39"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
+            filePath = "Mountain-UI-Companion/Login/LoginController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "72"
-            endingLineNumber = "72"
-            landmarkName = "loginOrCreateUser(type:id:token:email:firstName:lastName:completion:)"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "loginUser()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "FF7D8E7B-C8D4-421C-A154-3A3DC36B0DB3 - 2b1ed29af6b3d438"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "static Mountain_UI_Companion.ApolloMountainUIClient.loginOrCreateUser(type: Swift.String, id: Swift.String, token: Swift.String, email: Swift.Optional&lt;Swift.String&gt;, firstName: Swift.Optional&lt;Swift.String&gt;, lastName: Swift.Optional&lt;Swift.String&gt;, completion: (Swift.Result&lt;Swift.String, Swift.Error&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "Mountain-UI-Companion"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "72"
-                  endingLineNumber = "72"
-                  offsetFromSymbolStart = "6696">
-               </Location>
-               <Location
-                  uuid = "FF7D8E7B-C8D4-421C-A154-3A3DC36B0DB3 - 2b1ed29af6b3d438"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "static Mountain_UI_Companion.ApolloMountainUIClient.loginOrCreateUser(type: Swift.String, id: Swift.String, token: Swift.String, email: Swift.Optional&lt;Swift.String&gt;, firstName: Swift.Optional&lt;Swift.String&gt;, lastName: Swift.Optional&lt;Swift.String&gt;, completion: (Swift.Result&lt;Swift.String, Swift.Error&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "Mountain-UI-Companion"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "72"
-                  endingLineNumber = "72"
-                  offsetFromSymbolStart = "7580">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

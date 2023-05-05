@@ -5,5 +5,8 @@ mutation LoginOrCreateUser($type: LoginType!, $id: ID!, $token: ID!, $email: Str
     token: $token,
     email: $email,
     userData: $userData
-  )
+  ) {
+  token
+  expiryDate
+}
 }

@@ -26,16 +26,13 @@ class LoginController
                                                  firstName: firstName,
                                                  lastName: lastName) { result in
             switch result {
-            case .success(let token):
+            case .success:
                 Logger.loginController.info("Token successfully recieved.")
-                UserManager.shared.token = ExpirableAuthorizationToken(token: token)
                 
-                // TODO: createProfile
                 self.loginUser()
                 completion(.success(()))
-            case .failure(let error):
-                Logger.loginController.error("\(error)")
-                completion(.failure(UserError.noAuthorizationTokenReturned))
+            case .failure:
+                Logger.loginController.error("User not logged in.")
             }
         }
     }

@@ -1,5 +1,5 @@
-mutation EditUser($userPairs: [KeyValuePair!]!) {
-  editUser(userPairs: $userPairs) {
+mutation EditUser($userData: [KeyValuePair!]!) {
+  editUser(userData: $userData) {
     id
     appleId
     googleId

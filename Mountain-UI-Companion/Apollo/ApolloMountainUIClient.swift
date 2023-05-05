@@ -35,6 +35,7 @@ class ApolloMountainUIClient
     static let loginApolloClient = ApolloClient(url: URL(string: graphQLEndpoint)!)
     
     static func getProfileInformation(completion: @escaping (Result<ProfileAttributes, Error>) -> Void) {
+        
         apolloClient.fetch(query: ApolloGeneratedGraphQL.GetProfileInformationQuery()) { result in
             switch result {
             case .success(let graphQLResult):
@@ -43,12 +44,12 @@ class ApolloMountainUIClient
                     completion(.failure(UserError.noProfileAttributesReturned))
                     return
                 }
-
+                
                 let profileAttributes = ProfileAttributes(id: selfLookup.id,
                                                           email: selfLookup.email,
                                                           firstName: selfLookup.firstName,
                                                           lastName: selfLookup.lastName,
-                                                          profilePictureURL: selfLookup.profilePictureUrl ?? "")
+                                                          profilePictureURL: selfLookup.profilePictureUrl ?? "nil")
                 Logger.apollo.debug("ProfileAttributes retrieved: \(profileAttributes.debugDescription)")
                 completion(.success(profileAttributes))
             case .failure(let error):
@@ -57,9 +58,10 @@ class ApolloMountainUIClient
             }
         }
     }
-
     
-    static func loginOrCreateUser(type: String, id: String, token: String, email: String?, firstName: String?, lastName: String?, completion: @escaping (Result<String, Error>) -> Void) {
+    
+    
+    static func loginOrCreateUser(type: String, id: String, token: String, email: String?, firstName: String?, lastName: String?, completion: @escaping (Result<Void, Error>) -> Void) {
         
         Logger.apollo.debug("Login in with following: type      -> \(type)")
         Logger.apollo.debug("                         id        -> \(id)")
@@ -93,19 +95,31 @@ class ApolloMountainUIClient
                                                                                              userData: userDataNullable)) { result in
             switch result {
             case .success(let graphQLResult):
-                guard let authorizationToken = graphQLResult.data?.createUserOrSignIn else {
+                guard let data = graphQLResult.data?.createUserOrSignIn else {
                     let error = UserError.noAuthorizationTokenReturned
                     completion(.failure(error))
                     return
                 }
-                completion(.success(authorizationToken))
+                
+                let authorizationToken = data.token
+                
+                guard let expiryInMilliseconds = Double(data.expiryDate) else {
+                    Logger.apollo.error("Could not convert expiryDate to Double.")
+                    return
+                }
+                let expiryInSeconds = expiryInMilliseconds / 1000.0
+                
+                let expirationDate = Date().addingTimeInterval(expiryInSeconds)
+                
+                UserManager.shared.token = ExpirableAuthorizationToken(token: authorizationToken, expirationDate: expirationDate)
+                
+                completion(.success(()))
                 
             case .failure(let error):
-                completion(.failure(error))
+                Logger.apollo.error("LoginOrCreateUser mutation failed with Error: \(error)")
             }
         }
     }
-    
 }
 
 // MARK: - ProfileAttributes
