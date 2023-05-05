@@ -33,7 +33,8 @@ class UserManager {
                                                  token: "1234",
                                                  email: "sully@apple.com",
                                                  firstName: "Sully",
-                                                 lastName: "Perich") { result in
+                                                 lastName: "Perich",
+                                                 profilePictureUrl: "sully-wully.sullysullivan.com") { result in
             switch result {
             case .success:
                 completion(.success((UserManager.shared.token!.value)))

@@ -165,35 +165,23 @@ class LoginViewController: UIViewController
                 return
             }
             
-            Task {
-                let name = profile.name.components(separatedBy: " ")
-                let (firstName, lastName) = (name[0], name[1])
-                let email = profile.email
-                let activityIndicator = self.showSignInActivityIndicator()
-                
-                
-                
-                await LoginController.handleCommonSignIn(type: "GOOGLE",
-                                                         id: id,
-                                                         token: token,
-                                                         email: email,
-                                                         firstName: firstName,
-                                                         lastName: lastName,
-                                                         profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "") { result in
-                    activityIndicator.startAnimating()
-                    self.updateViewFromModel()
-                    
-                    switch result {
-                    case .success:
-                        self.goToMainApp()
-                    case .failure:
-                        self.showErrorWithSignIn()
-                    }
-                    
-                    
-                }
-                
-                
+            
+            let name = profile.name.components(separatedBy: " ")
+            let (firstName, lastName) = (name[0], name[1])
+            let email = profile.email
+            let activityIndicator = self.showSignInActivityIndicator()
+            
+            
+            
+            LoginController.handleCommonSignIn(type: "GOOGLE",
+                                               id: id,
+                                               token: token,
+                                               email: email,
+                                               firstName: firstName,
+                                               lastName: lastName,
+                                               profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "") { _ in
+                activityIndicator.startAnimating()
+                self.updateViewFromModel()
             }
         }
     }
@@ -283,23 +271,22 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
         switch authorization.credential {
         case let appleIdCredential as ASAuthorizationAppleIDCredential:
             Logger.loginViewController.debug("Sign in with Apple: Credential Sign in")
-            Task {
-                let activityIndicator = self.showSignInActivityIndicator()
-                await LoginController.handleCommonSignIn(type: "APPLE",
-                                                         id: appleIdCredential.user,
-                                                         token: appleIdCredential.authorizationCode!.description,
-                                                         email: appleIdCredential.email,
-                                                         firstName: appleIdCredential.fullName?.givenName,
-                                                         lastName: appleIdCredential.fullName?.familyName) { result -> Void in
-                    activityIndicator.stopAnimating()
-                    self.updateViewFromModel()
-                    
-                    switch result {
-                    case .success:
-                        self.goToMainApp()
-                    case .failure:
-                        self.showErrorWithSignIn()
-                    }
+            
+            let activityIndicator = self.showSignInActivityIndicator()
+            LoginController.handleCommonSignIn(type: "APPLE",
+                                               id: appleIdCredential.user,
+                                               token: appleIdCredential.authorizationCode!.description,
+                                               email: appleIdCredential.email,
+                                               firstName: appleIdCredential.fullName?.givenName,
+                                               lastName: appleIdCredential.fullName?.familyName) { result -> Void in
+                activityIndicator.stopAnimating()
+                self.updateViewFromModel()
+                
+                switch result {
+                case .success:
+                    self.goToMainApp()
+                case .failure:
+                    self.showErrorWithSignIn()
                 }
             }
             
@@ -334,10 +321,8 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             Logger.loginViewController.debug("\(baseErrorAreaMessage) Unknown error.")
         }
         
-        showErrorWithSignIn()
+        self.showErrorWithSignIn()
     }
-    
-    
 }
 
 extension LoginViewController: ASAuthorizationControllerPresentationContextProviding {

@@ -49,7 +49,7 @@ class ApolloMountainUIClient
                                                           email: selfLookup.email,
                                                           firstName: selfLookup.firstName,
                                                           lastName: selfLookup.lastName,
-                                                          profilePictureURL: selfLookup.profilePictureUrl ?? "nil")
+                                                          profilePictureURL: selfLookup.profilePictureUrl)
                 Logger.apollo.debug("ProfileAttributes retrieved: \(profileAttributes.debugDescription)")
                 completion(.success(profileAttributes))
             case .failure(let error):
@@ -61,23 +61,25 @@ class ApolloMountainUIClient
     
     
     
-    static func loginOrCreateUser(type: String, id: String, token: String, email: String?, firstName: String?, lastName: String?, completion: @escaping (Result<Void, Error>) -> Void) {
-        
-        Logger.apollo.debug("Login in with following: type      -> \(type)")
-        Logger.apollo.debug("                         id        -> \(id)")
-        Logger.apollo.debug("                         token     -> \(token)")
-        Logger.apollo.debug("                         email     -> \(email ?? "nil")")
-        Logger.apollo.debug("                         firstName -> \(firstName ?? "nil")")
-        Logger.apollo.debug("                         lastName  -> \(lastName ?? "nil")")
+    static func loginOrCreateUser(type: String, id: String, token: String, email: String?, firstName: String?, lastName: String?, profilePictureUrl: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+    
+        Logger.apollo.debug("Login in with following: type               -> \(type)")
+        Logger.apollo.debug("                         id                 -> \(id)")
+        Logger.apollo.debug("                         token              -> \(token)")
+        Logger.apollo.debug("                         email              -> \(email ?? "nil")")
+        Logger.apollo.debug("                         firstName          -> \(firstName ?? "nil")")
+        Logger.apollo.debug("                         lastName           -> \(lastName ?? "nil")")
+        Logger.apollo.debug("                         profilePictureUrl  -> \(profilePictureUrl ?? "nil")")
         
         
         var userData: [ApolloGeneratedGraphQL.KeyValuePair] = []
         var userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.KeyValuePair]>(nilLiteral: ())
         // TODO: ProfilePicture
-        if let firstName = firstName, let lastName = lastName {
+        if let firstName = firstName, let lastName = lastName, let profilePictureUrl = profilePictureUrl {
             userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "firstName", value: firstName))
             userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "lastName", value: lastName))
-            userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.KeyValuePair]>(arrayLiteral: userData[0], userData[1])
+            userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "profilePictureUrl", value: profilePictureUrl))
+            userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.KeyValuePair]>(arrayLiteral: userData[0], userData[1], userData[2])
         }
         
         let type = GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: type)
@@ -118,7 +120,9 @@ class ApolloMountainUIClient
             case .failure(let error):
                 Logger.apollo.error("LoginOrCreateUser mutation failed with Error: \(error)")
             }
+            
         }
+        
     }
 }
 
@@ -132,12 +136,12 @@ struct ProfileAttributes: CustomDebugStringConvertible
     var lastName: String
     var profilePictureURL: String
     
-    init(id: String, email: String, firstName: String, lastName: String, profilePictureURL: String = "") {
+    init(id: String, email: String, firstName: String, lastName: String, profilePictureURL: String? = "") {
         self.id = id
         self.email = email
         self.firstName = firstName
         self.lastName = lastName
-        self.profilePictureURL = profilePictureURL
+        self.profilePictureURL = profilePictureURL ?? ""
     }
     
     init() {
