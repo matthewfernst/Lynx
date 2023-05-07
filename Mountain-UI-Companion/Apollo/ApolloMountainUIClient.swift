@@ -45,12 +45,33 @@ class ApolloMountainUIClient
                     return
                 }
                 
-                let profileAttributes = ProfileAttributes(id: selfLookup.id,
+                guard let type: String = {
+                    switch (selfLookup.appleId, selfLookup.googleId) {
+                    case (.some, _):
+                        return "APPLE"
+                    case (_, .some):
+                        return "GOOGLE"
+                    default:
+                        return nil
+                    }
+                }() else {
+                    Logger.apollo.error("AppleId and GoogleId were both null.")
+                    return
+                }
+                
+                guard let oauthToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.oauthToken) else {
+                    Logger.apollo.error("oauthToken not found in UserDefaults.")
+                    return
+                }
+                
+                let profileAttributes = ProfileAttributes(type: type,
+                                                          oauthToken: oauthToken,
+                                                          id: selfLookup.id,
                                                           email: selfLookup.email,
                                                           firstName: selfLookup.firstName,
                                                           lastName: selfLookup.lastName,
                                                           profilePictureURL: selfLookup.profilePictureUrl)
-                Logger.apollo.debug("ProfileAttributes retrieved: \(profileAttributes.debugDescription)")
+                Logger.apollo.debug("ProfileAttributes being returned:\n \(profileAttributes.debugDescription)")
                 completion(.success(profileAttributes))
             case .failure(let error):
                 Logger.apollo.error("\(error)")
@@ -113,7 +134,7 @@ class ApolloMountainUIClient
                 
                 let expirationDate = Date().addingTimeInterval(expiryInSeconds)
                 
-                UserManager.shared.token = ExpirableAuthorizationToken(token: authorizationToken, expirationDate: expirationDate)
+                UserManager.shared.token = ExpirableAuthorizationToken(authorizationToken: authorizationToken, expirationDate: expirationDate, oauthToken: token)
                 
                 completion(.success(()))
                 
@@ -129,32 +150,29 @@ class ApolloMountainUIClient
 // MARK: - ProfileAttributes
 struct ProfileAttributes: CustomDebugStringConvertible
 {
-    
+    var type: String
+    var oauthToken: String
     var id: String
     var email: String
     var firstName: String
     var lastName: String
     var profilePictureURL: String
     
-    init(id: String, email: String, firstName: String, lastName: String, profilePictureURL: String? = "") {
+    init(type: String, oauthToken: String, id: String, email: String, firstName: String, lastName: String, profilePictureURL: String? = "") {
+        self.type = type
+        self.oauthToken = oauthToken
         self.id = id
         self.email = email
         self.firstName = firstName
         self.lastName = lastName
         self.profilePictureURL = profilePictureURL ?? ""
     }
-    
-    init() {
-        self.id = ""
-        self.email = ""
-        self.firstName = ""
-        self.lastName = ""
-        self.profilePictureURL = ""
-    }
-    
+
     var debugDescription: String {
        """
        id: \(self.id)
+       type: \(self.type)
+       oauthToken: \(self.oauthToken)
        firstName: \(self.firstName)
        lastName: \(self.lastName)
        email: \(self.email)

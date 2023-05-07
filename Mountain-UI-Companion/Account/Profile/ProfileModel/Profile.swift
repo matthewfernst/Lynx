@@ -11,6 +11,8 @@ import UIKit
 
 class Profile
 {
+    var type: String
+    var oauthToken: String
     var id: String
     var firstName, lastName: String
     var name: String { firstName + " " + lastName }
@@ -21,7 +23,9 @@ class Profile
     var units: String = "Imperial"
     var notificationsAllowed: Bool?
     
-    init(id: String, firstName: String, lastName: String, email: String, profilePicture: UIImage? = nil, profilePictureURL: String? = "") {
+    init(type: String, oauthToken: String, id: String, firstName: String, lastName: String, email: String, profilePicture: UIImage? = nil, profilePictureURL: String? = "") {
+        self.type = type
+        self.oauthToken = oauthToken
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
@@ -30,25 +34,27 @@ class Profile
         self.profilePictureURL = profilePictureURL
     }
     
-    public static func createProfile(id: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
+    public static func createProfile(type: String, oauthToken: String, id: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
         guard let profilePictureURL = URL(string: profilePictureURL ?? "") else {
-            completion(Profile(id: id, firstName: firstName, lastName: lastName, email: email))
+            completion(Profile(type: type, oauthToken: oauthToken, id: id, firstName: firstName, lastName: lastName, email: email))
             return
         }
         
         URLSession.shared.dataTask(with: profilePictureURL) { (data, response, error) in
             if let error = error {
                 print("Error downloading profile picture: \(error.localizedDescription)")
-                completion(Profile(id: id, firstName: firstName, lastName: lastName, email: email))
+                completion(Profile(type: type, oauthToken: oauthToken, id: id, firstName: firstName, lastName: lastName, email: email))
                 return
             }
             
             guard let data = data, let profilePicture = UIImage(data: data) else {
-                completion(Profile(id: id, firstName: firstName, lastName: lastName, email: email))
+                completion(Profile(type: type, oauthToken: oauthToken, id: id, firstName: firstName, lastName: lastName, email: email))
                 return
             }
             
-            let profile = Profile(id: id,
+            let profile = Profile(type: type,
+                                  oauthToken: oauthToken,
+                                  id: id,
                                   firstName: firstName,
                                   lastName: lastName,
                                   email: email,
@@ -72,11 +78,5 @@ extension Profile: CustomDebugStringConvertible
         profilePictureURL: \(String(describing: self.profilePictureURL))
         """
     }
-}
-extension Profile {
-    static var sampleProfile = Profile(id: "1234",
-                                       firstName: "John",
-                                       lastName: "AppleSeed",
-                                       email: "johnappleseed@icloud.com")
 }
 #endif

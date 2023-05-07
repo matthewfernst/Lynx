@@ -26,10 +26,10 @@ class LoginController {
                                                  profilePictureUrl: profilePictureURL) { result in
             switch result {
             case .success:
-                Logger.loginController.info("Token successfully recieved.")
+                Logger.loginController.info("Authorization Token successfully recieved.")
                 self.loginUser(completion: completion)
             case .failure:
-                Logger.loginController.error("User not logged in.")
+                Logger.loginController.error("Failed to retrieve Authorization Token.")
                 completion(.failure(UserError.noAuthorizationTokenReturned))
             }
         }
@@ -41,7 +41,7 @@ class LoginController {
             case .success(let profileAttributes):
                 self.signInUser(profileAttributes: profileAttributes, completion: completion)
             case .failure(let error):
-                Logger.loginController.error("No profile attributes returned. \(error)")
+                Logger.loginController.error("Failed to login user. \(error)")
                 completion(.failure(error))
             }
         }
@@ -52,7 +52,9 @@ class LoginController {
         var createdProfile: Profile?
         group.enter()
         
-        Profile.createProfile(id: profileAttributes.id,
+        Profile.createProfile(type: profileAttributes.type,
+                              oauthToken: profileAttributes.oauthToken,
+                              id: profileAttributes.id,
                               firstName: profileAttributes.firstName,
                               lastName: profileAttributes.lastName,
                               email: profileAttributes.email,

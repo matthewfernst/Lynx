@@ -21,4 +21,5 @@ enum UserDefaultsKeys
     // Apollo Authorization Token
     static let authorizationToken = "authorizationToken"
     static let authorizationTokenExpirationDate = "authorizationTokenExpirationDate"
+    static let oauthToken = "oauthToken"
 }

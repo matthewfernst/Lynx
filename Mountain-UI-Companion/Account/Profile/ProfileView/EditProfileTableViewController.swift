@@ -88,52 +88,52 @@ class EditProfileTableViewController: UITableViewController
     }
     
     private func saveProfileChanges() async {
-        let newFirstName = profileChanges[ProfileChangesKeys.firstName.rawValue] as? String ?? self.profile.firstName
-        let newLastName = profileChanges[ProfileChangesKeys.lastName.rawValue] as? String ?? self.profile.lastName
-        let newEmail = profileChanges[ProfileChangesKeys.email.rawValue] as? String ?? self.profile.email
+//        let newFirstName = profileChanges[ProfileChangesKeys.firstName.rawValue] as? String ?? self.profile.firstName
+//        let newLastName = profileChanges[ProfileChangesKeys.lastName.rawValue] as? String ?? self.profile.lastName
+//        let newEmail = profileChanges[ProfileChangesKeys.email.rawValue] as? String ?? self.profile.email
+//        
+//        var newProfilePictureURL = self.profile.profilePictureURL
+//        if let changedProfilePicture = profileChanges[ProfileChangesKeys.profilePicture.rawValue] as? UIImage {
+//            
+//            do {
+//                // Upload new profile picture to S3
+////                try await S3Utils.uploadProfilePictureToS3(id: self.profile.id, picture: changedProfilePicture)
+//                // Get new profile picture's Object URL
+////                let objectURL = await S3Utils.getProfilePictureObjectURL(id: self.profile.id)
+////                newProfilePictureURL = objectURL
+//            } catch {
+//                // Handle error
+//                print("Error uploading profile picture: \(error)")
+//            }
+//        } else if let _ = profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] as? Bool {
+//            newProfilePictureURL = nil
+//            profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] = false
+//            // TODO: Remove current S3 profilePic? or it doesn't matter? @MaxRosoff
+//        }
         
-        var newProfilePictureURL = self.profile.profilePictureURL
-        if let changedProfilePicture = profileChanges[ProfileChangesKeys.profilePicture.rawValue] as? UIImage {
-            
-            do {
-                // Upload new profile picture to S3
-//                try await S3Utils.uploadProfilePictureToS3(id: self.profile.id, picture: changedProfilePicture)
-                // Get new profile picture's Object URL
-//                let objectURL = await S3Utils.getProfilePictureObjectURL(id: self.profile.id)
-//                newProfilePictureURL = objectURL
-            } catch {
-                // Handle error
-                print("Error uploading profile picture: \(error)")
-            }
-        } else if let _ = profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] as? Bool {
-            newProfilePictureURL = nil
-            profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] = false
-            // TODO: Remove current S3 profilePic? or it doesn't matter? @MaxRosoff
-        }
-        
-        Task {
+//        Task {
             // Update Dynamo
 //            await DynamoDBUtils.updateDynamoDBItem(id: self.profile.id,
 //                                                   newFirstName: newFirstName,
 //                                                   newLastName: newLastName,
 //                                                   newEmail: newEmail,
 //                                                   newProfilePictureURL: newProfilePictureURL ?? "")
-        }
+//        }
         
-        Profile.createProfile(id: profile.id,
-                              firstName: newFirstName,
-                              lastName: newLastName,
-                              email: newEmail,
-                              profilePictureURL: newProfilePictureURL) { [unowned self] newProfile in
-            
-            self.delegate?.editProfileCompletionHandler(profile: newProfile)
-            
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-                self.activityIndicatorBackground.removeFromSuperview()
-                self.navigationController?.popViewController(animated: true)
-            }
-        }
+//        Profile.createProfile(id: profile.id,
+//                              firstName: newFirstName,
+//                              lastName: newLastName,
+//                              email: newEmail,
+//                              profilePictureURL: newProfilePictureURL) { [unowned self] newProfile in
+//
+//            self.delegate?.editProfileCompletionHandler(profile: newProfile)
+//
+//            DispatchQueue.main.async {
+//                self.activityIndicator.stopAnimating()
+//                self.activityIndicatorBackground.removeFromSuperview()
+//                self.navigationController?.popViewController(animated: true)
+//            }
+//        }
     }
     
     // MARK: - TableViewController Functions

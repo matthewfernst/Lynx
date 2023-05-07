@@ -14,30 +14,38 @@ class UserManager {
     
     var token: ExpirableAuthorizationToken? {
         get {
-            guard let savedToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.authorizationToken),
-                  let savedExpireDate = UserDefaults.standard.object(forKey: UserDefaultsKeys.authorizationTokenExpirationDate) as? Date else {
+            guard let savedAuthorizationToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.authorizationToken),
+                  let savedExpireDate = UserDefaults.standard.object(forKey: UserDefaultsKeys.authorizationTokenExpirationDate) as? Date,
+                      let savedOauthToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.oauthToken) else {
                 return nil
             }
-            return ExpirableAuthorizationToken(token: savedToken, expirationDate: savedExpireDate)
+            return ExpirableAuthorizationToken(authorizationToken: savedAuthorizationToken, expirationDate: savedExpireDate, oauthToken: savedOauthToken)
         }
         set {
-            UserDefaults.standard.set(newValue?.token, forKey: UserDefaultsKeys.authorizationToken)
+            UserDefaults.standard.set(newValue?.authorizationToken, forKey: UserDefaultsKeys.authorizationToken)
             UserDefaults.standard.set(newValue?.expirationDate, forKey: UserDefaultsKeys.authorizationTokenExpirationDate)
+            UserDefaults.standard.set(newValue?.oauthToken, forKey: UserDefaultsKeys.oauthToken)
         }
     }
     
     func renewToken(completion: @escaping (Result<String, Error>) -> Void) {
         //TODO: Add Profile!
-        ApolloMountainUIClient.loginOrCreateUser(type: "APPLE",
-                                                 id: "9702145508",
-                                                 token: "1234",
-                                                 email: "sully@apple.com",
-                                                 firstName: "Sully",
-                                                 lastName: "Perich",
-                                                 profilePictureUrl: "sully-wully.sullysullivan.com") { result in
+        guard let user = LoginController.profile else {
+            return
+        }
+        
+        
+        
+        ApolloMountainUIClient.loginOrCreateUser(type: "GOOGLE", // TODO: Save in Profile
+                                                 id: user.id,
+                                                 token: "1234", // TODO: How?
+                                                 email: user.email,
+                                                 firstName: user.firstName,
+                                                 lastName: user.lastName,
+                                                 profilePictureUrl: user.profilePictureURL) { result in
             switch result {
             case .success:
-                completion(.success((UserManager.shared.token!.value)))
+                completion(.success((UserManager.shared.token!.authorizationTokenValue)))
                 
             case .failure(let error):
                 completion(.failure(error))
@@ -47,14 +55,19 @@ class UserManager {
 }
 
 struct ExpirableAuthorizationToken {
-    let token: String
+    let authorizationToken: String
     let expirationDate: Date
+    let oauthToken: String
     
     var isExpired: Bool {
         return Date() >= expirationDate
     }
     
-    var value: String {
-        return token
+    var authorizationTokenValue: String {
+        return authorizationToken
+    }
+    
+    var oauthTokenValue: String {
+        return oauthToken
     }
 }

@@ -82,7 +82,7 @@ class UserManagementInterceptor: ApolloInterceptor {
         } else {
             // We don't need to wait for renewal, add token and move on
             self.addTokenAndProceed(
-                token.value,
+                token.authorizationToken,
                 to: request,
                 chain: chain,
                 response: response,

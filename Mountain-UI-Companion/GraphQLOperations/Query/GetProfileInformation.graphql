@@ -1,6 +1,8 @@
 query GetProfileInformation {
   selfLookup {
      id
+     appleId
+     googleId
      email
      firstName
      lastName

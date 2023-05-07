@@ -171,8 +171,6 @@ class LoginViewController: UIViewController
             let email = profile.email
             let activityIndicator = self.showSignInActivityIndicator()
             
-            
-            
             LoginController.handleCommonSignIn(type: "GOOGLE",
                                                id: id,
                                                token: token,
@@ -271,28 +269,25 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
         switch authorization.credential {
         case let appleIdCredential as ASAuthorizationAppleIDCredential:
             Logger.loginViewController.debug("Sign in with Apple: Credential Sign in")
+            guard let appleJWT = String(data:appleIdCredential.identityToken!, encoding: .utf8) else {
+                Logger.loginViewController.error("Apple JWT was not returned.")
+                return
+            }
             
             let activityIndicator = self.showSignInActivityIndicator()
             LoginController.handleCommonSignIn(type: "APPLE",
                                                id: appleIdCredential.user,
-                                               token: appleIdCredential.authorizationCode!.description,
+                                               token: appleJWT,
                                                email: appleIdCredential.email,
                                                firstName: appleIdCredential.fullName?.givenName,
-                                               lastName: appleIdCredential.fullName?.familyName) { result -> Void in
+                                               lastName: appleIdCredential.fullName?.familyName) { _ -> Void in
                 activityIndicator.stopAnimating()
                 self.updateViewFromModel()
-                
-                switch result {
-                case .success:
-                    self.goToMainApp()
-                case .failure:
-                    self.showErrorWithSignIn()
-                }
             }
             
         default:
+            Logger.loginViewController.error("AppleCredential did not return.")
             self.showErrorWithSignIn()
-            
         }
     }
     
