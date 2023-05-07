@@ -17,6 +17,7 @@ class UserManager {
             guard let savedAuthorizationToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.authorizationToken),
                   let savedExpireDate = UserDefaults.standard.object(forKey: UserDefaultsKeys.authorizationTokenExpirationDate) as? Date,
                       let savedOauthToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.oauthToken) else {
+                UserDefaults.standard.set(false, forKey: UserDefaultsKeys.isSignedIn)
                 return nil
             }
             return ExpirableAuthorizationToken(authorizationToken: savedAuthorizationToken, expirationDate: savedExpireDate, oauthToken: savedOauthToken)
@@ -25,6 +26,7 @@ class UserManager {
             UserDefaults.standard.set(newValue?.authorizationToken, forKey: UserDefaultsKeys.authorizationToken)
             UserDefaults.standard.set(newValue?.expirationDate, forKey: UserDefaultsKeys.authorizationTokenExpirationDate)
             UserDefaults.standard.set(newValue?.oauthToken, forKey: UserDefaultsKeys.oauthToken)
+            UserDefaults.standard.set(true, forKey: UserDefaultsKeys.isSignedIn)
         }
     }
     
@@ -60,6 +62,7 @@ struct ExpirableAuthorizationToken {
     let oauthToken: String
     
     var isExpired: Bool {
+        UserDefaults.standard.set(false, forKey: UserDefaultsKeys.isSignedIn)
         return Date() >= expirationDate
     }
     

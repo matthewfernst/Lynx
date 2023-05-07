@@ -5,8 +5,6 @@
 //  Created by Matthew Ernst on 1/26/23.
 //
 import AuthenticationServices
-import AWSClientRuntime
-import AWSDynamoDB
 import ClientRuntime
 import GoogleSignIn
 import UIKit
@@ -81,15 +79,6 @@ class LoginViewController: UIViewController
         if let url = URL(string: Constants.mountainUIDisplayGitub) {
             UIApplication.shared.open(url)
         }
-    }
-    
-    // MARK: DEBUG login for working on other parts of the app and bypassing login
-    private func debugLogin() {
-#if DEBUG
-        //        Logger.loginViewController.debug("DEBUG MODE!")
-        //        LoginController.profile = Profile.sampleProfile
-        //        self.goToMainApp()
-#endif
     }
     
     private func setupLearnMoreButton() {
@@ -247,19 +236,16 @@ class LoginViewController: UIViewController
     }
     
     private func signInExistingUser() {
-        self.debugLogin()
-        let isSignedIn = UserDefaults.standard.bool(forKey: UserDefaultsKeys.profileIsSignedInKey)
-        
-        //        if isSignedIn {
-        //            let activityIndicator = showSignInActivityIndicator()
-        //            Task {
-        //                await Profile.loadProfileFromKeychain { [unowned self] profile in
-        //                    activityIndicator.stopAnimating()
-        //
-        //                    self.goToMainApp()
-        //                }
-        //            }
-        //        }
+        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSignedIn) {
+            let activityIndicator = showSignInActivityIndicator()
+
+                Profile.loadProfileFromKeychain { [unowned self] profile in
+                    activityIndicator.stopAnimating()
+
+                    self.goToMainApp()
+                }
+
+        }
     }
 }
 

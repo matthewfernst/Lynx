@@ -29,8 +29,7 @@ class LoginController {
                 Logger.loginController.info("Authorization Token successfully recieved.")
                 self.loginUser(completion: completion)
             case .failure:
-                Logger.loginController.error("Failed to retrieve Authorization Token.")
-                completion(.failure(UserError.noAuthorizationTokenReturned))
+                fatalError("Failed to retrieve Authorization Token.")
             }
         }
     }
@@ -52,6 +51,7 @@ class LoginController {
         var createdProfile: Profile?
         group.enter()
         
+        UserDefaults.standard.setValue(profileAttributes.type, forKey: UserDefaultsKeys.loginType)
         Profile.createProfile(type: profileAttributes.type,
                               oauthToken: profileAttributes.oauthToken,
                               id: profileAttributes.id,
@@ -66,11 +66,11 @@ class LoginController {
         
         if let profile = createdProfile {
             LoginController.profile = profile
-            UserDefaults.standard.set(true, forKey: UserDefaultsKeys.profileIsSignedInKey)
+            UserDefaults.standard.set(true, forKey: UserDefaultsKeys.isSignedIn)
             profile.saveToKeychain()
             completion(.success(()))
         } else {
-            let error = NSError(domain: "com.example.app", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to create profile"])
+            let error = NSError(domain: Constants.bundleID, code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to create profile"])
             completion(.failure(error))
         }
     }

@@ -13,7 +13,7 @@ enum UserDefaultsKeys
     static let theme = "theme"
     
     // Profile
-    static let profileIsSignedInKey = "isSignedIn"
+    static let isSignedIn = "isSignedIn"
     
     // NotificationSettingsTableViewController
     static let notificationsTurnedOnOrOff = "notificationsAllowed"
@@ -22,4 +22,5 @@ enum UserDefaultsKeys
     static let authorizationToken = "authorizationToken"
     static let authorizationTokenExpirationDate = "authorizationTokenExpirationDate"
     static let oauthToken = "oauthToken"
+    static let loginType = "loginType"
 }

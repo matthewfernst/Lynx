@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import AWSDynamoDB
 import ClientRuntime
 
 enum AllSettingsSections: Int, CaseIterable

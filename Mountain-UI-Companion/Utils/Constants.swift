@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import AWSDynamoDB
 
 enum Constants
 {

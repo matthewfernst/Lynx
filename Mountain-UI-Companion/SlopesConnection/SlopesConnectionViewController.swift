@@ -4,9 +4,6 @@
 //
 //  Created by Matthew Ernst on 1/23/23.
 //
-
-import AWSClientRuntime
-import AWSS3
 import ClientRuntime
 import UIKit
 import OSLog

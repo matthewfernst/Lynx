@@ -10,7 +10,7 @@ import Foundation
 extension Profile
 {
     
-    static func loadProfileFromKeychain(completion: @escaping (Profile?) -> Void) async {
+    static func loadProfileFromKeychain(completion: @escaping (Profile?) -> Void) {
         
         let query = [
             kSecClass as String: kSecClassGenericPassword as String,
@@ -23,18 +23,20 @@ extension Profile
         let status: OSStatus = SecItemCopyMatching(query, &dataTypeRef)
         if status == errSecSuccess {
             if let data = dataTypeRef as? Data,
-               let id = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSString.self, from: data) as? String {
-//                await LoginController.handleCommonSignIn(id: id)
-                DispatchQueue.main.async {
-                    completion(LoginController.profile)
+               let id = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSString.self, from: data) as? String,
+               let token = UserDefaults.standard.string(forKey: UserDefaultsKeys.oauthToken),
+               let type = UserDefaults.standard.string(forKey: UserDefaultsKeys.loginType){
+                LoginController.handleCommonSignIn(type: type, id: id, token: token) { result in
+                    switch result {
+                    case .success:
+                        completion(LoginController.profile)
+                    case .failure(_):
+                        completion(nil)
+                    }
                 }
-                return
             }
         }
-        DispatchQueue.main.async {
-            completion(nil)
-        }
-        
+ 
     }
     
     

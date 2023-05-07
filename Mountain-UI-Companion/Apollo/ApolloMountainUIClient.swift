@@ -45,12 +45,12 @@ class ApolloMountainUIClient
                     return
                 }
                 
-                guard let type: String = {
+                guard let (type, oauthId): (String, String) = {
                     switch (selfLookup.appleId, selfLookup.googleId) {
                     case (.some, _):
-                        return "APPLE"
+                        return ("APPLE", selfLookup.appleId!)
                     case (_, .some):
-                        return "GOOGLE"
+                        return ("GOOGLE", selfLookup.googleId!)
                     default:
                         return nil
                     }
@@ -58,15 +58,16 @@ class ApolloMountainUIClient
                     Logger.apollo.error("AppleId and GoogleId were both null.")
                     return
                 }
-                
+
                 guard let oauthToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.oauthToken) else {
                     Logger.apollo.error("oauthToken not found in UserDefaults.")
                     return
                 }
                 
+                print(oauthId)
                 let profileAttributes = ProfileAttributes(type: type,
                                                           oauthToken: oauthToken,
-                                                          id: selfLookup.id,
+                                                          id: oauthId,
                                                           email: selfLookup.email,
                                                           firstName: selfLookup.firstName,
                                                           lastName: selfLookup.lastName,
@@ -79,7 +80,6 @@ class ApolloMountainUIClient
             }
         }
     }
-    
     
     
     static func loginOrCreateUser(type: String, id: String, token: String, email: String?, firstName: String?, lastName: String?, profilePictureUrl: String?, completion: @escaping (Result<Void, Error>) -> Void) {
