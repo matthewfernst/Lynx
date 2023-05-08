@@ -49,8 +49,7 @@ const createUserOrSignIn = async (
 
 const verifyAppleToken = async (id: string, token: string) => {
     const { sub } = await AppleSignIn.verifyIdToken(token, {
-        audience: process.env.APPLE_CLIENT_ID,
-        ignoreExpiration: true
+        audience: process.env.APPLE_CLIENT_ID
     });
     return sub === id;
 };

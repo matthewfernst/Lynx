@@ -7,7 +7,7 @@ import {
 } from "../../aws/dynamodb";
 
 interface Args {
-    userPairs: {
+    userData: {
         key: string;
         value: string;
     }[];
@@ -16,7 +16,7 @@ interface Args {
 const editUser = async (_: any, args: Args, context: Context, info: any) => {
     await checkIsLoggedIn(context);
     let queryOutput;
-    for (const userValue of args.userPairs) {
+    for (const userValue of args.userData) {
         queryOutput = await updateItem(
             DYNAMODB_TABLE_NAME_USERS,
             context.userId as string,
