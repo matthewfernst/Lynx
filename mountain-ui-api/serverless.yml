@@ -46,7 +46,10 @@ provider:
       statements:
         - Effect: Allow
           Action:
-            - s3:GetObject
+            - "s3:ListObjects"
+            - "s3:GetObject"
+            - "s3:GetObjectVersion"
+            - "s3:PutObject"
           Resource:
             - arn:aws:s3:::mountain-ui-app-slopes-unzipped
             - arn:aws:s3:::mountain-ui-app-slopes-unzipped/*
