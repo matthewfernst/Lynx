@@ -115,6 +115,69 @@ export const updateItem = async (
     }
 };
 
+export const addItemsToArray = async (
+    table: string,
+    id: string,
+    key: string,
+    values: string[]
+): Promise<UpdateItemOutput> => {
+    const documentClient = createDocumentClient();
+    try {
+        console.log(
+            `Updating item in table ${table} with id ${id}. ${key} now has the following as values: ${values}`
+        );
+        const updateItemRequest = new UpdateCommand({
+            TableName: table,
+            Key: { id },
+            UpdateExpression: "set #updateKey = list_append(#updateKey, :value)",
+            ExpressionAttributeNames: { "#updateKey": key },
+            ExpressionAttributeValues: { ":value": values },
+            ReturnValues: "ALL_NEW"
+        });
+        return await documentClient.send(updateItemRequest);
+    } catch (err) {
+        console.error(err);
+        throw Error("DynamoDB Update Call Failed");
+    }
+};
+
+export const deleteItemsFromArray = async (
+    table: string,
+    id: string,
+    key: string,
+    values: string[]
+): Promise<UpdateItemOutput> => {
+    const documentClient = createDocumentClient();
+    try {
+        console.log(
+            `Updating item in table ${table} with id ${id}. ${key} no longer has the following as values ${values}`
+        );
+        const item = getItemFromDynamoDBResult(await getItem(table, id));
+        if (!item) {
+            throw new Error("Error finding item for this userId");
+        }
+        const indices = item[key].map((listItem) => item[key].index(listItem));
+        const updateItemRequest = new UpdateCommand({
+            TableName: table,
+            Key: { id },
+            UpdateExpression:
+                "remove " +
+                indices.map((index, arrayIndex) => {
+                    if (arrayIndex + 1 === indices.length) {
+                        return `#updateKey[${index}]`;
+                    }
+                    return `#updateKey[${index}], `;
+                }),
+            ExpressionAttributeNames: { "#updateKey": key },
+            ReturnValues: "ALL_NEW"
+        });
+        return await documentClient.send(updateItemRequest);
+    } catch (err) {
+        console.error(err);
+        throw Error("DynamoDB Update Call Failed");
+    }
+};
+
 export const deleteItem = async (table: string, id: string): Promise<DeleteItemOutput> => {
     const documentClient = createDocumentClient();
     try {

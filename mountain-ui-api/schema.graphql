@@ -6,6 +6,8 @@ type User {
     firstName: String!
     lastName: String!
     profilePictureUrl: String
+    incomingFriendRequests: [User!]!
+    outgoingFriendRequests: [User!]!
     friends: [User!]!
     runRecords: [RunRecord!]!
 }
@@ -55,6 +57,6 @@ type Mutation {
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
     deleteUser: User
     editUser(userData: [KeyValuePair!]!): User!
-    requestFriend(friendId: ID!): User
-    resolveRequestFriend(friendId: String!, choice: Boolean!): User
+    requestFriend(friendId: ID!): User!
+    resolveRequestFriend(friendId: String!, choice: Boolean!): User!
 }

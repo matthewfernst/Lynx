@@ -83,7 +83,10 @@ const oauthLogin = async (
             id: mountainAppId,
             [idFieldName]: id,
             email,
-            ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
+            ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value }))),
+            incomingFriendRequests: [],
+            outgoingFriendRequests: [],
+            friends: []
         });
         return {
             token: generateToken(mountainAppId),
