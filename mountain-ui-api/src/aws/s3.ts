@@ -43,7 +43,9 @@ export const getRecordsFromBucket = async (bucketName: string, prefix: string = 
         const listObjectsRequest = new ListObjectsCommand({ Bucket: bucketName, Prefix: prefix });
         const listObjectsResponse = await s3Client.send(listObjectsRequest);
         if (!listObjectsResponse.Contents) {
-            throw new Error(`Error retrieving info of items in bucket ${listObjectsResponse}`);
+            throw new Error(
+                `Error retrieving info of items in bucket ${JSON.stringify(listObjectsResponse)}`
+            );
         }
         return await Promise.all(
             listObjectsResponse.Contents.map(async (content) => {
@@ -53,7 +55,11 @@ export const getRecordsFromBucket = async (bucketName: string, prefix: string = 
                 });
                 const getObjectResponse = await s3Client.send(getObjectRequest);
                 if (!getObjectResponse.Body) {
-                    throw new Error(`Error reading information about item in bucket ${getObjectResponse}`);
+                    throw new Error(
+                        `Error reading information about item in bucket ${JSON.stringify(
+                            getObjectResponse
+                        )}`
+                    );
                 }
                 return await getObjectResponse.Body.transformToString();
             })
