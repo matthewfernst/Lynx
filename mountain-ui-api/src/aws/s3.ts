@@ -3,9 +3,12 @@ import {
     GetObjectCommand,
     HeadObjectCommand,
     ListObjectsCommand,
-    PutObjectCommand
+    PutObjectCommand,
+    DeleteObjectCommand
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+export const profilePictureBucketName = "mountain-ui-app-profile-pictures";
 
 const createS3Client = (): S3Client => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
@@ -64,5 +67,19 @@ export const getRecordsFromBucket = async (
     } catch (err) {
         console.error(err);
         throw Error(`Error retrieving records from bucket with prefix ${prefix}`);
+    }
+};
+
+export const deleteObjectsInBucket = async (bucketName: string, prefix: string) => {
+    const s3Client = createS3Client();
+    try {
+        const deleteObjectRequest = new DeleteObjectCommand({
+            Bucket: bucketName,
+            Key: prefix
+        });
+        await s3Client.send(deleteObjectRequest);
+    } catch (err) {
+        console.error(err);
+        throw Error(``);
     }
 };

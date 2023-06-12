@@ -1,8 +1,6 @@
-import { createSignedUploadUrl } from "../../aws/s3";
+import { createSignedUploadUrl, profilePictureBucketName } from "../../aws/s3";
 import { Context } from "../../index";
 import { checkIsLoggedIn } from "../../auth";
-
-export const profilePictureBucketName = "mountain-ui-app-profile-pictures";
 
 interface Args {}
 
