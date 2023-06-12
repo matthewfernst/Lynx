@@ -1,8 +1,6 @@
-import { createSignedUploadUrl } from "../../aws/s3";
+import { createSignedUploadUrl, fromRunRecordsBucket } from "../../aws/s3";
 import { Context } from "../../index";
 import { checkIsLoggedIn } from "../../auth";
-
-const fromBucket = "mountain-ui-app-slopes-zipped";
 
 interface Args {
     requestedPaths: string[];
@@ -12,7 +10,7 @@ const createUserRecordUploadUrl = async (_: any, args: Args, context: Context, i
     await checkIsLoggedIn(context);
     console.log(`Creating UserRecord Upload URL For User ID ${context.userId}`);
     return args.requestedPaths.map((requestedPath) => {
-        createSignedUploadUrl(fromBucket, `${context.userId}/${requestedPath}`);
+        createSignedUploadUrl(fromRunRecordsBucket, `${context.userId}/${requestedPath}`);
     });
 };
 

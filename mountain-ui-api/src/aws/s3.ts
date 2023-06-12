@@ -9,6 +9,8 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export const profilePictureBucketName = "mountain-ui-app-profile-pictures";
+export const fromRunRecordsBucket = "mountain-ui-app-slopes-zipped";
+export const toRunRecordsBucket = "mountain-ui-app-slopes-unzipped";
 
 const createS3Client = (): S3Client => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");

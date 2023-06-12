@@ -1,6 +1,6 @@
 import { Context } from "../../index";
 import { RunRecord } from "../../types";
-import { getRecordsFromBucket } from "../../aws/s3";
+import { getRecordsFromBucket, toRunRecordsBucket } from "../../aws/s3";
 
 const runRecords = async (
     parent: any,
@@ -8,7 +8,7 @@ const runRecords = async (
     context: Context,
     info: any
 ): Promise<RunRecord[]> => {
-    const records = await getRecordsFromBucket("mountain-ui-app-slopes-unzipped", parent.id);
+    const records = await getRecordsFromBucket(toRunRecordsBucket, parent.id);
     return records.map((record) => JSON.parse(record));
 };
 
