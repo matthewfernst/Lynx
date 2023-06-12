@@ -476,4 +476,43 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         self.bookmark = bookmarks.first
     }
     
+    private func putZipFiles(urlEndPoint: String, zipFile: Data) {
+        let url = URL(string: "https://example.com/endpoint")! // Replace with your actual URL
+           
+           // Create the request object
+           var request = URLRequest(url: url)
+           request.httpMethod = "PUT"
+           
+           // Set the content type for the request
+           let contentType = "application/zip" // Replace with the appropriate content type
+           request.setValue(contentType, forHTTPHeaderField: "Content-Type")
+           
+           // Specify the path to your ZIP file
+           let zipFilePath = Bundle.main.path(forResource: "exampleFile", ofType: "zip")! // Replace with the path to your ZIP file
+           
+           // Read the ZIP file data
+           let zipFileData = try! Data(contentsOf: URL(fileURLWithPath: zipFilePath))
+           
+           // Set the request body to the ZIP file data
+           request.httpBody = zipFileData
+           
+           // Create a URLSession task for the request
+           let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+               if let error = error {
+                   print("Error: \(error)")
+                   return
+               }
+               
+               // Handle the response
+               if let response = response as? HTTPURLResponse {
+                   print("Response status code: \(response.statusCode)")
+                   // Handle the response data...
+               }
+           }
+           
+           // Start the task
+           task.resume()
+
+    }
+    
 }

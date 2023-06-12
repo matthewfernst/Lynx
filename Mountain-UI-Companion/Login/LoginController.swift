@@ -29,7 +29,7 @@ class LoginController {
                 Logger.loginController.info("Authorization Token successfully recieved.")
                 self.loginUser(completion: completion)
             case .failure:
-                fatalError("Failed to retrieve Authorization Token.")
+                completion(.failure(UserError.noAuthorizationTokenReturned))
             }
         }
     }

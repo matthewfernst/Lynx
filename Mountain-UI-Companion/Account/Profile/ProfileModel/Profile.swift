@@ -63,6 +63,14 @@ class Profile
             completion(profile)
         }.resume()
     }
+    
+    public func editAttributes(newFirstName: String?, newLastName: String?, newEmail: String?, newProfilePicture: UIImage?, newProfilePictureURL: String?) {
+        self.firstName = newFirstName ?? self.firstName
+        self.lastName = newLastName ?? self.lastName
+        self.email = newEmail ?? self.email
+        self.profilePicture = newProfilePicture ?? self.profilePicture
+        self.profilePictureURL = newProfilePictureURL ?? self.profilePictureURL
+    }
 }
 
 // MARK: - Extensions for Debugging

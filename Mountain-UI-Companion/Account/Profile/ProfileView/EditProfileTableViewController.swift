@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import OSLog
 
 protocol EditProfileDelegate
 {
@@ -22,9 +23,6 @@ class EditProfileTableViewController: UITableViewController
     
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var activityIndicatorBackground: UIView!
-    
-//    private let dynamoDBClient = DynamoDBUtils.dynamoDBClient
-//    private let userTable = DynamoDBUtils.usersTable
     
     private var profileChanges: [String: Any] = [:]
     
@@ -44,9 +42,9 @@ class EditProfileTableViewController: UITableViewController
         tableView.register(EditEmailTableViewCell.self, forCellReuseIdentifier: EditEmailTableViewCell.identifier)
         
         // Add tap gesture recognizer to allow save button to be pressed even if we are in a textField
-         let tapGesture = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
-         tapGesture.cancelsTouchesInView = false
-         self.view.addGestureRecognizer(tapGesture)
+        let tapGesture = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
+        tapGesture.cancelsTouchesInView = false
+        self.view.addGestureRecognizer(tapGesture)
     }
     
     @objc func goBackToSettings() {
@@ -88,52 +86,93 @@ class EditProfileTableViewController: UITableViewController
     }
     
     private func saveProfileChanges() async {
-//        let newFirstName = profileChanges[ProfileChangesKeys.firstName.rawValue] as? String ?? self.profile.firstName
-//        let newLastName = profileChanges[ProfileChangesKeys.lastName.rawValue] as? String ?? self.profile.lastName
-//        let newEmail = profileChanges[ProfileChangesKeys.email.rawValue] as? String ?? self.profile.email
-//        
-//        var newProfilePictureURL = self.profile.profilePictureURL
-//        if let changedProfilePicture = profileChanges[ProfileChangesKeys.profilePicture.rawValue] as? UIImage {
-//            
-//            do {
-//                // Upload new profile picture to S3
-////                try await S3Utils.uploadProfilePictureToS3(id: self.profile.id, picture: changedProfilePicture)
-//                // Get new profile picture's Object URL
-////                let objectURL = await S3Utils.getProfilePictureObjectURL(id: self.profile.id)
-////                newProfilePictureURL = objectURL
-//            } catch {
-//                // Handle error
-//                print("Error uploading profile picture: \(error)")
-//            }
-//        } else if let _ = profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] as? Bool {
-//            newProfilePictureURL = nil
-//            profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] = false
-//            // TODO: Remove current S3 profilePic? or it doesn't matter? @MaxRosoff
-//        }
+        let newFirstName = profileChanges[ProfileChangesKeys.firstName.rawValue] as? String ?? self.profile.firstName
+        let newLastName = profileChanges[ProfileChangesKeys.lastName.rawValue] as? String ?? self.profile.lastName
+        let newEmail = profileChanges[ProfileChangesKeys.email.rawValue] as? String ?? self.profile.email
         
-//        Task {
-            // Update Dynamo
-//            await DynamoDBUtils.updateDynamoDBItem(id: self.profile.id,
-//                                                   newFirstName: newFirstName,
-//                                                   newLastName: newLastName,
-//                                                   newEmail: newEmail,
-//                                                   newProfilePictureURL: newProfilePictureURL ?? "")
-//        }
+        var newProfilePictureURL = self.profile.profilePictureURL
+        let newProfilePicture = profileChanges.removeValue(forKey: ProfileChangesKeys.profilePicture.rawValue) as? UIImage
+        if let newProfilePicture = newProfilePicture {
+            // TODO: CreateUserProfilePictureUrl Mutation
+            ApolloMountainUIClient.createUserProfilePictureUploadUrl { result in
+                switch result {
+                case .success(let url):
+                    
+                    // Create the request object
+                    newProfilePictureURL = url
+                    guard let url = URL(string: url) else {
+                        Logger.editProfileTableViewController.error("Couldn't convert string URL to normal URL.")
+                        return
+                    }
+                    
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "PUT"
+                    
+                    // Set the content type for the request
+                    let contentType = "image/jpeg" // Replace with the appropriate content type
+                    request.setValue(contentType, forHTTPHeaderField: "Content-Type")
+                    
+                    // Convert your image to data
+                    guard let imageData = newProfilePicture.jpegData(compressionQuality: 0.8) else {
+                        Logger.editProfileTableViewController.error("Couldn't covert changed profile picture to JPEG.")
+                        return
+                    }
+                    
+                    // Set the request body to the image data
+                    request.httpBody = imageData
+                    
+                    // Create a URLSession task for the request
+                    let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                        if let error = error {
+                            print("Error: \(error)")
+                            return
+                        }
+                        
+                        // Handle the response
+                        if let response = response as? HTTPURLResponse {
+                            print("Response status code: \(response.statusCode)")
+                            // Handle the response data...
+                        }
+                    }
+                    
+                    // Start the task
+                    task.resume()
+                    
+                case .failure(_):
+                    Logger.editProfileTableViewController.error("Using profile before edit.")
+                    return
+                }
+            }
+            
+            
+        } else if let _ = profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] as? Bool {
+            newProfilePictureURL = nil
+            profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] = false
+            // TODO: Remove current S3 profilePic? or it doesn't matter? @MaxRosoff
+        }
         
-//        Profile.createProfile(id: profile.id,
-//                              firstName: newFirstName,
-//                              lastName: newLastName,
-//                              email: newEmail,
-//                              profilePictureURL: newProfilePictureURL) { [unowned self] newProfile in
-//
-//            self.delegate?.editProfileCompletionHandler(profile: newProfile)
-//
-//            DispatchQueue.main.async {
-//                self.activityIndicator.stopAnimating()
-//                self.activityIndicatorBackground.removeFromSuperview()
-//                self.navigationController?.popViewController(animated: true)
-//            }
-//        }
+        // TODO: EditUser Mutation - Test
+        ApolloMountainUIClient.editUser(profileChanges: profileChanges) { result in
+            switch result {
+            case .success(let returnedProfilePictureUrl):
+                Logger.editProfileTableViewController.info("Updating profile...")
+                newProfilePictureURL = returnedProfilePictureUrl
+            case .failure(_):
+                Logger.editProfileTableViewController.error("Using profile before edit.")
+            }
+        }
+        
+        self.profile.editAttributes(newFirstName: newFirstName, newLastName: newLastName, newEmail: newEmail, newProfilePicture: newProfilePicture, newProfilePictureURL: newProfilePictureURL)
+        
+        
+        self.delegate?.editProfileCompletionHandler(profile: self.profile)
+        
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
+            self.activityIndicatorBackground.removeFromSuperview()
+            self.navigationController?.popViewController(animated: true)
+        }
+        
     }
     
     // MARK: - TableViewController Functions

@@ -236,16 +236,15 @@ class LoginViewController: UIViewController
     }
     
     private func signInExistingUser() {
-        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSignedIn) {
-            let activityIndicator = showSignInActivityIndicator()
-
-                Profile.loadProfileFromKeychain { [unowned self] profile in
-                    activityIndicator.stopAnimating()
-
-                    self.goToMainApp()
-                }
-
-        }
+//        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSignedIn) {
+//            let activityIndicator = showSignInActivityIndicator()
+//
+//                Profile.loadProfileFromKeychain { [unowned self] profile in
+//                    activityIndicator.stopAnimating()
+//                    self.goToMainApp()
+//                }
+//
+//        }
     }
 }
 
