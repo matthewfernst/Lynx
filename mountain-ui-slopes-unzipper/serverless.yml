@@ -9,7 +9,7 @@ provider:
   stage: dev
   region: us-west-1
   runtime: nodejs18.x
-  memorySize: 256
+  memorySize: 1024
   iam:
     role:
       statements:
