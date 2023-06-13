@@ -5,8 +5,7 @@ import {
     addItemsToArray,
     deleteItemsFromArray,
     getItem,
-    getItemFromDynamoDBResult,
-    updateItem
+    getItemFromDynamoDBResult
 } from "../../aws/dynamodb";
 import { User } from "../../types";
 
@@ -34,11 +33,16 @@ const resolveRequestFriend = async (_: any, args: Args, context: Context, info: 
     await deleteItemsFromArray(DYNAMODB_TABLE_NAME_USERS, args.friendId, "outgoingFriendRequests", [
         context.userId as string
     ]);
+    if (args.choice) {
+        return getItemFromDynamoDBResult(
+            await addItemsToArray(DYNAMODB_TABLE_NAME_USERS, context.userId as string, "friends", [
+                args.friendId
+            ])
+        ) as User;
+    }
     return getItemFromDynamoDBResult(
-        await addItemsToArray(DYNAMODB_TABLE_NAME_USERS, context.userId as string, "friends", [
-            args.friendId
-        ])
-    ) as User;
+        await getItem(DYNAMODB_TABLE_NAME_USERS, context.userId as string)
+    );
 };
 
 export default resolveRequestFriend;
