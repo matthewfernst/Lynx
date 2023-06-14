@@ -7,5 +7,6 @@ query GetProfileInformation {
      firstName
      lastName
      profilePictureUrl
+     runRecords
   }
 }

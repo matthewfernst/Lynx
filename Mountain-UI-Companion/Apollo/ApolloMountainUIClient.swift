@@ -11,9 +11,9 @@ import OSLog
 
 class ApolloMountainUIClient
 {
-    static let graphQLEndpoint = Constants.graphQLEndpoint
+    private static let graphQLEndpoint = Constants.graphQLEndpoint
     
-    static let apolloClient: ApolloClient = {
+    private static let apolloClient: ApolloClient = {
         // The cache is necessary to set up the store, which we're going
         // to hand to the provider
         let cache = InMemoryNormalizedCache()
@@ -32,9 +32,9 @@ class ApolloMountainUIClient
         // doesn't create one on its own
         return ApolloClient(networkTransport: requestChainTransport, store: store)
     }()
-    static let loginApolloClient = ApolloClient(url: URL(string: graphQLEndpoint)!)
+    private static let loginApolloClient = ApolloClient(url: URL(string: graphQLEndpoint)!)
     
-    static func getProfileInformation(completion: @escaping (Result<ProfileAttributes, Error>) -> Void) {
+    public static func getProfileInformation(completion: @escaping (Result<ProfileAttributes, Error>) -> Void) {
         
         apolloClient.fetch(query: ApolloGeneratedGraphQL.GetProfileInformationQuery()) { result in
             switch result {
@@ -81,7 +81,7 @@ class ApolloMountainUIClient
     }
     
     
-    static func loginOrCreateUser(type: String, id: String, token: String, email: String?, firstName: String?, lastName: String?, profilePictureUrl: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+    public static func loginOrCreateUser(type: String, id: String, token: String, email: String?, firstName: String?, lastName: String?, profilePictureUrl: String?, completion: @escaping (Result<Void, Error>) -> Void) {
         
         Logger.apollo.debug("Login in with following: type               -> \(type)")
         Logger.apollo.debug("                         id                 -> \(id)")
@@ -145,7 +145,8 @@ class ApolloMountainUIClient
         
     }
     
-    static func editUser(profileChanges: [String: Any], completion: @escaping ((Result<String, Error>) -> Void)) {
+    public static func editUser(profileChanges: [String: Any], completion: @escaping ((Result<String, Error>) -> Void)) {
+        
         var userData: [ApolloGeneratedGraphQL.KeyValuePair] = []
         for (key, value) in profileChanges {
             let stringValue = String(describing: value)
@@ -176,7 +177,7 @@ class ApolloMountainUIClient
         }
     }
     
-    static func createUserProfilePictureUploadUrl(completion: @escaping ((Result<String, Error>) -> Void)) {
+    public static func createUserProfilePictureUploadUrl(completion: @escaping ((Result<String, Error>) -> Void)) {
         
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreateUserProfilePictureUploadUrlMutation()) { result in
             switch result {
@@ -196,14 +197,56 @@ class ApolloMountainUIClient
         }
     }
     
-//    static func createUserRecordUploadUrl(completion: @escaping ((Result<String, Error>) -> Void)) {
-//        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreateRunRecordUploadUrlMutation()) { result in
-//            switch result {
-//            case .success(let graphQLResult):
-//
-//            }
-//        }
-//    }
+    public static func createUserRecordUploadUrl(filesToUpload: [String], completion: @escaping ((Result<[String], Error>) -> Void)) {
+        
+        enum RunRecordURLErrors: Error {
+            case nilURLs
+            case mismatchNumberOfURLs
+        }
+        
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreateRunRecordUploadUrlMutation(requestedPaths: filesToUpload)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let urls = graphQLResult.data?.createUserRecordUploadUrl else {
+                    Logger.apollo.error("Unable to unwrap createUserRecordUploadUrl.")
+                    return
+                }
+                
+                if urls.contains(where: { $0 == nil }) {
+                    Logger.apollo.error("One or more of the URL's returned contains nil.")
+                    return completion(.failure(RunRecordURLErrors.nilURLs))
+                }
+                
+                if filesToUpload.count != urls.count {
+                    Logger.apollo.error("The number of URL's returned does not match the number of files requested for upload.")
+                    return completion(.failure(RunRecordURLErrors.mismatchNumberOfURLs))
+                }
+                Logger.apollo.info("Successfully acquired urls for run record upload.")
+                completion(.success(urls.compactMap { $0 })) // Unwrapping all internal url optionals
+                
+            case .failure(_):
+                break
+            }
+        }
+    }
+    
+    public static func getUsersRunRecords(completion: @escaping ((Result<[String], Error>) -> Void)) {
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetProfileInformationQuery()) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let selfLookup = graphQLResult.data?.selfLookup else {
+                    Logger.apollo.error("selfLookup did not have any data.")
+                    completion(.failure(UserError.noProfileAttributesReturned))
+                    return
+                }
+                
+                return selfLookup.
+                
+            case .failure(_):
+                break
+            }
+        }
+    }
     
 }
 

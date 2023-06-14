@@ -93,7 +93,6 @@ class EditProfileTableViewController: UITableViewController
         var newProfilePictureURL = self.profile.profilePictureURL
         let newProfilePicture = profileChanges.removeValue(forKey: ProfileChangesKeys.profilePicture.rawValue) as? UIImage
         if let newProfilePicture = newProfilePicture {
-            // TODO: CreateUserProfilePictureUrl Mutation
             ApolloMountainUIClient.createUserProfilePictureUploadUrl { result in
                 switch result {
                 case .success(let url):
@@ -148,10 +147,8 @@ class EditProfileTableViewController: UITableViewController
         } else if let _ = profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] as? Bool {
             newProfilePictureURL = nil
             profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] = false
-            // TODO: Remove current S3 profilePic? or it doesn't matter? @MaxRosoff
         }
         
-        // TODO: EditUser Mutation - Test
         ApolloMountainUIClient.editUser(profileChanges: profileChanges) { result in
             switch result {
             case .success(let returnedProfilePictureUrl):

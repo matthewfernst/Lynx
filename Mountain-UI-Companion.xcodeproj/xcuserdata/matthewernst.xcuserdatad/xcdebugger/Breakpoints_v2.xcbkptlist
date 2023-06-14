@@ -244,5 +244,131 @@
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "51CE4E2F-4422-4BA5-BA08-4C42ABDAC141"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "209"
+            endingLineNumber = "209"
+            landmarkName = "createUserRecordUploadUrl(filesToUpload:completion:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "51CE4E2F-4422-4BA5-BA08-4C42ABDAC141 - 8466ae694ee2417d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Mountain_UI_Companion.ApolloGeneratedGraphQL.CreateRunRecordUploadUrlMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Mountain_UI_Companion.ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: Swift.Array&lt;Swift.String&gt;, completion: (Swift.Result&lt;Swift.Array&lt;Swift.String&gt;, Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "Mountain-UI-Companion"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "203"
+                  endingLineNumber = "203"
+                  offsetFromSymbolStart = "368">
+               </Location>
+               <Location
+                  uuid = "51CE4E2F-4422-4BA5-BA08-4C42ABDAC141 - 8466ae694ee2417d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Mountain_UI_Companion.ApolloGeneratedGraphQL.CreateRunRecordUploadUrlMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Mountain_UI_Companion.ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: Swift.Array&lt;Swift.String&gt;, completion: (Swift.Result&lt;Swift.Array&lt;Swift.String&gt;, Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "Mountain-UI-Companion"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "203"
+                  endingLineNumber = "203"
+                  offsetFromSymbolStart = "484">
+               </Location>
+               <Location
+                  uuid = "51CE4E2F-4422-4BA5-BA08-4C42ABDAC141 - 8466ae694ee2417d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Mountain_UI_Companion.ApolloGeneratedGraphQL.CreateRunRecordUploadUrlMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Mountain_UI_Companion.ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: Swift.Array&lt;Swift.String&gt;, completion: (Swift.Result&lt;Swift.Array&lt;Swift.String&gt;, Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "Mountain-UI-Companion"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "203"
+                  endingLineNumber = "203"
+                  offsetFromSymbolStart = "428">
+               </Location>
+               <Location
+                  uuid = "51CE4E2F-4422-4BA5-BA08-4C42ABDAC141 - 8466ae694ee2403b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Mountain_UI_Companion.ApolloGeneratedGraphQL.CreateRunRecordUploadUrlMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Mountain_UI_Companion.ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: Swift.Array&lt;Swift.String&gt;, completion: (Swift.Result&lt;Swift.Array&lt;Swift.String&gt;, Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "Mountain-UI-Companion"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/ApolloMountainUIClient.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "209"
+                  endingLineNumber = "209"
+                  offsetFromSymbolStart = "444">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E48AD568-B7A7-4A98-8F32-15395A5AFFD9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Mountain-UI-Companion/SlopesConnection/SlopesConnectionViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "305"
+            endingLineNumber = "305"
+            landmarkName = "documentPicker(_:didPickDocumentsAt:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "E48AD568-B7A7-4A98-8F32-15395A5AFFD9 - d3196c02804b63ad"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Swift.Array&lt;Swift.String&gt;, Swift.Error&gt;) -&gt; () in closure #1 @Sendable () async -&gt; () in Mountain_UI_Companion.SlopesConnectionViewController.documentPicker(_: __C.UIDocumentPickerViewController, didPickDocumentsAt: Swift.Array&lt;Foundation.URL&gt;) -&gt; ()"
+                  moduleName = "Mountain-UI-Companion"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/SlopesConnection/SlopesConnectionViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "306"
+                  endingLineNumber = "306"
+                  offsetFromSymbolStart = "696">
+               </Location>
+               <Location
+                  uuid = "E48AD568-B7A7-4A98-8F32-15395A5AFFD9 - d3196c02804b638a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Swift.Array&lt;Swift.String&gt;, Swift.Error&gt;) -&gt; () in closure #1 @Sendable () async -&gt; () in Mountain_UI_Companion.SlopesConnectionViewController.documentPicker(_: __C.UIDocumentPickerViewController, didPickDocumentsAt: Swift.Array&lt;Foundation.URL&gt;) -&gt; ()"
+                  moduleName = "Mountain-UI-Companion"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/SlopesConnection/SlopesConnectionViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "305"
+                  endingLineNumber = "305"
+                  offsetFromSymbolStart = "576">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
