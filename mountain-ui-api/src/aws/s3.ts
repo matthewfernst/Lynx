@@ -17,11 +17,11 @@ const createS3Client = (): S3Client => {
     return new S3Client({ region: process.env.AWS_REGION });
 };
 
-export const createSignedUploadUrl = async (bucketName: string, path: string) => {
+export const createSignedUploadUrl = async (bucketName: string, path: string): Promise<string> => {
     const s3Client = createS3Client();
     try {
         const command = new PutObjectCommand({ Bucket: bucketName, Key: path });
-        return getSignedUrl(s3Client, command);
+        return await getSignedUrl(s3Client, command);
     } catch (err) {
         console.error(err);
         throw Error("Error creating url for file upload");

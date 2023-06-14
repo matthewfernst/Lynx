@@ -5,6 +5,7 @@ import {
     getItemFromDynamoDBResult,
     updateItem
 } from "../../aws/dynamodb";
+import { User } from "../../types";
 
 interface Args {
     userData: {
@@ -13,7 +14,7 @@ interface Args {
     }[];
 }
 
-const editUser = async (_: any, args: Args, context: Context, info: any) => {
+const editUser = async (_: any, args: Args, context: Context, info: any): Promise<User | null> => {
     await checkIsLoggedIn(context);
     let queryOutput;
     for (const userValue of args.userData) {

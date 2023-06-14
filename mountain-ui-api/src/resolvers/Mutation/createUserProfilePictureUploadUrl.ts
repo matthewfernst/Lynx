@@ -9,10 +9,10 @@ const createUserProfilePictureUploadUrl = async (
     args: Args,
     context: Context,
     info: any
-) => {
+): Promise<string> => {
     await checkIsLoggedIn(context);
     console.log(`Creating Profile Picture Upload URL For User ID ${context.userId}`);
-    return createSignedUploadUrl(profilePictureBucketName, context.userId as string);
+    return await createSignedUploadUrl(profilePictureBucketName, context.userId as string);
 };
 
 export default createUserProfilePictureUploadUrl;

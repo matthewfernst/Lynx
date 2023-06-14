@@ -14,7 +14,12 @@ interface Args {
     choice: boolean;
 }
 
-const resolveRequestFriend = async (_: any, args: Args, context: Context, info: any) => {
+const resolveRequestFriend = async (
+    _: any,
+    args: Args,
+    context: Context,
+    info: any
+): Promise<User | null> => {
     await checkIsLoggedIn(context);
     const userInfo = await getItem(DYNAMODB_TABLE_NAME_USERS, context.userId as string);
     const friendInfo = await getItem(DYNAMODB_TABLE_NAME_USERS, args.friendId);

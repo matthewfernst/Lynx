@@ -6,12 +6,19 @@ interface Args {
     requestedPaths: string[];
 }
 
-const createUserRecordUploadUrl = async (_: any, args: Args, context: Context, info: any) => {
+const createUserRecordUploadUrl = async (
+    _: any,
+    args: Args,
+    context: Context,
+    info: any
+): Promise<string[]> => {
     await checkIsLoggedIn(context);
     console.log(`Creating UserRecord Upload URL For User ID ${context.userId}`);
-    return args.requestedPaths.map((requestedPath) => {
-        createSignedUploadUrl(toRunRecordsBucket, `${context.userId}/${requestedPath}`);
-    });
+    return await Promise.all(
+        args.requestedPaths.map((requestedPath) =>
+            createSignedUploadUrl(toRunRecordsBucket, `${context.userId}/${requestedPath}`)
+        )
+    );
 };
 
 export default createUserRecordUploadUrl;
