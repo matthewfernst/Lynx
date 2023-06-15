@@ -50,13 +50,13 @@ provider:
             - "s3:ListBucketVersions"
             - "s3:GetObject"
             - "s3:GetObjectVersion"
-            - "s3:PutObject"
             - "s3:DeleteObject"
           Resource:
             - arn:aws:s3:::mountain-ui-app-slopes-unzipped
             - arn:aws:s3:::mountain-ui-app-slopes-unzipped/*
         - Effect: Allow
           Action:
+            - "s3:PutObject"
             - "s3:DeleteObject"
           Resource:
             - arn:aws:s3:::mountain-ui-app-slopes-zipped
@@ -69,7 +69,7 @@ provider:
             - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/mountain-ui-app-users/index/*
         - Effect: Allow
           Action: 
-            - "s3:ListObjects"
+            - "s3:ListBucket"
             - "s3:GetObject"
             - "s3:GetObjectVersion"
             - "s3:PutObject"
