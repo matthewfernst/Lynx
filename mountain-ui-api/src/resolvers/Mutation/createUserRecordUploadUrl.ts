@@ -16,7 +16,7 @@ const createUserRecordUploadUrl = async (
     console.log(`Creating UserRecord Upload URL For User ID ${context.userId}`);
     return await Promise.all(
         args.requestedPaths.map((requestedPath) =>
-            createSignedUploadUrl(toRunRecordsBucket, `${context.userId}/${requestedPath}`)
+            createSignedUploadUrl(fromRunRecordsBucket, `${context.userId}/${requestedPath}`)
         )
     );
 };
