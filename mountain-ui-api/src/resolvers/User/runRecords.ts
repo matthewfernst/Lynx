@@ -12,17 +12,18 @@ const runRecords = async (
     const records = await getRecordsFromBucket(toRunRecordsBucket, parent.id);
     return Promise.all(
         records.map(async (record): Promise<RunRecord> => {
-            const { activity }: { activity: any } = await parseStringPromise(record, {
-                normalize: true,
-                mergeAttrs: true,
-                explicitArray: false,
-                tagNameProcessors: [processors.firstCharLowerCase],
-                attrNameProcessors: [processors.firstCharLowerCase],
-                valueProcessors: [processors.parseBooleans, processors.parseNumbers],
-                attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
-            });
+            const { activity }: { activity: RunRecord & { identifier?: string } } =
+                await parseStringPromise(record, {
+                    normalize: true,
+                    mergeAttrs: true,
+                    explicitArray: false,
+                    tagNameProcessors: [processors.firstCharLowerCase],
+                    attrNameProcessors: [processors.firstCharLowerCase],
+                    valueProcessors: [processors.parseBooleans, processors.parseNumbers],
+                    attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
+                });
             delete Object.assign(activity, { id: activity.identifier }).identifier;
-            return activity as RunRecord;
+            return activity;
         })
     );
 };
