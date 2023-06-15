@@ -1,4 +1,4 @@
-import { createSignedUploadUrl, toRunRecordsBucket } from "../../aws/s3";
+import { createSignedUploadUrl, fromRunRecordsBucket } from "../../aws/s3";
 import { Context } from "../../index";
 import { checkIsLoggedIn } from "../../auth";
 
