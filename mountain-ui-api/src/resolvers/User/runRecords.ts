@@ -12,7 +12,7 @@ const runRecords = async (
     const records = await getRecordsFromBucket(toRunRecordsBucket, parent.id);
     return Promise.all(
         records.map(async (record): Promise<RunRecord> => {
-            const xml: { activity: RunRecord } = await parseStringPromise(record, {
+            const { activity }: { activity: any } = await parseStringPromise(record, {
                 normalize: true,
                 mergeAttrs: true,
                 explicitArray: false,
@@ -21,7 +21,8 @@ const runRecords = async (
                 valueProcessors: [processors.parseBooleans, processors.parseNumbers],
                 attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
             });
-            return xml.activity;
+            delete Object.assign(activity, { id: activity.identifier }).identifier;
+            return activity as RunRecord;
         })
     );
 };

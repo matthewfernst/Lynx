@@ -20,7 +20,7 @@ type RunRecord {
     start: String!
     end: String!
     locationName: String!
-    runCount: String!
+    runCount: Int!
     topSpeed: Float!
     vertical: Float!
 }
