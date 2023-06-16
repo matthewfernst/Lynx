@@ -16,7 +16,7 @@ class UserManager {
         get {
             guard let savedAuthorizationToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.authorizationToken),
                   let savedExpireDate = UserDefaults.standard.object(forKey: UserDefaultsKeys.authorizationTokenExpirationDate) as? Date,
-                      let savedOauthToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.oauthToken) else {
+                  let savedOauthToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.oauthToken) else {
                 UserDefaults.standard.set(false, forKey: UserDefaultsKeys.isSignedIn)
                 return nil
             }
@@ -31,18 +31,27 @@ class UserManager {
     }
     
     func renewToken(completion: @escaping (Result<String, Error>) -> Void) {
-        //TODO: Add Profile!
-        guard let user = LoginController.profile else {
-            return
+        enum RenewTokenErrors: Error
+        {
+            case noProfileSaved
+            case noOauthTokenSaved
+        }
+
+        guard let profile = LoginController.profile else {
+            return completion(.failure(RenewTokenErrors.noProfileSaved))
         }
         
-        ApolloMountainUIClient.loginOrCreateUser(type: "GOOGLE", // TODO: Save in Profile
-                                                 id: user.id,
-                                                 token: "1234", // TODO: How?
-                                                 email: user.email,
-                                                 firstName: user.firstName,
-                                                 lastName: user.lastName,
-                                                 profilePictureUrl: user.profilePictureURL) { result in
+        guard let oauthToken = UserDefaults.standard.string(forKey: UserDefaultsKeys.oauthToken) else {
+            return completion(.failure(RenewTokenErrors.noOauthTokenSaved))
+        }
+        
+        ApolloMountainUIClient.loginOrCreateUser(type: profile.type,
+                                                 id: profile.id,
+                                                 token: oauthToken,
+                                                 email: profile.email,
+                                                 firstName: profile.firstName,
+                                                 lastName: profile.lastName,
+                                                 profilePictureUrl: profile.profilePictureURL) { result in
             switch result {
             case .success:
                 completion(.success((UserManager.shared.token!.authorizationTokenValue)))
@@ -54,13 +63,14 @@ class UserManager {
     }
 }
 
-struct ExpirableAuthorizationToken {
+struct ExpirableAuthorizationToken
+{
     let authorizationToken: String
     let expirationDate: Date
     let oauthToken: String
     
     var isExpired: Bool {
-        return Date() >= expirationDate
+        return Date().timeIntervalSince1970 >= expirationDate.timeIntervalSince1970
     }
     
     var authorizationTokenValue: String {

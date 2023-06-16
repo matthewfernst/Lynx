@@ -129,9 +129,8 @@ class ApolloMountainUIClient
                     Logger.apollo.error("Could not convert expiryDate to Double.")
                     return
                 }
-                let expiryInSeconds = expiryInMilliseconds / 1000.0
                 
-                let expirationDate = Date().addingTimeInterval(expiryInSeconds)
+                let expirationDate = Date(timeIntervalSince1970: expiryInMilliseconds / 1000)
                 
                 UserManager.shared.token = ExpirableAuthorizationToken(authorizationToken: authorizationToken, expirationDate: expirationDate, oauthToken: token)
                 
