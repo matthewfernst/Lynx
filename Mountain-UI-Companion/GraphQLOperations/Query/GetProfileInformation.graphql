@@ -7,16 +7,5 @@ query GetProfileInformation {
      firstName
      lastName
      profilePictureUrl
-     runRecords {
-        conditions
-        distance
-        duration
-        start
-        end
-        locationName
-        runCount
-        topSpeed
-        vertical
-    }
   }
 }

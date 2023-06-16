@@ -106,7 +106,7 @@ class LoginViewController: UIViewController
         ])
     }
     
-    @objc private func handleAuthorizationAppleIDButtonPress() {
+    @objc public func handleAuthorizationAppleIDButtonPress() {
         let request = ASAuthorizationAppleIDProvider().createRequest()
         request.requestedScopes = [.fullName, .email]
         
@@ -160,7 +160,7 @@ class LoginViewController: UIViewController
             let email = profile.email
             let activityIndicator = self.showSignInActivityIndicator()
             
-            LoginController.handleCommonSignIn(type: "GOOGLE",
+            LoginController.handleCommonSignIn(type: SignInType.google.rawValue,
                                                id: id,
                                                token: token,
                                                email: email,
@@ -181,7 +181,7 @@ class LoginViewController: UIViewController
         self.goToMainApp()
     }
     
-    private func goToMainApp() {
+    public func goToMainApp() {
         if let tabBarController = self.storyboard?.instantiateViewController(withIdentifier: TabViewController.identifier) as? TabViewController {
             
             let defaults = UserDefaults.standard
@@ -235,14 +235,22 @@ class LoginViewController: UIViewController
     }
     
     private func signInExistingUser() {
-        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSignedIn) {
+        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSignedIn),
+           let type = UserDefaults.standard.string(forKey: UserDefaultsKeys.loginType) {
             let activityIndicator = showSignInActivityIndicator()
-
+            
+            switch SignInType(rawValue: type) {
+            case .apple:
+                self.performExistingAppleAccountSetupFlows()
+                
+            case .google:
                 Profile.loadProfileFromKeychain { [unowned self] profile in
                     activityIndicator.stopAnimating()
                     self.goToMainApp()
                 }
-
+            default:
+                break
+            }
         }
     }
 }
@@ -259,7 +267,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             }
             
             let activityIndicator = self.showSignInActivityIndicator()
-            LoginController.handleCommonSignIn(type: "APPLE",
+            LoginController.handleCommonSignIn(type: SignInType.apple.rawValue,
                                                id: appleIdCredential.user,
                                                token: appleJWT,
                                                email: appleIdCredential.email,
@@ -307,5 +315,18 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
 extension LoginViewController: ASAuthorizationControllerPresentationContextProviding {
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         return self.view.window!
+    }
+}
+
+extension LoginViewController {
+    func performExistingAppleAccountSetupFlows() {
+        // Prepare requests for both Apple ID and password providers.
+        let requests = [ASAuthorizationAppleIDProvider().createRequest()]
+        
+        // Create an authorization controller with the given requests.
+        let authorizationController = ASAuthorizationController(authorizationRequests: requests)
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
     }
 }

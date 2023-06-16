@@ -229,21 +229,43 @@ class ApolloMountainUIClient
         }
     }
     
+    enum QueryRunRecordsErrors: Error {
+        case runRecordsIsNil
+        case queryFailed
+    }
+    
     public static func getUploadedRunRecords(completion: @escaping ((Result<Set<String>, Error>) -> Void)) {
-        enum QueryRunRecordsErrors: Error {
-            case queryFailed
-        }
+
         apolloClient.fetch(query: ApolloGeneratedGraphQL.GetUploadedRunRecordsQuery()) { result in
             switch result {
             case .success(let graphQLResult):
                 guard let runRecords = graphQLResult.data?.selfLookup?.runRecords else {
                     Logger.apollo.error("runRecords could not be unwrapped.")
-                    completion(.failure(UserError.noProfileAttributesReturned))
+                    completion(.failure(QueryRunRecordsErrors.runRecordsIsNil))
                     return
                 }
                 
                 let uploadedSlopeFiles = Set(runRecords.map({ $0.id }))
                 return completion(.success(uploadedSlopeFiles))
+                
+            case .failure(_):
+                Logger.apollo.error("Error querying users runRecords.")
+                completion(.failure(QueryRunRecordsErrors.queryFailed))
+            }
+        }
+    }
+    
+    public static func getRunRecords(completion: @escaping ((Result<[Dictionary<String, String>], Error>) -> Void)) {
+        
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetRunRecordsQuery()) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let runRecords = graphQLResult.data?.selfLookup?.runRecords else {
+                    Logger.apollo.error("runRecords could not be unwrapped.")
+                    completion(.failure(QueryRunRecordsErrors.runRecordsIsNil))
+                    return
+                }
+                
                 
             case .failure(_):
                 Logger.apollo.error("Error querying users runRecords.")

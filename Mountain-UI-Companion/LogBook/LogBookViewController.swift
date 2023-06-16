@@ -17,7 +17,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
 {
     
     @IBOutlet var profilePictureImageView: UIImageView!
-    @IBOutlet var lifetimeTotalVerticalFeet: UILabel!
+    @IBOutlet var lifetimeVerticalFeetLabel: UILabel!
     @IBOutlet var lifetimeDaysOnMountainLabel: UILabel!
     @IBOutlet var lifetimeRunsTimeLabel: UILabel!
     @IBOutlet var lifetimeRunsLabel: UILabel!
@@ -25,7 +25,8 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet var sessionSummaryTableView: UITableView!
     
     var profile: Profile!
-    
+    var runRecordStats: RunRecordStats!
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let tabController = segue.destination as? TabViewController {
             // Set up data to pass to first view controller
@@ -35,11 +36,23 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
+    func setupMainStats() {
+        lifetimeVerticalFeetLabel.text   = RunRecordStats.lifetimeVerticalFeet()
+        lifetimeDaysOnMountainLabel.text = RunRecordStats.lifetimeDaysOnMountain()
+        lifetimeRunsTimeLabel.text       = RunRecordStats.lifetimeRunsTime()
+        lifetimeRunsLabel.text           = RunRecordStats.lifetimeRuns()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let tabBarController = self.tabBarController as! TabViewController
         self.profile = tabBarController.profile
+        
+        ApolloMountainUIClient.getRunRecords { result in
+            
+        }
+        
         
         self.title = "LogBook"
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -78,7 +91,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
                       """
         
         let ac = UIAlertController(title: "Information From Slopes", message: message, preferredStyle: .actionSheet)
-        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        ac.addAction(UIAlertAction(title: "Dimiss", style: .default))
         
         present(ac, animated: true)
     }
