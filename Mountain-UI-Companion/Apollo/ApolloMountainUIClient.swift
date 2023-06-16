@@ -230,20 +230,25 @@ class ApolloMountainUIClient
         }
     }
     
-    public static func getUsersRunRecords(completion: @escaping ((Result<[String], Error>) -> Void)) {
-        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetProfileInformationQuery()) { result in
+    public static func getUploadedRunRecords(completion: @escaping ((Result<Set<String>, Error>) -> Void)) {
+        enum QueryRunRecordsErrors: Error {
+            case queryFailed
+        }
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetUploadedRunRecordsQuery()) { result in
             switch result {
             case .success(let graphQLResult):
-                guard let selfLookup = graphQLResult.data?.selfLookup else {
-                    Logger.apollo.error("selfLookup did not have any data.")
+                guard let runRecords = graphQLResult.data?.selfLookup?.runRecords else {
+                    Logger.apollo.error("runRecords could not be unwrapped.")
                     completion(.failure(UserError.noProfileAttributesReturned))
                     return
                 }
                 
-                return selfLookup.
+                let uploadedSlopeFiles = Set(runRecords.map({ $0.id }))
+                return completion(.success(uploadedSlopeFiles))
                 
             case .failure(_):
-                break
+                Logger.apollo.error("Error querying users runRecords.")
+                completion(.failure(QueryRunRecordsErrors.queryFailed))
             }
         }
     }

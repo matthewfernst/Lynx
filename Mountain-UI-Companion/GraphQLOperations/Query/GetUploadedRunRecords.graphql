@@ -1,0 +1,7 @@
+query GetUploadedRunRecords {
+  selfLookup {
+     runRecords {
+        id
+    }
+  }
+}
