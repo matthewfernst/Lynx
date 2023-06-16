@@ -8,6 +8,11 @@
 import Foundation
 import OSLog
 
+enum ProfileError: Error
+{
+    case profileCreationFailed
+}
+
 class LoginController
 {
     let loginViewController: LoginViewController
@@ -70,9 +75,7 @@ class LoginController
             profile.saveToKeychain()
             completion(.success(()))
         } else {
-            // TODO: Update Error messages
-            let error = NSError(domain: Constants.bundleID, code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to create profile"])
-            completion(.failure(error))
+            completion(.failure(ProfileError.profileCreationFailed))
         }
     }
 }

@@ -36,8 +36,6 @@ class UserManager {
             return
         }
         
-        
-        
         ApolloMountainUIClient.loginOrCreateUser(type: "GOOGLE", // TODO: Save in Profile
                                                  id: user.id,
                                                  token: "1234", // TODO: How?

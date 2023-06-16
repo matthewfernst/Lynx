@@ -8,7 +8,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "DE7C3921-473D-4565-9F9C-3ECC48458DE1"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Mountain-UI-Companion/ApolloMountainUIClient.swift"
@@ -158,8 +158,8 @@
             filePath = "Mountain-UI-Companion/Login/LoginViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "263"
-            endingLineNumber = "263"
+            startingLineNumber = "262"
+            endingLineNumber = "262"
             landmarkName = "authorizationController(controller:didCompleteWithAuthorization:)"
             landmarkType = "7">
             <Locations>
@@ -199,7 +199,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "632BF3D2-5EA4-426C-A68E-C3E1497EDE08"
+            uuid = "B8487AF4-B85C-48FC-8200-3B2B2DED9EA5"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -210,36 +210,67 @@
             endingLineNumber = "239"
             landmarkName = "signInExistingUser()"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C379FCEC-0C49-4365-9CE3-3AF163C9243F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Mountain-UI-Companion/Apollo/UserManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
+            landmarkName = "isExpired"
+            landmarkType = "24">
             <Locations>
                <Location
-                  uuid = "632BF3D2-5EA4-426C-A68E-C3E1497EDE08 - 21c442593a8d900"
+                  uuid = "C379FCEC-0C49-4365-9CE3-3AF163C9243F - f76cede90e2b6f42"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Mountain_UI_Companion.LoginViewController.showSignInActivityIndicator() -&gt; __C.UIActivityIndicatorView"
+                  symbolName = "Mountain_UI_Companion.ExpirableAuthorizationToken.isExpired.getter : Swift.Bool"
                   moduleName = "Mountain-UI-Companion"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Login/LoginViewController.swift"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/UserManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "239"
-                  endingLineNumber = "239"
-                  offsetFromSymbolStart = "1328">
+                  startingLineNumber = "65"
+                  endingLineNumber = "65"
+                  offsetFromSymbolStart = "124">
                </Location>
                <Location
-                  uuid = "632BF3D2-5EA4-426C-A68E-C3E1497EDE08 - f7e3a36d059d5404"
+                  uuid = "C379FCEC-0C49-4365-9CE3-3AF163C9243F - f76cede90e2b6f61"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Mountain_UI_Companion.LoginViewController.signInExistingUser() -&gt; ()"
+                  symbolName = "Mountain_UI_Companion.ExpirableAuthorizationToken.isExpired.getter : Swift.Bool"
                   moduleName = "Mountain-UI-Companion"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Login/LoginViewController.swift"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/UserManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "249"
-                  endingLineNumber = "249"
-                  offsetFromSymbolStart = "12">
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "120">
+               </Location>
+               <Location
+                  uuid = "C379FCEC-0C49-4365-9CE3-3AF163C9243F - f76cede90e2b6f42"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Mountain_UI_Companion.ExpirableAuthorizationToken.isExpired.getter : Swift.Bool"
+                  moduleName = "Mountain-UI-Companion"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/UserManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "65"
+                  endingLineNumber = "65"
+                  offsetFromSymbolStart = "120">
                </Location>
             </Locations>
          </BreakpointContent>
