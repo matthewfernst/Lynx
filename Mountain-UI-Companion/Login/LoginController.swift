@@ -8,7 +8,8 @@
 import Foundation
 import OSLog
 
-class LoginController {
+class LoginController
+{
     let loginViewController: LoginViewController
     static var profile: Profile?
     
@@ -66,10 +67,10 @@ class LoginController {
         
         if let profile = createdProfile {
             LoginController.profile = profile
-            UserDefaults.standard.set(true, forKey: UserDefaultsKeys.isSignedIn)
             profile.saveToKeychain()
             completion(.success(()))
         } else {
+            // TODO: Update Error messages
             let error = NSError(domain: Constants.bundleID, code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to create profile"])
             completion(.failure(error))
         }

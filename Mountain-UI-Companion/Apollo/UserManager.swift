@@ -62,7 +62,6 @@ struct ExpirableAuthorizationToken {
     let oauthToken: String
     
     var isExpired: Bool {
-        UserDefaults.standard.set(false, forKey: UserDefaultsKeys.isSignedIn)
         return Date() >= expirationDate
     }
     
