@@ -32,3 +32,9 @@ enum EditProfileTextFieldTags: Int, CaseIterable
     case lastName = 1
     case email = 2
 }
+
+enum SignInType: String, CaseIterable
+{
+    case google = "GOOGLE"
+    case apple = "APPLE"
+}

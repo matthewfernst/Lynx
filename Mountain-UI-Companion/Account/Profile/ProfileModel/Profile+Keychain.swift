@@ -5,7 +5,9 @@
 //  Created by Matthew Ernst on 3/22/23.
 //
 
+import AuthenticationServices
 import Foundation
+import GoogleSignIn
 
 extension Profile
 {
@@ -23,20 +25,27 @@ extension Profile
         let status: OSStatus = SecItemCopyMatching(query, &dataTypeRef)
         if status == errSecSuccess {
             if let data = dataTypeRef as? Data,
-               let id = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSString.self, from: data) as? String,
-               let token = UserDefaults.standard.string(forKey: UserDefaultsKeys.oauthToken),
-               let type = UserDefaults.standard.string(forKey: UserDefaultsKeys.loginType){
-                LoginController.handleCommonSignIn(type: type, id: id, token: token) { result in
-                    switch result {
-                    case .success:
-                        completion(LoginController.profile)
-                    case .failure(_):
-                        completion(nil)
+               let id = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSString.self, from: data) as? String {
+                GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+                    if error != nil || user == nil {
+                        // Show the app's signed-out state.
+                    } else {
+                        // Show the app's signed-in state.
+                        if let token = user?.idToken?.tokenString {
+                            LoginController.handleCommonSignIn(type: SignInType.google.rawValue, id: id, token: token) { result in
+                                switch result {
+                                case .success:
+                                    completion(LoginController.profile)
+                                case .failure(_):
+                                    completion(nil)
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
- 
+        
     }
     
     

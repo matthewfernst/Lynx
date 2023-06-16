@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="1q6-pJ-EvQ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="1q6-pJ-EvQ">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -360,7 +361,7 @@
                         <outlet property="lifetimeDaysOnMountainLabel" destination="0G2-5v-GzR" id="as2-xu-WjG"/>
                         <outlet property="lifetimeRunsLabel" destination="2o5-lC-ZR2" id="x5c-mR-dyG"/>
                         <outlet property="lifetimeRunsTimeLabel" destination="uco-b4-Mxn" id="aAb-Ap-DOc"/>
-                        <outlet property="lifetimeTotalVerticalFeet" destination="hPG-Db-aC7" id="CGD-g7-7cr"/>
+                        <outlet property="lifetimeVerticalFeetLabel" destination="hPG-Db-aC7" id="CGD-g7-7cr"/>
                         <outlet property="profilePictureImageView" destination="zeA-Vy-F4b" id="Rgq-de-v63"/>
                         <outlet property="sessionSummaryTableView" destination="iaM-1U-51x" id="qzq-50-Mes"/>
                     </connections>
