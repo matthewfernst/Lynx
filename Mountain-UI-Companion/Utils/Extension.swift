@@ -107,7 +107,9 @@ extension Logger
     
     static let loginViewController = Logger(subsystem: subsystem, category: "LoginViewController")
     
-    static let dynamoDB = Logger(subsystem: subsystem, category: "DynamoDB")
+    static let editProfileTableViewController = Logger(subsystem: subsystem, category: "EditProfileTableViewController")
     
+    static let apollo = Logger(subsystem: subsystem, category: "Apollo")
+        
     static let slopesConnection = Logger(subsystem: subsystem, category: "SlopesConnection")
 }

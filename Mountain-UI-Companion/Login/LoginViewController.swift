@@ -5,8 +5,6 @@
 //  Created by Matthew Ernst on 1/26/23.
 //
 import AuthenticationServices
-import AWSClientRuntime
-import AWSDynamoDB
 import ClientRuntime
 import GoogleSignIn
 import UIKit
@@ -83,15 +81,6 @@ class LoginViewController: UIViewController
         }
     }
     
-    // MARK: DEBUG login for working on other parts of the app and bypassing login
-    private func debugLogin() {
-#if DEBUG
-        Logger.loginViewController.debug("DEBUG MODE!")
-        LoginController.profile = Profile.sampleProfile
-        self.goToMainApp()
-#endif
-    }
-    
     private func setupLearnMoreButton() {
         let learnMoreButtonTitle = NSMutableAttributedString(string: "What is Mountain UI? Learn More")
         learnMoreButtonTitle.addAttributes([.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 11)], range: NSRange(location: 0, length: 20))
@@ -160,17 +149,25 @@ class LoginViewController: UIViewController
                 showErrorWithSignIn()
                 return
             }
+            guard let token = signInResult?.user.idToken?.tokenString else {
+                showErrorWithSignIn()
+                return
+            }
             
-            Task {
-                let name = profile.name.components(separatedBy: " ")
-                let (firstName, lastName) = (name[0], name[1])
-                let activityIndicator = self.showSignInActivityIndicator()
-                await LoginController.handleCommonSignIn(id: id,
-                                                         firstName: firstName,
-                                                         lastName: lastName,
-                                                         email: profile.email,
-                                                         profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "")
-                activityIndicator.stopAnimating()
+            
+            let name = profile.name.components(separatedBy: " ")
+            let (firstName, lastName) = (name[0], name[1])
+            let email = profile.email
+            let activityIndicator = self.showSignInActivityIndicator()
+            
+            LoginController.handleCommonSignIn(type: "GOOGLE",
+                                               id: id,
+                                               token: token,
+                                               email: email,
+                                               firstName: firstName,
+                                               lastName: lastName,
+                                               profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "") { _ in
+                activityIndicator.startAnimating()
                 self.updateViewFromModel()
             }
         }
@@ -181,7 +178,6 @@ class LoginViewController: UIViewController
             showErrorWithSignIn()
             return
         }
-        
         self.goToMainApp()
     }
     
@@ -239,18 +235,14 @@ class LoginViewController: UIViewController
     }
     
     private func signInExistingUser() {
-        self.debugLogin()
-        let isSignedIn = UserDefaults.standard.bool(forKey: UserDefaultsKeys.profileIsSignedInKey)
-        
-        if isSignedIn {
+        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSignedIn) {
             let activityIndicator = showSignInActivityIndicator()
-            Task {
-                await Profile.loadProfileFromKeychain { [unowned self] profile in
+
+                Profile.loadProfileFromKeychain { [unowned self] profile in
                     activityIndicator.stopAnimating()
-                    
                     self.goToMainApp()
                 }
-            }
+
         }
     }
 }
@@ -261,19 +253,25 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
         switch authorization.credential {
         case let appleIdCredential as ASAuthorizationAppleIDCredential:
             Logger.loginViewController.debug("Sign in with Apple: Credential Sign in")
-            Task {
-                let activityIndicator = self.showSignInActivityIndicator()
-                await LoginController.handleCommonSignIn(id: appleIdCredential.user,
-                                                         firstName: appleIdCredential.fullName?.givenName,
-                                                         lastName: appleIdCredential.fullName?.familyName,
-                                                         email: appleIdCredential.email)
+            guard let appleJWT = String(data:appleIdCredential.identityToken!, encoding: .utf8) else {
+                Logger.loginViewController.error("Apple JWT was not returned.")
+                return
+            }
+            
+            let activityIndicator = self.showSignInActivityIndicator()
+            LoginController.handleCommonSignIn(type: "APPLE",
+                                               id: appleIdCredential.user,
+                                               token: appleJWT,
+                                               email: appleIdCredential.email,
+                                               firstName: appleIdCredential.fullName?.givenName,
+                                               lastName: appleIdCredential.fullName?.familyName) { _ -> Void in
                 activityIndicator.stopAnimating()
                 self.updateViewFromModel()
             }
             
         default:
-            showErrorWithSignIn()
-            Swift.debugPrint("Not ready yet")
+            Logger.loginViewController.error("AppleCredential did not return.")
+            self.showErrorWithSignIn()
         }
     }
     
@@ -302,10 +300,8 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             Logger.loginViewController.debug("\(baseErrorAreaMessage) Unknown error.")
         }
         
-        showErrorWithSignIn()
+        self.showErrorWithSignIn()
     }
-    
-    
 }
 
 extension LoginViewController: ASAuthorizationControllerPresentationContextProviding {

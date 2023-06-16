@@ -25,4 +25,5 @@ class NetworkManager
         
         return isReachable && (!needsConnection || canConnectWithoutUserInteraction)
     }
+
 }

@@ -1,0 +1,30 @@
+{
+  "schemaNamespace" : "ApolloGeneratedGraphQL",
+  "input" : {
+    "operationSearchPaths" : [
+      "./GraphQLOperations/Query/*.graphql",
+      "./GraphQLOperations/Mutation/*.graphql"
+    ],
+    "schemaSearchPaths" : [
+      "schema.graphql"
+    ]
+  },
+  "output" : {
+    "testMocks" : {
+      "none" : {
+      }
+    },
+    "schemaTypes" : {
+      "path" : "./ApolloGeneratedGraphQL",
+      "moduleType" : {
+        "embeddedInTarget" : {
+          "name" : "Mountain-UI-Companion"
+        }
+      }
+    },
+    "operations" : {
+      "inSchemaModule" : {
+      }
+    }
+  }
+}

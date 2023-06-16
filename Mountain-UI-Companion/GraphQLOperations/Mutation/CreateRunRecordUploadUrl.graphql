@@ -1,0 +1,3 @@
+mutation CreateRunRecordUploadUrl($requestedPaths: [String!]!) {
+  createUserRecordUploadUrl(requestedPaths: $requestedPaths)
+}

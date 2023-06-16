@@ -9,12 +9,18 @@ import Foundation
 
 enum UserDefaultsKeys
 {
-    //TabViewController
-    static var theme = "theme"
+    // TabViewController
+    static let theme = "theme"
     
-    //Profile
-    static let profileIsSignedInKey = "isSignedIn"
+    // Profile
+    static let isSignedIn = "isSignedIn"
     
     // NotificationSettingsTableViewController
-    static var notificationsTurnedOnOrOff = "notificationsAllowed"
+    static let notificationsTurnedOnOrOff = "notificationsAllowed"
+    
+    // Apollo Authorization Token
+    static let authorizationToken = "authorizationToken"
+    static let authorizationTokenExpirationDate = "authorizationTokenExpirationDate"
+    static let oauthToken = "oauthToken"
+    static let loginType = "loginType"
 }
