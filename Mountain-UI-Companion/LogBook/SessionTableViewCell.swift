@@ -72,10 +72,10 @@ class SessionTableViewCell: UITableViewCell
         resortDateImageView.image = nil
     }
     
-    public func configure() {
-        resortNameLabel.text = "Steamboat Ski Resort"
+    public func configure(locationName: String, numberOfRuns: Int, runDurationHour: Int, runDurationMinutes: Int, dateOfRun: String) {
+        resortNameLabel.text = locationName
         snowboardFigureImageView.tintColor = .secondaryLabel
-        resortStatsLabel.text = "| 3 runs | 1H 25M"
+        resortStatsLabel.text = "| \(numberOfRuns) runs | \(runDurationHour)H \(runDurationMinutes)M"
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         
@@ -84,7 +84,7 @@ class SessionTableViewCell: UITableViewCell
             .paragraphStyle: paragraph
         ]
         
-        resortDateImageView.image = "Jan\n2".image(withAttributes: dateOfSessionAttributes, move: .zero)?.withTintColor(.label)
+        resortDateImageView.image = dateOfRun.image(withAttributes: dateOfSessionAttributes, move: .zero)?.withTintColor(.label)
         
         resortDateImageView.translatesAutoresizingMaskIntoConstraints = false
         resortNameLabel.translatesAutoresizingMaskIntoConstraints = false

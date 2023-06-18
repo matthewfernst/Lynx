@@ -9,6 +9,8 @@ import Foundation
 import Apollo
 import OSLog
 
+typealias RunRecords = [ApolloGeneratedGraphQL.GetRunRecordsQuery.Data.SelfLookup.RunRecord]
+
 class ApolloMountainUIClient
 {
     private static let graphQLEndpoint = Constants.graphQLEndpoint
@@ -255,7 +257,8 @@ class ApolloMountainUIClient
         }
     }
     
-    public static func getRunRecords(completion: @escaping ((Result<[Dictionary<String, String>], Error>) -> Void)) {
+    
+    public static func getRunRecords(completion: @escaping ((Result<RunRecords, Error>) -> Void)) {
         
         apolloClient.fetch(query: ApolloGeneratedGraphQL.GetRunRecordsQuery()) { result in
             switch result {
@@ -266,6 +269,7 @@ class ApolloMountainUIClient
                     return
                 }
                 
+                return completion(.success(runRecords))
                 
             case .failure(_):
                 Logger.apollo.error("Error querying users runRecords.")

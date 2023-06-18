@@ -1,0 +1,16 @@
+query GetRunRecords {
+  selfLookup {
+      runRecords {
+        conditions
+        distance
+        duration
+        start
+        end
+        locationName
+        runCount
+        topSpeed
+        vertical
+    }
+  }
+}
+
