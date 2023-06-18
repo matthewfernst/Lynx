@@ -25,8 +25,8 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet var sessionSummaryTableView: UITableView!
     
     var profile: Profile!
-    var runRecordStats: RunRecordStats!
-
+    var runRecordStats: RunRecordStats = RunRecordStats()
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let tabController = segue.destination as? TabViewController {
             // Set up data to pass to first view controller
@@ -37,10 +37,10 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func setupMainStats() {
-        lifetimeVerticalFeetLabel.text   = RunRecordStats.lifetimeVerticalFeet()
-        lifetimeDaysOnMountainLabel.text = RunRecordStats.lifetimeDaysOnMountain()
-        lifetimeRunsTimeLabel.text       = RunRecordStats.lifetimeRunsTime()
-        lifetimeRunsLabel.text           = RunRecordStats.lifetimeRuns()
+        lifetimeVerticalFeetLabel.text   = runRecordStats.lifetimeVerticalFeet()
+        lifetimeDaysOnMountainLabel.text = runRecordStats.lifetimeDaysOnMountain()
+        lifetimeRunsTimeLabel.text       = runRecordStats.lifetimeRunsTime()
+        lifetimeRunsLabel.text           = runRecordStats.lifetimeRuns()
     }
     
     override func viewDidLoad() {
@@ -49,15 +49,26 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         let tabBarController = self.tabBarController as! TabViewController
         self.profile = tabBarController.profile
         
-        ApolloMountainUIClient.getRunRecords { result in
-            
-        }
-        
-        
         self.title = "LogBook"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(explainMoreWithSlopes))
+        
+        
+        ApolloMountainUIClient.getRunRecords { [unowned self] result in
+            switch result {
+            case .success(let runRecords):
+                self.runRecordStats.runRecords = runRecords
+                
+                DispatchQueue.main.async { [weak self] in
+                    self?.setupMainStats()
+                    self?.sessionSummaryTableView.reloadData()
+                }
+                
+            case .failure(_):
+                break
+            }
+        }
         
         sessionSummaryTableView.delegate = self
         sessionSummaryTableView.dataSource = self
@@ -78,7 +89,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
                 defaultProfilePicture.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
             ])
         }
-
+        
         profilePictureImageView.backgroundColor = .secondarySystemBackground
         profilePictureImageView.makeRounded()
     }
@@ -105,7 +116,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         case .seasonSummary:
             return 1
         case .sessionSummary:
-            return 2
+            return runRecordStats.runRecords.count
         default:
             return 0
         }
@@ -118,9 +129,8 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
             var configuration = cell.defaultContentConfiguration()
             
             configuration.text = "Season Summary"
-            configuration.secondaryText = "5 runs | 2 days | 4.3k FT"
-            configuration.secondaryTextProperties.color = .secondaryLabel
             
+            cell.detailTextLabel?.text = "\(lifetimeRunsLabel.text ?? "-") runs | \(lifetimeDaysOnMountainLabel.text ?? "-") days | \(lifetimeVerticalFeetLabel.text ?? "-") FT"
             cell.backgroundColor = .secondarySystemBackground
             
             return cell
@@ -129,8 +139,13 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SessionTableViewCell.identifier, for: indexPath) as? SessionTableViewCell else {
                 return UITableViewCell()
             }
+                
+            let locationName = runRecordStats.runLocationName(index: indexPath.row)
+            let dateOfRun = runRecordStats.runRecordDate(index: indexPath.row)
+            let numberOfRuns = runRecordStats.runRecordNumberOfRuns(index: indexPath.row)
+            let (runDurationHour, runDurationMinutes) = runRecordStats.totalRunRecordTime(index: indexPath.row)
             
-            cell.configure()
+            cell.configure(locationName: locationName, numberOfRuns: numberOfRuns, runDurationHour: runDurationHour, runDurationMinutes: runDurationMinutes, dateOfRun: dateOfRun)
             return cell
             
         default:
