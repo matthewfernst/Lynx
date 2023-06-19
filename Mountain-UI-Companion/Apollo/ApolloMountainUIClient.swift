@@ -10,6 +10,7 @@ import Apollo
 import OSLog
 
 typealias RunRecords = [ApolloGeneratedGraphQL.GetRunRecordsQuery.Data.SelfLookup.RunRecord]
+typealias RunRecord = ApolloGeneratedGraphQL.GetRunRecordsQuery.Data.SelfLookup.RunRecord
 
 class ApolloMountainUIClient
 {

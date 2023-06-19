@@ -22,7 +22,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet var lifetimeRunsTimeLabel: UILabel!
     @IBOutlet var lifetimeRunsLabel: UILabel!
     @IBOutlet var allLifetimeStateButton: UIButton!
-    @IBOutlet var sessionSummaryTableView: UITableView!
+    @IBOutlet var lifetimeSummaryTableView: UITableView!
     
     var profile: Profile!
     var runRecordStats: RunRecordStats = RunRecordStats()
@@ -37,10 +37,10 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func setupMainStats() {
-        lifetimeVerticalFeetLabel.text   = runRecordStats.lifetimeVerticalFeet()
-        lifetimeDaysOnMountainLabel.text = runRecordStats.lifetimeDaysOnMountain()
-        lifetimeRunsTimeLabel.text       = runRecordStats.lifetimeRunsTime()
-        lifetimeRunsLabel.text           = runRecordStats.lifetimeRuns()
+        lifetimeVerticalFeetLabel.text   = runRecordStats.lifetimeVerticalFeet
+        lifetimeDaysOnMountainLabel.text = runRecordStats.lifetimeDaysOnMountain
+        lifetimeRunsTimeLabel.text       = runRecordStats.lifetimeRunsTime
+        lifetimeRunsLabel.text           = runRecordStats.lifetimeRuns
     }
     
     override func viewDidLoad() {
@@ -62,7 +62,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
                 
                 DispatchQueue.main.async { [weak self] in
                     self?.setupMainStats()
-                    self?.sessionSummaryTableView.reloadData()
+                    self?.lifetimeSummaryTableView.reloadData()
                 }
                 
             case .failure(_):
@@ -70,10 +70,10 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }
         
-        sessionSummaryTableView.delegate = self
-        sessionSummaryTableView.dataSource = self
-        sessionSummaryTableView.register(SessionTableViewCell.self, forCellReuseIdentifier: SessionTableViewCell.identifier)
-        sessionSummaryTableView.rowHeight = 66.0
+        lifetimeSummaryTableView.delegate = self
+        lifetimeSummaryTableView.dataSource = self
+        lifetimeSummaryTableView.register(SessionTableViewCell.self, forCellReuseIdentifier: SessionTableViewCell.identifier)
+        lifetimeSummaryTableView.rowHeight = 66.0
         
         if let profilePicture = profile.profilePicture {
             profilePictureImageView.image = profilePicture
@@ -102,7 +102,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
                       """
         
         let ac = UIAlertController(title: "Information From Slopes", message: message, preferredStyle: .actionSheet)
-        ac.addAction(UIAlertAction(title: "Dimiss", style: .default))
+        ac.addAction(UIAlertAction(title: "Dismiss", style: .default))
         
         present(ac, animated: true)
     }
@@ -119,6 +119,20 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
             return runRecordStats.runRecords.count
         default:
             return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch SessionSection(rawValue: indexPath.section) {
+        case .seasonSummary:
+            if let lifetimeSummaryViewController = self.storyboard?.instantiateViewController(withIdentifier: LifetimeSummaryViewController.identifier) as? LifetimeSummaryViewController {
+                lifetimeSummaryViewController.averageStats = runRecordStats.lifetimeAverages
+                lifetimeSummaryViewController.bestStats = runRecordStats.lifetimeBest
+                self.navigationController?.pushViewController(lifetimeSummaryViewController, animated: true)
+            }
+            
+        default:
+            break
         }
     }
     
@@ -139,13 +153,11 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SessionTableViewCell.identifier, for: indexPath) as? SessionTableViewCell else {
                 return UITableViewCell()
             }
-                
-            let locationName = runRecordStats.runLocationName(index: indexPath.row)
-            let dateOfRun = runRecordStats.runRecordDate(index: indexPath.row)
-            let numberOfRuns = runRecordStats.runRecordNumberOfRuns(index: indexPath.row)
-            let (runDurationHour, runDurationMinutes) = runRecordStats.totalRunRecordTime(index: indexPath.row)
             
-            cell.configure(locationName: locationName, numberOfRuns: numberOfRuns, runDurationHour: runDurationHour, runDurationMinutes: runDurationMinutes, dateOfRun: dateOfRun)
+            if let configuredRunRecordData = runRecordStats.getConfiguredRunRecordData(at: indexPath.row) {
+                cell.configure(with: configuredRunRecordData)
+            }
+            
             return cell
             
         default:

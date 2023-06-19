@@ -4,7 +4,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
-        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -249,14 +248,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="igE-YC-QPB">
-                                <rect key="frame" x="230" y="319" width="163" height="35"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" imagePlacement="trailing" title="All Lifetime Stats" imagePadding="8" titleAlignment="leading">
-                                    <imageReference key="image" image="chevron.right" catalog="system" symbolScale="small"/>
-                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="16" weight="bold"/>
-                                </buttonConfiguration>
-                            </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="iaM-1U-51x">
                                 <rect key="frame" x="0.0" y="354" width="393" height="415"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -268,8 +259,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="322.66666666666669" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Season Summary" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gcF-Vo-g43">
-                                                    <rect key="frame" x="20" y="18.666666666666664" width="144.33333333333334" height="21.666666666666668"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Lifetime Summary" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gcF-Vo-g43">
+                                                    <rect key="frame" x="20" y="18.666666666666664" width="149.66666666666666" height="21.666666666666668"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
                                                     <nil key="textColor"/>
@@ -285,11 +276,11 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="2" indentationWidth="0.0" reuseIdentifier="SessionCell" textLabel="KmQ-nx-WaS" detailTextLabel="V2q-4i-bAO" rowHeight="80" style="IBUITableViewCellStyleSubtitle" id="jHn-c3-ywY">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="2" indentationWidth="0.0" reuseIdentifier="SessionCell" textLabel="KmQ-nx-WaS" detailTextLabel="V2q-4i-bAO" rowHeight="80" style="IBUITableViewCellStyleSubtitle" id="jHn-c3-ywY">
                                         <rect key="frame" x="20" y="135.33333206176758" width="353" height="80"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jHn-c3-ywY" id="YOo-5d-zYQ">
-                                            <rect key="frame" x="0.0" y="0.0" width="322.66666666666669" height="80"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="80"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Steamboat Ski Resort" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KmQ-nx-WaS">
@@ -326,9 +317,8 @@
                             <constraint firstItem="uco-b4-Mxn" firstAttribute="top" secondItem="JhK-39-ffW" secondAttribute="bottom" constant="56" id="4Ea-S0-n0S"/>
                             <constraint firstItem="a7h-ky-O9E" firstAttribute="bottom" secondItem="iaM-1U-51x" secondAttribute="bottom" id="9QS-Rk-UrY"/>
                             <constraint firstItem="ai6-hh-bgx" firstAttribute="centerX" secondItem="2o5-lC-ZR2" secondAttribute="centerX" id="ADd-lA-l1J"/>
-                            <constraint firstItem="iaM-1U-51x" firstAttribute="top" secondItem="igE-YC-QPB" secondAttribute="bottom" id="FP6-lG-eKD"/>
+                            <constraint firstItem="iaM-1U-51x" firstAttribute="top" secondItem="lTb-eQ-eSC" secondAttribute="bottom" constant="43" id="CSv-23-xDt"/>
                             <constraint firstItem="ai6-hh-bgx" firstAttribute="top" secondItem="2o5-lC-ZR2" secondAttribute="bottom" id="I4Q-qA-nQU"/>
-                            <constraint firstItem="igE-YC-QPB" firstAttribute="leading" secondItem="a7h-ky-O9E" secondAttribute="leading" constant="230" id="IUY-6Q-cSD"/>
                             <constraint firstItem="uco-b4-Mxn" firstAttribute="leading" secondItem="lTb-eQ-eSC" secondAttribute="leading" id="Kgu-nn-l9l"/>
                             <constraint firstItem="bWa-P7-9ls" firstAttribute="centerX" secondItem="0G2-5v-GzR" secondAttribute="centerX" id="N6B-TZ-dm2"/>
                             <constraint firstItem="a7h-ky-O9E" firstAttribute="trailing" secondItem="JhK-39-ffW" secondAttribute="trailing" constant="44" id="Nvc-AN-pXk"/>
@@ -347,28 +337,40 @@
                             <constraint firstItem="iaM-1U-51x" firstAttribute="centerX" secondItem="a7h-ky-O9E" secondAttribute="centerX" id="iRQ-dX-BdW"/>
                             <constraint firstItem="hPG-Db-aC7" firstAttribute="centerY" secondItem="zeA-Vy-F4b" secondAttribute="centerY" constant="-14" id="kOe-R0-H1g"/>
                             <constraint firstItem="lTb-eQ-eSC" firstAttribute="centerX" secondItem="uco-b4-Mxn" secondAttribute="centerX" id="lOe-gW-Yuu"/>
-                            <constraint firstItem="igE-YC-QPB" firstAttribute="top" secondItem="ai6-hh-bgx" secondAttribute="bottom" constant="8" symbolic="YES" id="o1f-Ch-Jv4"/>
                             <constraint firstItem="zeA-Vy-F4b" firstAttribute="leading" secondItem="a7h-ky-O9E" secondAttribute="leading" constant="45" id="q8J-AI-hzK"/>
                             <constraint firstItem="lTb-eQ-eSC" firstAttribute="baseline" secondItem="ai6-hh-bgx" secondAttribute="baseline" id="tha-Vi-u3x"/>
                             <constraint firstItem="0G2-5v-GzR" firstAttribute="leading" secondItem="a7h-ky-O9E" secondAttribute="leading" constant="16" id="uTm-om-ex8"/>
-                            <constraint firstItem="a7h-ky-O9E" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="igE-YC-QPB" secondAttribute="trailing" id="wAe-l3-aXF"/>
                             <constraint firstItem="bWa-P7-9ls" firstAttribute="leading" secondItem="a7h-ky-O9E" secondAttribute="leading" constant="45" id="xjA-TA-i4D"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="wuI-JD-NUX"/>
                     <connections>
-                        <outlet property="allLifetimeStateButton" destination="igE-YC-QPB" id="csg-bn-Pys"/>
                         <outlet property="lifetimeDaysOnMountainLabel" destination="0G2-5v-GzR" id="as2-xu-WjG"/>
                         <outlet property="lifetimeRunsLabel" destination="2o5-lC-ZR2" id="x5c-mR-dyG"/>
                         <outlet property="lifetimeRunsTimeLabel" destination="uco-b4-Mxn" id="aAb-Ap-DOc"/>
+                        <outlet property="lifetimeSummaryTableView" destination="iaM-1U-51x" id="qzq-50-Mes"/>
                         <outlet property="lifetimeVerticalFeetLabel" destination="hPG-Db-aC7" id="CGD-g7-7cr"/>
                         <outlet property="profilePictureImageView" destination="zeA-Vy-F4b" id="Rgq-de-v63"/>
-                        <outlet property="sessionSummaryTableView" destination="iaM-1U-51x" id="qzq-50-Mes"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ybF-G4-hBz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-866.41221374045801" y="1114.7887323943662"/>
+        </scene>
+        <!--Lifetime Summary View Controller-->
+        <scene sceneID="J6F-5x-43I">
+            <objects>
+                <viewController storyboardIdentifier="LifetimeSummaryViewController" id="Uv0-lf-Y0c" customClass="LifetimeSummaryViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="JPV-Wi-tEc">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="aHO-iX-jfb"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x9Y-Yi-Qg0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-51" y="1115"/>
         </scene>
         <!--Account View Controller-->
         <scene sceneID="RMd-vK-uZg">
@@ -399,7 +401,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WFT-1f-l7C" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-153" y="1115"/>
+            <point key="canvasLocation" x="850" y="1115"/>
         </scene>
         <!--Notification Settings Table View Controller-->
         <scene sceneID="QgC-5G-fTG">
@@ -427,7 +429,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NFr-Kz-sE5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1156" y="1315"/>
+            <point key="canvasLocation" x="1737" y="1315"/>
         </scene>
         <!--Edit Profile Table View Controller-->
         <scene sceneID="H93-7j-yvu">
@@ -455,7 +457,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YUl-7I-IsY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1134" y="1973"/>
+            <point key="canvasLocation" x="1715" y="1973"/>
         </scene>
         <!--App Setting Table View Controller-->
         <scene sceneID="G22-LT-FjF">
@@ -483,7 +485,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Qx-c5-Dec" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1134" y="672"/>
+            <point key="canvasLocation" x="1715" y="672"/>
         </scene>
         <!--LogBook-->
         <scene sceneID="zYW-10-Sh9">
@@ -517,12 +519,11 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tl2-oP-hvj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-152" y="456"/>
+            <point key="canvasLocation" x="850" y="456"/>
         </scene>
     </scenes>
     <resources>
         <image name="book.closed.fill" catalog="system" width="115" height="128"/>
-        <image name="chevron.right" catalog="system" width="97" height="128"/>
         <image name="person.fill" catalog="system" width="128" height="120"/>
         <image name="powerplug.fill" catalog="system" width="128" height="82"/>
         <image name="slopesFolder" width="348" height="381"/>
