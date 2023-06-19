@@ -62,7 +62,6 @@ class SessionTableViewCell: UITableViewCell
         contentView.addSubview(resortStatsLabel)
         contentView.addSubview(resortDateImageView)
         contentView.clipsToBounds = true
-        accessoryType = .disclosureIndicator
     }
     
     override func prepareForReuse() {
@@ -72,10 +71,10 @@ class SessionTableViewCell: UITableViewCell
         resortDateImageView.image = nil
     }
     
-    public func configure(locationName: String, numberOfRuns: Int, runDurationHour: Int, runDurationMinutes: Int, dateOfRun: String) {
-        resortNameLabel.text = locationName
+    public func configure(with configuredRunRecordData: ConfiguredRunRecordData) {
+        resortNameLabel.text = configuredRunRecordData.locationName
         snowboardFigureImageView.tintColor = .secondaryLabel
-        resortStatsLabel.text = "| \(numberOfRuns) runs | \(runDurationHour)H \(runDurationMinutes)M"
+        resortStatsLabel.text = "| \(configuredRunRecordData.numberOfRuns) runs | \(configuredRunRecordData.runDurationHour)H \(configuredRunRecordData.runDurationMinutes)M | \(configuredRunRecordData.conditions) | \(configuredRunRecordData.topSpeed)MPH"
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         
@@ -84,7 +83,7 @@ class SessionTableViewCell: UITableViewCell
             .paragraphStyle: paragraph
         ]
         
-        resortDateImageView.image = dateOfRun.image(withAttributes: dateOfSessionAttributes, move: .zero)?.withTintColor(.label)
+        resortDateImageView.image = configuredRunRecordData.dateOfRun.image(withAttributes: dateOfSessionAttributes, move: .zero)?.withTintColor(.label)
         
         resortDateImageView.translatesAutoresizingMaskIntoConstraints = false
         resortNameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -118,7 +117,7 @@ class SessionTableViewCell: UITableViewCell
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
+        super.setSelected(false, animated: false)
 
         // Configure the view for the selected state
     }
