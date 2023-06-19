@@ -21,7 +21,24 @@ import userLookup from "./resolvers/Query/userLookup";
 import email from "./resolvers/User/email";
 import friends from "./resolvers/User/friends";
 import profilePictureUrl from "./resolvers/User/profilePictureUrl";
-import runRecords from "./resolvers/User/runRecords";
+import logbook from "./resolvers/User/logbook";
+import id from "./resolvers/Log/id";
+import details from "./resolvers/Log/details";
+import logDistance from "./resolvers/Log/distance";
+import logStartDate from "./resolvers/Log/startDate";
+import logEndDate from "./resolvers/Log/endDate";
+import logTopSpeed from "./resolvers/Log/topSpeed";
+import logVerticalDistance from "./resolvers/Log/verticalDistance";
+import logDetailType from "./resolvers/LogDetail/type";
+import averageSpeed from "./resolvers/LogDetail/averageSpeed";
+import logDetailDistance from "./resolvers/LogDetail/distance";
+import logDetailStartDate from "./resolvers/LogDetail/startDate";
+import logDetailEndDate from "./resolvers/LogDetail/endDate";
+import minAltitude from "./resolvers/LogDetail/minAltitude";
+import maxAltitude from "./resolvers/LogDetail/maxAltitude";
+import logDetailTopSpeed from "./resolvers/LogDetail/topSpeed";
+import topSpeedAltitude from "./resolvers/LogDetail/topSpeedAltitude";
+import logDetailVerticalDistance from "./resolvers/LogDetail/verticalDistance";
 
 export const resolvers = {
     Query: { selfLookup, userLookup },
@@ -34,5 +51,26 @@ export const resolvers = {
         requestFriend,
         resolveRequestFriend
     },
-    User: { email, friends, profilePictureUrl, runRecords }
+    User: { email, friends, profilePictureUrl, logbook },
+    Log: {
+        id,
+        details,
+        distance: logDistance,
+        startDate: logStartDate,
+        endDate: logEndDate,
+        topSpeed: logTopSpeed,
+        verticalDistance: logVerticalDistance
+    },
+    LogDetail: {
+        type: logDetailType,
+        averageSpeed,
+        distance: logDetailDistance,
+        startDate: logDetailStartDate,
+        endDate: logDetailEndDate,
+        minAltitude,
+        maxAltitude,
+        topSpeed: logDetailTopSpeed,
+        topSpeedAltitude,
+        verticalDistance: logDetailVerticalDistance
+    }
 };

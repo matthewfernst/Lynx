@@ -9,20 +9,46 @@ type User {
     incomingFriendRequests: [User!]!
     outgoingFriendRequests: [User!]!
     friends: [User!]!
-    runRecords: [RunRecord!]!
+    logbook: [Log!]!
 }
 
-type RunRecord {
+type Log {
     id: ID!
+    originalFileName: String!
     conditions: String!
-    distance: Float!
+    distance(system: MeasurementSystem = IMPERIAL): Float!
     duration: Float!
-    start: String!
-    end: String!
+    startDate: String!
+    endDate: String!
     locationName: String!
     runCount: Int!
-    topSpeed: Float!
-    vertical: Float!
+    topSpeed(system: MeasurementSystem = IMPERIAL): Float!
+    verticalDistance(system: MeasurementSystem = IMPERIAL): Float!
+    details: [LogDetail!]!
+}
+
+enum MeasurementSystem {
+    METRIC
+    IMPERIAL
+}
+
+type LogDetail {
+    type: LogDetailType!
+    averageSpeed(system: MeasurementSystem = IMPERIAL): Float!
+    distance(system: MeasurementSystem = IMPERIAL): Float!
+    duration: Float!
+    startDate: String!
+    endDate: String!
+    maxAltitude(system: MeasurementSystem = IMPERIAL): Float!
+    minAltitude(system: MeasurementSystem = IMPERIAL): Float!
+    topSpeed(system: MeasurementSystem = IMPERIAL): Float!
+    topSpeedAltitude(system: MeasurementSystem = IMPERIAL): Float!
+    verticalDistance(system: MeasurementSystem = IMPERIAL): Float!
+}
+
+enum LogDetailType {
+    RUN
+    LIFT
 }
 
 type AuthorizationToken {

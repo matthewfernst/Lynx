@@ -4,7 +4,9 @@ import {
     HeadObjectCommand,
     ListObjectsCommand,
     PutObjectCommand,
-    DeleteObjectCommand
+    DeleteObjectCommand,
+    ListObjectVersionsCommandOutput,
+    _Object
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -42,7 +44,7 @@ export const checkIfObjectInBucket = async (bucketName: string, path: string) =>
     }
 };
 
-export const getRecordsFromBucket = async (
+export const getObjectNamesInBucket = async (
     bucketName: string,
     prefix: string = ""
 ): Promise<string[]> => {
@@ -53,22 +55,26 @@ export const getRecordsFromBucket = async (
         if (!listObjectsResponse.Contents) {
             return [];
         }
-        return await Promise.all(
-            listObjectsResponse.Contents.map(async (content) => {
-                const getObjectRequest = new GetObjectCommand({
-                    Bucket: bucketName,
-                    Key: content.Key
-                });
-                const getObjectResponse = await s3Client.send(getObjectRequest);
-                if (!getObjectResponse.Body) {
-                    throw new Error(`Error reading information about item in bucket`);
-                }
-                return await getObjectResponse.Body.transformToString();
-            })
-        );
+        const predicate = (content) => content.Key;
+        return listObjectsResponse.Contents.filter(predicate).map(predicate);
     } catch (err) {
         console.error(err);
         throw Error(`Error retrieving records from bucket with prefix ${prefix}`);
+    }
+};
+
+export const getRecordFromBucket = async (bucketName: string, key: string): Promise<string> => {
+    const s3Client = createS3Client();
+    try {
+        const getObjectRequest = new GetObjectCommand({ Bucket: bucketName, Key: key });
+        const getObjectResponse = await s3Client.send(getObjectRequest);
+        if (!getObjectResponse.Body) {
+            throw new Error(`Error reading information about item in bucket`);
+        }
+        return await getObjectResponse.Body.transformToString();
+    } catch (err) {
+        console.error(err);
+        throw Error(`Error retrieving record from bucket`);
     }
 };
 

@@ -13,6 +13,7 @@ export interface User {
 
 export interface RunRecord {
     id: string;
+    originalFileName: string;
     centerLat: number;
     centerLong: number;
     conditions: string;

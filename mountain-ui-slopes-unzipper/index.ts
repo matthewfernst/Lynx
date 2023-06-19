@@ -3,6 +3,10 @@ import { ParseOne } from "unzipper";
 
 const targetBucket = "mountain-ui-app-slopes-unzipped";
 
+const renameFileFunction = (originalFileName: string) => {
+    return `${originalFileName.split(".")[0]}.xml`;
+}
+
 export async function handler(event, context) {
     const s3Client = new S3({ region: "us-west-1" });
 
@@ -18,10 +22,7 @@ export async function handler(event, context) {
             .createReadStream()
             .pipe(ParseOne("Metadata.xml", { forceStream: true }));
 
-        const targetFile = `${fileName.split("/")[0]}/${fileName
-            .split("/")[1]
-            .split("-")[0]
-            .trim()}.xml`;
+        const targetFile = renameFileFunction(fileName);
         await s3Client
             .upload({ Bucket: targetBucket, Key: targetFile, Body: fileStream })
             .promise();
