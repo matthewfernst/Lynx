@@ -156,13 +156,13 @@ export const deleteItemsFromArray = async (
         if (!item) {
             throw new Error("Error finding item for this userId");
         }
-        const indices = item[key].map((listItem) => item[key].index(listItem));
+        const indices = item[key].map((listItem: string) => item[key].index(listItem));
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
             UpdateExpression:
                 "remove " +
-                indices.map((index, arrayIndex) => {
+                indices.map((index: number, arrayIndex: number) => {
                     if (arrayIndex + 1 === indices.length) {
                         return `#updateKey[${index}]`;
                     }

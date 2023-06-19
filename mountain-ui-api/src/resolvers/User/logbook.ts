@@ -1,5 +1,5 @@
 import { Context } from "../../index";
-import { RunRecord } from "../../types";
+import { Log } from "../../types";
 import { getObjectNamesInBucket, getRecordFromBucket, toRunRecordsBucket } from "../../aws/s3";
 import { parseStringPromise, processors } from "xml2js";
 
@@ -7,15 +7,10 @@ const reverseRenameFileFunction = (originalFileName: string) => {
     return `${originalFileName.split(".")[0]}.slopes`;
 };
 
-const logbook = async (
-    parent: any,
-    args: {},
-    context: Context,
-    info: any
-): Promise<RunRecord[]> => {
+const logbook = async (parent: any, args: {}, context: Context, info: any): Promise<Log[]> => {
     const recordNames = await getObjectNamesInBucket(toRunRecordsBucket, parent.id);
     return Promise.all(
-        recordNames.map(async (recordName): Promise<RunRecord> => {
+        recordNames.map(async (recordName): Promise<Log> => {
             const unzippedRecord = await getRecordFromBucket(toRunRecordsBucket, recordName);
             const { activity } = await parseStringPromise(unzippedRecord, {
                 normalize: true,

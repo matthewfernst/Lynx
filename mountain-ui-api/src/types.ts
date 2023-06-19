@@ -1,4 +1,5 @@
 export interface User {
+    [key: string]: any;
     id: string;
     appleId?: string;
     googleId?: string;
@@ -25,6 +26,7 @@ export interface Log {
     runCount: string;
     topSpeed: number;
     vertical: number;
+    details: LogDetail[];
 }
 
 export interface LogDetail {

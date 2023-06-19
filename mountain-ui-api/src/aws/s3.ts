@@ -55,7 +55,7 @@ export const getObjectNamesInBucket = async (
         if (!listObjectsResponse.Contents) {
             return [];
         }
-        const predicate = (content) => content.Key;
+        const predicate = (content: any) => content.Key;
         return listObjectsResponse.Contents.filter(predicate).map(predicate);
     } catch (err) {
         console.error(err);

@@ -6,7 +6,7 @@
     "license": "MIT",
     "main": "index.js",
     "scripts": {
-        "types": "tsc",
+        "types": "tsc -p ./tsconfig.lambda.json",
         "lint": "eslint **/*.ts **/*.tsx",
         "check": "npm run types && npm run lint",
         "clean": "rm -rf .build .serverless coverage dist",
