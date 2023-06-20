@@ -22,3 +22,4 @@ var/
 .build/
 .env
 .vscode
+apollo-ios-cli
