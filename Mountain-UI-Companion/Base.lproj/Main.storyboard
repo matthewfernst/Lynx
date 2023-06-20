@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="1q6-pJ-EvQ">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -33,7 +32,7 @@
                                 <rect key="frame" x="16" y="649" width="361" height="134.66666666666663"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QxK-Ba-fvh">
-                                <rect key="frame" x="96" y="791" width="201" height="27"/>
+                                <rect key="frame" x="90" y="791" width="213" height="27"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="What is Mountain UI? Learn More">
                                     <fontDescription key="titleFontDescription" type="system" pointSize="11"/>
@@ -47,7 +46,7 @@
                         <constraints>
                             <constraint firstItem="aZt-lh-lRI" firstAttribute="centerX" secondItem="Jfu-1C-LNU" secondAttribute="centerX" id="4Fo-EC-VMG"/>
                             <constraint firstItem="aZt-lh-lRI" firstAttribute="leading" secondItem="30o-R3-J92" secondAttribute="leading" id="9NP-pW-XIu"/>
-                            <constraint firstItem="Jfu-1C-LNU" firstAttribute="trailing" secondItem="QxK-Ba-fvh" secondAttribute="trailing" constant="96" id="CDu-RX-wZO"/>
+                            <constraint firstItem="Jfu-1C-LNU" firstAttribute="trailing" secondItem="QxK-Ba-fvh" secondAttribute="trailing" constant="90" id="CDu-RX-wZO"/>
                             <constraint firstItem="30o-R3-J92" firstAttribute="trailing" secondItem="Vt7-M1-c0P" secondAttribute="trailingMargin" id="E4W-h1-MqC"/>
                             <constraint firstAttribute="trailingMargin" secondItem="EzZ-7f-TgO" secondAttribute="trailing" constant="-46" id="IKY-Vf-y2Z"/>
                             <constraint firstItem="30o-R3-J92" firstAttribute="top" secondItem="EzZ-7f-TgO" secondAttribute="bottom" constant="10.666666666666629" id="M0b-y6-wdD"/>
@@ -59,7 +58,7 @@
                             <constraint firstItem="30o-R3-J92" firstAttribute="leading" secondItem="Vt7-M1-c0P" secondAttribute="leadingMargin" id="cBX-QA-gdh"/>
                             <constraint firstItem="aZt-lh-lRI" firstAttribute="top" secondItem="30o-R3-J92" secondAttribute="bottom" constant="1.3333333333333712" id="mD5-Z7-GdR"/>
                             <constraint firstItem="QxK-Ba-fvh" firstAttribute="top" secondItem="aZt-lh-lRI" secondAttribute="bottom" constant="7.3333333333333712" id="rsr-Os-m8B"/>
-                            <constraint firstItem="QxK-Ba-fvh" firstAttribute="leading" secondItem="Jfu-1C-LNU" secondAttribute="leading" constant="96" id="xCc-bb-Jps"/>
+                            <constraint firstItem="QxK-Ba-fvh" firstAttribute="leading" secondItem="Jfu-1C-LNU" secondAttribute="leading" constant="90" id="xCc-bb-Jps"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="oS8-ti-3CA"/>

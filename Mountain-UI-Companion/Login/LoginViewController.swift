@@ -37,7 +37,7 @@ class LoginViewController: UIViewController
         setupSignInWithAppleButton()
         setupSignInWithGoogleButton()
         
-        scheduleNotificationsForRemindingToUpload()
+        
     }
     
     // MARK: - Notifications
@@ -178,6 +178,7 @@ class LoginViewController: UIViewController
             showErrorWithSignIn()
             return
         }
+        scheduleNotificationsForRemindingToUpload()
         self.goToMainApp()
     }
     
