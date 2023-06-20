@@ -7,17 +7,18 @@ mutation EditUser($userData: [KeyValuePair!]!) {
     firstName
     lastName
     profilePictureUrl
-    runRecords {
+    logbook {
       id
       conditions
       distance
       duration
-      start
-      end
+      startDate
+      endDate
       locationName
       runCount
       topSpeed
-      vertical
+      verticalDistance
     }
   }
 }
+

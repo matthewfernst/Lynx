@@ -377,7 +377,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         guard let bookmark = bookmark else { return nil }
         var nonUploadedSlopeFiles: [String] = []
         
-        ApolloMountainUIClient.getUploadedRunRecords() { [unowned self] result in
+        ApolloMountainUIClient.getUploadedLogs() { [unowned self] result in
             switch result {
             case .success(let uploadedFiles):
                 do {

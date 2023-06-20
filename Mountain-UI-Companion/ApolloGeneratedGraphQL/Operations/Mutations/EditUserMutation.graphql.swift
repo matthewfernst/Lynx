@@ -19,18 +19,18 @@ public extension ApolloGeneratedGraphQL {
             firstName
             lastName
             profilePictureUrl
-            runRecords {
+            logbook {
               __typename
               id
               conditions
               distance
               duration
-              start
-              end
+              startDate
+              endDate
               locationName
               runCount
               topSpeed
-              vertical
+              verticalDistance
             }
           }
         }
@@ -73,7 +73,7 @@ public extension ApolloGeneratedGraphQL {
           .field("firstName", String.self),
           .field("lastName", String.self),
           .field("profilePictureUrl", String?.self),
-          .field("runRecords", [RunRecord].self),
+          .field("logbook", [Logbook].self),
         ] }
 
         public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
@@ -83,40 +83,40 @@ public extension ApolloGeneratedGraphQL {
         public var firstName: String { __data["firstName"] }
         public var lastName: String { __data["lastName"] }
         public var profilePictureUrl: String? { __data["profilePictureUrl"] }
-        public var runRecords: [RunRecord] { __data["runRecords"] }
+        public var logbook: [Logbook] { __data["logbook"] }
 
-        /// EditUser.RunRecord
+        /// EditUser.Logbook
         ///
-        /// Parent Type: `RunRecord`
-        public struct RunRecord: ApolloGeneratedGraphQL.SelectionSet {
+        /// Parent Type: `Log`
+        public struct Logbook: ApolloGeneratedGraphQL.SelectionSet {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.RunRecord }
+          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Log }
           public static var __selections: [ApolloAPI.Selection] { [
             .field("__typename", String.self),
             .field("id", ApolloGeneratedGraphQL.ID.self),
             .field("conditions", String.self),
             .field("distance", Double.self),
             .field("duration", Double.self),
-            .field("start", String.self),
-            .field("end", String.self),
+            .field("startDate", String.self),
+            .field("endDate", String.self),
             .field("locationName", String.self),
-            .field("runCount", String.self),
+            .field("runCount", Int.self),
             .field("topSpeed", Double.self),
-            .field("vertical", Double.self),
+            .field("verticalDistance", Double.self),
           ] }
 
           public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
           public var conditions: String { __data["conditions"] }
           public var distance: Double { __data["distance"] }
           public var duration: Double { __data["duration"] }
-          public var start: String { __data["start"] }
-          public var end: String { __data["end"] }
+          public var startDate: String { __data["startDate"] }
+          public var endDate: String { __data["endDate"] }
           public var locationName: String { __data["locationName"] }
-          public var runCount: String { __data["runCount"] }
+          public var runCount: Int { __data["runCount"] }
           public var topSpeed: Double { __data["topSpeed"] }
-          public var vertical: Double { __data["vertical"] }
+          public var verticalDistance: Double { __data["verticalDistance"] }
         }
       }
     }

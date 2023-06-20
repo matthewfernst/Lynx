@@ -71,10 +71,10 @@ class SessionTableViewCell: UITableViewCell
         resortDateImageView.image = nil
     }
     
-    public func configure(with configuredRunRecordData: ConfiguredRunRecordData) {
-        resortNameLabel.text = configuredRunRecordData.locationName
+    public func configure(with configuredLogbookData: ConfiguredLogbookData) {
+        resortNameLabel.text = configuredLogbookData.locationName
         snowboardFigureImageView.tintColor = .secondaryLabel
-        resortStatsLabel.text = "| \(configuredRunRecordData.numberOfRuns) runs | \(configuredRunRecordData.runDurationHour)H \(configuredRunRecordData.runDurationMinutes)M | \(configuredRunRecordData.conditions) | \(configuredRunRecordData.topSpeed)MPH"
+        resortStatsLabel.text = "| \(configuredLogbookData.numberOfRuns) runs | \(configuredLogbookData.runDurationHour)H \(configuredLogbookData.runDurationMinutes)M | \(configuredLogbookData.conditions) | \(configuredLogbookData.topSpeed)MPH"
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         
@@ -83,7 +83,7 @@ class SessionTableViewCell: UITableViewCell
             .paragraphStyle: paragraph
         ]
         
-        resortDateImageView.image = configuredRunRecordData.dateOfRun.image(withAttributes: dateOfSessionAttributes, move: .zero)?.withTintColor(.label)
+        resortDateImageView.image = configuredLogbookData.dateOfRun.image(withAttributes: dateOfSessionAttributes, move: .zero)?.withTintColor(.label)
         
         resortDateImageView.translatesAutoresizingMaskIntoConstraints = false
         resortNameLabel.translatesAutoresizingMaskIntoConstraints = false

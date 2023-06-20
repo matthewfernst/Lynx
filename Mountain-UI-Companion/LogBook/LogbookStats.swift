@@ -8,13 +8,13 @@ import UIKit
 import Foundation
 
 
-struct RunRecordStats {
-    var runRecords: RunRecords = []
+struct LogbookStats {
+    var logbooks: Logbooks = []
     
     // MARK: - Lifetime Stats
     
     var lifetimeVerticalFeet: String {
-        let totalVerticalFeet = runRecords.map { $0.vertical }.reduce(0, +)
+        let totalVerticalFeet = logbooks.map { $0.verticalDistance }.reduce(0, +)
         
         if totalVerticalFeet >= 1000 {
             let formattedVerticalFeet = String(format: "%.1fk", Double(totalVerticalFeet) / 1000)
@@ -25,38 +25,38 @@ struct RunRecordStats {
     }
     
     var lifetimeDaysOnMountain: String {
-        return String(runRecords.count)
+        return String(logbooks.count)
     }
     
     var lifetimeRunsTime: String {
-        let totalHours = Int(runRecords.map { $0.duration / 3600 }.reduce(0, +))
+        let totalHours = Int(logbooks.map { $0.duration / 3600 }.reduce(0, +))
         return "\(totalHours)H"
     }
     
     var lifetimeRuns: String {
-        return String(runRecords.map { Int($0.runCount) ?? 0 }.reduce(0, +))
+        return String(logbooks.map { Int($0.runCount) }.reduce(0, +))
     }
     
     // MARK: - Specific Run Record Data
     
-    func runRecord(at index: Int) -> RunRecord? {
-        guard index >= 0 && index < runRecords.count else {
+    func logbook(at index: Int) -> Logbook? {
+        guard index >= 0 && index < logbooks.count else {
             return nil
         }
         
-        return runRecords[index]
+        return logbooks[index]
     }
     
     func formattedDateOfRun(at index: Int) -> String {
         let defaultDate = "NA\n"
-        guard let runRecord = runRecord(at: index) else {
+        guard let logbook = logbook(at: index) else {
             return defaultDate
         }
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         
-        if let date = dateFormatter.date(from: String(runRecord.start.split(separator: " ")[0])) {
+        if let date = dateFormatter.date(from: String(logbook.startDate.split(separator: " ")[0])) {
             dateFormatter.dateFormat = "MMM\nd"
             return dateFormatter.string(from: date)
         }
@@ -64,20 +64,20 @@ struct RunRecordStats {
         return defaultDate
     }
     
-    func totalRunRecordTime(at index: Int) -> (Int, Int) {
-        guard let runRecord = runRecord(at: index) else {
+    func totalLogbookTime(at index: Int) -> (Int, Int) {
+        guard let logbook = logbook(at: index) else {
             return (0, 0)
         }
         
-        let durationInSeconds = Int(runRecord.duration)
+        let durationInSeconds = Int(logbook.duration)
         let hours = durationInSeconds / 3600
         let minutes = (durationInSeconds % 3600) / 60
         
         return (hours, minutes)
     }
     
-    func runRecordConditions(at index: Int) -> String {
-        guard let conditions = runRecord(at: index)?.conditions else {
+    func logbookConditions(at index: Int) -> String {
+        guard let conditions = logbook(at: index)?.conditions else {
             return ""
         }
         
@@ -91,24 +91,24 @@ struct RunRecordStats {
     }
     
     
-    func runRecordTopSpeed(at index: Int) -> String {
-        return String(format: "%.1f", runRecord(at: index)?.topSpeed ?? 0.0)
+    func logbookTopSpeed(at index: Int) -> String {
+        return String(format: "%.1f", logbook(at: index)?.topSpeed ?? 0.0)
     }
     
-    func getConfiguredRunRecordData(at index: Int) -> ConfiguredRunRecordData? {
-        guard let runRecord = runRecord(at: index) else {
+    func getConfiguredLogbookData(at index: Int) -> ConfiguredLogbookData? {
+        guard let logbook = logbook(at: index) else {
             return nil
         }
         
-        let (runDurationHour, runDurationMinutes) = totalRunRecordTime(at: index)
+        let (runDurationHour, runDurationMinutes) = totalLogbookTime(at: index)
         
-        return ConfiguredRunRecordData(locationName: runRecord.locationName,
-                                       numberOfRuns: Int(runRecord.runCount) ?? 0,
+        return ConfiguredLogbookData(locationName: logbook.locationName,
+                                       numberOfRuns: Int(logbook.runCount) ,
                                        runDurationHour: runDurationHour,
                                        runDurationMinutes: runDurationMinutes,
                                        dateOfRun: formattedDateOfRun(at: index),
-                                       conditions: runRecordConditions(at: index),
-                                       topSpeed: runRecordTopSpeed(at: index))
+                                       conditions: logbookConditions(at: index),
+                                       topSpeed: logbookTopSpeed(at: index))
     }
     
     // MARK: Lifetime Stats
@@ -130,8 +130,8 @@ struct RunRecordStats {
     
     // Helper methods to calculate the averages and best values
     private func calculateAverageVerticalFeet() -> String {
-        let averageVerticalFeet = runRecords.map { $0.vertical }.reduce(0.0) {
-            return $0 + $1/Double(runRecords.count)
+        let averageVerticalFeet = logbooks.map { $0.verticalDistance }.reduce(0.0) {
+            return $0 + $1/Double(logbooks.count)
         }
         
         if averageVerticalFeet >= 1000 {
@@ -142,35 +142,35 @@ struct RunRecordStats {
     }
     
     private func calculateAverageDistance() -> String {
-        let averageDistance = runRecords.map { $0.distance }.reduce(0.0) {
-            return $0 + $1/Double(runRecords.count)
+        let averageDistance = logbooks.map { $0.distance }.reduce(0.0) {
+            return $0 + $1/Double(logbooks.count)
         }
         
         return String(format: "%.1f MI", averageDistance.feetToMiles)
     }
     
     private func calculateAverageSpeed() -> String {
-        let averageSpeed = runRecords.map { $0.topSpeed }.reduce(0.0) {
-            return $0 + $1/Double(runRecords.count)
+        let averageSpeed = logbooks.map { $0.topSpeed }.reduce(0.0) {
+            return $0 + $1/Double(logbooks.count)
         }
         
         return String(format: "%.1f MPH", averageSpeed)
     }
     
     private func calculateBestTopSpeed() -> String {
-        return String(format: "%.1f MPH", runRecords.map { $0.topSpeed }.max() ?? 0.0)
+        return String(format: "%.1f MPH", logbooks.map { $0.topSpeed }.max() ?? 0.0)
     }
     
     private func calculateBestTallestRun() -> String {
-        return String(format: "%.1f FT", runRecords.map { $0.vertical }.max() ?? 0.0)
+        return String(format: "%.1f FT", logbooks.map { $0.verticalDistance }.max() ?? 0.0)
     }
     
     private func calculateBestLongestRun() -> String {
-        return String(format: "%.1f MI", (runRecords.map { $0.distance }.max() ?? 0.0).feetToMiles)
+        return String(format: "%.1f MI", (logbooks.map { $0.distance }.max() ?? 0.0).feetToMiles)
     }
 }
 
-struct ConfiguredRunRecordData {
+struct ConfiguredLogbookData {
     let locationName: String
     let numberOfRuns: Int
     let runDurationHour: Int

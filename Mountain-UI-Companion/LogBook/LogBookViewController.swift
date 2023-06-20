@@ -25,7 +25,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet var lifetimeSummaryTableView: UITableView!
     
     var profile: Profile!
-    var runRecordStats: RunRecordStats = RunRecordStats()
+    var logbookStats: LogbookStats = LogbookStats()
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let tabController = segue.destination as? TabViewController {
@@ -37,10 +37,10 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func setupMainStats() {
-        lifetimeVerticalFeetLabel.text   = runRecordStats.lifetimeVerticalFeet
-        lifetimeDaysOnMountainLabel.text = runRecordStats.lifetimeDaysOnMountain
-        lifetimeRunsTimeLabel.text       = runRecordStats.lifetimeRunsTime
-        lifetimeRunsLabel.text           = runRecordStats.lifetimeRuns
+        lifetimeVerticalFeetLabel.text   = logbookStats.lifetimeVerticalFeet
+        lifetimeDaysOnMountainLabel.text = logbookStats.lifetimeDaysOnMountain
+        lifetimeRunsTimeLabel.text       = logbookStats.lifetimeRunsTime
+        lifetimeRunsLabel.text           = logbookStats.lifetimeRuns
     }
     
     override func viewDidLoad() {
@@ -55,10 +55,10 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(explainMoreWithSlopes))
         
         
-        ApolloMountainUIClient.getRunRecords { [unowned self] result in
+        ApolloMountainUIClient.getLogs { [unowned self] result in
             switch result {
-            case .success(let runRecords):
-                self.runRecordStats.runRecords = runRecords
+            case .success(let logbook):
+                self.logbookStats.logbooks = logbook
                 
                 DispatchQueue.main.async { [weak self] in
                     self?.setupMainStats()
@@ -116,7 +116,7 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         case .seasonSummary:
             return 1
         case .sessionSummary:
-            return runRecordStats.runRecords.count
+            return logbookStats.logbooks.count
         default:
             return 0
         }
@@ -126,8 +126,8 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         switch SessionSection(rawValue: indexPath.section) {
         case .seasonSummary:
             if let lifetimeSummaryViewController = self.storyboard?.instantiateViewController(withIdentifier: LifetimeSummaryViewController.identifier) as? LifetimeSummaryViewController {
-                lifetimeSummaryViewController.averageStats = runRecordStats.lifetimeAverages
-                lifetimeSummaryViewController.bestStats = runRecordStats.lifetimeBest
+                lifetimeSummaryViewController.averageStats = logbookStats.lifetimeAverages
+                lifetimeSummaryViewController.bestStats = logbookStats.lifetimeBest
                 self.navigationController?.pushViewController(lifetimeSummaryViewController, animated: true)
             }
             
@@ -154,8 +154,8 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
                 return UITableViewCell()
             }
             
-            if let configuredRunRecordData = runRecordStats.getConfiguredRunRecordData(at: indexPath.row) {
-                cell.configure(with: configuredRunRecordData)
+            if let configuredLogbookData = logbookStats.getConfiguredLogbookData(at: indexPath.row) {
+                cell.configure(with: configuredLogbookData)
             }
             
             return cell

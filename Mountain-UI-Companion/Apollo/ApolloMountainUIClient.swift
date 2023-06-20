@@ -9,8 +9,8 @@ import Foundation
 import Apollo
 import OSLog
 
-typealias RunRecords = [ApolloGeneratedGraphQL.GetRunRecordsQuery.Data.SelfLookup.RunRecord]
-typealias RunRecord = ApolloGeneratedGraphQL.GetRunRecordsQuery.Data.SelfLookup.RunRecord
+typealias Logbooks = [ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook]
+typealias Logbook = ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook
 
 class ApolloMountainUIClient
 {
@@ -232,49 +232,49 @@ class ApolloMountainUIClient
         }
     }
     
-    enum QueryRunRecordsErrors: Error {
-        case runRecordsIsNil
+    enum QueryLogbookErrors: Error {
+        case logbookIsNil
         case queryFailed
     }
     
-    public static func getUploadedRunRecords(completion: @escaping ((Result<Set<String>, Error>) -> Void)) {
+    public static func getUploadedLogs(completion: @escaping ((Result<Set<String>, Error>) -> Void)) {
 
-        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetUploadedRunRecordsQuery()) { result in
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetUploadedLogsQuery()) { result in
             switch result {
             case .success(let graphQLResult):
-                guard let runRecords = graphQLResult.data?.selfLookup?.runRecords else {
-                    Logger.apollo.error("runRecords could not be unwrapped.")
-                    completion(.failure(QueryRunRecordsErrors.runRecordsIsNil))
+                guard let logbook = graphQLResult.data?.selfLookup?.logbook else {
+                    Logger.apollo.error("logbook could not be unwrapped.")
+                    completion(.failure(QueryLogbookErrors.logbookIsNil))
                     return
                 }
                 
-                let uploadedSlopeFiles = Set(runRecords.map({ $0.id }))
+                let uploadedSlopeFiles = Set(logbook.map({ $0.originalFileName }))
                 return completion(.success(uploadedSlopeFiles))
                 
             case .failure(_):
-                Logger.apollo.error("Error querying users runRecords.")
-                completion(.failure(QueryRunRecordsErrors.queryFailed))
+                Logger.apollo.error("Error querying users logbook.")
+                completion(.failure(QueryLogbookErrors.queryFailed))
             }
         }
     }
     
     
-    public static func getRunRecords(completion: @escaping ((Result<RunRecords, Error>) -> Void)) {
+    public static func getLogs(completion: @escaping ((Result<Logbooks, Error>) -> Void)) {
         
-        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetRunRecordsQuery()) { result in
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetLogsQuery()) { result in
             switch result {
             case .success(let graphQLResult):
-                guard let runRecords = graphQLResult.data?.selfLookup?.runRecords else {
-                    Logger.apollo.error("runRecords could not be unwrapped.")
-                    completion(.failure(QueryRunRecordsErrors.runRecordsIsNil))
+                guard let logbook = graphQLResult.data?.selfLookup?.logbook else {
+                    Logger.apollo.error("logbook could not be unwrapped.")
+                    completion(.failure(QueryLogbookErrors.logbookIsNil))
                     return
                 }
                 
-                return completion(.success(runRecords))
+                return completion(.success(logbook))
                 
             case .failure(_):
-                Logger.apollo.error("Error querying users runRecords.")
-                completion(.failure(QueryRunRecordsErrors.queryFailed))
+                Logger.apollo.error("Error querying users logbook.")
+                completion(.failure(QueryLogbookErrors.queryFailed))
             }
         }
     }
