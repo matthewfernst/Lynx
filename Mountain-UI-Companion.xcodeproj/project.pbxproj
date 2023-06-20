@@ -30,7 +30,6 @@
 		654DEAE429824134001565A3 /* SessionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654DEAE329824134001565A3 /* SessionTableViewCell.swift */; };
 		654DEAE82983933C001565A3 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654DEAE72983933C001565A3 /* LoginViewController.swift */; };
 		654F223C29FE362700D1C96E /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 654F223B29FE362700D1C96E /* Apollo */; };
-		654F223E29FE365D00D1C96E /* apollo-ios-cli in Resources */ = {isa = PBXBuildFile; fileRef = 654F223D29FE365D00D1C96E /* apollo-ios-cli */; };
 		654F224929FE373100D1C96E /* CreateUserProfilePictureUploadUrl.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 654F224829FE373100D1C96E /* CreateUserProfilePictureUploadUrl.graphql */; };
 		654F224B29FE374B00D1C96E /* CreateRunRecordUploadUrl.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 654F224A29FE374B00D1C96E /* CreateRunRecordUploadUrl.graphql */; };
 		654F224D29FE37C400D1C96E /* apollo-codegen-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 654F224C29FE37C400D1C96E /* apollo-codegen-config.json */; };
@@ -110,7 +109,6 @@
 		654DEADF29820806001565A3 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		654DEAE329824134001565A3 /* SessionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTableViewCell.swift; sourceTree = "<group>"; };
 		654DEAE72983933C001565A3 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		654F223D29FE365D00D1C96E /* apollo-ios-cli */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "apollo-ios-cli"; sourceTree = "<group>"; };
 		654F224829FE373100D1C96E /* CreateUserProfilePictureUploadUrl.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = CreateUserProfilePictureUploadUrl.graphql; sourceTree = "<group>"; };
 		654F224A29FE374B00D1C96E /* CreateRunRecordUploadUrl.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = CreateRunRecordUploadUrl.graphql; sourceTree = "<group>"; };
 		654F224C29FE37C400D1C96E /* apollo-codegen-config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "apollo-codegen-config.json"; sourceTree = "<group>"; };
@@ -424,7 +422,6 @@
 				654F224129FE36B400D1C96E /* GraphQLOperations */,
 				654F224C29FE37C400D1C96E /* apollo-codegen-config.json */,
 				654F224E29FE397E00D1C96E /* schema.graphql */,
-				654F223D29FE365D00D1C96E /* apollo-ios-cli */,
 				6540781F29875ADB00CFE259 /* Mountain-UI-Companion.entitlements */,
 				65A370DB297E594500E1D851 /* AppDelegate.swift */,
 				65A370DD297E594500E1D851 /* SceneDelegate.swift */,
@@ -562,7 +559,6 @@
 				654F227229FE3FE900D1C96E /* LoginOrCreateUser.graphql in Resources */,
 				654F224929FE373100D1C96E /* CreateUserProfilePictureUploadUrl.graphql in Resources */,
 				65A370E5297E594600E1D851 /* Assets.xcassets in Resources */,
-				654F223E29FE365D00D1C96E /* apollo-ios-cli in Resources */,
 				65A370E3297E594500E1D851 /* Main.storyboard in Resources */,
 				659A9F852A414C7800DC6006 /* EditUser.graphql in Resources */,
 				654F224D29FE37C400D1C96E /* apollo-codegen-config.json in Resources */,
