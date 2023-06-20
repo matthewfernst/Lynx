@@ -5,35 +5,75 @@
 //  Created by Matthew Ernst on 1/23/23.
 //
 
+
 import UIKit
 
-enum SessionSection: Int, CaseIterable
-{
-    case seasonSummary = 0
+enum SessionSection: Int, CaseIterable {
+    case lifetimeSummary = 0
     case sessionSummary = 1
 }
 
-class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
-{
+class LogBookViewController: UIViewController {
     
     @IBOutlet var profilePictureImageView: UIImageView!
     @IBOutlet var lifetimeVerticalFeetLabel: UILabel!
     @IBOutlet var lifetimeDaysOnMountainLabel: UILabel!
     @IBOutlet var lifetimeRunsTimeLabel: UILabel!
     @IBOutlet var lifetimeRunsLabel: UILabel!
-    @IBOutlet var allLifetimeStateButton: UIButton!
     @IBOutlet var lifetimeSummaryTableView: UITableView!
     
     var profile: Profile!
     var logbookStats: LogbookStats = LogbookStats()
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let tabController = segue.destination as? TabViewController {
-            // Set up data to pass to first view controller
-            if let firstViewController = tabController.viewControllers?.first as? LogBookViewController {
-                firstViewController.profile = tabController.profile
-            }
+    private var refreshControl: UIRefreshControl!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let tabBarController = self.tabBarController as! TabViewController
+        self.profile = tabBarController.profile
+        
+        setupNavigationBar()
+        setupRefreshControl()
+        setupTableView()
+        setupProfilePicture()
+        
+        refreshData()
+    }
+    
+    private func setupNavigationBar() {
+        self.title = "LogBook"
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(explainMoreWithSlopes))
+    }
+    
+    private func setupRefreshControl() {
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        lifetimeSummaryTableView.refreshControl = refreshControl
+    }
+    
+    private func setupTableView() {
+        lifetimeSummaryTableView.delegate = self
+        lifetimeSummaryTableView.dataSource = self
+        lifetimeSummaryTableView.register(SessionTableViewCell.self, forCellReuseIdentifier: SessionTableViewCell.identifier)
+        lifetimeSummaryTableView.rowHeight = 66.0
+    }
+    
+    private func setupProfilePicture() {
+        if let profilePicture = profile.profilePicture {
+            profilePictureImageView.image = profilePicture
+        } else {
+            let defaultProfilePicture = ProfilePictureUtils.getDefaultProfilePicture(name: profile.name, fontSize: 60)
+            profilePictureImageView.addSubview(defaultProfilePicture)
+            defaultProfilePicture.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                defaultProfilePicture.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
+                defaultProfilePicture.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
+            ])
         }
+        profilePictureImageView.backgroundColor = .secondarySystemBackground
+        profilePictureImageView.makeRounded()
     }
     
     func setupMainStats() {
@@ -43,131 +83,102 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
         lifetimeRunsLabel.text           = logbookStats.lifetimeRuns
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        let tabBarController = self.tabBarController as! TabViewController
-        self.profile = tabBarController.profile
-        
-        self.title = "LogBook"
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(explainMoreWithSlopes))
-        
-        
-        ApolloMountainUIClient.getLogs { [unowned self] result in
+    private func refreshData() {
+        refreshControl.beginRefreshing()
+        ApolloMountainUIClient.getLogs { [weak self] result in
             switch result {
             case .success(let logbook):
-                self.logbookStats.logbooks = logbook
-                
-                DispatchQueue.main.async { [weak self] in
+                self?.logbookStats.logbooks = logbook
+                DispatchQueue.main.async {
                     self?.setupMainStats()
                     self?.lifetimeSummaryTableView.reloadData()
+                    self?.refreshControl.endRefreshing()
                 }
-                
             case .failure(_):
-                break
+                DispatchQueue.main.async {
+                    self?.refreshControl.endRefreshing()
+                }
             }
         }
-        
-        lifetimeSummaryTableView.delegate = self
-        lifetimeSummaryTableView.dataSource = self
-        lifetimeSummaryTableView.register(SessionTableViewCell.self, forCellReuseIdentifier: SessionTableViewCell.identifier)
-        lifetimeSummaryTableView.rowHeight = 66.0
-        
-        if let profilePicture = profile.profilePicture {
-            profilePictureImageView.image = profilePicture
-        } else {
-            let defaultProfilePicture = ProfilePictureUtils.getDefaultProfilePicture(name: profile.name, fontSize: 60)
-            
-            profilePictureImageView.addSubview(defaultProfilePicture)
-            
-            defaultProfilePicture.translatesAutoresizingMaskIntoConstraints = false
-            
-            NSLayoutConstraint.activate([
-                defaultProfilePicture.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
-                defaultProfilePicture.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
-            ])
-        }
-        
-        profilePictureImageView.backgroundColor = .secondarySystemBackground
-        profilePictureImageView.makeRounded()
     }
     
-    @objc func explainMoreWithSlopes() {
-        
+    @objc private func refresh(_ sender: UIRefreshControl) {
+        refreshData()
+    }
+    
+    @objc private func explainMoreWithSlopes() {
         let message = """
                       This data comes from the Slopes app and is a way to quickly see your data being used.
                       For more detailed information, visit your Slopes app.
                       """
-        
         let ac = UIAlertController(title: "Information From Slopes", message: message, preferredStyle: .actionSheet)
         ac.addAction(UIAlertAction(title: "Dismiss", style: .default))
-        
         present(ac, animated: true)
     }
-    
+}
+
+extension LogBookViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return SessionSection.allCases.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch SessionSection(rawValue: section) {
-        case .seasonSummary:
+        guard let sessionSection = SessionSection(rawValue: section) else {
+            return 0
+        }
+        switch sessionSection {
+        case .lifetimeSummary:
             return 1
         case .sessionSummary:
             return logbookStats.logbooks.count
-        default:
-            return 0
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch SessionSection(rawValue: indexPath.section) {
-        case .seasonSummary:
-            if let lifetimeSummaryViewController = self.storyboard?.instantiateViewController(withIdentifier: LifetimeSummaryViewController.identifier) as? LifetimeSummaryViewController {
+        guard let sessionSection = SessionSection(rawValue: indexPath.section) else {
+            return
+        }
+        switch sessionSection {
+        case .lifetimeSummary:
+            if let lifetimeSummaryViewController = storyboard?.instantiateViewController(withIdentifier: LifetimeSummaryViewController.identifier) as? LifetimeSummaryViewController {
                 lifetimeSummaryViewController.averageStats = logbookStats.lifetimeAverages
                 lifetimeSummaryViewController.bestStats = logbookStats.lifetimeBest
-                self.navigationController?.pushViewController(lifetimeSummaryViewController, animated: true)
+                navigationController?.pushViewController(lifetimeSummaryViewController, animated: true)
             }
-            
         default:
             break
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch SessionSection(rawValue: indexPath.section) {
-        case .seasonSummary:
+        guard let sessionSection = SessionSection(rawValue: indexPath.section) else {
+            return UITableViewCell()
+        }
+        switch sessionSection {
+        case .lifetimeSummary:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SeasonSummaryCell", for: indexPath)
             var configuration = cell.defaultContentConfiguration()
-            
             configuration.text = "Season Summary"
-            
             cell.detailTextLabel?.text = "\(lifetimeRunsLabel.text ?? "-") runs | \(lifetimeDaysOnMountainLabel.text ?? "-") days | \(lifetimeVerticalFeetLabel.text ?? "-") FT"
             cell.backgroundColor = .secondarySystemBackground
-            
             return cell
-            
         case .sessionSummary:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SessionTableViewCell.identifier, for: indexPath) as? SessionTableViewCell else {
                 return UITableViewCell()
             }
-            
             if let configuredLogbookData = logbookStats.getConfiguredLogbookData(at: indexPath.row) {
                 cell.configure(with: configuredLogbookData)
             }
-            
             return cell
-            
-        default:
-            return UITableViewCell()
         }
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        switch SessionSection(rawValue: section) {
-        case.seasonSummary:
+        guard let sessionSection = SessionSection(rawValue: section) else {
+            return 0
+        }
+        switch sessionSection {
+        case .lifetimeSummary:
             return 50
         default:
             return 18
@@ -175,24 +186,21 @@ class LogBookViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        switch SessionSection(rawValue: section) {
-        case .seasonSummary:
+        guard let sessionSection = SessionSection(rawValue: section) else {
+            return nil
+        }
+        switch sessionSection {
+        case .lifetimeSummary:
             let header = UILabel()
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy"
-            
             let currentYear = dateFormatter.string(from: .now)
             let pastYear = String((Int(currentYear) ?? 0) - 1)
-            
             header.text = "\(pastYear)/\(currentYear)"
             header.font = UIFont.systemFont(ofSize: 22, weight: .bold)
-            
             return header
-            
         default:
             return nil
         }
     }
 }
-
-
