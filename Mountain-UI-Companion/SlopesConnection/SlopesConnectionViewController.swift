@@ -66,8 +66,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         let tabBarController = self.tabBarController as! TabViewController
         self.profile = tabBarController.profile
         
-        anchorSlopeFilesUploadProgressView()
-        setupThumbsUpImageViewAndManualSlopeFilesButton()
+        setupInitialView()
         
         if !NetworkManager().isInternetAvailable() {
             showNoInternetConnectionView()
@@ -90,6 +89,21 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     override func viewWillAppear(_ animated: Bool) {
         guard let _ = bookmark else { return }
         showAllSet()
+    }
+    
+    private func setupInitialView() {
+        self.explanationTitleLabel.text = "Connect to Slopes"
+        self.explanationTextView.text = """
+The Mountain-UI Companion App works together with the Slopes App by Breakpoint Studios. Slopes is able to track a skier or snowboarder while they shred it down the mountain. Slopes can track things such as average speed, total vertical feet, and more. The Mountain-UI Companion App, uses the data stored by Slopes and sends it to your Mountain-UI display. In order to get started, tap the "Connect Slopes" button and select the Slopes folder in your Files directory. The Slopes directory is shown below for reference.
+"""
+        self.connectSlopesButton.setTitle("Connect Slopes", for: .normal)
+        self.connectSlopesButton.isHidden = false
+        self.slopesFolderImageView.isHidden = true
+        
+        self.connectSlopesButton.addTarget(self, action: #selector(selectSlopesFiles), for: .touchUpInside)
+        
+        anchorSlopeFilesUploadProgressView()
+        setupThumbsUpImageViewAndManualSlopeFilesButton()
     }
     
     // MARK: - Progress View Functions
@@ -188,6 +202,10 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         connectSlopesButton.addTarget(self, action: #selector(selectSlopesFiles), for: .touchUpInside)
     }
     
+    @objc private func selectSlopesFiles() {
+        present(documentPicker, animated: true)
+    }
+    
     private func showAllSet() {
         DispatchQueue.main.async { [unowned self] in
             self.explanationTitleLabel.text = "You're All Set!"
@@ -215,9 +233,6 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         }
     }
     
-    @objc private func selectSlopesFiles() {
-        present(documentPicker, animated: true)
-    }
     
     // MARK: - Error Alert Functions
     private func showErrorUploading() {
@@ -250,9 +265,21 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         present(ac, animated: true)
     }
     
-    private func showFileExtensionNotSupported(file: URL) {
-        let ac = UIAlertController(title: "File Extension Not Supported",
-                                   message: "Only 'slope' file extensions are supported, but recieved \(file.pathExtension) extension. Please try again.",
+    private func showFileExtensionNotSupportedOrWrongDirectory(file: URL) {
+        let title: String
+        let message: String
+        
+        if file.pathExtension == "" {
+            title = "Wrong Directory Selected"
+            message = "The correct directory for uploading Slope files is '/Slopes/GPSLogs', but recieved '\(file.lastPathComponent)'. Please try again."
+            Logger.slopesConnection.debug("Got '\(file.lastPathComponent)' instead of 'GPSLogs' for a directory.")
+        } else {
+            title = "File Extension Not Supported"
+            message = "Only '.slope' file extensions are supported, but recieved \(file.pathExtension) extension. Please try again."
+            Logger.slopesConnection.debug("Got '\(file.pathExtension)' instead of '.slopes' file extension.")
+        }
+        let ac = UIAlertController(title: title,
+                                   message: message,
                                    preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         
@@ -261,7 +288,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     
     // MARK: - Document Picker
     private func isSlopesFiles(_ fileURL: URL) -> Bool {
-        return !fileURL.hasDirectoryPath && fileURL.pathExtension == "slopes"
+        return !fileURL.hasDirectoryPath && fileURL.path.lowercased().contains("/slopes/gpslogs") && fileURL.pathExtension == "slopes"
     }
     
     private func getFileList(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]) -> FileManager.DirectoryEnumerator? {
@@ -324,8 +351,9 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                                 
                                 url.stopAccessingSecurityScopedResource()
                             } else {
-                                showFileExtensionNotSupported(file: fileURL)
-                                Logger.slopesConnection.debug("Only slope file extensions are supported, but recieved \(fileURL.pathExtension) extension.")
+                                showFileExtensionNotSupportedOrWrongDirectory(file: fileURL)
+                                setupInitialView()
+                                return
                             }
                         }
                     }
