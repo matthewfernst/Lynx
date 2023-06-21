@@ -81,13 +81,16 @@ struct LogbookStats {
             return ""
         }
         
-        let capitalizedConditions = conditions
+        var capitalizedConditions = conditions
             .components(separatedBy: ",")
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).capitalized }
-            .prefix(2)
-            .joined(separator: ", ")
         
-        return capitalizedConditions
+        if capitalizedConditions.count > 1 {
+            capitalizedConditions.removeAll(where: { $0 == "Packed" })
+        }
+        
+        let formattedCondition = capitalizedConditions.first ?? ""
+        return formattedCondition
     }
     
     
