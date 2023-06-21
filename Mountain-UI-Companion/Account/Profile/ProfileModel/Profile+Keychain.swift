@@ -82,5 +82,7 @@ extension Profile
         for key in UserDefaultsKeys.allKeys {
             defaults.removeObject(forKey: key)
         }
+        
+        BookmarkManager.removeAllBookmarks()
     }
 }

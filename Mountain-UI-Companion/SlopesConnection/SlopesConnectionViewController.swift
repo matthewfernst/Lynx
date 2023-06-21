@@ -18,7 +18,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     @IBOutlet var slopeFilesUploadProgressView: UIProgressView!
     
     private var documentPicker: UIDocumentPickerViewController!
-    private var bookmark: (id: String, url: URL)?
+    private let bookmarkManager = BookmarkManager()
     
     lazy private var manualUploadSlopeFilesButton: UIButton = {
         var configuration = UIButton.Configuration.filled()
@@ -56,10 +56,6 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     
     var profile: Profile!
     
-    private func getAppSandboxDirectory() -> URL {
-        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -73,9 +69,9 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
         } else {
             self.connectSlopesButton.isHidden = false
             
-            loadAllBookmarks()
+            bookmarkManager.loadAllBookmarks()
             
-            if bookmark == nil {
+            if bookmarkManager.bookmarks == nil {
                 showConnectToSlopesView()
             }
             else {
@@ -87,7 +83,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        guard let _ = bookmark else { return }
+        guard let _ = bookmarkManager.bookmarks else { return }
         showAllSet()
     }
     
@@ -358,7 +354,7 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
                         }
                     }
                     
-                    saveBookmark(for: url)
+                    bookmarkManager.saveBookmark(for: url)
                     
                     cleanUpSlopeFilesUploadView()
                 case .failure(_):
@@ -370,39 +366,8 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
         }
     }
     
-    // MARK: - Bookmarks
-    private func saveBookmark(for url: URL) {
-        do {
-            // Start accessing a security-scoped resource.
-            guard url.startAccessingSecurityScopedResource() else {
-                // Handle the failure here.
-                return
-            }
-            
-            if bookmark?.url == url { return }
-            
-            // Make sure you release the security-scoped resource when you finish.
-            defer { url.stopAccessingSecurityScopedResource() }
-            
-            // Generate a UUID
-            let id = UUID().uuidString
-            
-            // Convert URL to bookmark
-            let bookmarkData = try url.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
-            // Save the bookmark into a file (the name of the file is the UUID)
-            try bookmarkData.write(to: getAppSandboxDirectory().appendingPathComponent(id))
-            
-            // Add the URL and UUID to the urls
-            bookmark = (id, url)
-        }
-        catch {
-            // Handle the error here.
-            Logger.slopesConnection.debug("Error creating the bookmark: \(error)")
-        }
-    }
-    
     private func getNonUploadedSlopeFiles() async -> [String]? {
-        guard let bookmark = bookmark else { return nil }
+        guard let bookmark = bookmarkManager.bookmarks else { return nil }
         var nonUploadedSlopeFiles: [String] = []
         
         ApolloMountainUIClient.getUploadedLogs() { [unowned self] result in
@@ -451,7 +416,7 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
             return
         }
         
-        guard let bookmark = bookmark else {
+        guard let bookmark = bookmarkManager.bookmarks else {
             self.cleanUpSlopeFilesUploadView()
             return
         }
@@ -501,35 +466,8 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
         }
     }
     
+    // MARK: - Bookmarks
     
-    private func loadAllBookmarks() {
-        // Get all the bookmark files
-        let files = try? FileManager.default.contentsOfDirectory(at: getAppSandboxDirectory(), includingPropertiesForKeys: nil)
-        // Map over the bookmark files
-        let bookmarks = files?.compactMap { file in
-            do {
-                let bookmarkData = try Data(contentsOf: file)
-                var isStale = false
-                // Get the URL from each bookmark
-                let url = try URL(resolvingBookmarkData: bookmarkData, bookmarkDataIsStale: &isStale)
-                
-                guard !isStale else {
-                    // Handle stale data here.
-                    return nil
-                }
-                
-                // Return URL
-                return (file.lastPathComponent, url)
-            }
-            catch let error {
-                // Handle the error here.
-                print(error)
-                return nil
-            }
-        } ?? Array<(id: String, url: URL)>()
-        
-        self.bookmark = bookmarks.first
-    }
     
     
     private static func putZipFiles(urlEndPoint: String, zipFilePath: URL, completion: @escaping (Result<Int, Error>) -> Void) {

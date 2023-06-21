@@ -68,6 +68,7 @@
 		659A9FE32A414FD100DC6006 /* KeyValuePair.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659A9FD02A414FD100DC6006 /* KeyValuePair.graphql.swift */; };
 		659A9FE42A414FD100DC6006 /* SchemaMetadata.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659A9FD12A414FD100DC6006 /* SchemaMetadata.graphql.swift */; };
 		659A9FE52A414FD100DC6006 /* ApolloGeneratedGraphQL.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659A9FD22A414FD100DC6006 /* ApolloGeneratedGraphQL.graphql.swift */; };
+		659A9FE72A42B83600DC6006 /* BookmarkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659A9FE62A42B83600DC6006 /* BookmarkManager.swift */; };
 		65A370DC297E594500E1D851 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370DB297E594500E1D851 /* AppDelegate.swift */; };
 		65A370DE297E594500E1D851 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370DD297E594500E1D851 /* SceneDelegate.swift */; };
 		65A370E3297E594500E1D851 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 65A370E1297E594500E1D851 /* Main.storyboard */; };
@@ -147,6 +148,7 @@
 		659A9FD02A414FD100DC6006 /* KeyValuePair.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValuePair.graphql.swift; sourceTree = "<group>"; };
 		659A9FD12A414FD100DC6006 /* SchemaMetadata.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaMetadata.graphql.swift; sourceTree = "<group>"; };
 		659A9FD22A414FD100DC6006 /* ApolloGeneratedGraphQL.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApolloGeneratedGraphQL.graphql.swift; sourceTree = "<group>"; };
+		659A9FE62A42B83600DC6006 /* BookmarkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkManager.swift; sourceTree = "<group>"; };
 		65A370D8297E594500E1D851 /* Mountain-UI-Companion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mountain-UI-Companion.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		65A370DB297E594500E1D851 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		65A370DD297E594500E1D851 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -476,6 +478,7 @@
 			children = (
 				654DEAC2297F6720001565A3 /* SlopesConnectionViewController.swift */,
 				65BA301129D0E45D00A6D1BF /* NetworkManager.swift */,
+				659A9FE62A42B83600DC6006 /* BookmarkManager.swift */,
 			);
 			path = SlopesConnection;
 			sourceTree = "<group>";
@@ -594,6 +597,7 @@
 				654DEAC3297F6720001565A3 /* SlopesConnectionViewController.swift in Sources */,
 				659A9FDE2A414FD100DC6006 /* Mutation.graphql.swift in Sources */,
 				659A9FD72A414FD100DC6006 /* GetUploadedLogsQuery.graphql.swift in Sources */,
+				659A9FE72A42B83600DC6006 /* BookmarkManager.swift in Sources */,
 				654DEACA2981B006001565A3 /* AppSettingTableViewController.swift in Sources */,
 				654DEABF297F5E8C001565A3 /* Extension.swift in Sources */,
 				654DEADC2981EE2A001565A3 /* SettingTableViewCell.swift in Sources */,
