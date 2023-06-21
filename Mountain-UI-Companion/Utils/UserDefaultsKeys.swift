@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum UserDefaultsKeys
+struct UserDefaultsKeys
 {
     // TabViewController
     static let theme = "theme"
@@ -23,4 +23,15 @@ enum UserDefaultsKeys
     static let authorizationTokenExpirationDate = "authorizationTokenExpirationDate"
     static let oauthToken = "oauthToken"
     static let loginType = "loginType"
+    
+    // All Keys
+    static let allKeys: [String] = [
+        theme,
+        isSignedIn,
+        notificationsTurnedOnOrOff,
+        authorizationToken,
+        authorizationTokenExpirationDate,
+        oauthToken,
+        loginType
+    ]
 }

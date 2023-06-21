@@ -77,5 +77,10 @@ extension Profile
         if status != errSecSuccess && status != errSecItemNotFound {
             print("Failed to delete profile from Keychain with error: \(status)")
         }
+        let defaults = UserDefaults.standard
+        
+        for key in UserDefaultsKeys.allKeys {
+            defaults.removeObject(forKey: key)
+        }
     }
 }
