@@ -15,7 +15,7 @@ type User {
 type Log {
     id: ID!
     originalFileName: String!
-    conditions: String!
+    conditions: String
     distance(system: MeasurementSystem = IMPERIAL): Float!
     duration: Float!
     startDate: String!
