@@ -14,6 +14,7 @@ struct UserDefaultsKeys
     
     // Profile
     static let isSignedIn = "isSignedIn"
+    static let appleOrGoogleId = "appleOrGoogleId"
     
     // NotificationSettingsTableViewController
     static let notificationsTurnedOnOrOff = "notificationsAllowed"

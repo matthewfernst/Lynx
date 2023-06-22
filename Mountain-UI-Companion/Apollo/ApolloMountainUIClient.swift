@@ -35,7 +35,10 @@ class ApolloMountainUIClient
         // doesn't create one on its own
         return ApolloClient(networkTransport: requestChainTransport, store: store)
     }()
-    private static let loginApolloClient = ApolloClient(url: URL(string: graphQLEndpoint)!)
+    
+    public static func clearCache() {
+        apolloClient.store.clearCache()
+    }
     
     public static func getProfileInformation(completion: @escaping (Result<ProfileAttributes, Error>) -> Void) {
         
@@ -113,11 +116,11 @@ class ApolloMountainUIClient
             emailNullable = GraphQLNullable<String>(stringLiteral: email!)
         }
         
-        loginApolloClient.perform(mutation: ApolloGeneratedGraphQL.LoginOrCreateUserMutation(type: type,
-                                                                                             id: id,
-                                                                                             token: token,
-                                                                                             email: emailNullable,
-                                                                                             userData: userDataNullable)) { result in
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.LoginOrCreateUserMutation(type: type,
+                                                                                        id: id,
+                                                                                        token: token,
+                                                                                        email: emailNullable,
+                                                                                        userData: userDataNullable)) { result in
             switch result {
             case .success(let graphQLResult):
                 guard let data = graphQLResult.data?.createUserOrSignIn else {
@@ -157,7 +160,7 @@ class ApolloMountainUIClient
         
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.EditUserMutation(userData: userData)) { result in
             switch result {
-                case .success(let graphQLResult):
+            case .success(let graphQLResult):
                 guard let editUser = graphQLResult.data?.editUser else {
                     Logger.apollo.error("editUser unwrapped to nil.")
                     return
@@ -191,7 +194,7 @@ class ApolloMountainUIClient
                 Logger.apollo.info("Successfully retrieved createUserProfilePictureUrl.")
                 Logger.apollo.debug("createUSerProfilePictureUrl: \(url)")
                 completion(.success(url))
-    
+                
             case .failure(let error):
                 Logger.apollo.error("Failed to retrieve createUserProfilePictureUrl.")
                 completion(.failure(error))
@@ -238,7 +241,7 @@ class ApolloMountainUIClient
     }
     
     public static func getUploadedLogs(completion: @escaping ((Result<Set<String>, Error>) -> Void)) {
-
+        
         apolloClient.fetch(query: ApolloGeneratedGraphQL.GetUploadedLogsQuery()) { result in
             switch result {
             case .success(let graphQLResult):

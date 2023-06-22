@@ -13,7 +13,7 @@ enum SessionSection: Int, CaseIterable {
     case sessionSummary = 1
 }
 
-class LogBookViewController: UIViewController {
+class LogbookViewController: UIViewController {
     
     @IBOutlet var profilePictureImageView: UIImageView!
     @IBOutlet var lifetimeVerticalFeetLabel: UILabel!
@@ -117,7 +117,7 @@ class LogBookViewController: UIViewController {
     }
 }
 
-extension LogBookViewController: UITableViewDelegate, UITableViewDataSource {
+extension LogbookViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return SessionSection.allCases.count
     }

@@ -36,6 +36,15 @@ class UserManagementInterceptor: ApolloInterceptor {
         completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
     ) {
         
+        // Bypass token check for login mutation
+        if request.operation is ApolloGeneratedGraphQL.LoginOrCreateUserMutation {
+            UserManager.shared.token = nil
+            chain.proceedAsync(request: request,
+                               response: response,
+                               completion: completion)
+            return
+        }
+        
         guard let token = UserManager.shared.token else {
             // In this instance, no user is logged in, so we want to call
             // the error handler, then return to prevent further work

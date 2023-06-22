@@ -78,9 +78,8 @@
 		65A370F3297E5DCD00E1D851 /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370F2297E5DCD00E1D851 /* Setting.swift */; };
 		65A370F7297E6B5800E1D851 /* Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370F6297E6B5800E1D851 /* Support.swift */; };
 		65A370F9297E6B6F00E1D851 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370F8297E6B6F00E1D851 /* Constants.swift */; };
-		65AF9FF6297F355500DC59C3 /* LogBookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AF9FF5297F355500DC59C3 /* LogBookViewController.swift */; };
+		65AF9FF6297F355500DC59C3 /* LogbookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AF9FF5297F355500DC59C3 /* LogbookViewController.swift */; };
 		65AFF4E929D163E200C0F8C0 /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AFF4E829D163E200C0F8C0 /* UserDefaultsKeys.swift */; };
-		65B2E3C729CBBA2800306EAE /* Profile+Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B2E3C629CBBA2800306EAE /* Profile+Keychain.swift */; };
 		65BA301229D0E45D00A6D1BF /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BA301129D0E45D00A6D1BF /* NetworkManager.swift */; };
 		65BA545629BC273200CA3F53 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 65BA545529BC273200CA3F53 /* GoogleSignIn */; };
 		65BA545829BC273200CA3F53 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 65BA545729BC273200CA3F53 /* GoogleSignInSwift */; };
@@ -160,9 +159,8 @@
 		65A370F2297E5DCD00E1D851 /* Setting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		65A370F6297E6B5800E1D851 /* Support.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Support.swift; sourceTree = "<group>"; };
 		65A370F8297E6B6F00E1D851 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		65AF9FF5297F355500DC59C3 /* LogBookViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogBookViewController.swift; sourceTree = "<group>"; };
+		65AF9FF5297F355500DC59C3 /* LogbookViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogbookViewController.swift; sourceTree = "<group>"; };
 		65AFF4E829D163E200C0F8C0 /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
-		65B2E3C629CBBA2800306EAE /* Profile+Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+Keychain.swift"; sourceTree = "<group>"; };
 		65BA301129D0E45D00A6D1BF /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		65D43AB72A400B590053C215 /* StatsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -260,7 +258,6 @@
 			children = (
 				654DEADF29820806001565A3 /* Profile.swift */,
 				65362D5D29C1512600507CCE /* Profile+Enums.swift */,
-				65B2E3C629CBBA2800306EAE /* Profile+Keychain.swift */,
 			);
 			path = ProfileModel;
 			sourceTree = "<group>";
@@ -464,7 +461,7 @@
 		65AF9FF7297F355800DC59C3 /* LogBook */ = {
 			isa = PBXGroup;
 			children = (
-				65AF9FF5297F355500DC59C3 /* LogBookViewController.swift */,
+				65AF9FF5297F355500DC59C3 /* LogbookViewController.swift */,
 				654DEAE329824134001565A3 /* SessionTableViewCell.swift */,
 				654F4C792A3CE91E00E0614C /* LogbookStats.swift */,
 				6568EE0D2A3FB1A500601759 /* LifetimeSummaryViewController.swift */,
@@ -618,7 +615,7 @@
 				65D43AB82A400B590053C215 /* StatsTableViewCell.swift in Sources */,
 				65BA301229D0E45D00A6D1BF /* NetworkManager.swift in Sources */,
 				65362D5E29C1512600507CCE /* Profile+Enums.swift in Sources */,
-				65AF9FF6297F355500DC59C3 /* LogBookViewController.swift in Sources */,
+				65AF9FF6297F355500DC59C3 /* LogbookViewController.swift in Sources */,
 				654F229E29FEFB1E00D1C96E /* NetworkInterceptorProvider.swift in Sources */,
 				654DEAE429824134001565A3 /* SessionTableViewCell.swift in Sources */,
 				659A9FDF2A414FD100DC6006 /* Query.graphql.swift in Sources */,
@@ -633,7 +630,6 @@
 				65A370F9297E6B6F00E1D851 /* Constants.swift in Sources */,
 				654DEAC52980FAB5001565A3 /* MadeWithLoveFooterView.swift in Sources */,
 				654F22A229FF009300D1C96E /* ResponseLoggingInterceptor.swift in Sources */,
-				65B2E3C729CBBA2800306EAE /* Profile+Keychain.swift in Sources */,
 				659A9FD92A414FD100DC6006 /* GetProfileInformationQuery.graphql.swift in Sources */,
 				65A370DE297E594500E1D851 /* SceneDelegate.swift in Sources */,
 				654F229C29FE486700D1C96E /* UserManagementInterceptor.swift in Sources */,

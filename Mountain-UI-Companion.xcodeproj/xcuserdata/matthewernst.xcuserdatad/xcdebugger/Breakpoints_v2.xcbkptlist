@@ -55,47 +55,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "82B804F9-F660-4C4C-A138-A04A3AB04921"
+            uuid = "6DD7998A-3896-40F2-BB69-BED451DCBE46"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Mountain-UI-Companion/Login/LoginViewController.swift"
+            filePath = "Mountain-UI-Companion/Apollo/UserManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "177"
-            endingLineNumber = "177"
-            landmarkName = "updateViewFromModel()"
-            landmarkType = "7">
+            startingLineNumber = "26"
+            endingLineNumber = "26"
+            landmarkName = "token"
+            landmarkType = "24">
             <Locations>
                <Location
-                  uuid = "82B804F9-F660-4C4C-A138-A04A3AB04921 - be5c64ef96fd41b2"
+                  uuid = "6DD7998A-3896-40F2-BB69-BED451DCBE46 - bd325d08a5109b6a"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in closure #1 (Swift.Optional&lt;__C.GIDSignInResult&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Mountain_UI_Companion.LoginViewController.handleAuthorizationGoogleButtonPress() -&gt; ()"
+                  symbolName = "Mountain_UI_Companion.UserManager.token.setter : Swift.Optional&lt;Mountain_UI_Companion.ExpirableAuthorizationToken&gt;"
                   moduleName = "Mountain-UI-Companion"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Login/LoginViewController.swift"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/UserManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "190"
-                  endingLineNumber = "190"
-                  offsetFromSymbolStart = "176">
+                  startingLineNumber = "26"
+                  endingLineNumber = "26"
+                  offsetFromSymbolStart = "216">
                </Location>
                <Location
-                  uuid = "82B804F9-F660-4C4C-A138-A04A3AB04921 - c6f5b0cc9b9a2517"
+                  uuid = "6DD7998A-3896-40F2-BB69-BED451DCBE46 - bd325d08a5109b6a"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Mountain_UI_Companion.LoginViewController.updateViewFromModel() -&gt; ()"
+                  symbolName = "Mountain_UI_Companion.UserManager.token.setter : Swift.Optional&lt;Mountain_UI_Companion.ExpirableAuthorizationToken&gt;"
                   moduleName = "Mountain-UI-Companion"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Login/LoginViewController.swift"
+                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/Apollo/UserManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "190"
-                  endingLineNumber = "190"
-                  offsetFromSymbolStart = "32">
+                  startingLineNumber = "26"
+                  endingLineNumber = "26"
+                  offsetFromSymbolStart = "156">
                </Location>
             </Locations>
          </BreakpointContent>

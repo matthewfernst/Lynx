@@ -71,6 +71,7 @@ class Profile
         self.profilePicture = newProfilePicture ?? self.profilePicture
         self.profilePictureURL = newProfilePictureURL ?? self.profilePictureURL
     }
+    
 }
 
 // MARK: - Extensions for Debugging

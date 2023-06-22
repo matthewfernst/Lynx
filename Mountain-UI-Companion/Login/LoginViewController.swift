@@ -141,7 +141,7 @@ class LoginViewController: UIViewController
                 showErrorWithSignIn()
                 return
             }
-            guard let id = signInResult?.user.userID else {
+            guard let googleId = signInResult?.user.userID else {
                 showErrorWithSignIn()
                 return
             }
@@ -161,7 +161,7 @@ class LoginViewController: UIViewController
             let activityIndicator = self.showSignInActivityIndicator()
             
             LoginController.handleCommonSignIn(type: SignInType.google.rawValue,
-                                               id: id,
+                                               id: googleId,
                                                token: token,
                                                email: email,
                                                firstName: firstName,
@@ -245,9 +245,19 @@ class LoginViewController: UIViewController
                 self.performExistingAppleAccountSetupFlows()
                 
             case .google:
-                Profile.loadProfileFromKeychain { [unowned self] profile in
-                    activityIndicator.stopAnimating()
-                    self.goToMainApp()
+                GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+                    if error != nil || user == nil {
+                        // Show the app's signed-out state.
+                    } else {
+                        // Show the app's signed-in state.
+                        if let token = user?.idToken?.tokenString,
+                           let googleId = user?.userID {
+                            LoginController.handleCommonSignIn(type: SignInType.google.rawValue, id: googleId, token: token) { result in
+                                activityIndicator.startAnimating()
+                                self.updateViewFromModel()
+                            }
+                        }
+                    }
                 }
             default:
                 break

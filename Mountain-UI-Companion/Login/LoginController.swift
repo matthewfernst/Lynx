@@ -57,7 +57,9 @@ class LoginController
         var createdProfile: Profile?
         group.enter()
         
-        UserDefaults.standard.setValue(profileAttributes.type, forKey: UserDefaultsKeys.loginType)
+        let defaults = UserDefaults.standard
+        defaults.setValue(profileAttributes.type, forKey: UserDefaultsKeys.loginType)
+        defaults.setValue(profileAttributes.id, forKey: UserDefaultsKeys.appleOrGoogleId)
         Profile.createProfile(type: profileAttributes.type,
                               oauthToken: profileAttributes.oauthToken,
                               id: profileAttributes.id,
@@ -72,11 +74,22 @@ class LoginController
         
         if let profile = createdProfile {
             LoginController.profile = profile
-            profile.saveToKeychain()
             completion(.success(()))
         } else {
             completion(.failure(ProfileError.profileCreationFailed))
         }
+    }
+    
+    public static func signOut() {
+        UserManager.shared.token = nil
+        ApolloMountainUIClient.clearCache()
+        
+        let defaults = UserDefaults.standard
+        for key in UserDefaultsKeys.allKeys {
+            defaults.removeObject(forKey: key)
+        }
+        
+        BookmarkManager.removeAllBookmarks()
     }
 }
 
