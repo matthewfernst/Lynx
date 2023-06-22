@@ -42,7 +42,7 @@ class LogbookViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        self.title = "LogBook"
+        self.title = "Logbook"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(explainMoreWithSlopes))
     }
@@ -85,6 +85,7 @@ class LogbookViewController: UIViewController {
     
     private func refreshData() {
         refreshControl.beginRefreshing()
+        ApolloMountainUIClient.clearCache()
         ApolloMountainUIClient.getLogs { [weak self] result in
             switch result {
             case .success(let logbook):

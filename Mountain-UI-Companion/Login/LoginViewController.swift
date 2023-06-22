@@ -19,7 +19,9 @@ class LoginViewController: UIViewController
     static let identitfier = "LoginViewController"
     
     private lazy var loginController = LoginController(loginViewController: self)
-    
+    private let activityIndicator = UIActivityIndicatorView()
+    private lazy var loadingBackground = UIView(frame: self.view.frame)
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.signInExistingUser()
@@ -202,6 +204,8 @@ class LoginViewController: UIViewController
     }
     
     private func showErrorWithSignIn() {
+        self.activityIndicator.stopAnimating()
+        self.loadingBackground.removeFromSuperview()
         let message = """
                       It looks like we weren't able to log you in. Please try again. If the issue continues, please contact the developers.
                       """
@@ -212,17 +216,16 @@ class LoginViewController: UIViewController
     }
     
     private func showSignInActivityIndicator() -> UIActivityIndicatorView {
-        let background = UIView(frame: self.view.frame)
-        background.backgroundColor = .black.withAlphaComponent(0.5)
         
-        self.view.addSubview(background)
+        loadingBackground.backgroundColor = .black.withAlphaComponent(0.5)
         
-        let activityIndicator = UIActivityIndicatorView()
+        self.view.addSubview(loadingBackground)
+        
         activityIndicator.color = .white
         activityIndicator.transform = CGAffineTransformMakeScale(2, 2)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         
-        background.addSubview(activityIndicator)
+        loadingBackground.addSubview(activityIndicator)
         
         NSLayoutConstraint.activate([
             

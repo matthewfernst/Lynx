@@ -122,7 +122,7 @@
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="QAS-4o-LNN">
                                 <rect key="frame" x="16" y="204" width="361" height="202"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <mutableString key="text">The Mountain-UI Companion App works together with the Slopes App by Breakpoint Studios. Slopes is able to track a skier or snowboarder while they shred it down the mountain. Slopes can track things such as average speed, total vertical feet, and more. The Mountain-UI Companion App, uses the data stored by Slopes and sends it to your Mountain-UI display. In order to get started, tap the "Connect Slopes" button and select the Slopes folder in your Files directory. The Slopes directory is shown below for reference.</mutableString>
+                                <string key="text">The Mountain-UI Companion App works together with the Slopes App by Breakpoint Studios. Slopes is able to track a skier or snowboarder while they shred it down the mountain. Slopes can track things such as average speed, total vertical feet, and more. The Mountain-UI Companion App, uses the data stored by Slopes and sends it to your Mountain-UI display. In order to get started, tap the "Connect Slopes" button and select the Slopes folder in your Files directory. The Slopes directory is shown below for reference.</string>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -486,11 +486,11 @@
             </objects>
             <point key="canvasLocation" x="1715" y="672"/>
         </scene>
-        <!--LogBook-->
+        <!--Logbook-->
         <scene sceneID="zYW-10-Sh9">
             <objects>
                 <navigationController id="2jz-bu-nGt" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="LogBook" image="book.closed.fill" catalog="system" id="MiF-QN-sfo"/>
+                    <tabBarItem key="tabBarItem" title="Logbook" image="book.closed.fill" catalog="system" id="MiF-QN-sfo"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="One-Gh-NwV">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
