@@ -21,11 +21,6 @@ class LoginViewController: UIViewController
     private lazy var loginController = LoginController(loginViewController: self)
     private let activityIndicator = UIActivityIndicatorView()
     private lazy var loadingBackground = UIView(frame: self.view.frame)
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.signInExistingUser()
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +34,7 @@ class LoginViewController: UIViewController
         setupSignInWithAppleButton()
         setupSignInWithGoogleButton()
         
-        
+        signInExistingUser()
     }
     
     // MARK: - Notifications
@@ -209,7 +204,7 @@ class LoginViewController: UIViewController
         let message = """
                       It looks like we weren't able to log you in. Please try again. If the issue continues, please contact the developers.
                       """
-        let ac = UIAlertController(title: "Well, This is Awkward...", message: message, preferredStyle: .alert)
+        let ac = UIAlertController(title: "Well, This is Awkward", message: message, preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         
         present(ac, animated: true)

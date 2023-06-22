@@ -137,21 +137,24 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
         self.slopeFilesUploadProgressView.progress = 0
         self.slopeFilesUploadProgressView.isHidden = false
         
-        self.explanationTitleLabel.text = "Uploading New Slope Files..."
+        self.explanationTitleLabel.text = "Uploading New Slope Files"
         self.explanationTextView.text = nil
         self.slopesFolderImageView.image = nil
     }
     
     private func cleanUpSlopeFilesUploadView() {
-        self.slopeFilesUploadProgressView.isHidden = true
-        self.manualUploadSlopeFilesButton.titleLabel?.isHidden = false
-        self.manualUploadActivityIndicator.stopAnimating()
-        showAllSet()
+        DispatchQueue.main.async { [unowned self] in
+            self.slopeFilesUploadProgressView.isHidden = true
+            self.manualUploadSlopeFilesButton.titleLabel?.isHidden = false
+            self.manualUploadActivityIndicator.stopAnimating()
+            self.slopeFilesUploadProgressView.isHidden = true
+            self.showAllSet()
+        }
     }
     
     private func updateSlopeFilesProgressView(fileBeingUploaded: String, progress: Float) {
         DispatchQueue.main.async {
-            self.explanationTextView.text = "Uploading: \(fileBeingUploaded)"
+            self.explanationTextView.text = "\(fileBeingUploaded)"
             self.slopeFilesUploadProgressView.progress = progress
         }
     }
@@ -203,30 +206,28 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
     }
     
     private func showAllSet() {
-        DispatchQueue.main.async { [unowned self] in
-            self.explanationTitleLabel.text = "You're All Set!"
-            self.explanationTitleLabel.font = UIFont.boldSystemFont(ofSize: 28)
-            self.explanationTextView.text = "Your Slopes data folder is connected. Your files will be automatically uploaded when you open the app. If you would like to manually upload new files, tap the Upload Slope Files button below."
-            self.explanationTextView.font = UIFont.systemFont(ofSize: 16)
-            self.connectSlopesButton.isHidden = true
-            self.slopesFolderImageView.isHidden = true
-            
-            self.manualUploadSlopeFilesButton.isHidden = false
-            self.thumbsUpImageView.isHidden = false
-            
-            self.thumbsUpImageView.image = UIImage(systemName: "hand.thumbsup.fill")
-            self.thumbsUpImageView.alpha = 0
-            self.thumbsUpImageView.transform = .identity
-            
-            UIImageView.animate(withDuration: 1, delay: 0, animations: {
-                self.thumbsUpImageView.alpha = 1
-                self.thumbsUpImageView.transform = CGAffineTransform(rotationAngle: -.pi / 4)
-            }, completion: {_ in
-                UIImageView.animate(withDuration: 2, delay: 0,  usingSpringWithDamping: 0.4, initialSpringVelocity: 0.5, animations: {
-                    self.thumbsUpImageView.transform = .identity
-                })
+        self.explanationTitleLabel.text = "You're All Set!"
+        self.explanationTitleLabel.font = UIFont.boldSystemFont(ofSize: 28)
+        self.explanationTextView.text = "Your Slopes data folder is connected. Your files will be automatically uploaded when you open the app. If you would like to manually upload new files, tap the Upload Slope Files button below."
+        self.explanationTextView.font = UIFont.systemFont(ofSize: 16)
+        self.connectSlopesButton.isHidden = true
+        self.slopesFolderImageView.isHidden = true
+        
+        self.manualUploadSlopeFilesButton.isHidden = false
+        self.thumbsUpImageView.isHidden = false
+        
+        self.thumbsUpImageView.image = UIImage(systemName: "hand.thumbsup.fill")
+        self.thumbsUpImageView.alpha = 0
+        self.thumbsUpImageView.transform = .identity
+        
+        UIImageView.animate(withDuration: 1, delay: 0, animations: {
+            self.thumbsUpImageView.alpha = 1
+            self.thumbsUpImageView.transform = CGAffineTransform(rotationAngle: -.pi / 4)
+        }, completion: {_ in
+            UIImageView.animate(withDuration: 2, delay: 0,  usingSpringWithDamping: 0.4, initialSpringVelocity: 0.5, animations: {
+                self.thumbsUpImageView.transform = .identity
             })
-        }
+        })
     }
     
     
@@ -280,7 +281,7 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
     
     // MARK: - Document Picker
     private func isSlopesFiles(_ fileURL: URL) -> Bool {
-        return !fileURL.hasDirectoryPath && fileURL.path.lowercased().contains("/slopes/gpslogs") && fileURL.pathExtension == "slopes"
+        return !fileURL.hasDirectoryPath && fileURL.path.lowercased().contains("gpslogs") && fileURL.pathExtension == "slopes"
     }
     
     private func getFileList(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]) -> [URL]? {
@@ -317,7 +318,9 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
         
         defer { url.stopAccessingSecurityScopedResource() }
         
-        if url.pathComponents.contains("GPSLogs") { // Slopes doesn't come up and is instead shows the App Sandbox ID
+        
+        // Slopes folder doesn't come up and instead shows the App Sandbox ID for Slopes
+        if url.pathComponents.contains("GPSLogs") {
             // Get the contents of the directory
             guard let contents = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil) else {
                 // Failed to access the directory
@@ -351,9 +354,8 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
                         setupSlopeFilesUploadingView()
                         var currentFileNumberBeingUploaded = 0
                         
-                        // Problem: fileList is not iterating over
                         for (fileURLEnumerator, uploadURL) in zip(fileList, urlsForUpload) {
-                            if case let fileURL as URL = fileURLEnumerator {
+                            if case let fileURL = fileURLEnumerator {
                                 Logger.slopesConnection.debug("Uploading file: \(fileURL.lastPathComponent) to \(uploadURL)")
                                 
                                 SlopesConnectionViewController.putZipFiles(urlEndPoint: uploadURL, zipFilePath: fileURL) { [unowned self] response in
@@ -362,19 +364,20 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
                                         currentFileNumberBeingUploaded += 1
                                         self.updateSlopeFilesProgressView(fileBeingUploaded: fileURL.lastPathComponent.replacingOccurrences(of: "%", with: " "),
                                                                           progress: Float(currentFileNumberBeingUploaded) / Float(totalNumberOfFiles))
+                                        
+                                        if currentFileNumberBeingUploaded == totalNumberOfFiles {
+                                            // All files are uploaded, perform cleanup
+                                            self.cleanUpSlopeFilesUploadView()
+                                        }
                                     case .failure(let error):
                                         Logger.slopesConnection.debug("Failed to upload \(fileURL) with error: \(error)")
                                         showErrorUploading()
                                     }
                                 }
-                                
-                                
                             }
                         }
-                        
                         url.stopAccessingSecurityScopedResource()
                         bookmarkManager.saveBookmark(for: url)
-                        cleanUpSlopeFilesUploadView()
                     case .failure(_):
                         showErrorUploading()
                     }
@@ -387,7 +390,7 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
         }
     }
     
-    private func getNonUploadedSlopeFiles() async -> [String]? {
+    private func getNonUploadedSlopeFiles() -> [String]? {
         guard let bookmark = bookmarkManager.bookmarks else { return nil }
         var nonUploadedSlopeFiles: [String] = []
         
@@ -399,7 +402,7 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
                     if resourceValues.isDirectory ?? false {
                         let keys: [URLResourceKey] = [.nameKey, .isDirectoryKey, .creationDateKey]
                         if let fileList = getFileList(at: bookmark.url, includingPropertiesForKeys: keys) {
-                            for case let fileURL as URL in fileList {
+                            for case let fileURL in fileList {
                                 if self.isSlopesFiles(fileURL) {
                                     if !uploadedFiles.contains(fileURL.lastPathComponent) {
                                         nonUploadedSlopeFiles.append(fileURL.lastPathComponent)
@@ -423,16 +426,14 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
     }
     
     @objc private func checkForNewFilesAndUploadWrapper() {
-        Task {
-            await self.checkForNewFilesAndUpload()
-        }
+        self.checkForNewFilesAndUpload()
     }
     
-    private func checkForNewFilesAndUpload() async {
+    private func checkForNewFilesAndUpload() {
         self.manualUploadSlopeFilesButton.titleLabel?.isHidden = true
         self.manualUploadActivityIndicator.startAnimating()
         
-        guard let nonUploadedSlopeFiles = await getNonUploadedSlopeFiles() else {
+        guard let nonUploadedSlopeFiles = getNonUploadedSlopeFiles() else {
             self.cleanUpSlopeFilesUploadView()
             return
         }
@@ -457,7 +458,7 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
                         let keys: [URLResourceKey] = [.nameKey, .isDirectoryKey, .creationDateKey]
                         if let fileList = self.getFileList(at: bookmark.url, includingPropertiesForKeys: keys) {
                             for (fileURLEnumerator, uploadURL) in zip(fileList, urlsForUpload) {
-                                if case let fileURL as URL = fileURLEnumerator, self.isSlopesFiles(fileURL), nonUploadedSlopeFiles.contains(fileURL.lastPathComponent) {
+                                if case let fileURL = fileURLEnumerator, self.isSlopesFiles(fileURL), nonUploadedSlopeFiles.contains(fileURL.lastPathComponent) {
                                     SlopesConnectionViewController.putZipFiles(urlEndPoint: uploadURL, zipFilePath: fileURL) { [unowned self] result in
                                         switch result {
                                         case .success(_):
@@ -487,7 +488,7 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
         }
     }
     
-
+    
     private static func putZipFiles(urlEndPoint: String, zipFilePath: URL, completion: @escaping (Result<Int, Error>) -> Void) {
         let url = URL(string: urlEndPoint)!
         

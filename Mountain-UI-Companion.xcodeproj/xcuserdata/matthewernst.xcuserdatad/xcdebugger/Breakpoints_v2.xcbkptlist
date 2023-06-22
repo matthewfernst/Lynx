@@ -100,53 +100,5 @@
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "5262E710-3955-43CA-B415-870C81630EE2"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Mountain-UI-Companion/SlopesConnection/SlopesConnectionViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "283"
-            endingLineNumber = "283"
-            landmarkName = "isSlopesFiles(_:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "5262E710-3955-43CA-B415-870C81630EE2 - bb847d970c2ec505"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Mountain_UI_Companion.SlopesConnectionViewController.showFileExtensionNotSupportedOrWrongDirectory(file: Foundation.URL) -&gt; ()"
-                  moduleName = "Mountain-UI-Companion"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/SlopesConnection/SlopesConnectionViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "283"
-                  endingLineNumber = "283"
-                  offsetFromSymbolStart = "5392">
-               </Location>
-               <Location
-                  uuid = "5262E710-3955-43CA-B415-870C81630EE2 - ccd783c38edf4351"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Mountain_UI_Companion.SlopesConnectionViewController.isSlopesFiles(Foundation.URL) -&gt; Swift.Bool"
-                  moduleName = "Mountain-UI-Companion"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Projects/Mountain-UI-Companion/Mountain-UI-Companion/SlopesConnection/SlopesConnectionViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "283"
-                  endingLineNumber = "283"
-                  offsetFromSymbolStart = "236">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
