@@ -261,24 +261,20 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
         present(ac, animated: true)
     }
     
-    private func showFileExtensionNotSupportedOrWrongDirectory(file: URL) {
-        let title: String
-        let message: String
-        
-        if file.pathExtension == "" {
-            title = "Wrong Directory Selected"
-            message = "The correct directory for uploading Slope files is '/Slopes/GPSLogs', but recieved '\(file.lastPathComponent)'. Please try again."
-            Logger.slopesConnection.debug("Got '\(file.lastPathComponent)' instead of 'GPSLogs' for a directory.")
-        } else {
-            title = "File Extension Not Supported"
-            message = "Only '.slope' file extensions are supported, but recieved \(file.pathExtension) extension. Please try again."
-            Logger.slopesConnection.debug("Got '\(file.pathExtension)' instead of '.slopes' file extension.")
-        }
-        let ac = UIAlertController(title: title,
-                                   message: message,
+    private func showFileExtensionNotSupported(extensions: [String]) {
+        let ac = UIAlertController(title: "File Extension Not Supported",
+                                   message: "Only '.slope' file extensions are supported, but recieved \(extensions.joined(separator: ",")) extension. Please try again.",
                                    preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         
+        present(ac, animated: true)
+    }
+    
+    private func showWrongDirectorySelected(directory: String) {
+        let ac = UIAlertController(title: "Wrong Directory Selected",
+                                   message: "The correct directory for uploading Slope files is '/Slopes/GPSLogs', but recieved '\(directory)'. Please try again.",
+                                   preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         present(ac, animated: true)
     }
     
@@ -287,50 +283,77 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
         return !fileURL.hasDirectoryPath && fileURL.path.lowercased().contains("/slopes/gpslogs") && fileURL.pathExtension == "slopes"
     }
     
-    private func getFileList(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]) -> FileManager.DirectoryEnumerator? {
-        guard let fileList = FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys) else {
-            Logger.slopesConnection.debug("*** Unable to access the contents of \(url.path) ***\n")
-            showFileAccessNotAllowed()
+    private func getFileList(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]) -> [URL]? {
+        var fileList: [URL] = []
+        let fileManager = FileManager.default
+        
+        guard let directoryEnumerator = fileManager.enumerator(at: url,
+                                                               includingPropertiesForKeys: keys,
+                                                               options: .skipsHiddenFiles,
+                                                               errorHandler: { (url, error) -> Bool in
+            print("Failed to access file at URL: \(url), error: \(error)")
+            return true
+        }) else {
+            print("Unable to access the contents of \(url.path)")
             return nil
         }
+        
+        for case let fileURL as URL in directoryEnumerator {
+            fileList.append(fileURL)
+        }
+        
         return fileList
     }
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        Task {
-            let url = urls[0]
-            
-            guard url.startAccessingSecurityScopedResource() else {
-                // Handle the failure here.
-                showFileAccessNotAllowed()
+        
+        let url = urls[0] // TODO: Make sure to select only one directory
+        
+        guard url.startAccessingSecurityScopedResource() else {
+            // Handle the failure here.
+            showFileAccessNotAllowed()
+            return
+        }
+        
+        defer { url.stopAccessingSecurityScopedResource() }
+        
+        if url.pathComponents.contains("GPSLogs") { // Slopes doesn't come up and is instead shows the App Sandbox ID
+            // Get the contents of the directory
+            guard let contents = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil) else {
+                // Failed to access the directory
                 return
             }
             
-            defer { url.stopAccessingSecurityScopedResource() }
-            
-            let keys: [URLResourceKey] = [.nameKey, .isDirectoryKey]
-            
-            guard let totalNumberOfFiles = FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys)?.allObjects.count else {
-                Logger.slopesConnection.debug("*** Unable to access the contents of \(url.path) ***\n")
-                showFileAccessNotAllowed()
-                return
-            }
-            
-            guard let fileList = getFileList(at: url, includingPropertiesForKeys: keys) else { return }
-            
-            let requestedPathsForUpload = fileList.compactMap { ($0 as? URL)?.lastPathComponent }
-            
-            ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: requestedPathsForUpload) { [unowned self] result in
-                switch result {
-                case .success(let urlsForUpload):
-                    guard let fileList = getFileList(at: url, includingPropertiesForKeys: keys) else { return }
-                    
-                    setupSlopeFilesUploadingView()
-                    var currentFileNumberBeingUploaded = 0
-                    
-                    for (fileURLEnumerator, uploadURL) in zip(fileList, urlsForUpload) {
-                        if case let fileURL as URL = fileURLEnumerator {
-                            if self.isSlopesFiles(fileURL) {
+            if contents.allSatisfy({ $0.pathExtension == "slopes" }) {
+                let keys: [URLResourceKey] = [.nameKey, .isDirectoryKey]
+                
+                guard let totalNumberOfFiles = FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys)?.allObjects.count else {
+                    Logger.slopesConnection.debug("*** Unable to access the contents of \(url.path) ***\n")
+                    showFileAccessNotAllowed()
+                    return
+                }
+                
+                guard let fileList = getFileList(at: url, includingPropertiesForKeys: keys) else { return }
+                
+                let requestedPathsForUpload = fileList.compactMap { $0.lastPathComponent }
+                
+                ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: requestedPathsForUpload) { [unowned self] result in
+                    switch result {
+                    case .success(let urlsForUpload):
+                        guard url.startAccessingSecurityScopedResource() else {
+                            // Handle the failure here.
+                            showFileAccessNotAllowed()
+                            return
+                        }
+                        
+                        guard let fileList = getFileList(at: url, includingPropertiesForKeys: keys) else { return }
+                        
+                        setupSlopeFilesUploadingView()
+                        var currentFileNumberBeingUploaded = 0
+                        
+                        // Problem: fileList is not iterating over
+                        for (fileURLEnumerator, uploadURL) in zip(fileList, urlsForUpload) {
+                            if case let fileURL as URL = fileURLEnumerator {
                                 Logger.slopesConnection.debug("Uploading file: \(fileURL.lastPathComponent) to \(uploadURL)")
                                 
                                 SlopesConnectionViewController.putZipFiles(urlEndPoint: uploadURL, zipFilePath: fileURL) { [unowned self] response in
@@ -345,24 +368,22 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
                                     }
                                 }
                                 
-                                url.stopAccessingSecurityScopedResource()
-                            } else {
-                                showFileExtensionNotSupportedOrWrongDirectory(file: fileURL)
-                                setupInitialView()
-                                return
+                                
                             }
                         }
+                        
+                        url.stopAccessingSecurityScopedResource()
+                        bookmarkManager.saveBookmark(for: url)
+                        cleanUpSlopeFilesUploadView()
+                    case .failure(_):
+                        showErrorUploading()
                     }
-                    
-                    bookmarkManager.saveBookmark(for: url)
-                    
-                    cleanUpSlopeFilesUploadView()
-                case .failure(_):
-                    showErrorUploading()
                 }
+            } else {
+                showFileExtensionNotSupported(extensions: contents.filter({ $0.lastPathComponent != "slopes" }).map({ $0.lastPathComponent }))
             }
-            
-            
+        } else {
+            showWrongDirectorySelected(directory: url.lastPathComponent)
         }
     }
     
@@ -466,10 +487,7 @@ The Mountain-UI Companion App works together with the Slopes App by Breakpoint S
         }
     }
     
-    // MARK: - Bookmarks
-    
-    
-    
+
     private static func putZipFiles(urlEndPoint: String, zipFilePath: URL, completion: @escaping (Result<Int, Error>) -> Void) {
         let url = URL(string: urlEndPoint)!
         
