@@ -8,11 +8,9 @@ import jwt from "jsonwebtoken";
 import { Context } from "./index";
 import { User } from "./types";
 import { DYNAMODB_TABLE_NAME_USERS, getItem, getItemFromDynamoDBResult } from "./aws/dynamodb";
-import { UserInputError } from "apollo-server-lambda";
 
 interface Parent {
     id: string;
-    friends?: string[];
 }
 
 export const generateToken = (id: string): string => {
@@ -52,16 +50,19 @@ export const checkIsLoggedIn = async (context: Context): Promise<void> => {
     }
 };
 
-export const checkIsMe = async (parent: Parent, context: Context): Promise<void> => {
-    if (!context.userId || parent.id?.toString() !== context.userId) {
-        throw new AuthenticationError("Permissions Invalid For Requested Field");
+export const checkIsLoggedInAndHasValidToken = async (context: Context): Promise<void> => {
+    if (!context.userId) {
+        throw new AuthenticationError("Must Be Logged In");
+    }
+    const queryOutput = await getItem(DYNAMODB_TABLE_NAME_USERS, context.userId);
+    const userRecord = getItemFromDynamoDBResult(queryOutput) as User | null;
+    if (!userRecord || !userRecord.validatedInvite) {
+        throw new AuthenticationError("User Does Not Exist Or No Validated Token");
     }
 };
 
-export const checkInMyFriends = async (context: Context, friendId: string): Promise<void> => {
-    const queryOutput = await getItem(DYNAMODB_TABLE_NAME_USERS, context.userId as string);
-    const userRecord = getItemFromDynamoDBResult(queryOutput);
-    if (!userRecord || !userRecord.friends.includes(friendId)) {
-        throw new UserInputError("Not Friends With Provided User");
+export const checkIsMe = async (parent: Parent, context: Context): Promise<void> => {
+    if (!context.userId || parent.id?.toString() !== context.userId) {
+        throw new AuthenticationError("Permissions Invalid For Requested Field");
     }
 };

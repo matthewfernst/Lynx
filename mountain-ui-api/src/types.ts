@@ -3,13 +3,11 @@ export interface User {
     id: string;
     appleId?: string;
     googleId?: string;
+    validatedInvite: boolean;
     email: string;
     firstName?: string;
     lastName?: string;
     profilePictureUrl?: string;
-    incomingFriendRequests: string[];
-    outgoingFriendRequests: string[];
-    friends: string[];
 }
 
 export interface Log {
@@ -45,3 +43,8 @@ export interface LogDetail {
 
 export type MeasurementSystem = "METRIC" | "IMPERIAL";
 export type LogDetailType = "RUN" | "LIFT";
+
+export interface Invite {
+    id: string;
+    ttl: number;
+}

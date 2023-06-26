@@ -118,6 +118,21 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
+    inviteTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: mountain-ui-app-invites
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+
     MountainUIProfilePictureBucket:
       Type: AWS::S3::Bucket
       Properties:

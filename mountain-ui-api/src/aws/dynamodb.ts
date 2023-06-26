@@ -18,7 +18,7 @@ import {
     QueryCommand
 } from "@aws-sdk/lib-dynamodb";
 
-import { User } from "../types";
+import { Invite, User } from "../types";
 
 type DynamoDBResult =
     | GetItemOutput
@@ -28,6 +28,7 @@ type DynamoDBResult =
     | DeleteItemOutput;
 
 export const DYNAMODB_TABLE_NAME_USERS = "mountain-ui-app-users";
+export const DYNAMODB_TABLE_NAME_INVITES = "mountain-ui-app-invites";
 
 const createDocumentClient = (): DynamoDBDocumentClient => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
@@ -95,7 +96,7 @@ export const updateItem = async (
     table: string,
     id: string,
     key: string,
-    value: string
+    value: any
 ): Promise<UpdateItemOutput> => {
     const documentClient = createDocumentClient();
     try {
@@ -194,15 +195,15 @@ export const deleteItem = async (table: string, id: string): Promise<DeleteItemO
     }
 };
 
-export const getItemFromDynamoDBResult = (dynamodbResult: DynamoDBResult): User | null => {
+export const getItemFromDynamoDBResult = (dynamodbResult: DynamoDBResult): User | Invite | null => {
     if ("Item" in dynamodbResult && dynamodbResult.Item) {
-        return dynamodbResult.Item as unknown as User;
+        return dynamodbResult.Item as any;
     }
     if ("Items" in dynamodbResult && dynamodbResult.Items) {
-        return dynamodbResult.Items[0] as unknown as User;
+        return dynamodbResult.Items[0] as any;
     }
     if ("Attributes" in dynamodbResult && dynamodbResult.Attributes) {
-        return dynamodbResult.Attributes as unknown as User;
+        return dynamodbResult.Attributes as any;
     }
     return null;
 };

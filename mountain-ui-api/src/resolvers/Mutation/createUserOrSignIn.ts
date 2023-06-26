@@ -82,11 +82,9 @@ const oauthLogin = async (
         await putItem(DYNAMODB_TABLE_NAME_USERS, {
             id: mountainAppId,
             [idFieldName]: id,
+            validatedInvite: false,
             email,
-            ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value }))),
-            incomingFriendRequests: [],
-            outgoingFriendRequests: [],
-            friends: []
+            ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
         });
         return {
             token: generateToken(mountainAppId),

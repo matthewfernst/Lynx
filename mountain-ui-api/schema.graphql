@@ -2,13 +2,11 @@ type User {
     id: ID!
     appleId: ID
     googleId: ID
+    validatedInvite: Boolean!
     email: String!
     firstName: String!
     lastName: String!
     profilePictureUrl: String
-    incomingFriendRequests: [User!]!
-    outgoingFriendRequests: [User!]!
-    friends: [User!]!
     logbook: [Log!]!
 }
 
@@ -69,6 +67,7 @@ input KeyValuePair {
 type Query {
     selfLookup: User
     userLookup(id: ID!): User
+    leaderboard: [User!]!
 }
 
 type Mutation {
@@ -81,8 +80,8 @@ type Mutation {
     ): AuthorizationToken
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
-    deleteUser: User
+    deleteUser: User!
     editUser(userData: [KeyValuePair!]!): User!
-    requestFriend(friendId: ID!): User!
-    resolveRequestFriend(friendId: String!, choice: Boolean!): User!
+    createInviteKey: String!
+    resolveInviteKey(inviteKey: ID!): User!
 }

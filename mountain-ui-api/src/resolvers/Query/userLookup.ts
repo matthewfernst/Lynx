@@ -1,5 +1,4 @@
 import { Context } from "../../index";
-import { checkIsLoggedIn } from "../../auth";
 import { User } from "../../types";
 import { DYNAMODB_TABLE_NAME_USERS, getItem, getItemFromDynamoDBResult } from "../../aws/dynamodb";
 
@@ -13,9 +12,8 @@ const userLookup = async (
     context: Context,
     info: any
 ): Promise<User | null> => {
-    await checkIsLoggedIn(context);
     const queryOutput = await getItem(DYNAMODB_TABLE_NAME_USERS, args.id);
-    return getItemFromDynamoDBResult(queryOutput);
+    return getItemFromDynamoDBResult(queryOutput) as User | null;
 };
 
 export default userLookup;
