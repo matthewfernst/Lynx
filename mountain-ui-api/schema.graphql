@@ -25,11 +25,6 @@ type Log {
     details: [LogDetail!]!
 }
 
-enum MeasurementSystem {
-    METRIC
-    IMPERIAL
-}
-
 type LogDetail {
     type: LogDetailType!
     averageSpeed(system: MeasurementSystem = IMPERIAL): Float!
@@ -49,6 +44,18 @@ enum LogDetailType {
     LIFT
 }
 
+enum MeasurementSystem {
+    METRIC
+    IMPERIAL
+}
+
+enum LeaderboardSort {
+    DISTANCE
+    RUN_COUNT
+    TOP_SPEED
+    VERTICAL_DISTANCE
+}
+
 type AuthorizationToken {
     token: ID!
     expiryDate: String!
@@ -60,28 +67,28 @@ enum LoginType {
     GOOGLE
 }
 
-input UserDataPair {
-    key: String!
-    value: String!
-}
-
 input LoginTypeCorrelations {
     type: LoginType!
     id: String!
 }
 
+input UserDataPair {
+    key: String!
+    value: String!
+}
+
 type Query {
     selfLookup: User
     userLookup(id: ID!): User
-    leaderboard: [User!]!
+    leaderboard(sortBy: LeaderboardSort = VERTICAL_DISTANCE, limit: Int): [User!]!
 }
 
 type Mutation {
     createUserOrSignIn(
         type: LoginType!
-        id: ID!,
-        token: ID!,
-        email: String,
+        id: ID!
+        token: ID!
+        email: String
         userData: [UserDataPair!]
     ): AuthorizationToken
     combineOAuthAccounts(combineWith: [LoginTypeCorrelations!]!): User!
