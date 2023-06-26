@@ -52,6 +52,7 @@ enum LogDetailType {
 type AuthorizationToken {
     token: ID!
     expiryDate: String!
+    validatedInvite: Boolean!
 }
 
 enum LoginType {

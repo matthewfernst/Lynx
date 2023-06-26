@@ -12,6 +12,7 @@ import {
     getItemsByIndex,
     putItem
 } from "../../aws/dynamodb";
+import { User } from "../../types";
 
 export type LoginType = "APPLE" | "GOOGLE";
 
@@ -29,6 +30,7 @@ interface Args {
 interface AuthorizationToken {
     token: string;
     expiryDate: string;
+    validatedInvite: boolean;
 }
 
 const createUserOrSignIn = async (
@@ -78,25 +80,31 @@ const oauthLogin = async (
     userData?: { key: string; value: string }[]
 ): Promise<AuthorizationToken> => {
     const dynamodbResult = await getItemsByIndex(DYNAMODB_TABLE_NAME_USERS, idFieldName, id);
-    const user = await getItemFromDynamoDBResult(dynamodbResult);
+    const user = (await getItemFromDynamoDBResult(dynamodbResult)) as User | null;
     const oneHourFromNow = DateTime.now().plus({ hours: 1 }).toMillis().toString();
     if (user) {
-        return { token: generateToken(user.id), expiryDate: oneHourFromNow };
+        return {
+            token: generateToken(user.id),
+            expiryDate: oneHourFromNow,
+            validatedInvite: user.validatedInvite
+        };
     } else {
         if (!email || !userData) {
             throw new UserInputError("Must Provide Email And UserData On Account Creation");
         }
         const mountainAppId = uuid();
+        const validatedInvite = false;
         await putItem(DYNAMODB_TABLE_NAME_USERS, {
             id: mountainAppId,
             [idFieldName]: id,
-            validatedInvite: false,
+            validatedInvite,
             email,
             ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
         });
         return {
             token: generateToken(mountainAppId),
-            expiryDate: oneHourFromNow
+            expiryDate: oneHourFromNow,
+            validatedInvite
         };
     }
 };
