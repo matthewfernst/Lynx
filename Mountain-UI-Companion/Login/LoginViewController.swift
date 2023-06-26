@@ -223,7 +223,6 @@ class LoginViewController: UIViewController
         loadingBackground.addSubview(activityIndicator)
         
         NSLayoutConstraint.activate([
-            
             activityIndicator.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
         ])
@@ -231,6 +230,14 @@ class LoginViewController: UIViewController
         activityIndicator.startAnimating()
         
         return activityIndicator
+    }
+    
+    private func setupInvitationSheet() {
+        DispatchQueue.main.async {
+            let activationSheetViewController = InvitationCodeSheetViewController()
+            activationSheetViewController.modalPresentationStyle = .formSheet
+            self.present(activationSheetViewController, animated: true, completion: nil)
+        }
     }
     
     private func signInExistingUser() {
@@ -260,6 +267,8 @@ class LoginViewController: UIViewController
             default:
                 break
             }
+        } else {
+            setupInvitationSheet()
         }
     }
 }

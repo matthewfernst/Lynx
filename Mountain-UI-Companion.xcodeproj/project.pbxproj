@@ -45,6 +45,7 @@
 		654F4C7A2A3CE91E00E0614C /* LogbookStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654F4C792A3CE91E00E0614C /* LogbookStats.swift */; };
 		6566A0BD29D3EC2B008B7E57 /* ProfilePictureUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6566A0BC29D3EC2B008B7E57 /* ProfilePictureUtils.swift */; };
 		6568EE0E2A3FB1A500601759 /* LifetimeSummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568EE0D2A3FB1A500601759 /* LifetimeSummaryViewController.swift */; };
+		657392262A47798600981775 /* InvitationCodeSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392252A47798600981775 /* InvitationCodeSheetViewController.swift */; };
 		659A9F7E2A414BA600DC6006 /* GetLogs.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 659A9F7B2A414BA600DC6006 /* GetLogs.graphql */; };
 		659A9F832A414C2E00DC6006 /* GetProfileInformation.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 659A9F822A414C2E00DC6006 /* GetProfileInformation.graphql */; };
 		659A9F852A414C7800DC6006 /* EditUser.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 659A9F842A414C7800DC6006 /* EditUser.graphql */; };
@@ -124,6 +125,7 @@
 		654F4C792A3CE91E00E0614C /* LogbookStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogbookStats.swift; sourceTree = "<group>"; };
 		6566A0BC29D3EC2B008B7E57 /* ProfilePictureUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePictureUtils.swift; sourceTree = "<group>"; };
 		6568EE0D2A3FB1A500601759 /* LifetimeSummaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifetimeSummaryViewController.swift; sourceTree = "<group>"; };
+		657392252A47798600981775 /* InvitationCodeSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationCodeSheetViewController.swift; sourceTree = "<group>"; };
 		659A9F7B2A414BA600DC6006 /* GetLogs.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GetLogs.graphql; sourceTree = "<group>"; };
 		659A9F822A414C2E00DC6006 /* GetProfileInformation.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GetProfileInformation.graphql; sourceTree = "<group>"; };
 		659A9F842A414C7800DC6006 /* EditUser.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EditUser.graphql; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 				654DEAE72983933C001565A3 /* LoginViewController.swift */,
 				65362D5929C1037600507CCE /* LoginController.swift */,
 				653A0E5E29BCFE8200C8F308 /* SignInWithGoogleButton.swift */,
+				657392252A47798600981775 /* InvitationCodeSheetViewController.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -634,6 +637,7 @@
 				65A370DE297E594500E1D851 /* SceneDelegate.swift in Sources */,
 				654F229C29FE486700D1C96E /* UserManagementInterceptor.swift in Sources */,
 				659A9FE22A414FD100DC6006 /* SchemaConfiguration.swift in Sources */,
+				657392262A47798600981775 /* InvitationCodeSheetViewController.swift in Sources */,
 				654F22A029FEFB7100D1C96E /* RequestLoggingInterceptor.swift in Sources */,
 				65A370F7297E6B5800E1D851 /* Support.swift in Sources */,
 			);
