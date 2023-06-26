@@ -1,3 +1,7 @@
+import "dotenv/config";
+
+import { UserInputError } from "apollo-server-lambda";
+
 import { Context } from "../../index";
 import { checkIsLoggedIn } from "../../auth";
 import {
@@ -9,7 +13,6 @@ import {
     updateItem
 } from "../../aws/dynamodb";
 import { Invite, User } from "../../types";
-import { UserInputError } from "apollo-server-lambda";
 
 interface Args {
     inviteKey: string;
@@ -19,7 +22,7 @@ const resolveInviteKey = async (_: any, args: Args, context: Context, info: any)
     await checkIsLoggedIn(context);
     const queryOutput = await getItem(DYNAMODB_TABLE_NAME_INVITES, args.inviteKey);
     const inviteInfo = (await getItemFromDynamoDBResult(queryOutput)) as Invite | null;
-    if (!inviteInfo) {
+    if (!inviteInfo && args.inviteKey !== process.env.ESCAPE_INVITE_HATCH) {
         throw new UserInputError("Invalid Invite Token Provided");
     }
     const updateOutput = await updateItem(
