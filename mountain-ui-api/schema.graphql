@@ -59,9 +59,14 @@ enum LoginType {
     GOOGLE
 }
 
-input KeyValuePair {
+input UserDataPair {
     key: String!
     value: String!
+}
+
+input LoginTypeCorrelations {
+    type: LoginType!
+    id: String!
 }
 
 type Query {
@@ -76,12 +81,13 @@ type Mutation {
         id: ID!,
         token: ID!,
         email: String,
-        userData: [KeyValuePair!]
+        userData: [UserDataPair!]
     ): AuthorizationToken
+    combineOAuthAccounts(combineWith: [LoginTypeCorrelations!]!): User!
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
     deleteUser: User!
-    editUser(userData: [KeyValuePair!]!): User!
+    editUser(userData: [UserDataPair!]!): User!
     createInviteKey: String!
     resolveInviteKey(inviteKey: ID!): User!
 }

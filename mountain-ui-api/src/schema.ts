@@ -13,6 +13,7 @@ import selfLookup from "./resolvers/Query/selfLookup";
 import userLookup from "./resolvers/Query/userLookup";
 import leaderboard from "./resolvers/Query/leaderboard";
 import createUserOrSignIn from "./resolvers/Mutation/createUserOrSignIn";
+import combineOAuthAccounts from "./resolvers/Mutation/combineOAuthAccounts";
 import createUserProfilePictureUploadUrl from "./resolvers/Mutation/createUserProfilePictureUploadUrl";
 import createUserRecordUploadUrl from "./resolvers/Mutation/createUserRecordUploadUrl";
 import deleteUser from "./resolvers/Mutation/deleteUser";
@@ -44,6 +45,7 @@ export const resolvers = {
     Query: { selfLookup, userLookup, leaderboard },
     Mutation: {
         createUserOrSignIn,
+        combineOAuthAccounts,
         createUserProfilePictureUploadUrl,
         createUserRecordUploadUrl,
         deleteUser,

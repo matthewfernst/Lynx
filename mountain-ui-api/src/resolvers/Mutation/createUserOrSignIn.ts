@@ -13,7 +13,7 @@ import {
     putItem
 } from "../../aws/dynamodb";
 
-type LoginType = "APPLE" | "GOOGLE";
+export type LoginType = "APPLE" | "GOOGLE";
 
 interface Args {
     type: LoginType;
@@ -40,10 +40,18 @@ const createUserOrSignIn = async (
     switch (args.type) {
         case "APPLE":
             await verifyAppleToken(args.id, args.token);
-            return await oauthLogin("appleId", args.id, args.email, args.userData);
         case "GOOGLE":
             await verifyGoogleToken(args.id, args.token);
-            return await oauthLogin("googleId", args.id, args.email, args.userData);
+    }
+    return await oauthLogin(idKeyFromIdType(args.type), args.id, args.email, args.userData);
+};
+
+export const idKeyFromIdType = (idType: LoginType) => {
+    switch (idType) {
+        case "APPLE":
+            return "appleId";
+        case "GOOGLE":
+            return "googleId";
     }
 };
 

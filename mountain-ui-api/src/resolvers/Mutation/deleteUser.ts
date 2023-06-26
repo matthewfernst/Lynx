@@ -7,14 +7,15 @@ import {
     profilePictureBucketName,
     toRunRecordsBucket
 } from "../../aws/s3";
+import { User } from "../../types";
 
-const deleteUser = async (_: any, args: {}, context: Context, info: any) => {
+const deleteUser = async (_: any, args: {}, context: Context, info: any): Promise<User> => {
     await checkIsLoggedInAndHasValidToken(context);
     await deleteObjectsInBucket(profilePictureBucketName, context.userId as string);
     await deleteObjectsInBucket(fromRunRecordsBucket, context.userId as string);
     await deleteObjectsInBucket(toRunRecordsBucket, context.userId as string);
     const result = await deleteItem(DYNAMODB_TABLE_NAME_USERS, context.userId as string);
-    return result.Attributes;
+    return result.Attributes as User;
 };
 
 export default deleteUser;
