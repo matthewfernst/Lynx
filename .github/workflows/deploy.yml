@@ -79,6 +79,7 @@ jobs:
           ENV_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           ENV_APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
           ENV_AUTH_KEY: ${{ secrets.AUTH_KEY }}
+          ENV_ESCAPE_INVITE_HATCH: ${{ secrets.ESCAPE_INVITE_HATCH }}
 
       - name: Deploy
         run: npm run --prefix mountain-ui-api deploy
