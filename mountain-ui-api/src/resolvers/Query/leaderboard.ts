@@ -12,8 +12,7 @@ interface Args {
 
 const leaderboard = async (_: any, args: Args, context: Context, info: any): Promise<User[]> => {
     const scanOutput = await scanAllItems(DYNAMODB_TABLE_USERS);
-    const users = scanOutput.Items as User[];
-
+    const users = scanOutput.Items as unknown[] as User[];
     const usersWithPulledLogBook = await Promise.all(
         users.map(async (user) => {
             const logs = await logbook({ id: user.id }, {}, context, {});
@@ -29,7 +28,7 @@ const leaderboard = async (_: any, args: Args, context: Context, info: any): Pro
     );
 
     const sortProperty = getSortProperty(args.sortBy);
-    return usersWithPulledLogBook
+    return (usersWithPulledLogBook as any[])
         .sort((a, b) => a[sortProperty] - b[sortProperty])
         .slice(0, args.limit || 5);
 };

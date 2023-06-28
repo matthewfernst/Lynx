@@ -173,7 +173,9 @@ export const deleteItemsFromArray = async (
         if (!item) {
             throw new Error("Error finding item for this userId");
         }
-        const indices = item[key].map((listItem: string) => item[key].index(listItem));
+        const indices = (item[key] as unknown as any[]).map((listItem: string) =>
+            (item[key] as unknown as any[]).indexOf(listItem)
+        );
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },

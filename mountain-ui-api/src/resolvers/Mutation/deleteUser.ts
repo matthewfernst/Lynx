@@ -15,7 +15,7 @@ const deleteUser = async (_: any, args: {}, context: Context, info: any): Promis
     await deleteObjectsInBucket(fromRunRecordsBucket, context.userId as string);
     await deleteObjectsInBucket(toRunRecordsBucket, context.userId as string);
     const result = await deleteItem(DYNAMODB_TABLE_USERS, context.userId as string);
-    return result.Attributes as User;
+    return result.Attributes as unknown as User;
 };
 
 export default deleteUser;

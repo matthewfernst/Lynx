@@ -1,5 +1,5 @@
 export interface User {
-    [key: string]: any;
+    [key: string]: string | boolean | undefined;
     id: string;
     appleId?: string;
     googleId?: string;
@@ -11,7 +11,7 @@ export interface User {
 }
 
 export interface Log {
-    [key: string]: any;
+    [key: string]: string | number | LogDetail[];
     id: string;
     originalFileName: string;
     centerLat: number;
@@ -29,7 +29,7 @@ export interface Log {
 }
 
 export interface LogDetail {
-    [key: string]: any;
+    [key: string]: string | number;
     type: LogDetailType;
     averageSpeed: number;
     distance: number;
@@ -47,7 +47,7 @@ export type MeasurementSystem = "METRIC" | "IMPERIAL";
 export type LogDetailType = "RUN" | "LIFT";
 
 export interface Invite {
-    [key: string]: any;
+    [key: string]: string | number;
     id: string;
     ttl: number;
 }
