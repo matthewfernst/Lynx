@@ -8,10 +8,10 @@ import {
     QueryOutput,
     ScanOutput,
     UpdateItemOutput,
-    DynamoDBClient
+    DynamoDB
 } from "@aws-sdk/client-dynamodb";
 import {
-    DynamoDBDocumentClient,
+    DynamoDBDocument,
     DeleteCommand,
     GetCommand,
     UpdateCommand,
@@ -34,7 +34,7 @@ export const DYNAMODB_TABLE_NAME_INVITES = "mountain-ui-app-invites";
 
 export type Table = typeof DYNAMODB_TABLE_NAME_USERS | typeof DYNAMODB_TABLE_NAME_INVITES;
 
-const createDocumentClient = (): DynamoDBDocumentClient => {
+const createDocumentClient = (): DynamoDBDocument => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
 
     const serviceConfigOptions: DynamoDBClientConfig = {
@@ -42,8 +42,8 @@ const createDocumentClient = (): DynamoDBDocumentClient => {
         ...(process.env.IS_OFFLINE && { endpoint: "http://localhost:8080" })
     };
 
-    const dynamodbClient = new DynamoDBClient(serviceConfigOptions);
-    return DynamoDBDocumentClient.from(dynamodbClient);
+    const dynamodbClient = new DynamoDB(serviceConfigOptions);
+    return DynamoDBDocument.from(dynamodbClient);
 };
 
 export const getItem = async (table: Table, id: string): Promise<GetItemOutput> => {
