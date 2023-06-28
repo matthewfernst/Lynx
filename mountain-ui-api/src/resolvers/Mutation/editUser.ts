@@ -1,7 +1,7 @@
 import { Context } from "../../index";
 import { checkIsLoggedInAndHasValidToken } from "../../auth";
 import {
-    DYNAMODB_TABLE_NAME_USERS,
+    DYNAMODB_TABLE_USERS,
     getItem,
     getItemFromDynamoDBResult,
     updateItem
@@ -18,9 +18,9 @@ interface Args {
 const editUser = async (_: any, args: Args, context: Context, info: any): Promise<User> => {
     await checkIsLoggedInAndHasValidToken(context);
     for (const data of args.userData) {
-        await updateItem(DYNAMODB_TABLE_NAME_USERS, context.userId as string, data.key, data.value);
+        await updateItem(DYNAMODB_TABLE_USERS, context.userId as string, data.key, data.value);
     }
-    const queryOutput = await getItem(DYNAMODB_TABLE_NAME_USERS, context.userId as string);
+    const queryOutput = await getItem(DYNAMODB_TABLE_USERS, context.userId as string);
     return getItemFromDynamoDBResult(queryOutput) as User;
 };
 

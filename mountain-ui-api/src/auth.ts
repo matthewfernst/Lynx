@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 
 import { Context } from "./index";
 import { User } from "./types";
-import { DYNAMODB_TABLE_NAME_USERS, getItem, getItemFromDynamoDBResult } from "./aws/dynamodb";
+import { DYNAMODB_TABLE_USERS, getItem, getItemFromDynamoDBResult } from "./aws/dynamodb";
 
 interface Parent {
     id: string;
@@ -43,7 +43,7 @@ export const checkIsLoggedIn = async (context: Context): Promise<void> => {
     if (!context.userId) {
         throw new AuthenticationError("Must Be Logged In");
     }
-    const queryOutput = await getItem(DYNAMODB_TABLE_NAME_USERS, context.userId);
+    const queryOutput = await getItem(DYNAMODB_TABLE_USERS, context.userId);
     const userRecord = getItemFromDynamoDBResult(queryOutput);
     if (!userRecord) {
         throw new AuthenticationError("User Does Not Exist");
@@ -54,7 +54,7 @@ export const checkIsLoggedInAndHasValidToken = async (context: Context): Promise
     if (!context.userId) {
         throw new AuthenticationError("Must Be Logged In");
     }
-    const queryOutput = await getItem(DYNAMODB_TABLE_NAME_USERS, context.userId);
+    const queryOutput = await getItem(DYNAMODB_TABLE_USERS, context.userId);
     const userRecord = getItemFromDynamoDBResult(queryOutput) as User | null;
     if (!userRecord || !userRecord.validatedInvite) {
         throw new AuthenticationError("User Does Not Exist Or No Validated Token");

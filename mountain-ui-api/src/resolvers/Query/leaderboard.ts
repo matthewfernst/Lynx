@@ -1,6 +1,6 @@
 import { Context } from "../../index";
 import { User } from "../../types";
-import { DYNAMODB_TABLE_NAME_USERS, scanAllItems } from "../../aws/dynamodb";
+import { DYNAMODB_TABLE_USERS, scanAllItems } from "../../aws/dynamodb";
 import logbook from "../User/logbook";
 
 type LeaderboardSort = "DISTANCE" | "RUN_COUNT" | "TOP_SPEED" | "VERTICAL_DISTANCE";
@@ -11,7 +11,7 @@ interface Args {
 }
 
 const leaderboard = async (_: any, args: Args, context: Context, info: any): Promise<User[]> => {
-    const scanOutput = await scanAllItems(DYNAMODB_TABLE_NAME_USERS);
+    const scanOutput = await scanAllItems(DYNAMODB_TABLE_USERS);
     const users = scanOutput.Items as User[];
 
     const usersWithPulledLogBook = await Promise.all(

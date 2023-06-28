@@ -7,7 +7,7 @@ import { UserInputError } from "apollo-server-lambda";
 import { generateToken } from "../../auth";
 import { Context } from "../../index";
 import {
-    DYNAMODB_TABLE_NAME_USERS,
+    DYNAMODB_TABLE_USERS,
     getItemFromDynamoDBResult,
     getItemsByIndex,
     putItem
@@ -79,7 +79,7 @@ const oauthLogin = async (
     email?: string,
     userData?: { key: string; value: string }[]
 ): Promise<AuthorizationToken> => {
-    const dynamodbResult = await getItemsByIndex(DYNAMODB_TABLE_NAME_USERS, idFieldName, id);
+    const dynamodbResult = await getItemsByIndex(DYNAMODB_TABLE_USERS, idFieldName, id);
     const user = (await getItemFromDynamoDBResult(dynamodbResult)) as User | null;
     const oneHourFromNow = DateTime.now().plus({ hours: 1 }).toMillis().toString();
     if (user) {
@@ -94,7 +94,7 @@ const oauthLogin = async (
         }
         const mountainAppId = uuid();
         const validatedInvite = false;
-        await putItem(DYNAMODB_TABLE_NAME_USERS, {
+        await putItem(DYNAMODB_TABLE_USERS, {
             id: mountainAppId,
             [idFieldName]: id,
             validatedInvite,

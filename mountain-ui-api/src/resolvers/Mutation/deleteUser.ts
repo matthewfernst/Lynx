@@ -1,6 +1,6 @@
 import { Context } from "../../index";
 import { checkIsLoggedInAndHasValidToken } from "../../auth";
-import { DYNAMODB_TABLE_NAME_USERS, deleteItem } from "../../aws/dynamodb";
+import { DYNAMODB_TABLE_USERS, deleteItem } from "../../aws/dynamodb";
 import {
     deleteObjectsInBucket,
     fromRunRecordsBucket,
@@ -14,7 +14,7 @@ const deleteUser = async (_: any, args: {}, context: Context, info: any): Promis
     await deleteObjectsInBucket(profilePictureBucketName, context.userId as string);
     await deleteObjectsInBucket(fromRunRecordsBucket, context.userId as string);
     await deleteObjectsInBucket(toRunRecordsBucket, context.userId as string);
-    const result = await deleteItem(DYNAMODB_TABLE_NAME_USERS, context.userId as string);
+    const result = await deleteItem(DYNAMODB_TABLE_USERS, context.userId as string);
     return result.Attributes as User;
 };
 
