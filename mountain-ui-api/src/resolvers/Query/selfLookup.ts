@@ -7,7 +7,7 @@ const selfLookup = async (_: any, args: {}, context: Context, info: any): Promis
         return null;
     }
     const queryOutput = await getItem(DYNAMODB_TABLE_NAME_USERS, context.userId);
-    return getItemFromDynamoDBResult(queryOutput);
+    return getItemFromDynamoDBResult(queryOutput) as User | null;
 };
 
 export default selfLookup;

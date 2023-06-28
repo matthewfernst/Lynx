@@ -11,6 +11,7 @@ export interface User {
 }
 
 export interface Log {
+    [key: string]: any;
     id: string;
     originalFileName: string;
     centerLat: number;
@@ -21,13 +22,14 @@ export interface Log {
     start: string;
     end: string;
     locationName: string;
-    runCount: string;
+    runCount: number;
     topSpeed: number;
     vertical: number;
     details: LogDetail[];
 }
 
 export interface LogDetail {
+    [key: string]: any;
     type: LogDetailType;
     averageSpeed: number;
     distance: number;
@@ -45,6 +47,7 @@ export type MeasurementSystem = "METRIC" | "IMPERIAL";
 export type LogDetailType = "RUN" | "LIFT";
 
 export interface Invite {
+    [key: string]: any;
     id: string;
     ttl: number;
 }

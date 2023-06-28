@@ -17,7 +17,7 @@ const leaderboard = async (_: any, args: Args, context: Context, info: any): Pro
     const usersWithPulledLogBook = await Promise.all(
         users.map(async (user) => {
             const logs = await logbook({ id: user.id }, {}, context, {});
-            const sumArray = (array) => array.reduce((a, b) => a + b, 0);
+            const sumArray = (array: number[]) => array.reduce((a, b) => a + b, 0);
             return {
                 ...user,
                 distance: sumArray(logs.map((log) => log.distance)),
