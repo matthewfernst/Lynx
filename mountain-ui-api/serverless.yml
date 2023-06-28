@@ -88,7 +88,6 @@ provider:
           Resource:
             - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/mountain-ui-app-invites
        
-
 functions:
   graphql:
     description: GraphQL API
@@ -115,6 +114,8 @@ resources:
             AttributeType: S
           - AttributeName: googleId
             AttributeType: S
+          - AttributeName: validatedInvite
+            AttributeType: BOOL
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
           - IndexName: appleId
