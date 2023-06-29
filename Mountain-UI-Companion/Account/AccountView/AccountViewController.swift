@@ -12,7 +12,8 @@ enum AllSettingsSections: Int, CaseIterable
 {
     case profile = 0
     case general = 1
-    case support = 2
+    case inviteKey = 2
+    case support = 3
 }
 
 enum GeneralSettinsSections: Int, CaseIterable
@@ -70,6 +71,8 @@ class AccountViewController: UITableViewController, EditProfileDelegate
             return 1
         case .general:
             return generalSettings.count
+        case .inviteKey:
+            return 1
         case .support:
             return supportSettings.count
         default:
@@ -104,6 +107,15 @@ class AccountViewController: UITableViewController, EditProfileDelegate
             generalSettingCell.configure(with: generalSettings[indexPath.row])
             return generalSettingCell
             
+        case .inviteKey:
+            guard let inviteKeyCell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
+                return UITableViewCell()
+            }
+            
+            inviteKeyCell.configure(with: Setting.inviteKeySetting)
+            
+            return inviteKeyCell
+            
         case .support:
             guard let supportCell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
                 return UITableViewCell()
@@ -121,6 +133,8 @@ class AccountViewController: UITableViewController, EditProfileDelegate
         switch AllSettingsSections(rawValue: section) {
         case .general:
             return "Settings"
+        case .inviteKey:
+            return "Invite key"
         case .support:
             return "Show your support"
         default:
@@ -178,6 +192,29 @@ class AccountViewController: UITableViewController, EditProfileDelegate
                 return
             }
             
+            
+        case .inviteKey:
+            ApolloMountainUIClient.createInviteKey { [weak self] result in
+                switch result {
+                case .success(let inviteKey):
+                    let activityViewController = UIActivityViewController(activityItems: [inviteKey], applicationActivities: nil)
+                    
+                    activityViewController.excludedActivityTypes = [
+                        .addToReadingList,
+                        .assignToContact,
+                        .openInIBooks,
+                        .addToHomeScreen,
+                    ]
+                    
+                    self?.present(activityViewController, animated: true)
+                   
+                case .failure(_):
+                    let ac = UIAlertController(title: "Failed to Create Invite Key", message: "Our systems were not able to create a invite key. Please try again.", preferredStyle: .alert)
+                    
+                    ac.addAction(.init(title: "Dismiss", style: .cancel))
+                    self?.present(ac, animated: true)
+                }
+            }
             
         case .support:
             if let url = URL(string: self.supportSettings[indexPath.row].link) {

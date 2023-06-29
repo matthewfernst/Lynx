@@ -9,7 +9,7 @@ public extension ApolloGeneratedGraphQL {
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        mutation LoginOrCreateUser($type: LoginType!, $id: ID!, $token: ID!, $email: String, $userData: [KeyValuePair!]) {
+        mutation LoginOrCreateUser($type: LoginType!, $id: ID!, $token: ID!, $email: String, $userData: [UserDataPair!]) {
           createUserOrSignIn(
             type: $type
             id: $id
@@ -20,6 +20,7 @@ public extension ApolloGeneratedGraphQL {
             __typename
             token
             expiryDate
+            validatedInvite
           }
         }
         """#
@@ -29,14 +30,14 @@ public extension ApolloGeneratedGraphQL {
     public var id: ID
     public var token: ID
     public var email: GraphQLNullable<String>
-    public var userData: GraphQLNullable<[KeyValuePair]>
+    public var userData: GraphQLNullable<[UserDataPair]>
 
     public init(
       type: GraphQLEnum<LoginType>,
       id: ID,
       token: ID,
       email: GraphQLNullable<String>,
-      userData: GraphQLNullable<[KeyValuePair]>
+      userData: GraphQLNullable<[UserDataPair]>
     ) {
       self.type = type
       self.id = id
@@ -82,10 +83,12 @@ public extension ApolloGeneratedGraphQL {
           .field("__typename", String.self),
           .field("token", ApolloGeneratedGraphQL.ID.self),
           .field("expiryDate", String.self),
+          .field("validatedInvite", Bool.self),
         ] }
 
         public var token: ApolloGeneratedGraphQL.ID { __data["token"] }
         public var expiryDate: String { __data["expiryDate"] }
+        public var validatedInvite: Bool { __data["validatedInvite"] }
       }
     }
   }

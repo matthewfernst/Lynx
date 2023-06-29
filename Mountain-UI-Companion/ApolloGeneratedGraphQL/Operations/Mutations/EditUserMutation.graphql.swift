@@ -9,7 +9,7 @@ public extension ApolloGeneratedGraphQL {
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        mutation EditUser($userData: [KeyValuePair!]!) {
+        mutation EditUser($userData: [UserDataPair!]!) {
           editUser(userData: $userData) {
             __typename
             id
@@ -37,9 +37,9 @@ public extension ApolloGeneratedGraphQL {
         """#
       ))
 
-    public var userData: [KeyValuePair]
+    public var userData: [UserDataPair]
 
-    public init(userData: [KeyValuePair]) {
+    public init(userData: [UserDataPair]) {
       self.userData = userData
     }
 
@@ -96,7 +96,7 @@ public extension ApolloGeneratedGraphQL {
           public static var __selections: [ApolloAPI.Selection] { [
             .field("__typename", String.self),
             .field("id", ApolloGeneratedGraphQL.ID.self),
-            .field("conditions", String.self),
+            .field("conditions", String?.self),
             .field("distance", Double.self),
             .field("duration", Double.self),
             .field("startDate", String.self),
@@ -108,7 +108,7 @@ public extension ApolloGeneratedGraphQL {
           ] }
 
           public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
-          public var conditions: String { __data["conditions"] }
+          public var conditions: String? { __data["conditions"] }
           public var distance: Double { __data["distance"] }
           public var duration: Double { __data["duration"] }
           public var startDate: String { __data["startDate"] }

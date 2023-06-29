@@ -1,5 +1,5 @@
 //
-//  InvitationCodeSheetViewController.swift
+//  InvitationKeySheetViewController.swift
 //  Mountain-UI-Companion
 //
 //  Created by Matthew Ernst on 6/24/23.
@@ -7,13 +7,25 @@
 
 import Foundation
 import UIKit
+import OSLog
 
-class InvitationCodeSheetViewController: UIViewController {
+class InvitationKeySheetViewController: UIViewController {
+    
+    init(completion: @escaping () -> Void) {
+        self.completion = completion
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public let completion: (()-> Void)
     
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Enter Your Invitation Code"
+        label.text = "Enter Your Invitation Key"
         label.font = UIFont.systemFont(ofSize: 30, weight: .semibold)
         label.textAlignment = .center
         return label
@@ -34,20 +46,20 @@ class InvitationCodeSheetViewController: UIViewController {
     private let explainationLabelView: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text =
-"""
-Mountain-UI-Companion App only supports select users. An invitation code is needed to create an account.\nPlease enter your code below.
-"""
+        label.text = """
+                     Mountain-UI-Companion App only supports select users. An invitation key is needed to create an account.
+                     Please enter your key below.
+                     """
         label.textAlignment = .center
         label.numberOfLines = 6
         label.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         return label
     }()
     
-    private let invitationCodeTextField: UITextField = {
+    private let invitationKeyTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.placeholder = "Enter Code"
+        textField.placeholder = "Enter Key"
         textField.textAlignment = .center
         textField.borderStyle = .roundedRect
         textField.spellCheckingType = .no
@@ -71,15 +83,27 @@ Mountain-UI-Companion App only supports select users. An invitation code is need
         
         return button
     }()
-
-
+    
+    
     @objc private func submitButtonTapped() {
         startLoadingAnimation()
-        // TODO: Apollo Call
-        self.invitationCodeTextField.text = ""
-        showInvitationCodeIsInvalidAlert()
-        stopLoadingAnimation()
-        self.dismiss(animated: true, completion: nil)
+        guard let invitationKey = self.invitationKeyTextField.text else {
+            showInvitationKeyIsInvalidAlert()
+            return
+        }
+        self.invitationKeyTextField.text = ""
+        ApolloMountainUIClient.submitInviteKey(with: invitationKey) { [unowned self] result in
+            switch result {
+            case .success(_):
+                Logger.invitationKeySheet.debug("Successfully validated invite key.")
+                self.dismiss(animated: true, completion: nil)
+                self.completion()
+            case .failure(let error):
+                Logger.invitationKeySheet.error("Error: \(error)")
+                showInvitationKeyIsInvalidAlert()
+            }
+            stopLoadingAnimation()
+        }
     }
     
     private let loadingBackground: UIView = {
@@ -112,9 +136,9 @@ Mountain-UI-Companion App only supports select users. An invitation code is need
         loadingBackground.removeFromSuperview()
     }
     
-    private func showInvitationCodeIsInvalidAlert() {
-        let ac = UIAlertController(title: "Invalid Code",
-                                   message: "The code entered is not recongized in our system. Please try again.",
+    private func showInvitationKeyIsInvalidAlert() {
+        let ac = UIAlertController(title: "Invalid Key",
+                                   message: "The key entered is not recongized in our system. Please try again.",
                                    preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         self.present(ac, animated: true)
@@ -138,11 +162,11 @@ Mountain-UI-Companion App only supports select users. An invitation code is need
         self.view.addSubview(titleLabel)
         self.view.addSubview(appIconImageView)
         self.view.addSubview(explainationLabelView)
-        self.view.addSubview(invitationCodeTextField)
+        self.view.addSubview(invitationKeyTextField)
         self.view.addSubview(submitButton)
         
         submitButton.addTarget(self, action: #selector(submitButtonTapped), for: .touchUpInside)
-        invitationCodeTextField.delegate = self
+        invitationKeyTextField.delegate = self
         loadingBackground.frame = self.view.frame
         
         self.view.addSubview(loadingBackground)
@@ -169,13 +193,13 @@ Mountain-UI-Companion App only supports select users. An invitation code is need
             explainationLabelView.topAnchor.constraint(equalTo: appIconImageView.bottomAnchor, constant: 20),
             
             
-            invitationCodeTextField.centerXAnchor.constraint(equalTo: self.view.layoutMarginsGuide.centerXAnchor),
-            invitationCodeTextField.topAnchor.constraint(equalTo: explainationLabelView.bottomAnchor, constant: 20),
-            invitationCodeTextField.leadingAnchor.constraint(equalTo: self.view.layoutMarginsGuide.leadingAnchor, constant: 20),
-            invitationCodeTextField.trailingAnchor.constraint(equalTo: self.view.layoutMarginsGuide.trailingAnchor, constant: -20),
+            invitationKeyTextField.centerXAnchor.constraint(equalTo: self.view.layoutMarginsGuide.centerXAnchor),
+            invitationKeyTextField.topAnchor.constraint(equalTo: explainationLabelView.bottomAnchor, constant: 20),
+            invitationKeyTextField.leadingAnchor.constraint(equalTo: self.view.layoutMarginsGuide.leadingAnchor, constant: 20),
+            invitationKeyTextField.trailingAnchor.constraint(equalTo: self.view.layoutMarginsGuide.trailingAnchor, constant: -20),
             
             submitButton.centerXAnchor.constraint(equalTo: self.view.layoutMarginsGuide.centerXAnchor),
-            submitButton.topAnchor.constraint(equalTo: invitationCodeTextField.bottomAnchor, constant: 20),
+            submitButton.topAnchor.constraint(equalTo: invitationKeyTextField.bottomAnchor, constant: 20),
             submitButton.heightAnchor.constraint(equalToConstant: 44),
             submitButton.widthAnchor.constraint(equalToConstant: 100),
             
@@ -186,9 +210,9 @@ Mountain-UI-Companion App only supports select users. An invitation code is need
 }
 
 
-extension InvitationCodeSheetViewController: UITextFieldDelegate {
+extension InvitationKeySheetViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == invitationCodeTextField {
+        if textField == invitationKeyTextField {
             submitButtonTapped()
             return true
         }

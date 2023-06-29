@@ -85,7 +85,7 @@ public extension ApolloGeneratedGraphQL {
             .field("id", ApolloGeneratedGraphQL.ID.self),
             .field("originalFileName", String.self),
             .field("distance", Double.self),
-            .field("conditions", String.self),
+            .field("conditions", String?.self),
             .field("duration", Double.self),
             .field("startDate", String.self),
             .field("endDate", String.self),
@@ -99,7 +99,7 @@ public extension ApolloGeneratedGraphQL {
           public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
           public var originalFileName: String { __data["originalFileName"] }
           public var distance: Double { __data["distance"] }
-          public var conditions: String { __data["conditions"] }
+          public var conditions: String? { __data["conditions"] }
           public var duration: Double { __data["duration"] }
           public var startDate: String { __data["startDate"] }
           public var endDate: String { __data["endDate"] }

@@ -23,4 +23,5 @@ extension Setting
         .init(name: "General", iconImage: UIImage(systemName: "gear"), backgroundColor: .lightGray),
         .init(name: "Notifications", iconImage: UIImage(systemName: "bell.badge.fill"), backgroundColor: .red),
     ]
+    static let inviteKeySetting: Setting = .init(name: "Share Invite Key to Friend", iconImage: .init(systemName: "person.badge.key"), backgroundColor: .inviteKeyGreen)
 }

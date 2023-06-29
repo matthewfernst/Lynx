@@ -1,4 +1,4 @@
-mutation EditUser($userData: [KeyValuePair!]!) {
+mutation EditUser($userData: [UserDataPair!]!) {
   editUser(userData: $userData) {
     id
     appleId

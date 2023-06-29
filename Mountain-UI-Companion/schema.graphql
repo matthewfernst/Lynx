@@ -2,20 +2,18 @@ type User {
     id: ID!
     appleId: ID
     googleId: ID
+    validatedInvite: Boolean!
     email: String!
     firstName: String!
     lastName: String!
     profilePictureUrl: String
-    incomingFriendRequests: [User!]!
-    outgoingFriendRequests: [User!]!
-    friends: [User!]!
     logbook: [Log!]!
 }
 
 type Log {
     id: ID!
     originalFileName: String!
-    conditions: String!
+    conditions: String
     distance(system: MeasurementSystem = IMPERIAL): Float!
     duration: Float!
     startDate: String!
@@ -25,11 +23,6 @@ type Log {
     topSpeed(system: MeasurementSystem = IMPERIAL): Float!
     verticalDistance(system: MeasurementSystem = IMPERIAL): Float!
     details: [LogDetail!]!
-}
-
-enum MeasurementSystem {
-    METRIC
-    IMPERIAL
 }
 
 type LogDetail {
@@ -51,9 +44,22 @@ enum LogDetailType {
     LIFT
 }
 
+enum MeasurementSystem {
+    METRIC
+    IMPERIAL
+}
+
+enum LeaderboardSort {
+    DISTANCE
+    RUN_COUNT
+    TOP_SPEED
+    VERTICAL_DISTANCE
+}
+
 type AuthorizationToken {
     token: ID!
     expiryDate: String!
+    validatedInvite: Boolean!
 }
 
 enum LoginType {
@@ -61,7 +67,12 @@ enum LoginType {
     GOOGLE
 }
 
-input KeyValuePair {
+input LoginTypeCorrelations {
+    type: LoginType!
+    id: String!
+}
+
+input UserDataPair {
     key: String!
     value: String!
 }
@@ -69,20 +80,22 @@ input KeyValuePair {
 type Query {
     selfLookup: User
     userLookup(id: ID!): User
+    leaderboard(sortBy: LeaderboardSort = VERTICAL_DISTANCE, limit: Int): [User!]!
 }
 
 type Mutation {
     createUserOrSignIn(
         type: LoginType!
-        id: ID!,
-        token: ID!,
-        email: String,
-        userData: [KeyValuePair!]
+        id: ID!
+        token: ID!
+        email: String
+        userData: [UserDataPair!]
     ): AuthorizationToken
+    combineOAuthAccounts(combineWith: [LoginTypeCorrelations!]!): User!
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
-    deleteUser: User
-    editUser(userData: [KeyValuePair!]!): User!
-    requestFriend(friendId: ID!): User!
-    resolveRequestFriend(friendId: String!, choice: Boolean!): User!
+    deleteUser: User!
+    editUser(userData: [UserDataPair!]!): User!
+    createInviteKey: String!
+    resolveInviteKey(inviteKey: ID!): User!
 }
