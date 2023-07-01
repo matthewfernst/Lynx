@@ -1,5 +1,5 @@
 # Mountain-UI-Companion-App
-iOS App for Uploading Slope Files for Mountain-UI 
+iOS App for Uploading Slope Files for Mountain-UI
 
 <img src="Mountain-UI-Companion/Assets.xcassets/AppIcon.appiconset/Mountain-UI-Companion-App-Icon.png" width="300" height="300"/>
 
