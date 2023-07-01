@@ -212,9 +212,7 @@
 				654DEAE72983933C001565A3 /* LoginViewController.swift */,
 				65362D5929C1037600507CCE /* LoginController.swift */,
 				653A0E5E29BCFE8200C8F308 /* SignInWithGoogleButton.swift */,
-				657392252A47798600981775 /* InvitationKeySheetViewController.swift */,
-				657392BF2A4FE7A500981775 /* InvitationKeyInputUIView.swift */,
-				657392C12A4FE7C800981775 /* InvitationKeyDashesUIView.swift */,
+				657392C32A4FFD0100981775 /* InvitationKey */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -414,6 +412,16 @@
 				657392A12A4DD5AD00981775 /* UserDataPair.graphql.swift */,
 			);
 			path = InputObjects;
+			sourceTree = "<group>";
+		};
+		657392C32A4FFD0100981775 /* InvitationKey */ = {
+			isa = PBXGroup;
+			children = (
+				657392252A47798600981775 /* InvitationKeySheetViewController.swift */,
+				657392BF2A4FE7A500981775 /* InvitationKeyInputUIView.swift */,
+				657392C12A4FE7C800981775 /* InvitationKeyDashesUIView.swift */,
+			);
+			path = InvitationKey;
 			sourceTree = "<group>";
 		};
 		65A370CF297E594500E1D851 = {

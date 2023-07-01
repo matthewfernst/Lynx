@@ -51,6 +51,24 @@ class InvitationKeySheetViewController: UIViewController {
         return view
     }()
     
+    private let dontHaveAnInviteKeyButton: UIButton = {
+        let button = UIButton(configuration: .plain())
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Don't have an invite key?", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        return button
+    }()
+    
+    @objc private func explainInviteKey() {
+        let ac = UIAlertController(title: "Invitation Keys Explained",
+                                   message: """
+                                            Invitation keys can be acquired through friends who have already registered a key. Ask a friend to share an invitation key with you to get started.
+                                            """,
+                                   preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+        self.present(ac, animated: true)
+    }
+    
     private let loadingBackground: UIView = {
         let view = UIView()
         view.backgroundColor = .black.withAlphaComponent(0.5)
@@ -105,6 +123,7 @@ class InvitationKeySheetViewController: UIViewController {
         self.view.addSubview(titleLabel)
         self.view.addSubview(explainationLabelView)
         self.view.addSubview(invitationKeyInputView)
+        self.view.addSubview(dontHaveAnInviteKeyButton)
         
         invitationKeyInputView.didFinishEnteringKey = { [unowned self] key in
             startLoadingAnimation()
@@ -122,6 +141,8 @@ class InvitationKeySheetViewController: UIViewController {
                 stopLoadingAnimation()
             }
         }
+        
+        dontHaveAnInviteKeyButton.addTarget(self, action: #selector(explainInviteKey), for: .touchUpInside)
         
         loadingBackground.frame = self.view.frame
         
@@ -148,6 +169,8 @@ class InvitationKeySheetViewController: UIViewController {
             invitationKeyInputView.widthAnchor.constraint(equalToConstant: 320),
             invitationKeyInputView.heightAnchor.constraint(equalToConstant: 44),
             
+            dontHaveAnInviteKeyButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            dontHaveAnInviteKeyButton.topAnchor.constraint(equalTo: invitationKeyInputView.bottomAnchor, constant: 10),
             
             activityIndicator.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
