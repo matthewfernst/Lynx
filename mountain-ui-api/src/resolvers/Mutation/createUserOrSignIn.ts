@@ -39,21 +39,16 @@ const createUserOrSignIn = async (
     context: Context,
     info: any
 ): Promise<AuthorizationToken> => {
-    switch (args.type) {
-        case "APPLE":
-            await verifyAppleToken(args.id, args.token);
-        case "GOOGLE":
-            await verifyGoogleToken(args.id, args.token);
-    }
+    await verifyToken(args.type, args.id, args.token);
     return await oauthLogin(idKeyFromIdType(args.type), args.id, args.email, args.userData);
 };
 
-export const idKeyFromIdType = (idType: LoginType) => {
-    switch (idType) {
+const verifyToken = async (type: LoginType, id: string, token: string) => {
+    switch (type) {
         case "APPLE":
-            return "appleId";
+            return await verifyAppleToken(id, token);
         case "GOOGLE":
-            return "googleId";
+            return await verifyGoogleToken(id, token);
     }
 };
 
@@ -71,6 +66,15 @@ const verifyGoogleToken = async (id: string, token: string) => {
         audience: process.env.GOOGLE_CLIENT_ID
     });
     return ticket.getUserId() === id;
+};
+
+export const idKeyFromIdType = (idType: LoginType) => {
+    switch (idType) {
+        case "APPLE":
+            return "appleId";
+        case "GOOGLE":
+            return "googleId";
+    }
 };
 
 const oauthLogin = async (
