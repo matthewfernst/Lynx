@@ -17,8 +17,10 @@ import { User } from "../../types";
 export type LoginType = "APPLE" | "GOOGLE";
 
 interface Args {
-    type: LoginType;
-    id: string;
+    oauthLoginId: {
+        type: LoginType;
+        id: string;
+    };
     token: string;
     email?: string;
     userData: {
@@ -39,8 +41,13 @@ const createUserOrSignIn = async (
     context: Context,
     info: any
 ): Promise<AuthorizationToken> => {
-    await verifyToken(args.type, args.id, args.token);
-    return await oauthLogin(idKeyFromIdType(args.type), args.id, args.email, args.userData);
+    await verifyToken(args.oauthLoginId.type, args.oauthLoginId.id, args.token);
+    return await oauthLogin(
+        idKeyFromIdType(args.oauthLoginId.type),
+        args.oauthLoginId.id,
+        args.email,
+        args.userData
+    );
 };
 
 const verifyToken = async (type: LoginType, id: string, token: string) => {
