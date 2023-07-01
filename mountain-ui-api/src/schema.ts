@@ -21,6 +21,7 @@ import editUser from "./resolvers/Mutation/editUser";
 import createInviteKey from "./resolvers/Mutation/createInviteKey";
 import resolveInviteKey from "./resolvers/Mutation/resolveInviteKey";
 import email from "./resolvers/User/email";
+import oauthLoginIds from "./resolvers/User/oauthLoginIds";
 import profilePictureUrl from "./resolvers/User/profilePictureUrl";
 import logbook from "./resolvers/User/logbook";
 import id from "./resolvers/Log/id";
@@ -53,7 +54,7 @@ export const resolvers = {
         createInviteKey,
         resolveInviteKey
     },
-    User: { email, profilePictureUrl, logbook },
+    User: { email, oauthLoginIds, profilePictureUrl, logbook },
     Log: {
         id,
         details,
