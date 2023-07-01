@@ -1,7 +1,6 @@
 type User {
     id: ID!
-    appleId: ID
-    googleId: ID
+    oauthLoginIds: [LoginTypeCorrelations!]!
     validatedInvite: Boolean!
     email: String!
     firstName: String!
