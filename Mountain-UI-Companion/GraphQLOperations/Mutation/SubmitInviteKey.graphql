@@ -1,0 +1,5 @@
+mutation SubmitInviteKey($inviteKey: ID!) {
+    resolveInviteKey(inviteKey: $inviteKey) {
+        validatedInvite
+    }
+}

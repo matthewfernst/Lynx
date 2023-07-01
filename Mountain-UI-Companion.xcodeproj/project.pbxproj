@@ -67,6 +67,8 @@
 		657392B62A4DD5AD00981775 /* UserDataPair.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392A12A4DD5AD00981775 /* UserDataPair.graphql.swift */; };
 		657392B72A4DD5AD00981775 /* SchemaMetadata.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392A22A4DD5AD00981775 /* SchemaMetadata.graphql.swift */; };
 		657392B82A4DD5AD00981775 /* ApolloGeneratedGraphQL.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392A32A4DD5AD00981775 /* ApolloGeneratedGraphQL.graphql.swift */; };
+		657392C02A4FE7A500981775 /* InvitationKeyInputUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392BF2A4FE7A500981775 /* InvitationKeyInputUIView.swift */; };
+		657392C22A4FE7C800981775 /* InvitationKeyDashesUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392C12A4FE7C800981775 /* InvitationKeyDashesUIView.swift */; };
 		659A9F7E2A414BA600DC6006 /* GetLogs.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 659A9F7B2A414BA600DC6006 /* GetLogs.graphql */; };
 		659A9F832A414C2E00DC6006 /* GetProfileInformation.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 659A9F822A414C2E00DC6006 /* GetProfileInformation.graphql */; };
 		659A9F852A414C7800DC6006 /* EditUser.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 659A9F842A414C7800DC6006 /* EditUser.graphql */; };
@@ -151,6 +153,8 @@
 		657392A12A4DD5AD00981775 /* UserDataPair.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDataPair.graphql.swift; sourceTree = "<group>"; };
 		657392A22A4DD5AD00981775 /* SchemaMetadata.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaMetadata.graphql.swift; sourceTree = "<group>"; };
 		657392A32A4DD5AD00981775 /* ApolloGeneratedGraphQL.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApolloGeneratedGraphQL.graphql.swift; sourceTree = "<group>"; };
+		657392BF2A4FE7A500981775 /* InvitationKeyInputUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationKeyInputUIView.swift; sourceTree = "<group>"; };
+		657392C12A4FE7C800981775 /* InvitationKeyDashesUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationKeyDashesUIView.swift; sourceTree = "<group>"; };
 		659A9F7B2A414BA600DC6006 /* GetLogs.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GetLogs.graphql; sourceTree = "<group>"; };
 		659A9F822A414C2E00DC6006 /* GetProfileInformation.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GetProfileInformation.graphql; sourceTree = "<group>"; };
 		659A9F842A414C7800DC6006 /* EditUser.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EditUser.graphql; sourceTree = "<group>"; };
@@ -209,6 +213,8 @@
 				65362D5929C1037600507CCE /* LoginController.swift */,
 				653A0E5E29BCFE8200C8F308 /* SignInWithGoogleButton.swift */,
 				657392252A47798600981775 /* InvitationKeySheetViewController.swift */,
+				657392BF2A4FE7A500981775 /* InvitationKeyInputUIView.swift */,
+				657392C12A4FE7C800981775 /* InvitationKeyDashesUIView.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -601,6 +607,7 @@
 				654F227029FE3A1600D1C96E /* ApolloMountainUIClient.swift in Sources */,
 				65AFF4E929D163E200C0F8C0 /* UserDefaultsKeys.swift in Sources */,
 				65362D5A29C1037600507CCE /* LoginController.swift in Sources */,
+				657392C22A4FE7C800981775 /* InvitationKeyDashesUIView.swift in Sources */,
 				654DEAC3297F6720001565A3 /* SlopesConnectionViewController.swift in Sources */,
 				659A9FE72A42B83600DC6006 /* BookmarkManager.swift in Sources */,
 				654DEACA2981B006001565A3 /* AppSettingTableViewController.swift in Sources */,
@@ -647,6 +654,7 @@
 				657392B42A4DD5AD00981775 /* AuthorizationToken.graphql.swift in Sources */,
 				657392262A47798600981775 /* InvitationKeySheetViewController.swift in Sources */,
 				657392AC2A4DD5AD00981775 /* GetProfileInformationQuery.graphql.swift in Sources */,
+				657392C02A4FE7A500981775 /* InvitationKeyInputUIView.swift in Sources */,
 				657392AB2A4DD5AD00981775 /* GetLogsQuery.graphql.swift in Sources */,
 				654F22A029FEFB7100D1C96E /* RequestLoggingInterceptor.swift in Sources */,
 				65A370F7297E6B5800E1D851 /* Support.swift in Sources */,
