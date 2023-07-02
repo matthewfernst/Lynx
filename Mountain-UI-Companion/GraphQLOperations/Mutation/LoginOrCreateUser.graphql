@@ -1,12 +1,11 @@
-mutation LoginOrCreateUser($type: LoginType!, $id: ID!, $token: ID!, $email: String, $userData: [KeyValuePair!]) {
+mutation LoginOrCreateUser($oauthLoginId: LoginTypeCorrelationInput!, $token: ID!, $email: String, $userData: [UserDataPair!]) {
   createUserOrSignIn(
-    type: $type,
-    id: $id,
+    oauthLoginId: $oauthLoginId
     token: $token,
     email: $email,
-    userData: $userData
-  ) {
-  token
-  expiryDate
-}
+    userData: $userData) {
+      token
+      expiryDate
+      validatedInvite
+    }
 }

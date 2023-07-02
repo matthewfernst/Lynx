@@ -157,7 +157,7 @@ class LoginViewController: UIViewController
             let email = profile.email
             let activityIndicator = self.showSignInActivityIndicator()
             
-            LoginController.handleCommonSignIn(type: SignInType.google.rawValue,
+            loginController.handleCommonSignIn(type: SignInType.google.rawValue,
                                                id: googleId,
                                                token: token,
                                                email: email,
@@ -223,7 +223,6 @@ class LoginViewController: UIViewController
         loadingBackground.addSubview(activityIndicator)
         
         NSLayoutConstraint.activate([
-            
             activityIndicator.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
         ])
@@ -231,6 +230,14 @@ class LoginViewController: UIViewController
         activityIndicator.startAnimating()
         
         return activityIndicator
+    }
+    
+    public func setupInvitationSheet(completion: @escaping () -> Void) {
+        DispatchQueue.main.async {
+            let activationSheetViewController = InvitationKeySheetViewController(completion: completion)
+            activationSheetViewController.modalPresentationStyle = .formSheet
+            self.present(activationSheetViewController, animated: true)
+        }
     }
     
     private func signInExistingUser() {
@@ -243,14 +250,14 @@ class LoginViewController: UIViewController
                 self.performExistingAppleAccountSetupFlows()
                 
             case .google:
-                GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+                GIDSignIn.sharedInstance.restorePreviousSignIn { [unowned self] user, error in
                     if error != nil || user == nil {
                         // Show the app's signed-out state.
                     } else {
                         // Show the app's signed-in state.
                         if let token = user?.idToken?.tokenString,
                            let googleId = user?.userID {
-                            LoginController.handleCommonSignIn(type: SignInType.google.rawValue, id: googleId, token: token) { result in
+                            loginController.handleCommonSignIn(type: SignInType.google.rawValue, id: googleId, token: token) { result in
                                 activityIndicator.startAnimating()
                                 self.updateViewFromModel()
                             }
@@ -276,7 +283,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             }
             
             let activityIndicator = self.showSignInActivityIndicator()
-            LoginController.handleCommonSignIn(type: SignInType.apple.rawValue,
+            loginController.handleCommonSignIn(type: SignInType.apple.rawValue,
                                                id: appleIdCredential.user,
                                                token: appleJWT,
                                                email: appleIdCredential.email,

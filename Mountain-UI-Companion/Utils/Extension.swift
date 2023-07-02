@@ -85,7 +85,6 @@ extension String
 
 extension UIColor
 {
-    
     static var signBackgroundLavendar: UIColor {
         return UIColor(red: 226 / 255, green: 232 / 255, blue: 247 / 255, alpha: 1)
     }
@@ -97,6 +96,10 @@ extension UIColor
     static var buyMeCoffeeYellow: UIColor {
         return UIColor(red: 255 / 255, green: 221 / 255, blue: 0 / 255, alpha: 1)
     }
+    
+    static var inviteKeyGreen: UIColor {
+        return UIColor(red: 50 / 255.0, green: 205 / 255.0, blue: 50 / 255.0, alpha: 1)
+    }
 }
 
 extension Logger
@@ -106,6 +109,8 @@ extension Logger
     static let loginController = Logger(subsystem: subsystem, category: "UserInfo")
     
     static let loginViewController = Logger(subsystem: subsystem, category: "LoginViewController")
+    
+    static let invitationKeySheet = Logger(subsystem: subsystem, category: "InvitationKeySheet")
     
     static let editProfileTableViewController = Logger(subsystem: subsystem, category: "EditProfileTableViewController")
     

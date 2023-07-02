@@ -51,17 +51,14 @@ class ApolloMountainUIClient
                     return
                 }
                 
-                guard let (type, oauthId): (String, String) = {
-                    switch (selfLookup.appleId, selfLookup.googleId) {
-                    case (.some, _):
-                        return ("APPLE", selfLookup.appleId!)
-                    case (_, .some):
-                        return ("GOOGLE", selfLookup.googleId!)
-                    default:
-                        return nil
-                    }
-                }() else {
-                    Logger.apollo.error("AppleId and GoogleId were both null.")
+                // TODO: First okay?
+                guard let type = selfLookup.oauthLoginIds.first?.type else {
+                    Logger.apollo.error("oauthLoginIds failed to unwrap type.")
+                    return
+                }
+                
+                guard let oauthId = selfLookup.oauthLoginIds.first?.id else {
+                    Logger.apollo.error("oauthLoginIds failed to unwrap id.")
                     return
                 }
                 
@@ -70,7 +67,7 @@ class ApolloMountainUIClient
                     return
                 }
                 
-                let profileAttributes = ProfileAttributes(type: type,
+                let profileAttributes = ProfileAttributes(type: type.rawValue,
                                                           oauthToken: oauthToken,
                                                           id: oauthId,
                                                           email: selfLookup.email,
@@ -87,7 +84,7 @@ class ApolloMountainUIClient
     }
     
     
-    public static func loginOrCreateUser(type: String, id: String, token: String, email: String?, firstName: String?, lastName: String?, profilePictureUrl: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+    public static func loginOrCreateUser(type: String, id: String, token: String, email: String?, firstName: String?, lastName: String?, profilePictureUrl: String?, completion: @escaping (Result<Bool, Error>) -> Void) {
         
         Logger.apollo.debug("Login in with following: type               -> \(type)")
         Logger.apollo.debug("                         id                 -> \(id)")
@@ -98,17 +95,20 @@ class ApolloMountainUIClient
         Logger.apollo.debug("                         profilePictureUrl  -> \(profilePictureUrl ?? "nil")")
         
         
-        var userData: [ApolloGeneratedGraphQL.KeyValuePair] = []
-        var userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.KeyValuePair]>(nilLiteral: ())
+        var userData: [ApolloGeneratedGraphQL.UserDataPair] = []
+        var userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.UserDataPair]>(nilLiteral: ())
         
         if let firstName = firstName, let lastName = lastName, let profilePictureUrl = profilePictureUrl {
-            userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "firstName", value: firstName))
-            userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "lastName", value: lastName))
-            userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "profilePictureUrl", value: profilePictureUrl))
-            userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.KeyValuePair]>(arrayLiteral: userData[0], userData[1], userData[2])
+            userData.append(ApolloGeneratedGraphQL.UserDataPair(key: "firstName", value: firstName))
+            userData.append(ApolloGeneratedGraphQL.UserDataPair(key: "lastName", value: lastName))
+            userData.append(ApolloGeneratedGraphQL.UserDataPair(key: "profilePictureUrl", value: profilePictureUrl))
+            userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.UserDataPair]>(arrayLiteral: userData[0], userData[1], userData[2])
         }
         
         let type = GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: type)
+        let oauthLoginId = ApolloGeneratedGraphQL.LoginTypeCorrelationInput(type: type, id: id)
+        
+        
         let emailNullable: GraphQLNullable<String>
         if email == nil {
             emailNullable = GraphQLNullable<String>(nilLiteral: ())
@@ -116,8 +116,7 @@ class ApolloMountainUIClient
             emailNullable = GraphQLNullable<String>(stringLiteral: email!)
         }
         
-        apolloClient.perform(mutation: ApolloGeneratedGraphQL.LoginOrCreateUserMutation(type: type,
-                                                                                        id: id,
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.LoginOrCreateUserMutation(oauthLoginId: oauthLoginId,
                                                                                         token: token,
                                                                                         email: emailNullable,
                                                                                         userData: userDataNullable)) { result in
@@ -140,22 +139,60 @@ class ApolloMountainUIClient
                 
                 UserManager.shared.token = ExpirableAuthorizationToken(authorizationToken: authorizationToken, expirationDate: expirationDate, oauthToken: token)
                 
-                completion(.success(()))
+                completion(.success((data.validatedInvite)))
                 
             case .failure(let error):
                 Logger.apollo.error("LoginOrCreateUser mutation failed with Error: \(error)")
             }
-            
         }
-        
+    }
+    
+    public static func createInviteKey(completion: @escaping ((Result<String, Error>) -> Void)) {
+        enum CreateInviteKeyError: Error {
+            case failedToUnwrapData
+        }
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreateInviteKeyMutation()) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let inviteKey = graphQLResult.data?.createInviteKey else {
+                    Logger.apollo.error("Error: Failed to unwrap data for invite key.")
+                    completion(.failure(CreateInviteKeyError.failedToUnwrapData))
+                    return
+                }
+                
+                completion(.success(inviteKey))
+                
+            case .failure(let error):
+                Logger.apollo.error("Error: Failed to create invite key with error \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    public static func submitInviteKey(with invitationKey: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+        enum InviteKeyError: Error {
+            case failedValidateInvite
+        }
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.SubmitInviteKeyMutation(inviteKey: invitationKey)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                if let validatedInvite = graphQLResult.data?.resolveInviteKey.validatedInvite, validatedInvite {
+                    completion(.success(()))
+                } else {
+                    completion(.failure(InviteKeyError.failedValidateInvite))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
     
     public static func editUser(profileChanges: [String: Any], completion: @escaping ((Result<String, Error>) -> Void)) {
         
-        var userData: [ApolloGeneratedGraphQL.KeyValuePair] = []
+        var userData: [ApolloGeneratedGraphQL.UserDataPair] = []
         for (key, value) in profileChanges {
             let stringValue = String(describing: value)
-            userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: key, value: stringValue))
+            userData.append(ApolloGeneratedGraphQL.UserDataPair(key: key, value: stringValue))
         }
         
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.EditUserMutation(userData: userData)) { result in

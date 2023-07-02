@@ -22,7 +22,7 @@ class LoginController
         self.loginViewController = loginViewController
     }
     
-    static func handleCommonSignIn(type: String, id: String, token: String, email: String? = nil, firstName: String? = nil, lastName: String? = nil, profilePictureURL: String = "", completion: @escaping (Result<Void, Error>) -> Void) {
+    public func handleCommonSignIn(type: String, id: String, token: String, email: String? = nil, firstName: String? = nil, lastName: String? = nil, profilePictureURL: String = "", completion: @escaping (Result<Void, Error>) -> Void) {
         ApolloMountainUIClient.loginOrCreateUser(type: type,
                                                  id: id,
                                                  token: token,
@@ -31,16 +31,22 @@ class LoginController
                                                  lastName: lastName,
                                                  profilePictureUrl: profilePictureURL) { result in
             switch result {
-            case .success:
+            case .success(let validatedInvite):
                 Logger.loginController.info("Authorization Token successfully recieved.")
-                self.loginUser(completion: completion)
+                if validatedInvite {
+                    self.loginUser(completion: completion)
+                } else {
+                    self.loginViewController.setupInvitationSheet { [weak self] in
+                        self?.loginUser(completion: completion)
+                    }
+                }
             case .failure:
                 completion(.failure(UserError.noAuthorizationTokenReturned))
             }
         }
     }
     
-    private static func loginUser(completion: @escaping (Result<Void, Error>) -> Void) {
+    private func loginUser(completion: @escaping (Result<Void, Error>) -> Void) {
         ApolloMountainUIClient.getProfileInformation() { result in
             switch result {
             case .success(let profileAttributes):
@@ -52,7 +58,7 @@ class LoginController
         }
     }
     
-    private static func signInUser(profileAttributes: ProfileAttributes, completion: @escaping (Result<Void, Error>) -> Void) {
+    private func signInUser(profileAttributes: ProfileAttributes, completion: @escaping (Result<Void, Error>) -> Void) {
         let group = DispatchGroup()
         var createdProfile: Profile?
         group.enter()

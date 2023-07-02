@@ -75,9 +75,7 @@ class SlopesConnectionViewController: UIViewController, UIDocumentPickerDelegate
                 showConnectToSlopesView()
             }
             else {
-                Task {
-                    await self.checkForNewFilesAndUpload()
-                }
+                self.checkForNewFilesAndUpload()
             }
         }
     }
