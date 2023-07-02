@@ -44,7 +44,8 @@ class LogbookViewController: UIViewController {
     private func setupNavigationBar() {
         self.title = "Logbook"
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(explainMoreWithSlopes))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "folder.badge.plus"), style: .plain, target: self, action: #selector(explainMoreWithSlopes))
+
     }
     
     private func setupRefreshControl() {
