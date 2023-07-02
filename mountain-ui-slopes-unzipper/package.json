@@ -6,10 +6,16 @@
     "license": "MIT",
     "main": "index.js",
     "scripts": {
+        "types": "tsc && rm -rf ./index.js",
+        "lint": "eslint ./**/*.ts",
+        "check": "npm run types && npm run lint",
         "deploy": "serverless deploy --stage production"
     },
     "devDependencies": {
         "@types/node": "^11.13.0",
+        "@typescript-eslint/eslint-plugin": "^5.60.1",
+        "eslint": "^8.43.0",
+        "eslint-config-prettier": "^8.8.0",
         "serverless": "^3.28.1",
         "serverless-plugin-typescript": "^2.1.4",
         "typescript": "^4.9.5"

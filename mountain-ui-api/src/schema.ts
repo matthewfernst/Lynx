@@ -9,17 +9,19 @@ const schema = fs.readFileSync(path.join(__dirname, "../schema.graphql"), "utf8"
 export const typeDefs = gql(schema);
 export const gqlSchema = buildSchema(schema);
 
+import selfLookup from "./resolvers/Query/selfLookup";
+import userLookup from "./resolvers/Query/userLookup";
+import leaderboard from "./resolvers/Query/leaderboard";
 import createUserOrSignIn from "./resolvers/Mutation/createUserOrSignIn";
+import combineOAuthAccounts from "./resolvers/Mutation/combineOAuthAccounts";
 import createUserProfilePictureUploadUrl from "./resolvers/Mutation/createUserProfilePictureUploadUrl";
 import createUserRecordUploadUrl from "./resolvers/Mutation/createUserRecordUploadUrl";
 import deleteUser from "./resolvers/Mutation/deleteUser";
 import editUser from "./resolvers/Mutation/editUser";
-import requestFriend from "./resolvers/Mutation/requestFriend";
-import resolveRequestFriend from "./resolvers/Mutation/resolveRequestFriend";
-import selfLookup from "./resolvers/Query/selfLookup";
-import userLookup from "./resolvers/Query/userLookup";
+import createInviteKey from "./resolvers/Mutation/createInviteKey";
+import resolveInviteKey from "./resolvers/Mutation/resolveInviteKey";
 import email from "./resolvers/User/email";
-import friends from "./resolvers/User/friends";
+import oauthLoginIds from "./resolvers/User/oauthLoginIds";
 import profilePictureUrl from "./resolvers/User/profilePictureUrl";
 import logbook from "./resolvers/User/logbook";
 import id from "./resolvers/Log/id";
@@ -41,17 +43,18 @@ import topSpeedAltitude from "./resolvers/LogDetail/topSpeedAltitude";
 import logDetailVerticalDistance from "./resolvers/LogDetail/verticalDistance";
 
 export const resolvers = {
-    Query: { selfLookup, userLookup },
+    Query: { selfLookup, userLookup, leaderboard },
     Mutation: {
         createUserOrSignIn,
+        combineOAuthAccounts,
         createUserProfilePictureUploadUrl,
         createUserRecordUploadUrl,
         deleteUser,
         editUser,
-        requestFriend,
-        resolveRequestFriend
+        createInviteKey,
+        resolveInviteKey
     },
-    User: { email, friends, profilePictureUrl, logbook },
+    User: { email, oauthLoginIds, profilePictureUrl, logbook },
     Log: {
         id,
         details,

@@ -1,6 +1,6 @@
 import { createSignedUploadUrl, profilePictureBucketName } from "../../aws/s3";
 import { Context } from "../../index";
-import { checkIsLoggedIn } from "../../auth";
+import { checkIsLoggedInAndHasValidToken } from "../../auth";
 
 interface Args {}
 
@@ -10,7 +10,7 @@ const createUserProfilePictureUploadUrl = async (
     context: Context,
     info: any
 ): Promise<string> => {
-    await checkIsLoggedIn(context);
+    await checkIsLoggedInAndHasValidToken(context);
     console.log(`Creating Profile Picture Upload URL For User ID ${context.userId}`);
     return await createSignedUploadUrl(profilePictureBucketName, context.userId as string);
 };

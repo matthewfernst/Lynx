@@ -1,18 +1,17 @@
 export interface User {
-    [key: string]: any;
+    [key: string]: string | boolean | undefined;
     id: string;
     appleId?: string;
     googleId?: string;
+    validatedInvite: boolean;
     email: string;
     firstName?: string;
     lastName?: string;
     profilePictureUrl?: string;
-    incomingFriendRequests: string[];
-    outgoingFriendRequests: string[];
-    friends: string[];
 }
 
 export interface Log {
+    [key: string]: string | number | LogDetail[];
     id: string;
     originalFileName: string;
     centerLat: number;
@@ -23,13 +22,14 @@ export interface Log {
     start: string;
     end: string;
     locationName: string;
-    runCount: string;
+    runCount: number;
     topSpeed: number;
     vertical: number;
     details: LogDetail[];
 }
 
 export interface LogDetail {
+    [key: string]: string | number;
     type: LogDetailType;
     averageSpeed: number;
     distance: number;
@@ -45,3 +45,9 @@ export interface LogDetail {
 
 export type MeasurementSystem = "METRIC" | "IMPERIAL";
 export type LogDetailType = "RUN" | "LIFT";
+
+export interface Invite {
+    [key: string]: string | number;
+    id: string;
+    ttl: number;
+}

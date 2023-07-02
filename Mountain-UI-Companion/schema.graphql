@@ -85,6 +85,7 @@ type Query {
     selfLookup: User
     userLookup(id: ID!): User
     leaderboard(sortBy: LeaderboardSort = VERTICAL_DISTANCE, limit: Int): [User!]!
+
 }
 
 type Mutation {
@@ -101,4 +102,5 @@ type Mutation {
     editUser(userData: [UserDataPair!]!): User!
     createInviteKey: String!
     resolveInviteKey(inviteKey: ID!): User!
+
 }

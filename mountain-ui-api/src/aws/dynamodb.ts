@@ -6,19 +6,21 @@ import {
     GetItemOutput,
     PutItemOutput,
     QueryOutput,
+    ScanOutput,
     UpdateItemOutput,
-    DynamoDBClient
+    DynamoDB
 } from "@aws-sdk/client-dynamodb";
 import {
-    DynamoDBDocumentClient,
+    DynamoDBDocument,
     DeleteCommand,
     GetCommand,
     UpdateCommand,
     PutCommand,
-    QueryCommand
+    QueryCommand,
+    ScanCommand
 } from "@aws-sdk/lib-dynamodb";
 
-import { User } from "../types";
+import { Invite, User } from "../types";
 
 type DynamoDBResult =
     | GetItemOutput
@@ -27,9 +29,12 @@ type DynamoDBResult =
     | UpdateItemOutput
     | DeleteItemOutput;
 
-export const DYNAMODB_TABLE_NAME_USERS = "mountain-ui-app-users";
+export const DYNAMODB_TABLE_USERS = "mountain-ui-app-users";
+export const DYNAMODB_TABLE_INVITES = "mountain-ui-app-invites";
 
-const createDocumentClient = (): DynamoDBDocumentClient => {
+export type Table = typeof DYNAMODB_TABLE_USERS | typeof DYNAMODB_TABLE_INVITES;
+
+const createDocumentClient = (): DynamoDBDocument => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
 
     const serviceConfigOptions: DynamoDBClientConfig = {
@@ -37,11 +42,11 @@ const createDocumentClient = (): DynamoDBDocumentClient => {
         ...(process.env.IS_OFFLINE && { endpoint: "http://localhost:8080" })
     };
 
-    const dynamodbClient = new DynamoDBClient(serviceConfigOptions);
-    return DynamoDBDocumentClient.from(dynamodbClient);
+    const dynamodbClient = new DynamoDB(serviceConfigOptions);
+    return DynamoDBDocument.from(dynamodbClient);
 };
 
-export const getItem = async (table: string, id: string): Promise<GetItemOutput> => {
+export const getItem = async (table: Table, id: string): Promise<GetItemOutput> => {
     const documentClient = createDocumentClient();
     try {
         console.log(`Getting item from table ${table} with id ${id}`);
@@ -54,7 +59,7 @@ export const getItem = async (table: string, id: string): Promise<GetItemOutput>
 };
 
 export const getItemsByIndex = async (
-    table: string,
+    table: Table,
     key: string,
     value: string
 ): Promise<QueryOutput> => {
@@ -75,7 +80,19 @@ export const getItemsByIndex = async (
     }
 };
 
-export const putItem = async (table: string, item: Object): Promise<PutItemOutput> => {
+export const scanAllItems = async (table: Table): Promise<ScanOutput> => {
+    const documentClient = createDocumentClient();
+    try {
+        console.log(`Getting all items from table ${table}`);
+        const scanRequest = new ScanCommand({ TableName: table });
+        return await documentClient.send(scanRequest);
+    } catch (err) {
+        console.error(err);
+        throw Error("DynamoDB Scan Call Failed");
+    }
+};
+
+export const putItem = async (table: Table, item: Object): Promise<PutItemOutput> => {
     const documentClient = createDocumentClient();
     try {
         console.log(`Putting item into table ${table}`);
@@ -92,10 +109,10 @@ export const putItem = async (table: string, item: Object): Promise<PutItemOutpu
 };
 
 export const updateItem = async (
-    table: string,
+    table: Table,
     id: string,
     key: string,
-    value: string
+    value: any
 ): Promise<UpdateItemOutput> => {
     const documentClient = createDocumentClient();
     try {
@@ -116,7 +133,7 @@ export const updateItem = async (
 };
 
 export const addItemsToArray = async (
-    table: string,
+    table: Table,
     id: string,
     key: string,
     values: string[]
@@ -142,7 +159,7 @@ export const addItemsToArray = async (
 };
 
 export const deleteItemsFromArray = async (
-    table: string,
+    table: Table,
     id: string,
     key: string,
     values: string[]
@@ -156,7 +173,9 @@ export const deleteItemsFromArray = async (
         if (!item) {
             throw new Error("Error finding item for this userId");
         }
-        const indices = item[key].map((listItem: string) => item[key].index(listItem));
+        const indices = (item[key] as unknown as any[]).map((listItem: string) =>
+            (item[key] as unknown as any[]).indexOf(listItem)
+        );
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
@@ -178,7 +197,7 @@ export const deleteItemsFromArray = async (
     }
 };
 
-export const deleteItem = async (table: string, id: string): Promise<DeleteItemOutput> => {
+export const deleteItem = async (table: Table, id: string): Promise<DeleteItemOutput> => {
     const documentClient = createDocumentClient();
     try {
         console.log(`Deleting item from table ${table} with id ${id}`);
@@ -194,15 +213,15 @@ export const deleteItem = async (table: string, id: string): Promise<DeleteItemO
     }
 };
 
-export const getItemFromDynamoDBResult = (dynamodbResult: DynamoDBResult): User | null => {
+export const getItemFromDynamoDBResult = (dynamodbResult: DynamoDBResult): User | Invite | null => {
     if ("Item" in dynamodbResult && dynamodbResult.Item) {
-        return dynamodbResult.Item as unknown as User;
+        return dynamodbResult.Item as any;
     }
     if ("Items" in dynamodbResult && dynamodbResult.Items) {
-        return dynamodbResult.Items[0] as unknown as User;
+        return dynamodbResult.Items[0] as any;
     }
     if ("Attributes" in dynamodbResult && dynamodbResult.Attributes) {
-        return dynamodbResult.Attributes as unknown as User;
+        return dynamodbResult.Attributes as any;
     }
     return null;
 };

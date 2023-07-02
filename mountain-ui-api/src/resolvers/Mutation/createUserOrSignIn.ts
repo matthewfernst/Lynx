@@ -7,17 +7,20 @@ import { UserInputError } from "apollo-server-lambda";
 import { generateToken } from "../../auth";
 import { Context } from "../../index";
 import {
-    DYNAMODB_TABLE_NAME_USERS,
+    DYNAMODB_TABLE_USERS,
     getItemFromDynamoDBResult,
     getItemsByIndex,
     putItem
 } from "../../aws/dynamodb";
+import { User } from "../../types";
 
-type LoginType = "APPLE" | "GOOGLE";
+export type LoginType = "APPLE" | "GOOGLE";
 
 interface Args {
-    type: LoginType;
-    id: string;
+    oauthLoginId: {
+        type: LoginType;
+        id: string;
+    };
     token: string;
     email?: string;
     userData: {
@@ -29,6 +32,7 @@ interface Args {
 interface AuthorizationToken {
     token: string;
     expiryDate: string;
+    validatedInvite: boolean;
 }
 
 const createUserOrSignIn = async (
@@ -37,13 +41,21 @@ const createUserOrSignIn = async (
     context: Context,
     info: any
 ): Promise<AuthorizationToken> => {
-    switch (args.type) {
+    await verifyToken(args.oauthLoginId.type, args.oauthLoginId.id, args.token);
+    return await oauthLogin(
+        idKeyFromIdType(args.oauthLoginId.type),
+        args.oauthLoginId.id,
+        args.email,
+        args.userData
+    );
+};
+
+const verifyToken = async (type: LoginType, id: string, token: string) => {
+    switch (type) {
         case "APPLE":
-            await verifyAppleToken(args.id, args.token);
-            return await oauthLogin("appleId", args.id, args.email, args.userData);
+            return await verifyAppleToken(id, token);
         case "GOOGLE":
-            await verifyGoogleToken(args.id, args.token);
-            return await oauthLogin("googleId", args.id, args.email, args.userData);
+            return await verifyGoogleToken(id, token);
     }
 };
 
@@ -63,34 +75,47 @@ const verifyGoogleToken = async (id: string, token: string) => {
     return ticket.getUserId() === id;
 };
 
+export const idKeyFromIdType = (idType: LoginType) => {
+    switch (idType) {
+        case "APPLE":
+            return "appleId";
+        case "GOOGLE":
+            return "googleId";
+    }
+};
+
 const oauthLogin = async (
     idFieldName: string,
     id: string,
     email?: string,
     userData?: { key: string; value: string }[]
 ): Promise<AuthorizationToken> => {
-    const dynamodbResult = await getItemsByIndex(DYNAMODB_TABLE_NAME_USERS, idFieldName, id);
-    const user = await getItemFromDynamoDBResult(dynamodbResult);
+    const dynamodbResult = await getItemsByIndex(DYNAMODB_TABLE_USERS, idFieldName, id);
+    const user = (await getItemFromDynamoDBResult(dynamodbResult)) as User | null;
     const oneHourFromNow = DateTime.now().plus({ hours: 1 }).toMillis().toString();
     if (user) {
-        return { token: generateToken(user.id), expiryDate: oneHourFromNow };
+        return {
+            token: generateToken(user.id),
+            expiryDate: oneHourFromNow,
+            validatedInvite: user.validatedInvite
+        };
     } else {
         if (!email || !userData) {
             throw new UserInputError("Must Provide Email And UserData On Account Creation");
         }
         const mountainAppId = uuid();
-        await putItem(DYNAMODB_TABLE_NAME_USERS, {
+        const validatedInvite = false;
+        await putItem(DYNAMODB_TABLE_USERS, {
             id: mountainAppId,
             [idFieldName]: id,
+            validatedInvite,
             email,
-            ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value }))),
-            incomingFriendRequests: [],
-            outgoingFriendRequests: [],
-            friends: []
+            ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
         });
         return {
             token: generateToken(mountainAppId),
-            expiryDate: oneHourFromNow
+            expiryDate: oneHourFromNow,
+            validatedInvite
         };
     }
 };
