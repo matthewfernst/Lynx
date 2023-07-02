@@ -197,13 +197,34 @@ class AccountViewController: UITableViewController, EditProfileDelegate
             ApolloMountainUIClient.createInviteKey { [weak self] result in
                 switch result {
                 case .success(let inviteKey):
-                    let activityViewController = UIActivityViewController(activityItems: [inviteKey], applicationActivities: nil)
+                    
+                    guard let firstName = self?.profile.firstName else {
+                        return
+                    }
+
+                    guard let lastName = self?.profile.lastName else {
+                        return
+                    }
+                    
+                    let message = """
+                                  \(firstName) \(lastName) has shared an invitation key to Mountain-UI-Companion App. Open the app and enter the key below.
+                                  
+                                  
+                                  \(inviteKey)
+                                  """
+                    let activityViewController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
                     
                     activityViewController.excludedActivityTypes = [
                         .addToReadingList,
                         .assignToContact,
                         .openInIBooks,
                         .addToHomeScreen,
+                        .airDrop,
+                        .postToFacebook,
+                        .postToTwitter,
+                        .postToVimeo,
+                        .postToWeibo,
+                        .postToTencentWeibo,
                     ]
                     
                     self?.present(activityViewController, animated: true)

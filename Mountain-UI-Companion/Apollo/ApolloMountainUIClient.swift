@@ -51,17 +51,14 @@ class ApolloMountainUIClient
                     return
                 }
                 
-                guard let (type, oauthId): (String, String) = {
-                    switch (selfLookup.appleId, selfLookup.googleId) {
-                    case (.some, _):
-                        return ("APPLE", selfLookup.appleId!)
-                    case (_, .some):
-                        return ("GOOGLE", selfLookup.googleId!)
-                    default:
-                        return nil
-                    }
-                }() else {
-                    Logger.apollo.error("AppleId and GoogleId were both null.")
+                // TODO: First okay?
+                guard let type = selfLookup.oauthLoginIds.first?.type else {
+                    Logger.apollo.error("oauthLoginIds failed to unwrap type.")
+                    return
+                }
+                
+                guard let oauthId = selfLookup.oauthLoginIds.first?.id else {
+                    Logger.apollo.error("oauthLoginIds failed to unwrap id.")
                     return
                 }
                 
@@ -70,7 +67,7 @@ class ApolloMountainUIClient
                     return
                 }
                 
-                let profileAttributes = ProfileAttributes(type: type,
+                let profileAttributes = ProfileAttributes(type: type.rawValue,
                                                           oauthToken: oauthToken,
                                                           id: oauthId,
                                                           email: selfLookup.email,
@@ -109,6 +106,9 @@ class ApolloMountainUIClient
         }
         
         let type = GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: type)
+        let oauthLoginId = ApolloGeneratedGraphQL.LoginTypeCorrelationInput(type: type, id: id)
+        
+        
         let emailNullable: GraphQLNullable<String>
         if email == nil {
             emailNullable = GraphQLNullable<String>(nilLiteral: ())
@@ -116,8 +116,7 @@ class ApolloMountainUIClient
             emailNullable = GraphQLNullable<String>(stringLiteral: email!)
         }
         
-        apolloClient.perform(mutation: ApolloGeneratedGraphQL.LoginOrCreateUserMutation(type: type,
-                                                                                        id: id,
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.LoginOrCreateUserMutation(oauthLoginId: oauthLoginId,
                                                                                         token: token,
                                                                                         email: emailNullable,
                                                                                         userData: userDataNullable)) { result in

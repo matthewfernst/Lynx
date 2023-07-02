@@ -1,8 +1,10 @@
 mutation EditUser($userData: [UserDataPair!]!) {
   editUser(userData: $userData) {
     id
-    appleId
-    googleId
+    oauthLoginIds {
+        type
+        id
+    }
     email
     firstName
     lastName

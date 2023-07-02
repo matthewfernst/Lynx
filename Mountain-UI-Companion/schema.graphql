@@ -1,7 +1,6 @@
 type User {
     id: ID!
-    appleId: ID
-    googleId: ID
+    oauthLoginIds: [LoginTypeCorrelation!]!
     validatedInvite: Boolean!
     email: String!
     firstName: String!
@@ -67,7 +66,12 @@ enum LoginType {
     GOOGLE
 }
 
-input LoginTypeCorrelations {
+type LoginTypeCorrelation {
+    type: LoginType!
+    id: String!
+}
+
+input LoginTypeCorrelationInput {
     type: LoginType!
     id: String!
 }
@@ -85,13 +89,12 @@ type Query {
 
 type Mutation {
     createUserOrSignIn(
-        type: LoginType!
-        id: ID!
+        oauthLoginId: LoginTypeCorrelationInput!
         token: ID!
         email: String
         userData: [UserDataPair!]
     ): AuthorizationToken
-    combineOAuthAccounts(combineWith: [LoginTypeCorrelations!]!): User!
+    combineOAuthAccounts(combineWith: [LoginTypeCorrelationInput!]!): User!
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
     deleteUser: User!

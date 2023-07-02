@@ -25,7 +25,7 @@ class InvitationKeySheetViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Enter Your Invitation Key"
+        label.text = "Invitation Key"
         label.numberOfLines = 2
         label.font = UIFont.systemFont(ofSize: 30, weight: .semibold)
         label.textAlignment = .center
@@ -59,10 +59,10 @@ class InvitationKeySheetViewController: UIViewController {
         return button
     }()
     
-    @objc private func explainInviteKey() {
-        let ac = UIAlertController(title: "Invitation Keys Explained",
+    @objc private func dontHaveAnInviteKeyButtonPressed() {
+        let ac = UIAlertController(title: "Need an Invitation Key?",
                                    message: """
-                                            Invitation keys can be acquired through friends who have already registered a key. Ask a friend to share an invitation key with you to get started.
+                                            Invitation keys are required to create an account on Mountain-UI-Companion. If you don't have an invitation key, you can request one from a friend who already has an account.
                                             """,
                                    preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
@@ -127,14 +127,14 @@ class InvitationKeySheetViewController: UIViewController {
         
         invitationKeyInputView.didFinishEnteringKey = { [unowned self] key in
             startLoadingAnimation()
-            invitationKeyInputView.key = ""
             ApolloMountainUIClient.submitInviteKey(with: key) { [unowned self] result in
                 switch result {
                 case .success(_):
-                    Logger.invitationKeySheet.debug("Successfully validated invite key.")
+                    Logger.invitationKeySheet.debug("Successfully validated invitation key.")
                     self.dismiss(animated: true, completion: nil)
                     self.completion()
                 case .failure(let error):
+                    invitationKeyInputView.key = ""
                     Logger.invitationKeySheet.error("Error: \(error)")
                     showInvitationKeyIsInvalidAlert()
                 }
@@ -142,7 +142,7 @@ class InvitationKeySheetViewController: UIViewController {
             }
         }
         
-        dontHaveAnInviteKeyButton.addTarget(self, action: #selector(explainInviteKey), for: .touchUpInside)
+        dontHaveAnInviteKeyButton.addTarget(self, action: #selector(dontHaveAnInviteKeyButtonPressed), for: .touchUpInside)
         
         loadingBackground.frame = self.view.frame
         

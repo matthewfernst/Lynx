@@ -9,7 +9,8 @@ import UIKit
 
 class InvitationKeyInputUIView: UIView, UITextInputTraits {
     var keyboardType: UIKeyboardType = .numberPad
-    
+    var textContentType: UITextContentType = .oneTimeCode
+
     var didFinishEnteringKey:((String)-> Void)?
     
     var key: String = "" {
@@ -40,7 +41,6 @@ class InvitationKeyInputUIView: UIView, UITextInputTraits {
 }
 
 extension InvitationKeyInputUIView {
-    
     override var canBecomeFirstResponder: Bool {
         return true
     }
@@ -106,12 +106,6 @@ extension InvitationKeyInputUIView {
         return dashes
     }
     
-    private func dash() -> UIView {
-        let dashes = InvitationKeyDashesUIView()
-        dashes.dashes.backgroundColor = .green
-        return dashes
-    }
-    
     private func updateStack(by key: String) {
         var emptyDashesLeft: [UIView] = Array(0..<maxLength/2).map { _ in emptyDash() }
         var emptyDashesRight: [UIView] = Array(0..<maxLength/2).map { _ in emptyDash() }
@@ -119,7 +113,7 @@ extension InvitationKeyInputUIView {
         let keyLabels: [UILabel] = Array(key).map { character in
             let label = UILabel()
             label.textAlignment = .center
-            label.font = UIFont.systemFont(ofSize: 30)
+            label.font = UIFont.systemFont(ofSize: 28, weight: .semibold)
             label.text = String(character)
             return label
         }
@@ -142,7 +136,6 @@ extension InvitationKeyInputUIView {
             rightStack.addArrangedSubview(view)
         }
     }
-    
 }
 
 extension UIStackView {

@@ -13,8 +13,11 @@ public extension ApolloGeneratedGraphQL {
           editUser(userData: $userData) {
             __typename
             id
-            appleId
-            googleId
+            oauthLoginIds {
+              __typename
+              type
+              id
+            }
             email
             firstName
             lastName
@@ -67,8 +70,7 @@ public extension ApolloGeneratedGraphQL {
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
           .field("id", ApolloGeneratedGraphQL.ID.self),
-          .field("appleId", ApolloGeneratedGraphQL.ID?.self),
-          .field("googleId", ApolloGeneratedGraphQL.ID?.self),
+          .field("oauthLoginIds", [OauthLoginId].self),
           .field("email", String.self),
           .field("firstName", String.self),
           .field("lastName", String.self),
@@ -77,13 +79,30 @@ public extension ApolloGeneratedGraphQL {
         ] }
 
         public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
-        public var appleId: ApolloGeneratedGraphQL.ID? { __data["appleId"] }
-        public var googleId: ApolloGeneratedGraphQL.ID? { __data["googleId"] }
+        public var oauthLoginIds: [OauthLoginId] { __data["oauthLoginIds"] }
         public var email: String { __data["email"] }
         public var firstName: String { __data["firstName"] }
         public var lastName: String { __data["lastName"] }
         public var profilePictureUrl: String? { __data["profilePictureUrl"] }
         public var logbook: [Logbook] { __data["logbook"] }
+
+        /// EditUser.OauthLoginId
+        ///
+        /// Parent Type: `LoginTypeCorrelation`
+        public struct OauthLoginId: ApolloGeneratedGraphQL.SelectionSet {
+          public let __data: DataDict
+          public init(_dataDict: DataDict) { __data = _dataDict }
+
+          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.LoginTypeCorrelation }
+          public static var __selections: [ApolloAPI.Selection] { [
+            .field("__typename", String.self),
+            .field("type", GraphQLEnum<ApolloGeneratedGraphQL.LoginType>.self),
+            .field("id", String.self),
+          ] }
+
+          public var type: GraphQLEnum<ApolloGeneratedGraphQL.LoginType> { __data["type"] }
+          public var id: String { __data["id"] }
+        }
 
         /// EditUser.Logbook
         ///

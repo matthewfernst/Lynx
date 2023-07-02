@@ -16,6 +16,8 @@ struct LogbookStats {
     var lifetimeVerticalFeet: String {
         let totalVerticalFeet = logbooks.map { $0.verticalDistance }.reduce(0, +)
         
+        if totalVerticalFeet == 0 { return "-" }
+        
         if totalVerticalFeet >= 1000 {
             let formattedVerticalFeet = String(format: "%.1fk", Double(totalVerticalFeet) / 1000)
             return formattedVerticalFeet
@@ -25,16 +27,19 @@ struct LogbookStats {
     }
     
     var lifetimeDaysOnMountain: String {
-        return String(logbooks.count)
+        let totalDays = logbooks.count
+        return totalDays == 0 ? "-" : String(totalDays)
     }
     
     var lifetimeRunsTime: String {
         let totalHours = Int(logbooks.map { $0.duration / 3600 }.reduce(0, +))
+        if totalHours == 0 { return "-" }
         return "\(totalHours)H"
     }
     
     var lifetimeRuns: String {
-        return String(logbooks.map { Int($0.runCount) }.reduce(0, +))
+        let totalRuns = logbooks.map { Int($0.runCount) }.reduce(0, +)
+        return totalRuns == 0 ? "-" : String(totalRuns)
     }
     
     // MARK: - Specific Run Record Data
@@ -92,7 +97,6 @@ struct LogbookStats {
         let formattedCondition = capitalizedConditions.first ?? ""
         return formattedCondition
     }
-    
     
     func logbookTopSpeed(at index: Int) -> String {
         return String(format: "%.1f", logbook(at: index)?.topSpeed ?? 0.0)
