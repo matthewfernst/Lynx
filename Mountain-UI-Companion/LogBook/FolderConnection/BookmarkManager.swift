@@ -10,7 +10,7 @@ import OSLog
 
 class BookmarkManager
 {
-    private(set) var bookmarks: (id: String, url: URL)?
+    private(set) var bookmark: (id: String, url: URL)?
     
     private static func getAppSandboxDirectory() -> URL {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -24,7 +24,7 @@ class BookmarkManager
                 return
             }
             
-            if bookmarks?.url == url { return }
+            if bookmark?.url == url { return }
             
             // Make sure you release the security-scoped resource when you finish.
             defer { url.stopAccessingSecurityScopedResource() }
@@ -38,7 +38,7 @@ class BookmarkManager
             try bookmarkData.write(to: BookmarkManager.getAppSandboxDirectory().appendingPathComponent(id))
             
             // Add the URL and UUID to the urls
-            bookmarks = (id, url)
+            bookmark = (id, url)
         }
         catch {
             // Handle the error here.
@@ -72,7 +72,7 @@ class BookmarkManager
             }
         } ?? Array<(id: String, url: URL)>()
         
-        self.bookmarks = bookmarks.first
+        self.bookmark = bookmarks.first
     }
     
     static func removeAllBookmarks() {

@@ -85,7 +85,6 @@
                         <tabBarAppearance key="scrollEdgeAppearance"/>
                     </tabBar>
                     <connections>
-                        <segue destination="6ud-3H-V0X" kind="relationship" relationship="viewControllers" id="4B7-ka-jpt"/>
                         <segue destination="2jz-bu-nGt" kind="relationship" relationship="viewControllers" id="ndX-GQ-OMX"/>
                         <segue destination="2gt-UY-kCx" kind="relationship" relationship="viewControllers" id="pA4-1c-tfV"/>
                     </connections>
@@ -93,92 +92,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fjX-JV-8Dd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-866" y="-222"/>
-        </scene>
-        <!--Connect-->
-        <scene sceneID="8JM-on-fj6">
-            <objects>
-                <navigationController id="6ud-3H-V0X" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Connect" image="powerplug.fill" catalog="system" id="YgD-uM-V8h"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="NTK-q4-LWW">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="uel-YM-gdd" kind="relationship" relationship="rootViewController" id="p9W-qZ-e8c"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="aca-UY-OiN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1575" y="456"/>
-        </scene>
-        <!--Slopes Connection View Controller-->
-        <scene sceneID="OfY-gM-Npx">
-            <objects>
-                <viewController storyboardIdentifier="SlopesConnection" id="uel-YM-gdd" customClass="SlopesConnectionViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="mzZ-ta-53v">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="QAS-4o-LNN">
-                                <rect key="frame" x="16" y="204" width="361" height="202"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <string key="text">The Mountain-UI Companion App works together with the Slopes App by Breakpoint Studios. Slopes is able to track a skier or snowboarder while they shred it down the mountain. Slopes can track things such as average speed, total vertical feet, and more. The Mountain-UI Companion App, uses the data stored by Slopes and sends it to your Mountain-UI display. In order to get started, tap the "Connect Slopes" button and select the Slopes folder in your Files directory. The Slopes directory is shown below for reference.</string>
-                                <color key="textColor" systemColor="labelColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="slopesFolder" translatesAutoresizingMaskIntoConstraints="NO" id="0XO-Dy-70K">
-                                <rect key="frame" x="76" y="414" width="241" height="128"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="128" id="nws-pT-4bb"/>
-                                </constraints>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g7e-gT-Rnm">
-                                <rect key="frame" x="124.33333333333333" y="611" width="144.66666666666669" height="35"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Connect Slopes"/>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Connecting to Slopes Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QAY-up-5qW">
-                                <rect key="frame" x="16" y="172" width="361" height="24"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="kDF-UR-AHv">
-                                <rect key="frame" x="71" y="463" width="250" height="4"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </progressView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="J1J-x6-hDi"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="QAY-up-5qW" firstAttribute="centerX" secondItem="QAS-4o-LNN" secondAttribute="centerX" id="9ef-GO-U3r"/>
-                            <constraint firstItem="g7e-gT-Rnm" firstAttribute="centerX" secondItem="J1J-x6-hDi" secondAttribute="centerX" id="Alq-HL-TLF"/>
-                            <constraint firstItem="QAS-4o-LNN" firstAttribute="centerX" secondItem="0XO-Dy-70K" secondAttribute="centerX" id="BQu-Oe-8NT"/>
-                            <constraint firstItem="0XO-Dy-70K" firstAttribute="top" secondItem="QAS-4o-LNN" secondAttribute="bottom" constant="8" symbolic="YES" id="IdV-VC-09A"/>
-                            <constraint firstItem="g7e-gT-Rnm" firstAttribute="top" secondItem="0XO-Dy-70K" secondAttribute="bottom" constant="69" id="Ktf-PE-HAM"/>
-                            <constraint firstItem="J1J-x6-hDi" firstAttribute="bottom" secondItem="0XO-Dy-70K" secondAttribute="bottom" constant="227" id="Ujg-xQ-p9W"/>
-                            <constraint firstItem="QAY-up-5qW" firstAttribute="top" secondItem="J1J-x6-hDi" secondAttribute="top" constant="69" id="W1k-6F-PWf"/>
-                            <constraint firstItem="J1J-x6-hDi" firstAttribute="bottom" secondItem="g7e-gT-Rnm" secondAttribute="bottom" constant="123" id="YCQ-3k-vGp"/>
-                            <constraint firstItem="QAY-up-5qW" firstAttribute="leading" secondItem="J1J-x6-hDi" secondAttribute="leading" constant="16" id="aqz-Yp-oK0"/>
-                            <constraint firstItem="QAS-4o-LNN" firstAttribute="trailing" secondItem="mzZ-ta-53v" secondAttribute="trailingMargin" id="h4z-LP-SFe"/>
-                            <constraint firstItem="QAS-4o-LNN" firstAttribute="leading" secondItem="mzZ-ta-53v" secondAttribute="leadingMargin" id="ham-z9-nHW"/>
-                            <constraint firstItem="QAS-4o-LNN" firstAttribute="top" secondItem="QAY-up-5qW" secondAttribute="bottom" constant="8" symbolic="YES" id="hrT-Tn-PQG"/>
-                            <constraint firstItem="0XO-Dy-70K" firstAttribute="leading" secondItem="J1J-x6-hDi" secondAttribute="leading" constant="76" id="lrB-Kg-20K"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="irn-QB-XZe"/>
-                    <connections>
-                        <outlet property="connectSlopesButton" destination="g7e-gT-Rnm" id="TkV-l2-IfG"/>
-                        <outlet property="explanationTextView" destination="QAS-4o-LNN" id="sVB-9v-r0c"/>
-                        <outlet property="explanationTitleLabel" destination="QAY-up-5qW" id="cRK-Z2-Z6N"/>
-                        <outlet property="slopeFilesUploadProgressView" destination="kDF-UR-AHv" id="IDN-8O-wvs"/>
-                        <outlet property="slopesFolderImageView" destination="0XO-Dy-70K" id="3fX-fl-rjS"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="N7k-KF-UwP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1587.0229007633586" y="1115.4929577464789"/>
         </scene>
         <!--Logbook View Controller-->
         <scene sceneID="cJL-29-DGS">
@@ -524,12 +437,7 @@
     <resources>
         <image name="book.closed.fill" catalog="system" width="115" height="128"/>
         <image name="person.fill" catalog="system" width="128" height="120"/>
-        <image name="powerplug.fill" catalog="system" width="128" height="82"/>
-        <image name="slopesFolder" width="348" height="381"/>
         <image name="vecteezy_ski-lift-and-winter-activities-concept-positive-young_13489041" width="1920" height="1280"/>
-        <systemColor name="labelColor">
-            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="linkColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

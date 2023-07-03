@@ -16,7 +16,7 @@ struct LogbookStats {
     var lifetimeVerticalFeet: String {
         let totalVerticalFeet = logbooks.map { $0.verticalDistance }.reduce(0, +)
         
-        if totalVerticalFeet == 0 { return "-" }
+        if totalVerticalFeet == 0 { return "--" }
         
         if totalVerticalFeet >= 1000 {
             let formattedVerticalFeet = String(format: "%.1fk", Double(totalVerticalFeet) / 1000)
@@ -28,18 +28,18 @@ struct LogbookStats {
     
     var lifetimeDaysOnMountain: String {
         let totalDays = logbooks.count
-        return totalDays == 0 ? "-" : String(totalDays)
+        return totalDays == 0 ? "--" : String(totalDays)
     }
     
     var lifetimeRunsTime: String {
         let totalHours = Int(logbooks.map { $0.duration / 3600 }.reduce(0, +))
-        if totalHours == 0 { return "-" }
+        if totalHours == 0 { return "--" }
         return "\(totalHours)H"
     }
     
     var lifetimeRuns: String {
         let totalRuns = logbooks.map { Int($0.runCount) }.reduce(0, +)
-        return totalRuns == 0 ? "-" : String(totalRuns)
+        return totalRuns == 0 ? "--" : String(totalRuns)
     }
     
     // MARK: - Specific Run Record Data
