@@ -100,7 +100,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                 // Access the root view controller of the navigation controller
                 if let logbookViewController = desiredNavigationController.viewControllers.first as? LogbookViewController {
                     // Modify the right bar button item
-                    logbookViewController.navigationItem.rightBarButtonItem?.image = UIImage(systemName: "link.icloud")
+                    logbookViewController.setupNavigationBar()
                 }
             }
         }

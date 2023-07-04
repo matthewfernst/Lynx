@@ -88,7 +88,7 @@ class LogbookViewController: UIViewController {
         }
     }
     
-    private func setupNavigationBar() {
+    public func setupNavigationBar() {
         self.title = "Logbook"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(showMoreInfo))
