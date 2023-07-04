@@ -38,7 +38,6 @@ extension UIImage
         
         return scaledImage
     }
-    
 }
 
 extension UIImageView
@@ -115,8 +114,8 @@ extension Logger
     static let editProfileTableViewController = Logger(subsystem: subsystem, category: "EditProfileTableViewController")
     
     static let apollo = Logger(subsystem: subsystem, category: "Apollo")
-        
-    static let slopesConnection = Logger(subsystem: subsystem, category: "SlopesConnection")
+    
+    static let folderConnection = Logger(subsystem: subsystem, category: "FolderConnection")
     
     static let bookmarkManager = Logger(subsystem: subsystem, category: "BookmarkManager")
 }

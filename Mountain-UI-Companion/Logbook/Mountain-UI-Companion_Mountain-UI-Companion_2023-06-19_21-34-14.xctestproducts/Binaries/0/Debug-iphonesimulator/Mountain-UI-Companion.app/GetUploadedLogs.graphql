@@ -1,0 +1,8 @@
+query GetUploadedLogs {
+  selfLookup {
+     logbook {
+        originalFileName
+    }
+  }
+}
+

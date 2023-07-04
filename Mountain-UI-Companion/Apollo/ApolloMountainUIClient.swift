@@ -288,7 +288,8 @@ class ApolloMountainUIClient
                     return
                 }
                 
-                let uploadedSlopeFiles = Set(logbook.map({ $0.originalFileName }))
+                let uploadedSlopeFiles = Set(logbook.map { $0.originalFileName.split(separator: "/").last.map(String.init) ?? "" })
+                Logger.apollo.info("Successfully retrieved logs.")
                 return completion(.success(uploadedSlopeFiles))
                 
             case .failure(_):

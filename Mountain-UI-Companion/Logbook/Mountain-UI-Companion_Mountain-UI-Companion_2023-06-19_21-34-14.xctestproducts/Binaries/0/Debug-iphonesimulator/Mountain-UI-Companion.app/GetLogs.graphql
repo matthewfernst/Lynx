@@ -1,0 +1,30 @@
+query GetLogs {
+    selfLookup {
+        logbook {
+            id
+            originalFileName
+            distance
+            conditions
+            duration
+            startDate
+            endDate
+            locationName
+            runCount
+            topSpeed
+            verticalDistance
+            details {
+                type
+                averageSpeed
+                duration
+                startDate
+                endDate
+                maxAltitude
+                minAltitude
+                topSpeed
+                topSpeedAltitude
+                verticalDistance
+            }
+        }
+    }
+}
+

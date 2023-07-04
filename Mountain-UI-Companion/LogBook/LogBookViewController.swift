@@ -26,6 +26,7 @@ class LogbookViewController: UIViewController {
     var logbookStats: LogbookStats = LogbookStats()
     
     private var refreshControl: UIRefreshControl!
+    private var didFindNewFiles = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,14 +38,66 @@ class LogbookViewController: UIViewController {
         setupRefreshControl()
         setupTableView()
         setupProfilePicture()
-        
         refreshData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateButtonAvailability()
+    }
+     
+    private func autoUploadDecider(compeltion: (() -> Void)) {
+        if !didFindNewFiles {
+            autoUploadFiles()
+            didFindNewFiles = true
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 20) { [weak self] in
+                self?.autoUploadFiles()
+            }
+        }
+        compeltion()
+    }
+
+    private func autoUploadFiles() {
+        let uploadLabel = AutoUploadFileLabel()
+        
+        if FolderConnectionViewController.isConnected {
+            FolderConnectionViewController.getNonUploadedSlopeFiles { [weak self] result in
+                if let newUploadFiles = result {
+                    self?.view.addSubview(uploadLabel)
+                    uploadLabel.slideDown {
+                        FolderConnectionViewController.uploadNewFilesWithLabel(label: uploadLabel, files: newUploadFiles) {
+                            uploadLabel.slideUp()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func updateButtonAvailability() {
+        if FolderConnectionViewController.isConnected {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "link.icloud"), style: .plain, target: self, action: #selector(showConnectedFolder))
+        } else {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "folder.badge.plus"), style: .plain, target: self, action: #selector(connectSlopesFolder))
+        }
+        
+        if !NetworkManager().isInternetAvailable() {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "icloud.slash"), style: .plain, target: self, action: #selector(showNoInternetConnection))
+            self.navigationItem.rightBarButtonItem?.tintColor = .systemGray4
+        }
     }
     
     private func setupNavigationBar() {
         self.title = "Logbook"
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(explainMoreWithSlopes))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(showMoreInfo))
+        
+        if FolderConnectionViewController.isConnected {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "link.icloud"), style: .plain, target: self, action: #selector(showConnectedFolder))
+        } else {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "folder.badge.plus"), style: .plain, target: self, action: #selector(connectSlopesFolder))
+        }
     }
     
     private func setupRefreshControl() {
@@ -76,7 +129,7 @@ class LogbookViewController: UIViewController {
         profilePictureImageView.makeRounded()
     }
     
-    func setupMainStats() {
+    private func setupMainStats() {
         lifetimeVerticalFeetLabel.text   = logbookStats.lifetimeVerticalFeet
         lifetimeDaysOnMountainLabel.text = logbookStats.lifetimeDaysOnMountain
         lifetimeRunsTimeLabel.text       = logbookStats.lifetimeRunsTime
@@ -86,18 +139,21 @@ class LogbookViewController: UIViewController {
     private func refreshData() {
         refreshControl.beginRefreshing()
         ApolloMountainUIClient.clearCache()
-        ApolloMountainUIClient.getLogs { [weak self] result in
-            switch result {
-            case .success(let logbook):
-                self?.logbookStats.logbooks = logbook
-                DispatchQueue.main.async {
-                    self?.setupMainStats()
-                    self?.lifetimeSummaryTableView.reloadData()
-                    self?.refreshControl.endRefreshing()
-                }
-            case .failure(_):
-                DispatchQueue.main.async {
-                    self?.refreshControl.endRefreshing()
+        
+        autoUploadDecider {
+            ApolloMountainUIClient.getLogs { [weak self] result in
+                switch result {
+                case .success(let logbook):
+                    self?.logbookStats.logbooks = logbook
+                    DispatchQueue.main.async {
+                        self?.setupMainStats()
+                        self?.lifetimeSummaryTableView.reloadData()
+                        self?.refreshControl.endRefreshing()
+                    }
+                case .failure(_):
+                    DispatchQueue.main.async {
+                        self?.refreshControl.endRefreshing()
+                    }
                 }
             }
         }
@@ -107,15 +163,50 @@ class LogbookViewController: UIViewController {
         refreshData()
     }
     
-    @objc private func explainMoreWithSlopes() {
+    @objc private func showMoreInfo() {
         let message = """
-                      This data comes from the Slopes app and is a way to quickly see your data being used.
-                      For more detailed information, visit your Slopes app.
-                      """
-        let ac = UIAlertController(title: "Information From Slopes", message: message, preferredStyle: .actionSheet)
-        ac.addAction(UIAlertAction(title: "Dismiss", style: .default))
-        present(ac, animated: true)
+                           The Mountain-UI Companion App works together with the Slopes App by Breakpoint Studios. Slopes is able to track a skier or snowboarder while they shred it down the mountain. Slopes can track things such as average speed, total vertical feet, and more. The Mountain-UI Companion App, uses the data stored by Slopes and sends it to your Mountain-UI display.
+                       """
+        let ac = UIAlertController(title: "Slopes Integration", message: message, preferredStyle: .actionSheet)
+        ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+        self.present(ac, animated: true)
     }
+    
+    @objc private func connectSlopesFolder() {
+        let connectVC = FolderConnectionViewController()
+        let navigationController = UINavigationController(rootViewController: connectVC)
+        navigationController.navigationBar.prefersLargeTitles = false
+        
+        navigationController.modalPresentationStyle = .pageSheet
+        self.present(navigationController, animated: true, completion: nil)
+    }
+    
+    @objc private func showConnectedFolder() {
+        guard var connectedFolder = FolderConnectionViewController.bookmarkManager.bookmark?.url.lastPathComponent else {
+            return
+        }
+        
+        if connectedFolder.lowercased() == "gpslogs" {
+            connectedFolder = "Slopes"
+        }
+        
+        let ac = UIAlertController(title: "Successfully Connected to \(connectedFolder)", message: "You have already successfully connected your folder. When you open the app, it will automatically upload new files. Do you wish to connect to a different folder?", preferredStyle: .actionSheet)
+        
+        ac.addAction(UIAlertAction(title: "Connect to New Folder", style: .default) { [weak self] _ in
+            self?.connectSlopesFolder()
+        })
+        
+        ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+        self.present(ac, animated: true)
+    }
+    
+    @objc private func showNoInternetConnection() {
+        let ac = UIAlertController(title: "No Internet Connection", message: "You are currently not connected to the internet.", preferredStyle: .alert)
+        
+        ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+        self.present(ac, animated: true)
+    }
+    
 }
 
 extension LogbookViewController: UITableViewDelegate, UITableViewDataSource {
