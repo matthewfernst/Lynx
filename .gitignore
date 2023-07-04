@@ -23,3 +23,4 @@ var/
 .env
 .vscode
 apollo-ios-cli
+xcshareddata
