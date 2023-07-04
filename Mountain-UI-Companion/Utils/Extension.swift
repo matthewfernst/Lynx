@@ -115,7 +115,7 @@ extension Logger
     
     static let apollo = Logger(subsystem: subsystem, category: "Apollo")
     
-    static let slopesConnection = Logger(subsystem: subsystem, category: "SlopesConnection")
+    static let folderConnection = Logger(subsystem: subsystem, category: "FolderConnection")
     
     static let bookmarkManager = Logger(subsystem: subsystem, category: "BookmarkManager")
 }

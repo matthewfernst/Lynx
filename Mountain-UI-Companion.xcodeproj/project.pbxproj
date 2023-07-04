@@ -78,6 +78,7 @@
 		659A9F852A414C7800DC6006 /* EditUser.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 659A9F842A414C7800DC6006 /* EditUser.graphql */; };
 		659A9F892A414D2100DC6006 /* GetUploadedLogs.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 659A9F882A414D2100DC6006 /* GetUploadedLogs.graphql */; };
 		659A9FE72A42B83600DC6006 /* BookmarkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659A9FE62A42B83600DC6006 /* BookmarkManager.swift */; };
+		659C5CF32A537A0800E21CD7 /* AutoUploadFileLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659C5CF22A537A0800E21CD7 /* AutoUploadFileLabel.swift */; };
 		65A370DC297E594500E1D851 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370DB297E594500E1D851 /* AppDelegate.swift */; };
 		65A370DE297E594500E1D851 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A370DD297E594500E1D851 /* SceneDelegate.swift */; };
 		65A370E3297E594500E1D851 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 65A370E1297E594500E1D851 /* Main.storyboard */; };
@@ -168,6 +169,7 @@
 		659A9F842A414C7800DC6006 /* EditUser.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EditUser.graphql; sourceTree = "<group>"; };
 		659A9F882A414D2100DC6006 /* GetUploadedLogs.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GetUploadedLogs.graphql; sourceTree = "<group>"; };
 		659A9FE62A42B83600DC6006 /* BookmarkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkManager.swift; sourceTree = "<group>"; };
+		659C5CF22A537A0800E21CD7 /* AutoUploadFileLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoUploadFileLabel.swift; sourceTree = "<group>"; };
 		65A370D8297E594500E1D851 /* Mountain-UI-Companion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mountain-UI-Companion.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		65A370DB297E594500E1D851 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		65A370DD297E594500E1D851 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -476,7 +478,7 @@
 				65A370E1297E594500E1D851 /* Main.storyboard */,
 				65A370FC297E6F5100E1D851 /* Utils */,
 				653A0E5D29BCD20A00C8F308 /* Login */,
-				65AF9FF7297F355800DC59C3 /* LogBook */,
+				65AF9FF7297F355800DC59C3 /* Logbook */,
 				65A370F1297E5DBE00E1D851 /* Account */,
 				65A370E4297E594600E1D851 /* Assets.xcassets */,
 				65A370E6297E594600E1D851 /* LaunchScreen.storyboard */,
@@ -506,7 +508,7 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		65AF9FF7297F355800DC59C3 /* LogBook */ = {
+		65AF9FF7297F355800DC59C3 /* Logbook */ = {
 			isa = PBXGroup;
 			children = (
 				65AF9FF5297F355500DC59C3 /* LogbookViewController.swift */,
@@ -515,8 +517,9 @@
 				6568EE0D2A3FB1A500601759 /* LifetimeSummaryViewController.swift */,
 				65D43AB72A400B590053C215 /* StatsTableViewCell.swift */,
 				657393342A51FE2600981775 /* FolderConnection */,
+				659C5CF22A537A0800E21CD7 /* AutoUploadFileLabel.swift */,
 			);
-			path = LogBook;
+			path = Logbook;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -659,6 +662,7 @@
 				65AF9FF6297F355500DC59C3 /* LogbookViewController.swift in Sources */,
 				654F229E29FEFB1E00D1C96E /* NetworkInterceptorProvider.swift in Sources */,
 				654DEAE429824134001565A3 /* SessionTableViewCell.swift in Sources */,
+				659C5CF32A537A0800E21CD7 /* AutoUploadFileLabel.swift in Sources */,
 				65A370DC297E594500E1D851 /* AppDelegate.swift in Sources */,
 				657393272A51116C00981775 /* Mutation.graphql.swift in Sources */,
 				654F22A429FF1B5000D1C96E /* UserManager.swift in Sources */,
