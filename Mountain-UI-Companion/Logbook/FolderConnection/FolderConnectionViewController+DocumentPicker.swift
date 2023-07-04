@@ -84,7 +84,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             self.checkmarkImageView.transform = .identity
             self.checkmarkImageView.alpha = 1
         }, completion: { _ in
-            UIView.animate(withDuration: 0.8, delay: 0.8, options: .curveEaseInOut, animations: {
+            UIView.animate(withDuration: 0.8, delay: 1.0, options: .curveEaseInOut, animations: {
                 self.checkmarkImageView.transform = CGAffineTransform(translationX: 0, y: self.checkmarkImageView.bounds.height)
                 self.checkmarkImageView.alpha = 0
             }, completion: { _ in
@@ -132,7 +132,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                 
                 guard let totalNumberOfFiles = FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys)?.allObjects.count else {
                     Logger.folderConnection.debug("*** Unable to access the contents of \(url.path) ***\n")
-//                    showFileAccessNotAllowed()
+                    showFileAccessNotAllowed()
                     return
                 }
                 
@@ -145,7 +145,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                     case .success(let urlsForUpload):
                         guard url.startAccessingSecurityScopedResource() else {
                             // Handle the failure here.
-//                            showFileAccessNotAllowed()
+                            showFileAccessNotAllowed()
                             return
                         }
                         
@@ -216,14 +216,18 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                     }
                 } catch {
                     // Handle the error
-    //                FolderConnectionViewController.showErrorUploading()
                     Logger.folderConnection.error("Error accessing bookmarked URL: \(error)")
                     completion(nil)
                     return
                 }
-                
-                Logger.folderConnection.debug("New files to upload found.")
-                completion(nonUploadedSlopeFiles)
+        
+                if nonUploadedSlopeFiles.isEmpty {
+                    Logger.folderConnection.debug("No new files found.")
+                    completion(nil)
+                } else {
+                    Logger.folderConnection.debug("New files to upload found.")
+                    completion(nonUploadedSlopeFiles)
+                }
                 
             case .failure(_):
                 completion(nil)
@@ -238,7 +242,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
         
         ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: nonUploadedSlopeFiles) { result in
             switch result {
-            case .success(let urlsForUpload):
+            case .success(var urlsForUpload):
                 do {
                     let resourceValues = try bookmark.url.resourceValues(forKeys: [.isDirectoryKey])
                     if resourceValues.isDirectory ?? false {
@@ -255,9 +259,12 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                                 }
                                 
                                 let fileURL = fileList[currentIndex]
-                                let uploadURL = urlsForUpload[currentIndex]
+                                
                                 
                                 if FolderConnectionViewController.isSlopesFiles(fileURL), nonUploadedSlopeFiles.contains(fileURL.lastPathComponent) {
+                                    guard let uploadURL = urlsForUpload.popLast() else {
+                                        return
+                                    }
                                     FolderConnectionViewController.putZipFiles(urlEndPoint: uploadURL, zipFilePath: fileURL) { result in
                                         switch result {
                                         case .success(_):
@@ -295,10 +302,6 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
         }
     }
 
-
-
-    
-    
     private static func putZipFiles(urlEndPoint: String, zipFilePath: URL, completion: @escaping (Result<Int, Error>) -> Void) {
         let url = URL(string: urlEndPoint)!
         

@@ -26,7 +26,7 @@ class LogbookViewController: UIViewController {
     var logbookStats: LogbookStats = LogbookStats()
     
     private var refreshControl: UIRefreshControl!
-    private let uploadLabel = AutoUploadFileLabel()
+    private var didFindNewFiles = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +38,6 @@ class LogbookViewController: UIViewController {
         setupRefreshControl()
         setupTableView()
         setupProfilePicture()
-        self.view.addSubview(uploadLabel)
         refreshData()
     }
     
@@ -46,30 +45,35 @@ class LogbookViewController: UIViewController {
         super.viewWillAppear(animated)
         updateButtonAvailability()
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+     
+    private func autoUploadDecider(compeltion: (() -> Void)) {
+        if !didFindNewFiles {
+            autoUploadFiles()
+            didFindNewFiles = true
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 20) { [weak self] in
+                self?.autoUploadFiles()
+            }
+        }
+        compeltion()
+    }
+
+    private func autoUploadFiles() {
+        let uploadLabel = AutoUploadFileLabel()
         
         if FolderConnectionViewController.isConnected {
             FolderConnectionViewController.getNonUploadedSlopeFiles { [weak self] result in
-                guard let newUploadFiles = result else {
-                    return
-                }
-                
-                guard let uploadLabel = self?.uploadLabel else {
-                    return
-                }
-                
-                uploadLabel.slideDown {
-                    FolderConnectionViewController.uploadNewFilesWithLabel(label: uploadLabel, files: newUploadFiles) {
-                        uploadLabel.slideUp()
+                if let newUploadFiles = result {
+                    self?.view.addSubview(uploadLabel)
+                    uploadLabel.slideDown {
+                        FolderConnectionViewController.uploadNewFilesWithLabel(label: uploadLabel, files: newUploadFiles) {
+                            uploadLabel.slideUp()
+                        }
                     }
                 }
             }
         }
     }
-    
-    
     
     private func updateButtonAvailability() {
         if FolderConnectionViewController.isConnected {
@@ -135,18 +139,21 @@ class LogbookViewController: UIViewController {
     private func refreshData() {
         refreshControl.beginRefreshing()
         ApolloMountainUIClient.clearCache()
-        ApolloMountainUIClient.getLogs { [weak self] result in
-            switch result {
-            case .success(let logbook):
-                self?.logbookStats.logbooks = logbook
-                DispatchQueue.main.async {
-                    self?.setupMainStats()
-                    self?.lifetimeSummaryTableView.reloadData()
-                    self?.refreshControl.endRefreshing()
-                }
-            case .failure(_):
-                DispatchQueue.main.async {
-                    self?.refreshControl.endRefreshing()
+        
+        autoUploadDecider {
+            ApolloMountainUIClient.getLogs { [weak self] result in
+                switch result {
+                case .success(let logbook):
+                    self?.logbookStats.logbooks = logbook
+                    DispatchQueue.main.async {
+                        self?.setupMainStats()
+                        self?.lifetimeSummaryTableView.reloadData()
+                        self?.refreshControl.endRefreshing()
+                    }
+                case .failure(_):
+                    DispatchQueue.main.async {
+                        self?.refreshControl.endRefreshing()
+                    }
                 }
             }
         }
