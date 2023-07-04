@@ -260,27 +260,29 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                                 
                                 let fileURL = fileList[currentIndex]
                                 
-                                
                                 if FolderConnectionViewController.isSlopesFiles(fileURL), nonUploadedSlopeFiles.contains(fileURL.lastPathComponent) {
                                     guard let uploadURL = urlsForUpload.popLast() else {
                                         return
                                     }
+                                    
+                                    let fileURLString = fileURL.lastPathComponent.replacingOccurrences(of: "%", with: " ")
+                                    if let range = fileURLString.range(of: "-"), let range2 = fileURLString.range(of: ".slopes") {
+                                        label.label.text = fileURLString[range.upperBound..<range2.lowerBound].trimmingCharacters(in: .whitespaces)
+                                    }
+                                    
                                     FolderConnectionViewController.putZipFiles(urlEndPoint: uploadURL, zipFilePath: fileURL) { result in
                                         switch result {
                                         case .success(_):
-                                            let fileURLString = fileURL.lastPathComponent.replacingOccurrences(of: "%", with: " ")
-                                            if let range = fileURLString.range(of: "-"), let range2 = fileURLString.range(of: ".slopes") {
-                                                DispatchQueue.main.async {
-                                                    label.label.text = fileURLString[range.upperBound..<range2.lowerBound].trimmingCharacters(in: .whitespaces)
-                                                }
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                                currentIndex += 1
+                                                uploadNextFile()
                                             }
                                         case .failure(let error):
                                             Logger.folderConnection.debug("\(error)")
-                                        }
-                                        
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                                            currentIndex += 1
-                                            uploadNextFile()
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                                currentIndex += 1
+                                                uploadNextFile()
+                                            }
                                         }
                                     }
                                 } else {
@@ -301,6 +303,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             }
         }
     }
+
 
     private static func putZipFiles(urlEndPoint: String, zipFilePath: URL, completion: @escaping (Result<Int, Error>) -> Void) {
         let url = URL(string: urlEndPoint)!
