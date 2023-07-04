@@ -54,8 +54,6 @@ class EditProfileTableViewController: UITableViewController
     func handleProfilePictureChange(newProfilePicture: UIImage?) {
         if newProfilePicture != nil {
             profileChanges[ProfileChangesKeys.profilePicture.rawValue] = newProfilePicture
-        } else {
-            profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] = true
         }
     }
     
@@ -142,34 +140,27 @@ class EditProfileTableViewController: UITableViewController
                     return
                 }
             }
-            
-            
-        } else if let _ = profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] as? Bool {
-            newProfilePictureURL = nil
-            profileChanges[ProfileChangesKeys.removedProfilePicture.rawValue] = false
         }
         
         ApolloMountainUIClient.editUser(profileChanges: profileChanges) { result in
             switch result {
             case .success(let returnedProfilePictureUrl):
-                Logger.editProfileTableViewController.info("Updating profile...")
+                Logger.editProfileTableViewController.info("Retrieved new profile picture URL")
                 newProfilePictureURL = returnedProfilePictureUrl
             case .failure(_):
                 Logger.editProfileTableViewController.error("Using profile before edit.")
             }
+            self.profile.editAttributes(newFirstName: newFirstName, newLastName: newLastName, newEmail: newEmail, newProfilePicture: newProfilePicture, newProfilePictureURL: newProfilePictureURL)
+            
+            
+            self.delegate?.editProfileCompletionHandler(profile: self.profile)
+            
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicatorBackground.removeFromSuperview()
+                self.navigationController?.popViewController(animated: true)
+            }
         }
-        
-        self.profile.editAttributes(newFirstName: newFirstName, newLastName: newLastName, newEmail: newEmail, newProfilePicture: newProfilePicture, newProfilePictureURL: newProfilePictureURL)
-        
-        
-        self.delegate?.editProfileCompletionHandler(profile: self.profile)
-        
-        DispatchQueue.main.async {
-            self.activityIndicator.stopAnimating()
-            self.activityIndicatorBackground.removeFromSuperview()
-            self.navigationController?.popViewController(animated: true)
-        }
-        
     }
     
     // MARK: - TableViewController Functions
@@ -320,6 +311,5 @@ extension EditProfileTableViewController
         case lastName = "lastName"
         case email = "email"
         case profilePicture = "profilePicture"
-        case removedProfilePicture = "removedProfilePicture"
     }
 }

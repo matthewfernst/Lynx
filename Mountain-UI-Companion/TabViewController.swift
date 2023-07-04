@@ -10,7 +10,7 @@ import UIKit
 class TabViewController: UITabBarController
 {
     static let identifier = "TabController"
-    var profile: Profile?
+    static var profile: Profile?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,7 +21,7 @@ class TabViewController: UITabBarController
             } else {
                 overrideUserInterfaceStyle = .light
             }
-            profile?.appTheme = theme
+            TabViewController.profile?.appTheme = theme
         }
     }
     

@@ -47,16 +47,6 @@ class EditProfilePictureTableViewCell: UITableViewCell
             self.delegate?.present(picker, animated: true)
         })
         
-        ac.addAction(UIAlertAction(title: "Remove", style: .destructive) { [unowned self] _ in
-            if let defaultLabel = ProfilePictureUtils.setupDefaultProfilePicture(profile: profile,
-                                                                                 profilePictureImageView: profilePictureImageView,
-                                                                                 defaultProfilePictureLabel: defaultProfilePictureLabel,
-                                                                                 fontSize: 55) {
-                defaultProfilePictureLabel = defaultLabel
-            }
-            self.delegate?.handleProfilePictureChange(newProfilePicture: nil)
-        })
-        
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
         self.delegate?.present(ac, animated: true)

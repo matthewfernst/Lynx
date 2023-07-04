@@ -33,8 +33,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let tabBarController = self.tabBarController as! TabViewController
-        self.profile = tabBarController.profile
+        self.profile = TabViewController.profile
         
         self.title = "Account"
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -47,14 +46,12 @@ class AccountViewController: UITableViewController, EditProfileDelegate
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        let tabBarController = self.tabBarController as! TabViewController
-        tabBarController.profile = self.profile
+        TabViewController.profile = self.profile
     }
     
     func editProfileCompletionHandler(profile: Profile) {
         DispatchQueue.main.async {
-            let tabBarController = self.tabBarController as! TabViewController
-            tabBarController.profile = profile
+            TabViewController.profile = profile
             self.profile = profile
             self.tableView.reloadData()
         }

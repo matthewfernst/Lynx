@@ -190,7 +190,7 @@ class LoginViewController: UIViewController
                 }
             }
             
-            tabBarController.profile = LoginController.profile
+            TabViewController.profile = LoginController.profile
             tabBarController.modalTransitionStyle = .flipHorizontal
             tabBarController.modalPresentationStyle = .fullScreen
             

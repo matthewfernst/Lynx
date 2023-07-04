@@ -26,36 +26,24 @@ class LogbookViewController: UIViewController {
     var logbookStats: LogbookStats = LogbookStats()
     
     private var refreshControl: UIRefreshControl!
-    private var didFindNewFiles = false
+    private var timer: Timer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let tabBarController = self.tabBarController as! TabViewController
-        self.profile = tabBarController.profile
+        self.profile = TabViewController.profile
         
         setupNavigationBar()
         setupRefreshControl()
         setupTableView()
         setupProfilePicture()
-        refreshData()
+        refresh()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateButtonAvailability()
-    }
-     
-    private func autoUploadDecider(compeltion: (() -> Void)) {
-        if !didFindNewFiles {
-            autoUploadFiles()
-            didFindNewFiles = true
-        } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
-                self?.autoUploadFiles()
-            }
-        }
-        compeltion()
+        reloadProfile()
     }
 
     private func autoUploadFiles() {
@@ -68,6 +56,10 @@ class LogbookViewController: UIViewController {
                     uploadLabel.slideDown {
                         FolderConnectionViewController.uploadNewFilesWithLabel(label: uploadLabel, files: newUploadFiles) {
                             uploadLabel.slideUp()
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                                self?.refreshUI()
+                            }
                         }
                     }
                 }
@@ -102,7 +94,7 @@ class LogbookViewController: UIViewController {
     
     private func setupRefreshControl() {
         refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         lifetimeSummaryTableView.refreshControl = refreshControl
     }
     
@@ -129,38 +121,56 @@ class LogbookViewController: UIViewController {
         profilePictureImageView.makeRounded()
     }
     
+    func reloadProfile() {
+         // Update the profile picture
+         if let profilePicture = profile.profilePicture {
+             profilePictureImageView.image = profilePicture
+         } else {
+             let defaultProfilePicture = ProfilePictureUtils.getDefaultProfilePicture(name: profile.name, fontSize: 60)
+             profilePictureImageView.addSubview(defaultProfilePicture)
+             defaultProfilePicture.translatesAutoresizingMaskIntoConstraints = false
+             NSLayoutConstraint.activate([
+                 defaultProfilePicture.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
+                 defaultProfilePicture.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
+             ])
+         }
+         
+         // Update other UI elements or perform any necessary setup
+         
+         // Refresh the table view
+         lifetimeSummaryTableView.reloadData()
+     }
+    
     private func setupMainStats() {
         lifetimeVerticalFeetLabel.text   = logbookStats.lifetimeVerticalFeet
         lifetimeDaysOnMountainLabel.text = logbookStats.lifetimeDaysOnMountain
         lifetimeRunsTimeLabel.text       = logbookStats.lifetimeRunsTime
         lifetimeRunsLabel.text           = logbookStats.lifetimeRuns
     }
-    
-    private func refreshData() {
-        refreshControl.beginRefreshing()
+
+    private func refreshUI() {
         ApolloMountainUIClient.clearCache()
-        
-        autoUploadDecider {
-            ApolloMountainUIClient.getLogs { [weak self] result in
-                switch result {
-                case .success(let logbook):
-                    self?.logbookStats.logbooks = logbook
-                    DispatchQueue.main.async {
-                        self?.setupMainStats()
-                        self?.lifetimeSummaryTableView.reloadData()
-                        self?.refreshControl.endRefreshing()
-                    }
-                case .failure(_):
-                    DispatchQueue.main.async {
-                        self?.refreshControl.endRefreshing()
-                    }
+        ApolloMountainUIClient.getLogs { [weak self] result in
+            switch result {
+            case .success(let logbook):
+                self?.logbookStats.logbooks = logbook
+                DispatchQueue.main.async {
+                    self?.setupMainStats()
+                    self?.lifetimeSummaryTableView.reloadData()
+                    self?.refreshControl.endRefreshing()
+                }
+            case .failure(_):
+                DispatchQueue.main.async {
+                    self?.refreshControl.endRefreshing()
                 }
             }
         }
     }
     
-    @objc private func refresh(_ sender: UIRefreshControl) {
-        refreshData()
+    @objc private func refresh() {
+        refreshControl.beginRefreshing()
+        autoUploadFiles()
+        refreshUI()
     }
     
     @objc private func showMoreInfo() {
