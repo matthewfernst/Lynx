@@ -88,7 +88,7 @@ struct LogbookStats {
         
         var capitalizedConditions = conditions
             .components(separatedBy: ",")
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).capitalized }
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "_", with: " ").capitalized }
         
         if capitalizedConditions.count > 1 {
             capitalizedConditions.removeAll(where: { $0 == "Packed" })
