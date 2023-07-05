@@ -320,6 +320,29 @@ class ApolloMountainUIClient
         }
     }
     
+    public static func deleteAccount(completion: @escaping ((Result<Void, Error>) -> Void)) {
+        enum DeleteAccountErrors: Error {
+            case UnwrapOfReturnedUserFailed
+            case BackendCouldntDelete
+        }
+        
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.DeleteAccountMutation()) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let _ = graphQLResult.data?.deleteUser.id else {
+                    Logger.apollo.error("Couldn't unwrap delete user.")
+                    completion(.failure(DeleteAccountErrors.UnwrapOfReturnedUserFailed))
+                    return
+                }
+                
+                Logger.apollo.info("Successfully deleted user.")
+                completion(.success(()))
+            case .failure(_):
+                Logger.apollo.error("Failed to delete user.")
+                completion(.failure(DeleteAccountErrors.BackendCouldntDelete))
+            }
+        }
+    }
 }
 
 

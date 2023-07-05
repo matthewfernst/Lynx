@@ -44,32 +44,33 @@
 		654F4C7A2A3CE91E00E0614C /* LogbookStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654F4C792A3CE91E00E0614C /* LogbookStats.swift */; };
 		6566A0BD29D3EC2B008B7E57 /* ProfilePictureUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6566A0BC29D3EC2B008B7E57 /* ProfilePictureUtils.swift */; };
 		6568EE0E2A3FB1A500601759 /* LifetimeSummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568EE0D2A3FB1A500601759 /* LifetimeSummaryViewController.swift */; };
+		656FE85A2A54EEA6001B2C67 /* DeleteAccountMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE83D2A54EEA6001B2C67 /* DeleteAccountMutation.graphql.swift */; };
+		656FE85B2A54EEA6001B2C67 /* LoginOrCreateUserMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE83E2A54EEA6001B2C67 /* LoginOrCreateUserMutation.graphql.swift */; };
+		656FE85C2A54EEA6001B2C67 /* EditUserMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE83F2A54EEA6001B2C67 /* EditUserMutation.graphql.swift */; };
+		656FE85D2A54EEA6001B2C67 /* CreateInviteKeyMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8402A54EEA6001B2C67 /* CreateInviteKeyMutation.graphql.swift */; };
+		656FE85E2A54EEA6001B2C67 /* CreateUserProfilePictureUploadUrlMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8412A54EEA6001B2C67 /* CreateUserProfilePictureUploadUrlMutation.graphql.swift */; };
+		656FE85F2A54EEA6001B2C67 /* CreateRunRecordUploadUrlMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8422A54EEA6001B2C67 /* CreateRunRecordUploadUrlMutation.graphql.swift */; };
+		656FE8602A54EEA6001B2C67 /* SubmitInviteKeyMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8432A54EEA6001B2C67 /* SubmitInviteKeyMutation.graphql.swift */; };
+		656FE8612A54EEA6001B2C67 /* GetUploadedLogsQuery.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8452A54EEA6001B2C67 /* GetUploadedLogsQuery.graphql.swift */; };
+		656FE8622A54EEA6001B2C67 /* GetLogsQuery.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8462A54EEA6001B2C67 /* GetLogsQuery.graphql.swift */; };
+		656FE8632A54EEA6001B2C67 /* GetProfileInformationQuery.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8472A54EEA6001B2C67 /* GetProfileInformationQuery.graphql.swift */; };
+		656FE8642A54EEA6001B2C67 /* LoginType.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE84A2A54EEA6001B2C67 /* LoginType.graphql.swift */; };
+		656FE8652A54EEA6001B2C67 /* LogDetailType.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE84B2A54EEA6001B2C67 /* LogDetailType.graphql.swift */; };
+		656FE8662A54EEA6001B2C67 /* LoginTypeCorrelation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE84D2A54EEA6001B2C67 /* LoginTypeCorrelation.graphql.swift */; };
+		656FE8672A54EEA6001B2C67 /* User.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE84E2A54EEA6001B2C67 /* User.graphql.swift */; };
+		656FE8682A54EEA6001B2C67 /* Log.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE84F2A54EEA6001B2C67 /* Log.graphql.swift */; };
+		656FE8692A54EEA6001B2C67 /* Mutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8502A54EEA6001B2C67 /* Mutation.graphql.swift */; };
+		656FE86A2A54EEA6001B2C67 /* Query.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8512A54EEA6001B2C67 /* Query.graphql.swift */; };
+		656FE86B2A54EEA6001B2C67 /* LogDetail.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8522A54EEA6001B2C67 /* LogDetail.graphql.swift */; };
+		656FE86C2A54EEA6001B2C67 /* AuthorizationToken.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8532A54EEA6001B2C67 /* AuthorizationToken.graphql.swift */; };
+		656FE86D2A54EEA6001B2C67 /* SchemaConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8542A54EEA6001B2C67 /* SchemaConfiguration.swift */; };
+		656FE86E2A54EEA6001B2C67 /* LoginTypeCorrelationInput.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8562A54EEA6001B2C67 /* LoginTypeCorrelationInput.graphql.swift */; };
+		656FE86F2A54EEA6001B2C67 /* UserDataPair.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8572A54EEA6001B2C67 /* UserDataPair.graphql.swift */; };
+		656FE8702A54EEA6001B2C67 /* SchemaMetadata.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8582A54EEA6001B2C67 /* SchemaMetadata.graphql.swift */; };
+		656FE8712A54EEA6001B2C67 /* ApolloGeneratedGraphQL.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8592A54EEA6001B2C67 /* ApolloGeneratedGraphQL.graphql.swift */; };
 		657392262A47798600981775 /* InvitationKeySheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392252A47798600981775 /* InvitationKeySheetViewController.swift */; };
 		657392C02A4FE7A500981775 /* InvitationKeyInputUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392BF2A4FE7A500981775 /* InvitationKeyInputUIView.swift */; };
 		657392C22A4FE7C800981775 /* InvitationKeyDashesUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392C12A4FE7C800981775 /* InvitationKeyDashesUIView.swift */; };
-		657393192A51116C00981775 /* LoginOrCreateUserMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392FD2A51116C00981775 /* LoginOrCreateUserMutation.graphql.swift */; };
-		6573931A2A51116C00981775 /* EditUserMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392FE2A51116C00981775 /* EditUserMutation.graphql.swift */; };
-		6573931B2A51116C00981775 /* CreateInviteKeyMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392FF2A51116C00981775 /* CreateInviteKeyMutation.graphql.swift */; };
-		6573931C2A51116C00981775 /* CreateUserProfilePictureUploadUrlMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393002A51116C00981775 /* CreateUserProfilePictureUploadUrlMutation.graphql.swift */; };
-		6573931D2A51116C00981775 /* CreateRunRecordUploadUrlMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393012A51116C00981775 /* CreateRunRecordUploadUrlMutation.graphql.swift */; };
-		6573931E2A51116C00981775 /* SubmitInviteKeyMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393022A51116C00981775 /* SubmitInviteKeyMutation.graphql.swift */; };
-		6573931F2A51116C00981775 /* GetUploadedLogsQuery.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393042A51116C00981775 /* GetUploadedLogsQuery.graphql.swift */; };
-		657393202A51116C00981775 /* GetLogsQuery.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393052A51116C00981775 /* GetLogsQuery.graphql.swift */; };
-		657393212A51116C00981775 /* GetProfileInformationQuery.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393062A51116C00981775 /* GetProfileInformationQuery.graphql.swift */; };
-		657393222A51116C00981775 /* LoginType.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393092A51116C00981775 /* LoginType.graphql.swift */; };
-		657393232A51116C00981775 /* LogDetailType.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6573930A2A51116C00981775 /* LogDetailType.graphql.swift */; };
-		657393242A51116C00981775 /* LoginTypeCorrelation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6573930C2A51116C00981775 /* LoginTypeCorrelation.graphql.swift */; };
-		657393252A51116C00981775 /* User.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6573930D2A51116C00981775 /* User.graphql.swift */; };
-		657393262A51116C00981775 /* Log.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6573930E2A51116C00981775 /* Log.graphql.swift */; };
-		657393272A51116C00981775 /* Mutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6573930F2A51116C00981775 /* Mutation.graphql.swift */; };
-		657393282A51116C00981775 /* Query.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393102A51116C00981775 /* Query.graphql.swift */; };
-		657393292A51116C00981775 /* LogDetail.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393112A51116C00981775 /* LogDetail.graphql.swift */; };
-		6573932A2A51116C00981775 /* AuthorizationToken.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393122A51116C00981775 /* AuthorizationToken.graphql.swift */; };
-		6573932B2A51116C00981775 /* SchemaConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393132A51116C00981775 /* SchemaConfiguration.swift */; };
-		6573932C2A51116C00981775 /* LoginTypeCorrelationInput.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393152A51116C00981775 /* LoginTypeCorrelationInput.graphql.swift */; };
-		6573932D2A51116C00981775 /* UserDataPair.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393162A51116C00981775 /* UserDataPair.graphql.swift */; };
-		6573932E2A51116C00981775 /* SchemaMetadata.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393172A51116C00981775 /* SchemaMetadata.graphql.swift */; };
-		6573932F2A51116C00981775 /* ApolloGeneratedGraphQL.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393182A51116C00981775 /* ApolloGeneratedGraphQL.graphql.swift */; };
 		657393312A51EADB00981775 /* FolderConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393302A51EADB00981775 /* FolderConnectionViewController.swift */; };
 		657393332A51FDE300981775 /* FolderConnectionViewController+DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393322A51FDE300981775 /* FolderConnectionViewController+DocumentPicker.swift */; };
 		657393362A51FE4100981775 /* FolderConnectionViewController+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657393352A51FE4100981775 /* FolderConnectionViewController+Errors.swift */; };
@@ -134,38 +135,40 @@
 		654F4C792A3CE91E00E0614C /* LogbookStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogbookStats.swift; sourceTree = "<group>"; };
 		6566A0BC29D3EC2B008B7E57 /* ProfilePictureUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePictureUtils.swift; sourceTree = "<group>"; };
 		6568EE0D2A3FB1A500601759 /* LifetimeSummaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifetimeSummaryViewController.swift; sourceTree = "<group>"; };
+		656FE83D2A54EEA6001B2C67 /* DeleteAccountMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteAccountMutation.graphql.swift; sourceTree = "<group>"; };
+		656FE83E2A54EEA6001B2C67 /* LoginOrCreateUserMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginOrCreateUserMutation.graphql.swift; sourceTree = "<group>"; };
+		656FE83F2A54EEA6001B2C67 /* EditUserMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditUserMutation.graphql.swift; sourceTree = "<group>"; };
+		656FE8402A54EEA6001B2C67 /* CreateInviteKeyMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateInviteKeyMutation.graphql.swift; sourceTree = "<group>"; };
+		656FE8412A54EEA6001B2C67 /* CreateUserProfilePictureUploadUrlMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateUserProfilePictureUploadUrlMutation.graphql.swift; sourceTree = "<group>"; };
+		656FE8422A54EEA6001B2C67 /* CreateRunRecordUploadUrlMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateRunRecordUploadUrlMutation.graphql.swift; sourceTree = "<group>"; };
+		656FE8432A54EEA6001B2C67 /* SubmitInviteKeyMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubmitInviteKeyMutation.graphql.swift; sourceTree = "<group>"; };
+		656FE8452A54EEA6001B2C67 /* GetUploadedLogsQuery.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUploadedLogsQuery.graphql.swift; sourceTree = "<group>"; };
+		656FE8462A54EEA6001B2C67 /* GetLogsQuery.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetLogsQuery.graphql.swift; sourceTree = "<group>"; };
+		656FE8472A54EEA6001B2C67 /* GetProfileInformationQuery.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetProfileInformationQuery.graphql.swift; sourceTree = "<group>"; };
+		656FE84A2A54EEA6001B2C67 /* LoginType.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginType.graphql.swift; sourceTree = "<group>"; };
+		656FE84B2A54EEA6001B2C67 /* LogDetailType.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogDetailType.graphql.swift; sourceTree = "<group>"; };
+		656FE84D2A54EEA6001B2C67 /* LoginTypeCorrelation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginTypeCorrelation.graphql.swift; sourceTree = "<group>"; };
+		656FE84E2A54EEA6001B2C67 /* User.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.graphql.swift; sourceTree = "<group>"; };
+		656FE84F2A54EEA6001B2C67 /* Log.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.graphql.swift; sourceTree = "<group>"; };
+		656FE8502A54EEA6001B2C67 /* Mutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mutation.graphql.swift; sourceTree = "<group>"; };
+		656FE8512A54EEA6001B2C67 /* Query.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.graphql.swift; sourceTree = "<group>"; };
+		656FE8522A54EEA6001B2C67 /* LogDetail.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogDetail.graphql.swift; sourceTree = "<group>"; };
+		656FE8532A54EEA6001B2C67 /* AuthorizationToken.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationToken.graphql.swift; sourceTree = "<group>"; };
+		656FE8542A54EEA6001B2C67 /* SchemaConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaConfiguration.swift; sourceTree = "<group>"; };
+		656FE8562A54EEA6001B2C67 /* LoginTypeCorrelationInput.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginTypeCorrelationInput.graphql.swift; sourceTree = "<group>"; };
+		656FE8572A54EEA6001B2C67 /* UserDataPair.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDataPair.graphql.swift; sourceTree = "<group>"; };
+		656FE8582A54EEA6001B2C67 /* SchemaMetadata.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaMetadata.graphql.swift; sourceTree = "<group>"; };
+		656FE8592A54EEA6001B2C67 /* ApolloGeneratedGraphQL.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApolloGeneratedGraphQL.graphql.swift; sourceTree = "<group>"; };
 		657392252A47798600981775 /* InvitationKeySheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationKeySheetViewController.swift; sourceTree = "<group>"; };
 		657392552A4B376D00981775 /* SubmitInviteKey.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = SubmitInviteKey.graphql; sourceTree = "<group>"; };
-		657392862A4DD55D00981775 /* SubmitInviteKey copy.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SubmitInviteKey copy.graphql"; sourceTree = "<group>"; };
+		657392862A4DD55D00981775 /* CreateInviteKey.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = CreateInviteKey.graphql; sourceTree = "<group>"; };
 		657392BF2A4FE7A500981775 /* InvitationKeyInputUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationKeyInputUIView.swift; sourceTree = "<group>"; };
 		657392C12A4FE7C800981775 /* InvitationKeyDashesUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationKeyDashesUIView.swift; sourceTree = "<group>"; };
-		657392FD2A51116C00981775 /* LoginOrCreateUserMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginOrCreateUserMutation.graphql.swift; sourceTree = "<group>"; };
-		657392FE2A51116C00981775 /* EditUserMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditUserMutation.graphql.swift; sourceTree = "<group>"; };
-		657392FF2A51116C00981775 /* CreateInviteKeyMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateInviteKeyMutation.graphql.swift; sourceTree = "<group>"; };
-		657393002A51116C00981775 /* CreateUserProfilePictureUploadUrlMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateUserProfilePictureUploadUrlMutation.graphql.swift; sourceTree = "<group>"; };
-		657393012A51116C00981775 /* CreateRunRecordUploadUrlMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateRunRecordUploadUrlMutation.graphql.swift; sourceTree = "<group>"; };
-		657393022A51116C00981775 /* SubmitInviteKeyMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubmitInviteKeyMutation.graphql.swift; sourceTree = "<group>"; };
-		657393042A51116C00981775 /* GetUploadedLogsQuery.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUploadedLogsQuery.graphql.swift; sourceTree = "<group>"; };
-		657393052A51116C00981775 /* GetLogsQuery.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetLogsQuery.graphql.swift; sourceTree = "<group>"; };
-		657393062A51116C00981775 /* GetProfileInformationQuery.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetProfileInformationQuery.graphql.swift; sourceTree = "<group>"; };
-		657393092A51116C00981775 /* LoginType.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginType.graphql.swift; sourceTree = "<group>"; };
-		6573930A2A51116C00981775 /* LogDetailType.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogDetailType.graphql.swift; sourceTree = "<group>"; };
-		6573930C2A51116C00981775 /* LoginTypeCorrelation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginTypeCorrelation.graphql.swift; sourceTree = "<group>"; };
-		6573930D2A51116C00981775 /* User.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.graphql.swift; sourceTree = "<group>"; };
-		6573930E2A51116C00981775 /* Log.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.graphql.swift; sourceTree = "<group>"; };
-		6573930F2A51116C00981775 /* Mutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mutation.graphql.swift; sourceTree = "<group>"; };
-		657393102A51116C00981775 /* Query.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.graphql.swift; sourceTree = "<group>"; };
-		657393112A51116C00981775 /* LogDetail.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogDetail.graphql.swift; sourceTree = "<group>"; };
-		657393122A51116C00981775 /* AuthorizationToken.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationToken.graphql.swift; sourceTree = "<group>"; };
-		657393132A51116C00981775 /* SchemaConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaConfiguration.swift; sourceTree = "<group>"; };
-		657393152A51116C00981775 /* LoginTypeCorrelationInput.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginTypeCorrelationInput.graphql.swift; sourceTree = "<group>"; };
-		657393162A51116C00981775 /* UserDataPair.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDataPair.graphql.swift; sourceTree = "<group>"; };
-		657393172A51116C00981775 /* SchemaMetadata.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaMetadata.graphql.swift; sourceTree = "<group>"; };
-		657393182A51116C00981775 /* ApolloGeneratedGraphQL.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApolloGeneratedGraphQL.graphql.swift; sourceTree = "<group>"; };
 		657393302A51EADB00981775 /* FolderConnectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderConnectionViewController.swift; sourceTree = "<group>"; };
 		657393322A51FDE300981775 /* FolderConnectionViewController+DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FolderConnectionViewController+DocumentPicker.swift"; sourceTree = "<group>"; };
 		657393352A51FE4100981775 /* FolderConnectionViewController+Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FolderConnectionViewController+Errors.swift"; sourceTree = "<group>"; };
 		657473D22A54E81200B776E2 /* DeleteAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountViewController.swift; sourceTree = "<group>"; };
+		657473D42A54EC9C00B776E2 /* DeleteAccount.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = DeleteAccount.graphql; sourceTree = "<group>"; };
 		659A9F7B2A414BA600DC6006 /* GetLogs.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GetLogs.graphql; sourceTree = "<group>"; };
 		659A9F822A414C2E00DC6006 /* GetProfileInformation.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GetProfileInformation.graphql; sourceTree = "<group>"; };
 		659A9F842A414C7800DC6006 /* EditUser.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EditUser.graphql; sourceTree = "<group>"; };
@@ -323,8 +326,9 @@
 				654F224829FE373100D1C96E /* CreateUserProfilePictureUploadUrl.graphql */,
 				654F224A29FE374B00D1C96E /* CreateRunRecordUploadUrl.graphql */,
 				654F227129FE3FE900D1C96E /* LoginOrCreateUser.graphql */,
-				657392862A4DD55D00981775 /* SubmitInviteKey copy.graphql */,
+				657392862A4DD55D00981775 /* CreateInviteKey.graphql */,
 				657392552A4B376D00981775 /* SubmitInviteKey.graphql */,
+				657473D42A54EC9C00B776E2 /* DeleteAccount.graphql */,
 			);
 			path = Mutation;
 			sourceTree = "<group>";
@@ -343,6 +347,93 @@
 			path = Apollo;
 			sourceTree = "<group>";
 		};
+		656FE83A2A54EEA6001B2C67 /* ApolloGeneratedGraphQL */ = {
+			isa = PBXGroup;
+			children = (
+				656FE83B2A54EEA6001B2C67 /* Operations */,
+				656FE8482A54EEA6001B2C67 /* Schema */,
+				656FE8592A54EEA6001B2C67 /* ApolloGeneratedGraphQL.graphql.swift */,
+			);
+			path = ApolloGeneratedGraphQL;
+			sourceTree = "<group>";
+		};
+		656FE83B2A54EEA6001B2C67 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				656FE83C2A54EEA6001B2C67 /* Mutations */,
+				656FE8442A54EEA6001B2C67 /* Queries */,
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
+		656FE83C2A54EEA6001B2C67 /* Mutations */ = {
+			isa = PBXGroup;
+			children = (
+				656FE83D2A54EEA6001B2C67 /* DeleteAccountMutation.graphql.swift */,
+				656FE83E2A54EEA6001B2C67 /* LoginOrCreateUserMutation.graphql.swift */,
+				656FE83F2A54EEA6001B2C67 /* EditUserMutation.graphql.swift */,
+				656FE8402A54EEA6001B2C67 /* CreateInviteKeyMutation.graphql.swift */,
+				656FE8412A54EEA6001B2C67 /* CreateUserProfilePictureUploadUrlMutation.graphql.swift */,
+				656FE8422A54EEA6001B2C67 /* CreateRunRecordUploadUrlMutation.graphql.swift */,
+				656FE8432A54EEA6001B2C67 /* SubmitInviteKeyMutation.graphql.swift */,
+			);
+			path = Mutations;
+			sourceTree = "<group>";
+		};
+		656FE8442A54EEA6001B2C67 /* Queries */ = {
+			isa = PBXGroup;
+			children = (
+				656FE8452A54EEA6001B2C67 /* GetUploadedLogsQuery.graphql.swift */,
+				656FE8462A54EEA6001B2C67 /* GetLogsQuery.graphql.swift */,
+				656FE8472A54EEA6001B2C67 /* GetProfileInformationQuery.graphql.swift */,
+			);
+			path = Queries;
+			sourceTree = "<group>";
+		};
+		656FE8482A54EEA6001B2C67 /* Schema */ = {
+			isa = PBXGroup;
+			children = (
+				656FE8492A54EEA6001B2C67 /* Enums */,
+				656FE84C2A54EEA6001B2C67 /* Objects */,
+				656FE8542A54EEA6001B2C67 /* SchemaConfiguration.swift */,
+				656FE8552A54EEA6001B2C67 /* InputObjects */,
+				656FE8582A54EEA6001B2C67 /* SchemaMetadata.graphql.swift */,
+			);
+			path = Schema;
+			sourceTree = "<group>";
+		};
+		656FE8492A54EEA6001B2C67 /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				656FE84A2A54EEA6001B2C67 /* LoginType.graphql.swift */,
+				656FE84B2A54EEA6001B2C67 /* LogDetailType.graphql.swift */,
+			);
+			path = Enums;
+			sourceTree = "<group>";
+		};
+		656FE84C2A54EEA6001B2C67 /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				656FE84D2A54EEA6001B2C67 /* LoginTypeCorrelation.graphql.swift */,
+				656FE84E2A54EEA6001B2C67 /* User.graphql.swift */,
+				656FE84F2A54EEA6001B2C67 /* Log.graphql.swift */,
+				656FE8502A54EEA6001B2C67 /* Mutation.graphql.swift */,
+				656FE8512A54EEA6001B2C67 /* Query.graphql.swift */,
+				656FE8522A54EEA6001B2C67 /* LogDetail.graphql.swift */,
+				656FE8532A54EEA6001B2C67 /* AuthorizationToken.graphql.swift */,
+			);
+			path = Objects;
+			sourceTree = "<group>";
+		};
+		656FE8552A54EEA6001B2C67 /* InputObjects */ = {
+			isa = PBXGroup;
+			children = (
+				656FE8562A54EEA6001B2C67 /* LoginTypeCorrelationInput.graphql.swift */,
+				656FE8572A54EEA6001B2C67 /* UserDataPair.graphql.swift */,
+			);
+			path = InputObjects;
+			sourceTree = "<group>";
+		};
 		657392C32A4FFD0100981775 /* InvitationKey */ = {
 			isa = PBXGroup;
 			children = (
@@ -351,92 +442,6 @@
 				657392C12A4FE7C800981775 /* InvitationKeyDashesUIView.swift */,
 			);
 			path = InvitationKey;
-			sourceTree = "<group>";
-		};
-		657392FA2A51116C00981775 /* ApolloGeneratedGraphQL */ = {
-			isa = PBXGroup;
-			children = (
-				657392FB2A51116C00981775 /* Operations */,
-				657393072A51116C00981775 /* Schema */,
-				657393182A51116C00981775 /* ApolloGeneratedGraphQL.graphql.swift */,
-			);
-			path = ApolloGeneratedGraphQL;
-			sourceTree = "<group>";
-		};
-		657392FB2A51116C00981775 /* Operations */ = {
-			isa = PBXGroup;
-			children = (
-				657392FC2A51116C00981775 /* Mutations */,
-				657393032A51116C00981775 /* Queries */,
-			);
-			path = Operations;
-			sourceTree = "<group>";
-		};
-		657392FC2A51116C00981775 /* Mutations */ = {
-			isa = PBXGroup;
-			children = (
-				657392FD2A51116C00981775 /* LoginOrCreateUserMutation.graphql.swift */,
-				657392FE2A51116C00981775 /* EditUserMutation.graphql.swift */,
-				657392FF2A51116C00981775 /* CreateInviteKeyMutation.graphql.swift */,
-				657393002A51116C00981775 /* CreateUserProfilePictureUploadUrlMutation.graphql.swift */,
-				657393012A51116C00981775 /* CreateRunRecordUploadUrlMutation.graphql.swift */,
-				657393022A51116C00981775 /* SubmitInviteKeyMutation.graphql.swift */,
-			);
-			path = Mutations;
-			sourceTree = "<group>";
-		};
-		657393032A51116C00981775 /* Queries */ = {
-			isa = PBXGroup;
-			children = (
-				657393042A51116C00981775 /* GetUploadedLogsQuery.graphql.swift */,
-				657393052A51116C00981775 /* GetLogsQuery.graphql.swift */,
-				657393062A51116C00981775 /* GetProfileInformationQuery.graphql.swift */,
-			);
-			path = Queries;
-			sourceTree = "<group>";
-		};
-		657393072A51116C00981775 /* Schema */ = {
-			isa = PBXGroup;
-			children = (
-				657393082A51116C00981775 /* Enums */,
-				6573930B2A51116C00981775 /* Objects */,
-				657393132A51116C00981775 /* SchemaConfiguration.swift */,
-				657393142A51116C00981775 /* InputObjects */,
-				657393172A51116C00981775 /* SchemaMetadata.graphql.swift */,
-			);
-			path = Schema;
-			sourceTree = "<group>";
-		};
-		657393082A51116C00981775 /* Enums */ = {
-			isa = PBXGroup;
-			children = (
-				657393092A51116C00981775 /* LoginType.graphql.swift */,
-				6573930A2A51116C00981775 /* LogDetailType.graphql.swift */,
-			);
-			path = Enums;
-			sourceTree = "<group>";
-		};
-		6573930B2A51116C00981775 /* Objects */ = {
-			isa = PBXGroup;
-			children = (
-				6573930C2A51116C00981775 /* LoginTypeCorrelation.graphql.swift */,
-				6573930D2A51116C00981775 /* User.graphql.swift */,
-				6573930E2A51116C00981775 /* Log.graphql.swift */,
-				6573930F2A51116C00981775 /* Mutation.graphql.swift */,
-				657393102A51116C00981775 /* Query.graphql.swift */,
-				657393112A51116C00981775 /* LogDetail.graphql.swift */,
-				657393122A51116C00981775 /* AuthorizationToken.graphql.swift */,
-			);
-			path = Objects;
-			sourceTree = "<group>";
-		};
-		657393142A51116C00981775 /* InputObjects */ = {
-			isa = PBXGroup;
-			children = (
-				657393152A51116C00981775 /* LoginTypeCorrelationInput.graphql.swift */,
-				657393162A51116C00981775 /* UserDataPair.graphql.swift */,
-			);
-			path = InputObjects;
 			sourceTree = "<group>";
 		};
 		657393342A51FE2600981775 /* FolderConnection */ = {
@@ -469,8 +474,8 @@
 		65A370DA297E594500E1D851 /* Mountain-UI-Companion */ = {
 			isa = PBXGroup;
 			children = (
+				656FE83A2A54EEA6001B2C67 /* ApolloGeneratedGraphQL */,
 				654F229A29FE484C00D1C96E /* Apollo */,
-				657392FA2A51116C00981775 /* ApolloGeneratedGraphQL */,
 				654F224129FE36B400D1C96E /* GraphQLOperations */,
 				654F224C29FE37C400D1C96E /* apollo-codegen-config.json */,
 				654F224E29FE397E00D1C96E /* schema.graphql */,
@@ -622,32 +627,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				657393292A51116C00981775 /* LogDetail.graphql.swift in Sources */,
 				654DEADA2981D8B0001565A3 /* NotificationSettingsTableViewController.swift in Sources */,
-				657393262A51116C00981775 /* Log.graphql.swift in Sources */,
-				6573931F2A51116C00981775 /* GetUploadedLogsQuery.graphql.swift in Sources */,
 				65478ADF29BE8B4400861A63 /* EditNameTableViewCell.swift in Sources */,
 				654DEAD82981CB3F001565A3 /* PopoverButtonTableViewCell.swift in Sources */,
+				656FE8632A54EEA6001B2C67 /* GetProfileInformationQuery.graphql.swift in Sources */,
 				654DEAD22981BF6D001565A3 /* EditProfileTableViewController.swift in Sources */,
 				6568EE0E2A3FB1A500601759 /* LifetimeSummaryViewController.swift in Sources */,
-				657393242A51116C00981775 /* LoginTypeCorrelation.graphql.swift in Sources */,
+				656FE85B2A54EEA6001B2C67 /* LoginOrCreateUserMutation.graphql.swift in Sources */,
 				654F227029FE3A1600D1C96E /* ApolloMountainUIClient.swift in Sources */,
-				6573932A2A51116C00981775 /* AuthorizationToken.graphql.swift in Sources */,
-				6573931A2A51116C00981775 /* EditUserMutation.graphql.swift in Sources */,
-				6573931D2A51116C00981775 /* CreateRunRecordUploadUrlMutation.graphql.swift in Sources */,
-				657393212A51116C00981775 /* GetProfileInformationQuery.graphql.swift in Sources */,
 				65AFF4E929D163E200C0F8C0 /* UserDefaultsKeys.swift in Sources */,
 				657473D32A54E81200B776E2 /* DeleteAccountViewController.swift in Sources */,
+				656FE86D2A54EEA6001B2C67 /* SchemaConfiguration.swift in Sources */,
 				65362D5A29C1037600507CCE /* LoginController.swift in Sources */,
 				657392C22A4FE7C800981775 /* InvitationKeyDashesUIView.swift in Sources */,
 				659A9FE72A42B83600DC6006 /* BookmarkManager.swift in Sources */,
 				657393312A51EADB00981775 /* FolderConnectionViewController.swift in Sources */,
-				6573932C2A51116C00981775 /* LoginTypeCorrelationInput.graphql.swift in Sources */,
+				656FE85A2A54EEA6001B2C67 /* DeleteAccountMutation.graphql.swift in Sources */,
 				654DEACA2981B006001565A3 /* AppSettingTableViewController.swift in Sources */,
 				654DEABF297F5E8C001565A3 /* Extension.swift in Sources */,
-				6573931C2A51116C00981775 /* CreateUserProfilePictureUploadUrlMutation.graphql.swift in Sources */,
+				656FE8612A54EEA6001B2C67 /* GetUploadedLogsQuery.graphql.swift in Sources */,
 				654DEADC2981EE2A001565A3 /* SettingTableViewCell.swift in Sources */,
 				654DEAE029820806001565A3 /* Profile.swift in Sources */,
+				656FE86B2A54EEA6001B2C67 /* LogDetail.graphql.swift in Sources */,
 				654DEAE82983933C001565A3 /* LoginViewController.swift in Sources */,
 				65478ADD29BE6FB100861A63 /* EditEmailTableViewCell.swift in Sources */,
 				65362D5C29C115A100507CCE /* TabViewController.swift in Sources */,
@@ -655,42 +656,47 @@
 				654F4C7A2A3CE91E00E0614C /* LogbookStats.swift in Sources */,
 				654F22A629FF232300D1C96E /* UserError.swift in Sources */,
 				653A0E5F29BCFE8200C8F308 /* SignInWithGoogleButton.swift in Sources */,
-				6573931E2A51116C00981775 /* SubmitInviteKeyMutation.graphql.swift in Sources */,
-				6573932E2A51116C00981775 /* SchemaMetadata.graphql.swift in Sources */,
+				656FE86C2A54EEA6001B2C67 /* AuthorizationToken.graphql.swift in Sources */,
 				6566A0BD29D3EC2B008B7E57 /* ProfilePictureUtils.swift in Sources */,
+				656FE85C2A54EEA6001B2C67 /* EditUserMutation.graphql.swift in Sources */,
 				65D43AB82A400B590053C215 /* StatsTableViewCell.swift in Sources */,
 				65BA301229D0E45D00A6D1BF /* NetworkManager.swift in Sources */,
-				6573932F2A51116C00981775 /* ApolloGeneratedGraphQL.graphql.swift in Sources */,
+				656FE8662A54EEA6001B2C67 /* LoginTypeCorrelation.graphql.swift in Sources */,
 				65362D5E29C1512600507CCE /* Profile+Enums.swift in Sources */,
-				657393252A51116C00981775 /* User.graphql.swift in Sources */,
+				656FE86A2A54EEA6001B2C67 /* Query.graphql.swift in Sources */,
 				65AF9FF6297F355500DC59C3 /* LogbookViewController.swift in Sources */,
 				654F229E29FEFB1E00D1C96E /* NetworkInterceptorProvider.swift in Sources */,
 				654DEAE429824134001565A3 /* SessionTableViewCell.swift in Sources */,
 				659C5CF32A537A0800E21CD7 /* AutoUploadFileLabel.swift in Sources */,
 				65A370DC297E594500E1D851 /* AppDelegate.swift in Sources */,
-				657393272A51116C00981775 /* Mutation.graphql.swift in Sources */,
 				654F22A429FF1B5000D1C96E /* UserManager.swift in Sources */,
+				656FE8682A54EEA6001B2C67 /* Log.graphql.swift in Sources */,
+				656FE85D2A54EEA6001B2C67 /* CreateInviteKeyMutation.graphql.swift in Sources */,
+				656FE8652A54EEA6001B2C67 /* LogDetailType.graphql.swift in Sources */,
 				657393332A51FDE300981775 /* FolderConnectionViewController+DocumentPicker.swift in Sources */,
+				656FE8602A54EEA6001B2C67 /* SubmitInviteKeyMutation.graphql.swift in Sources */,
+				656FE86E2A54EEA6001B2C67 /* LoginTypeCorrelationInput.graphql.swift in Sources */,
 				65362D6029C1526900507CCE /* EditProfilePictureTableViewCell.swift in Sources */,
-				657393282A51116C00981775 /* Query.graphql.swift in Sources */,
-				6573932B2A51116C00981775 /* SchemaConfiguration.swift in Sources */,
+				656FE86F2A54EEA6001B2C67 /* UserDataPair.graphql.swift in Sources */,
+				656FE8712A54EEA6001B2C67 /* ApolloGeneratedGraphQL.graphql.swift in Sources */,
 				654DEADE2981F8C9001565A3 /* ProfileTableViewCell.swift in Sources */,
-				657393202A51116C00981775 /* GetLogsQuery.graphql.swift in Sources */,
+				656FE85E2A54EEA6001B2C67 /* CreateUserProfilePictureUploadUrlMutation.graphql.swift in Sources */,
 				65A370F0297E5D1200E1D851 /* AccountViewController.swift in Sources */,
 				65A370F9297E6B6F00E1D851 /* Constants.swift in Sources */,
+				656FE8622A54EEA6001B2C67 /* GetLogsQuery.graphql.swift in Sources */,
 				654DEAC52980FAB5001565A3 /* MadeWithLoveFooterView.swift in Sources */,
+				656FE8642A54EEA6001B2C67 /* LoginType.graphql.swift in Sources */,
+				656FE8702A54EEA6001B2C67 /* SchemaMetadata.graphql.swift in Sources */,
 				654F22A229FF009300D1C96E /* ResponseLoggingInterceptor.swift in Sources */,
 				65A370DE297E594500E1D851 /* SceneDelegate.swift in Sources */,
 				654F229C29FE486700D1C96E /* UserManagementInterceptor.swift in Sources */,
-				6573932D2A51116C00981775 /* UserDataPair.graphql.swift in Sources */,
 				657393362A51FE4100981775 /* FolderConnectionViewController+Errors.swift in Sources */,
-				657393222A51116C00981775 /* LoginType.graphql.swift in Sources */,
+				656FE8692A54EEA6001B2C67 /* Mutation.graphql.swift in Sources */,
 				657392262A47798600981775 /* InvitationKeySheetViewController.swift in Sources */,
-				657393232A51116C00981775 /* LogDetailType.graphql.swift in Sources */,
+				656FE85F2A54EEA6001B2C67 /* CreateRunRecordUploadUrlMutation.graphql.swift in Sources */,
 				657392C02A4FE7A500981775 /* InvitationKeyInputUIView.swift in Sources */,
-				657393192A51116C00981775 /* LoginOrCreateUserMutation.graphql.swift in Sources */,
 				654F22A029FEFB7100D1C96E /* RequestLoggingInterceptor.swift in Sources */,
-				6573931B2A51116C00981775 /* CreateInviteKeyMutation.graphql.swift in Sources */,
+				656FE8672A54EEA6001B2C67 /* User.graphql.swift in Sources */,
 				65A370F7297E6B5800E1D851 /* Support.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -42,7 +42,6 @@ class LogbookViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateButtonAvailability()
         reloadProfile()
     }
 
@@ -148,7 +147,8 @@ class LogbookViewController: UIViewController {
         lifetimeRunsLabel.text           = logbookStats.lifetimeRuns
     }
 
-    private func refreshUI() {
+    public func refreshUI() {
+        updateButtonAvailability()
         ApolloMountainUIClient.clearCache()
         ApolloMountainUIClient.getLogs { [weak self] result in
             switch result {

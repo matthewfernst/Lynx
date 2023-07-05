@@ -96,7 +96,7 @@
         <!--Logbook View Controller-->
         <scene sceneID="cJL-29-DGS">
             <objects>
-                <viewController storyboardIdentifier="LogBook" id="Yqy-EV-f8Y" customClass="LogbookViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LogbookViewController" id="Yqy-EV-f8Y" customClass="LogbookViewController" customModule="Mountain_UI_Companion" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="z9n-BO-We8">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

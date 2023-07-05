@@ -24,6 +24,8 @@ class DeleteAccountViewController: UIViewController {
         textView.textColor = .label
         textView.textAlignment = .center
         textView.isScrollEnabled = false
+        textView.isEditable = false
+        textView.isSelectable = false
         return textView
     }()
     
@@ -45,6 +47,9 @@ class DeleteAccountViewController: UIViewController {
         
         self.view.addSubview(explanationTextView)
         self.view.addSubview(confirmDeletionOfAccountButton)
+        
+        confirmDeletionOfAccountButton.addTarget(self, action: #selector(deleteAccount), for: .touchUpInside)
+        
         NSLayoutConstraint.activate([
             explanationTextView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor, constant: 20),
             explanationTextView.leadingAnchor.constraint(equalTo: self.view.layoutMarginsGuide.leadingAnchor),
@@ -57,6 +62,54 @@ class DeleteAccountViewController: UIViewController {
             
         ])
         
+    }
+    
+    @objc private func deleteAccount() {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.color = .white
+        activityIndicator.color = .white
+        activityIndicator.transform = CGAffineTransformMakeScale(2, 2)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        let loadingBackground = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
+        loadingBackground.backgroundColor = .black.withAlphaComponent(0.5)
+        
+        loadingBackground.addSubview(activityIndicator)
+        
+        self.view.addSubview(loadingBackground)
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+        ])
+        
+        activityIndicator.startAnimating()
+        
+        ApolloMountainUIClient.deleteAccount() { result in
+            activityIndicator.stopAnimating()
+            loadingBackground.removeFromSuperview()
+            
+            switch result {
+            case .success(_):
+                let ac = UIAlertController(title: "Successfully Deleted Account", message: nil, preferredStyle: .alert)
+                ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel) { _ in
+                    LoginController.signOut()
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    
+                    if let vc = storyboard.instantiateInitialViewController() as? LoginViewController {
+                        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(vc)
+                    }
+                })
+                self.present(ac, animated: true)
+
+            case .failure(_):
+                let ac = UIAlertController(title: "Failed to Delete Account", message: "Our systems were not able to delete your account. Please try again. If the error persists, please contact the developers.", preferredStyle: .alert)
+                
+                ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+                
+                self.present(ac, animated: true)
+            }
+        }
     }
     
 }
