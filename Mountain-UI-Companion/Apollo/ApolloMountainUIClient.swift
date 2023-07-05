@@ -337,12 +337,38 @@ class ApolloMountainUIClient
                 
                 Logger.apollo.info("Successfully deleted user.")
                 completion(.success(()))
-            case .failure(_):
-                Logger.apollo.error("Failed to delete user.")
+                
+            case .failure(let error):
+                Logger.apollo.error("Failed to delete user: \(error)")
                 completion(.failure(DeleteAccountErrors.BackendCouldntDelete))
             }
         }
     }
+    
+    public static func mergeAccount(with accounts: [ApolloGeneratedGraphQL.LoginTypeCorrelationInput], completion: @escaping ((Result<Void, Error>) -> Void)) {
+        enum MergeAccountErrors: Error {
+            case UnwrapOfReturnedUserFailed
+            case BackendCouldntMerge
+        }
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CombineOAuthAccountsMutation(combineWith: accounts)) { result in
+            
+            switch result {
+            case .success(let graphQLResult):
+                guard let _ = graphQLResult.data?.combineOAuthAccounts.id else {
+                    Logger.apollo.error("Couldn't unwrap merge account id.")
+                    completion(.failure(MergeAccountErrors.UnwrapOfReturnedUserFailed))
+                    return
+                }
+                
+                completion(.success(()))
+                
+            case .failure(let error):
+                Logger.apollo.error("Failed to merge accounts: \(error)")
+                completion(.failure(MergeAccountErrors.BackendCouldntMerge))
+            }
+        }
+    }
+    
 }
 
 

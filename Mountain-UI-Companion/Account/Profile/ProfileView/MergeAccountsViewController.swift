@@ -5,12 +5,6 @@
 //  Created by Matthew Ernst on 7/4/23.
 //
 
-//
-//  MergeAccountsViewController.swift
-//  Mountain-UI-Companion
-//
-//  Created by Matthew Ernst on 7/4/23.
-//
 
 import UIKit
 import AuthenticationServices
@@ -157,7 +151,19 @@ class MergeAccountsViewController: UIViewController {
                                                firstName: firstName,
                                                lastName: lastName,
                                                profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "") { _ in
-                // Merge Account
+                
+                let account: [ApolloGeneratedGraphQL.LoginTypeCorrelationInput] = [.init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "GOOGLE"), id: googleId)]
+                
+                ApolloMountainUIClient.mergeAccount(with: account) { result in
+                    switch result {
+                    case .success(_):
+                        self.showSuccessfullyMerged()
+                        
+                    case .failure(_):
+                        self.showFailedToMerge()
+                    }
+                    
+                }
             }
             
         }
@@ -168,6 +174,21 @@ class MergeAccountsViewController: UIViewController {
         ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         present(ac, animated: true)
     }
+    
+    private func showFailedToMerge() {
+        let ac = UIAlertController(title: "Failed to Merge Accounts", message: "We were unable to merge your account. Please try again", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+        present(ac, animated: true)
+    }
+    
+    private func showSuccessfullyMerged() {
+        let ac = UIAlertController(title: "Successfully Merged Accounts", message: nil, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel) {_ in
+            self.dismiss(animated: true)
+        })
+        present(ac, animated: true)
+    }
+    
 }
 
 
@@ -187,7 +208,17 @@ extension MergeAccountsViewController: ASAuthorizationControllerDelegate {
                                                email: appleIdCredential.email,
                                                firstName: appleIdCredential.fullName?.givenName,
                                                lastName: appleIdCredential.fullName?.familyName) { _ -> Void in
-                // MERGE ACCOUNT
+                let account: [ApolloGeneratedGraphQL.LoginTypeCorrelationInput] = [.init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "APPLE"), id: appleIdCredential.user)]
+                
+                ApolloMountainUIClient.mergeAccount(with: account) { result in
+                    switch result {
+                    case .success(_):
+                        self.showSuccessfullyMerged()
+                        
+                    case .failure(_):
+                        self.showFailedToMerge()
+                    }
+                }
             }
             
         default:
