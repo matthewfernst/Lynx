@@ -273,13 +273,13 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                                     FolderConnectionViewController.putZipFiles(urlEndPoint: uploadURL, zipFilePath: fileURL) { result in
                                         switch result {
                                         case .success(_):
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                                 currentIndex += 1
                                                 uploadNextFile()
                                             }
                                         case .failure(let error):
                                             Logger.folderConnection.debug("\(error)")
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                                 currentIndex += 1
                                                 uploadNextFile()
                                             }

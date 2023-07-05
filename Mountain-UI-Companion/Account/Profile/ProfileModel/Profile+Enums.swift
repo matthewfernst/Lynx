@@ -18,6 +18,7 @@ enum EditProfileSections: Int, CaseIterable
     case changeProfilePicture = 0
     case changeNameAndEmail = 1
     case signOut = 2
+    case deleteAccount = 3
 }
 
 enum NameAndEmailRows: Int, CaseIterable

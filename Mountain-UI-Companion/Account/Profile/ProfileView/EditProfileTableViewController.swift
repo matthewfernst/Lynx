@@ -198,6 +198,8 @@ class EditProfileTableViewController: UITableViewController
             return 2
         case .signOut:
             return 1
+        case .deleteAccount:
+            return 1
         default:
             return 0
         }
@@ -238,15 +240,34 @@ class EditProfileTableViewController: UITableViewController
         case .signOut:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileCell", for: indexPath)
             var configuation = cell.defaultContentConfiguration()
-            
+
             configuation.text = "Sign Out"
-            configuation.textProperties.alignment = .center
-            configuation.textProperties.color = .red
-            
+            configuation.textProperties.color = .systemBlue
+
+            configuation.image = UIImage(systemName: "door.right.hand.closed")
+
             cell.backgroundColor = .secondarySystemBackground
             cell.contentConfiguration = configuation
             
             return cell
+
+        case .deleteAccount:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileCell", for: indexPath)
+            var configuation = cell.defaultContentConfiguration()
+            
+            configuation.text = "Delete Account"
+            configuation.textProperties.color = .systemRed
+            
+            configuation.image = UIImage(systemName: "trash.fill")
+            configuation.imageProperties.tintColor = .systemRed
+            
+            cell.backgroundColor = .secondarySystemBackground
+            cell.contentConfiguration = configuation
+            
+            cell.accessoryType = .disclosureIndicator
+            
+            return cell
+
         default:
             return UITableViewCell()
         }
@@ -260,6 +281,10 @@ class EditProfileTableViewController: UITableViewController
             if let vc = self.storyboard?.instantiateInitialViewController() as? LoginViewController {
                 (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(vc)
             }
+        case .deleteAccount:
+            let deleteAccountVC = DeleteAccountViewController()
+            
+            self.navigationController?.pushViewController(deleteAccountVC, animated: true)
         default:
             break
         }
