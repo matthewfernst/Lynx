@@ -305,10 +305,20 @@ class ApolloMountainUIClient
         apolloClient.fetch(query: ApolloGeneratedGraphQL.GetLogsQuery()) { result in
             switch result {
             case .success(let graphQLResult):
-                guard let logbook = graphQLResult.data?.selfLookup?.logbook else {
+                guard var logbook = graphQLResult.data?.selfLookup?.logbook else {
                     Logger.apollo.error("logbook could not be unwrapped.")
                     completion(.failure(QueryLogbookErrors.logbookIsNil))
                     return
+                }
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+                
+                logbook.sort { (a: Logbook, b: Logbook) in
+                    let date1 = dateFormatter.date(from: a.startDate) ?? Date()
+                    let date2 = dateFormatter.date(from: b.startDate) ?? Date()
+                    
+                    return date1 < date2
                 }
                 
                 return completion(.success(logbook))

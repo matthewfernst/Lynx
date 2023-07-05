@@ -45,7 +45,7 @@ class LogbookViewController: UIViewController {
         self.navigationController?.navigationBar.prefersLargeTitles = true
         reloadProfile()
     }
-
+    
     private func autoUploadFiles() {
         let uploadLabel = AutoUploadFileLabel()
         
@@ -122,24 +122,24 @@ class LogbookViewController: UIViewController {
     }
     
     func reloadProfile() {
-         // Update the profile picture
-         if let profilePicture = profile.profilePicture {
-             profilePictureImageView.image = profilePicture
-         } else {
-             let defaultProfilePicture = ProfilePictureUtils.getDefaultProfilePicture(name: profile.name, fontSize: 60)
-             profilePictureImageView.addSubview(defaultProfilePicture)
-             defaultProfilePicture.translatesAutoresizingMaskIntoConstraints = false
-             NSLayoutConstraint.activate([
-                 defaultProfilePicture.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
-                 defaultProfilePicture.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
-             ])
-         }
-         
-         // Update other UI elements or perform any necessary setup
-         
-         // Refresh the table view
-         lifetimeSummaryTableView.reloadData()
-     }
+        // Update the profile picture
+        if let profilePicture = profile.profilePicture {
+            profilePictureImageView.image = profilePicture
+        } else {
+            let defaultProfilePicture = ProfilePictureUtils.getDefaultProfilePicture(name: profile.name, fontSize: 60)
+            profilePictureImageView.addSubview(defaultProfilePicture)
+            defaultProfilePicture.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                defaultProfilePicture.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor),
+                defaultProfilePicture.centerYAnchor.constraint(equalTo: profilePictureImageView.centerYAnchor)
+            ])
+        }
+        
+        // Update other UI elements or perform any necessary setup
+        
+        // Refresh the table view
+        lifetimeSummaryTableView.reloadData()
+    }
     
     private func setupMainStats() {
         lifetimeVerticalFeetLabel.text   = logbookStats.lifetimeVerticalFeet
@@ -147,14 +147,14 @@ class LogbookViewController: UIViewController {
         lifetimeRunsTimeLabel.text       = logbookStats.lifetimeRunsTime
         lifetimeRunsLabel.text           = logbookStats.lifetimeRuns
     }
-
+    
     public func refreshUI() {
         updateButtonAvailability()
         ApolloMountainUIClient.clearCache()
         ApolloMountainUIClient.getLogs { [weak self] result in
             switch result {
             case .success(let logbook):
-                self?.logbookStats.logbooks = logbook
+                self?.logbookStats.logbooks = logbook            
                 DispatchQueue.main.async {
                     self?.setupMainStats()
                     self?.lifetimeSummaryTableView.reloadData()
