@@ -101,7 +101,9 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                 if let logbookViewController = desiredNavigationController.viewControllers.first as? LogbookViewController {
                     // Modify the right bar button item
                     logbookViewController.setupNavigationBar()
-                    logbookViewController.refreshUI()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        logbookViewController.refreshUI()
+                    }
                 }
             }
         }
