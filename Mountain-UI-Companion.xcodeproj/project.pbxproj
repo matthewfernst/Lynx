@@ -68,6 +68,8 @@
 		656FE86F2A54EEA6001B2C67 /* UserDataPair.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8572A54EEA6001B2C67 /* UserDataPair.graphql.swift */; };
 		656FE8702A54EEA6001B2C67 /* SchemaMetadata.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8582A54EEA6001B2C67 /* SchemaMetadata.graphql.swift */; };
 		656FE8712A54EEA6001B2C67 /* ApolloGeneratedGraphQL.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8592A54EEA6001B2C67 /* ApolloGeneratedGraphQL.graphql.swift */; };
+		656FE8732A552941001B2C67 /* MergeAccountsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656FE8722A552941001B2C67 /* MergeAccountsViewController.swift */; };
+		656FE8752A553A42001B2C67 /* MergeAccounts.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 656FE8742A553A42001B2C67 /* MergeAccounts.graphql */; };
 		657392262A47798600981775 /* InvitationKeySheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392252A47798600981775 /* InvitationKeySheetViewController.swift */; };
 		657392C02A4FE7A500981775 /* InvitationKeyInputUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392BF2A4FE7A500981775 /* InvitationKeyInputUIView.swift */; };
 		657392C22A4FE7C800981775 /* InvitationKeyDashesUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657392C12A4FE7C800981775 /* InvitationKeyDashesUIView.swift */; };
@@ -159,6 +161,8 @@
 		656FE8572A54EEA6001B2C67 /* UserDataPair.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDataPair.graphql.swift; sourceTree = "<group>"; };
 		656FE8582A54EEA6001B2C67 /* SchemaMetadata.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SchemaMetadata.graphql.swift; sourceTree = "<group>"; };
 		656FE8592A54EEA6001B2C67 /* ApolloGeneratedGraphQL.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApolloGeneratedGraphQL.graphql.swift; sourceTree = "<group>"; };
+		656FE8722A552941001B2C67 /* MergeAccountsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergeAccountsViewController.swift; sourceTree = "<group>"; };
+		656FE8742A553A42001B2C67 /* MergeAccounts.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MergeAccounts.graphql; sourceTree = "<group>"; };
 		657392252A47798600981775 /* InvitationKeySheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationKeySheetViewController.swift; sourceTree = "<group>"; };
 		657392552A4B376D00981775 /* SubmitInviteKey.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = SubmitInviteKey.graphql; sourceTree = "<group>"; };
 		657392862A4DD55D00981775 /* CreateInviteKey.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = CreateInviteKey.graphql; sourceTree = "<group>"; };
@@ -237,8 +241,9 @@
 			children = (
 				654DEAD12981BF6D001565A3 /* EditProfileTableViewController.swift */,
 				6566A0BC29D3EC2B008B7E57 /* ProfilePictureUtils.swift */,
-				65362D6329C16C8100507CCE /* EditProfileTableCells */,
 				657473D22A54E81200B776E2 /* DeleteAccountViewController.swift */,
+				656FE8722A552941001B2C67 /* MergeAccountsViewController.swift */,
+				65362D6329C16C8100507CCE /* EditProfileTableCells */,
 			);
 			path = ProfileView;
 			sourceTree = "<group>";
@@ -329,6 +334,7 @@
 				657392862A4DD55D00981775 /* CreateInviteKey.graphql */,
 				657392552A4B376D00981775 /* SubmitInviteKey.graphql */,
 				657473D42A54EC9C00B776E2 /* DeleteAccount.graphql */,
+				656FE8742A553A42001B2C67 /* MergeAccounts.graphql */,
 			);
 			path = Mutation;
 			sourceTree = "<group>";
@@ -617,6 +623,7 @@
 				654F224F29FE397E00D1C96E /* schema.graphql in Resources */,
 				659A9F832A414C2E00DC6006 /* GetProfileInformation.graphql in Resources */,
 				654F224B29FE374B00D1C96E /* CreateRunRecordUploadUrl.graphql in Resources */,
+				656FE8752A553A42001B2C67 /* MergeAccounts.graphql in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -684,6 +691,7 @@
 				65A370F0297E5D1200E1D851 /* AccountViewController.swift in Sources */,
 				65A370F9297E6B6F00E1D851 /* Constants.swift in Sources */,
 				656FE8622A54EEA6001B2C67 /* GetLogsQuery.graphql.swift in Sources */,
+				656FE8732A552941001B2C67 /* MergeAccountsViewController.swift in Sources */,
 				654DEAC52980FAB5001565A3 /* MadeWithLoveFooterView.swift in Sources */,
 				656FE8642A54EEA6001B2C67 /* LoginType.graphql.swift in Sources */,
 				656FE8702A54EEA6001B2C67 /* SchemaMetadata.graphql.swift in Sources */,

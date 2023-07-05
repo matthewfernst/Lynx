@@ -113,6 +113,8 @@ extension Logger
     
     static let editProfileTableViewController = Logger(subsystem: subsystem, category: "EditProfileTableViewController")
     
+    static let mergeAccountsViewController = Logger(subsystem: subsystem, category: "MergeAccountsViewController")
+    
     static let apollo = Logger(subsystem: subsystem, category: "Apollo")
     
     static let folderConnection = Logger(subsystem: subsystem, category: "FolderConnection")

@@ -196,8 +196,8 @@ class EditProfileTableViewController: UITableViewController
             return 1
         case .changeNameAndEmail:
             return 2
-        case .signOut:
-            return 1
+        case .mergeAccountsOrSignOut:
+            return 2
         case .deleteAccount:
             return 1
         default:
@@ -237,14 +237,25 @@ class EditProfileTableViewController: UITableViewController
                 return UITableViewCell()
             }
             
-        case .signOut:
+        case .mergeAccountsOrSignOut:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileCell", for: indexPath)
             var configuation = cell.defaultContentConfiguration()
-
-            configuation.text = "Sign Out"
+            
+            switch MergeAccountOrSignOutRows(rawValue: indexPath.row) {
+            case .mergeAccounts:
+                configuation.text = "Merge Accounts"
+                configuation.image = UIImage(systemName: "person.2.gobackward")
+                cell.accessoryType = .disclosureIndicator
+                
+            case .signOut:
+                configuation.text = "Sign Out"
+                configuation.image = UIImage(systemName: "door.right.hand.closed")
+                
+            default:
+                break
+            }
+            
             configuation.textProperties.color = .systemBlue
-
-            configuation.image = UIImage(systemName: "door.right.hand.closed")
 
             cell.backgroundColor = .secondarySystemBackground
             cell.contentConfiguration = configuation
@@ -276,15 +287,25 @@ class EditProfileTableViewController: UITableViewController
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch EditProfileSections(rawValue: indexPath.section) {
-        case .signOut:
-            LoginController.signOut()
-            if let vc = self.storyboard?.instantiateInitialViewController() as? LoginViewController {
-                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(vc)
-            }
-        case .deleteAccount:
-            let deleteAccountVC = DeleteAccountViewController()
+        case .mergeAccountsOrSignOut:
             
-            self.navigationController?.pushViewController(deleteAccountVC, animated: true)
+            switch MergeAccountOrSignOutRows(rawValue: indexPath.row) {
+            case .mergeAccounts:
+                self.navigationController?.pushViewController(MergeAccountsViewController(), animated: true)
+                
+            case .signOut:
+                LoginController.signOut()
+                if let vc = self.storyboard?.instantiateInitialViewController() as? LoginViewController {
+                    (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(vc)
+                }
+                
+            default:
+                break
+            }
+
+        case .deleteAccount:
+            self.navigationController?.pushViewController(DeleteAccountViewController(), animated: true)
+            
         default:
             break
         }

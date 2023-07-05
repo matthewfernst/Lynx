@@ -18,7 +18,7 @@ class LoginViewController: UIViewController
     
     static let identitfier = "LoginViewController"
     
-    private lazy var loginController = LoginController(loginViewController: self)
+    private lazy var loginController = LoginController(loginControllerCaller: self)
     private let activityIndicator = UIActivityIndicatorView()
     private lazy var loadingBackground = UIView(frame: self.view.frame)
     
@@ -230,14 +230,6 @@ class LoginViewController: UIViewController
         activityIndicator.startAnimating()
         
         return activityIndicator
-    }
-    
-    public func setupInvitationSheet(completion: @escaping () -> Void) {
-        DispatchQueue.main.async {
-            let activationSheetViewController = InvitationKeySheetViewController(completion: completion)
-            activationSheetViewController.modalPresentationStyle = .formSheet
-            self.present(activationSheetViewController, animated: true)
-        }
     }
     
     private func signInExistingUser() {

@@ -17,8 +17,14 @@ enum EditProfileSections: Int, CaseIterable
 {
     case changeProfilePicture = 0
     case changeNameAndEmail = 1
-    case signOut = 2
+    case mergeAccountsOrSignOut = 2
     case deleteAccount = 3
+}
+
+enum MergeAccountOrSignOutRows: Int, CaseIterable
+{
+    case mergeAccounts = 0
+    case signOut = 1
 }
 
 enum NameAndEmailRows: Int, CaseIterable

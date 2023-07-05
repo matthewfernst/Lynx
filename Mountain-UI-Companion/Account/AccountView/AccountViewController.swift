@@ -147,7 +147,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
         case .support:
             return "Show your support"
         case .contactDevelopers:
-            return "Found an Issue?"
+            return "Found an Issue or Need Help?"
         default:
             return nil
         }
