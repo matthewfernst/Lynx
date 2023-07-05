@@ -154,7 +154,7 @@ class LogbookViewController: UIViewController {
         ApolloMountainUIClient.getLogs { [weak self] result in
             switch result {
             case .success(let logbook):
-                self?.logbookStats.logbooks = logbook            
+                self?.logbookStats.logbooks = logbook
                 DispatchQueue.main.async {
                     self?.setupMainStats()
                     self?.lifetimeSummaryTableView.reloadData()
@@ -195,10 +195,6 @@ class LogbookViewController: UIViewController {
     @objc private func showConnectedFolder() {
         guard var connectedFolder = FolderConnectionViewController.bookmarkManager.bookmark?.url.lastPathComponent else {
             return
-        }
-        
-        if connectedFolder.lowercased() == "gpslogs" {
-            connectedFolder = "Slopes"
         }
         
         let ac = UIAlertController(title: "Successfully Connected to \(connectedFolder)", message: "You have already successfully connected your folder. When you open the app, it will automatically upload new files. Do you wish to connect to a different folder?", preferredStyle: .actionSheet)

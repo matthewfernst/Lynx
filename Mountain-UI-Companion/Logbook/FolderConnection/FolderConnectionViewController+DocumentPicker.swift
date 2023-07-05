@@ -110,7 +110,6 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
     }
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        
         let url = urls[0] // TODO: Make sure to select only one directory
         
         guard url.startAccessingSecurityScopedResource() else {
@@ -121,11 +120,13 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
         
         defer { url.stopAccessingSecurityScopedResource() }
         
+        let fileManager = FileManager.default
         
-        // Slopes folder doesn't come up and instead shows the App Sandbox ID for Slopes
-        if url.pathComponents.contains("GPSLogs") {
-            // Get the contents of the directory
-            guard let contents = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil) else {
+        // Find the "GPSLogs" directory within the selected directory
+        let slopsDirectoryURLs = try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+        if let gpsLogsURL = slopsDirectoryURLs?.first(where: { $0.lastPathComponent == "GPSLogs" }), gpsLogsURL.hasDirectoryPath {
+            // Get the contents of the "GPSLogs" directory
+            guard let contents = try? fileManager.contentsOfDirectory(at: gpsLogsURL, includingPropertiesForKeys: nil) else {
                 // Failed to access the directory
                 return
             }
@@ -133,26 +134,26 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             if contents.allSatisfy({ $0.pathExtension == "slopes" }) {
                 let keys: [URLResourceKey] = [.nameKey, .isDirectoryKey]
                 
-                guard let totalNumberOfFiles = FileManager.default.enumerator(at: url, includingPropertiesForKeys: keys)?.allObjects.count else {
-                    Logger.folderConnection.debug("*** Unable to access the contents of \(url.path) ***\n")
+                guard let totalNumberOfFiles = fileManager.enumerator(at: gpsLogsURL, includingPropertiesForKeys: keys)?.allObjects.count else {
+                    Logger.folderConnection.debug("*** Unable to access the contents of \(gpsLogsURL.path) ***\n")
                     showFileAccessNotAllowed()
                     return
                 }
                 
-                guard let fileList = FolderConnectionViewController.getFileList(at: url, includingPropertiesForKeys: keys) else { return }
+                guard let fileList = FolderConnectionViewController.getFileList(at: gpsLogsURL, includingPropertiesForKeys: keys) else { return }
                 
                 let requestedPathsForUpload = fileList.compactMap { $0.lastPathComponent }
                 
                 ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: requestedPathsForUpload) { [unowned self] result in
                     switch result {
                     case .success(let urlsForUpload):
-                        guard url.startAccessingSecurityScopedResource() else {
+                        guard gpsLogsURL.startAccessingSecurityScopedResource() else {
                             // Handle the failure here.
                             showFileAccessNotAllowed()
                             return
                         }
                         
-                        guard let fileList = FolderConnectionViewController.getFileList(at: url, includingPropertiesForKeys: keys) else { return }
+                        guard let fileList = FolderConnectionViewController.getFileList(at: gpsLogsURL, includingPropertiesForKeys: keys) else { return }
                         
                         setupSlopeFilesUploadingView()
                         var currentFileNumberBeingUploaded = 0
@@ -179,8 +180,8 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                                 }
                             }
                         }
-                        url.stopAccessingSecurityScopedResource()
-                        FolderConnectionViewController.bookmarkManager.saveBookmark(for: url)
+                        gpsLogsURL.stopAccessingSecurityScopedResource()
+                        FolderConnectionViewController.bookmarkManager.saveBookmark(for: gpsLogsURL)
                     case .failure(_):
                         showErrorUploading()
                     }
@@ -192,6 +193,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             showWrongDirectorySelected(directory: url.lastPathComponent)
         }
     }
+
     
     public static func getNonUploadedSlopeFiles(completion: @escaping ([String]?) -> Void) {
         guard let bookmark = FolderConnectionViewController.bookmarkManager.bookmark else {
