@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import MessageUI
 import ClientRuntime
 
 enum AllSettingsSections: Int, CaseIterable
@@ -14,6 +15,7 @@ enum AllSettingsSections: Int, CaseIterable
     case general = 1
     case inviteKey = 2
     case support = 3
+    case contactDevelopers = 4
 }
 
 enum GeneralSettinsSections: Int, CaseIterable
@@ -72,6 +74,8 @@ class AccountViewController: UITableViewController, EditProfileDelegate
             return 1
         case .support:
             return supportSettings.count
+        case .contactDevelopers:
+            return 1
         default:
             return 0
         }
@@ -120,6 +124,14 @@ class AccountViewController: UITableViewController, EditProfileDelegate
             supportCell.configure(with: supportSettings[indexPath.row].setting)
             return supportCell
             
+        case .contactDevelopers:
+            guard let contactDevelopers = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.identifier, for: indexPath) as? SettingTableViewCell else {
+                return UITableViewCell()
+            }
+            
+            contactDevelopers.configure(with: Setting.contactDevelopers)
+            return contactDevelopers
+            
         default:
             return UITableViewCell()
         }
@@ -134,6 +146,8 @@ class AccountViewController: UITableViewController, EditProfileDelegate
             return "Invite key"
         case .support:
             return "Show your support"
+        case .contactDevelopers:
+            return "Found an Issue?"
         default:
             return nil
         }
@@ -141,7 +155,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch AllSettingsSections(rawValue: section) {
-        case .support:
+        case .contactDevelopers:
             let footer = tableView.dequeueReusableHeaderFooterView(withIdentifier: MadeWithLoveFooterView.identifier) as! MadeWithLoveFooterView
             footer.appVersionLabel.text = "Version 1.0.0"
             footer.madeWithLoveLabel.text = "Made with ❤️+☕️ in San Diego, CA and Seattle, WA"
@@ -153,7 +167,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         switch AllSettingsSections(rawValue: section) {
-        case .support:
+        case .contactDevelopers:
             return 100
         default:
             return 0
@@ -167,7 +181,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
                 
                 editProfileViewController.profile = self.profile
                 editProfileViewController.delegate = self
-
+                
                 self.navigationController?.pushViewController(editProfileViewController, animated: true)
             }
             
@@ -198,7 +212,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
                     guard let firstName = self?.profile.firstName else {
                         return
                     }
-
+                    
                     guard let lastName = self?.profile.lastName else {
                         return
                     }
@@ -225,7 +239,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
                     ]
                     
                     self?.present(activityViewController, animated: true)
-                   
+                    
                 case .failure(_):
                     let ac = UIAlertController(title: "Failed to Create Invite Key", message: "Our systems were not able to create a invite key. Please try again.", preferredStyle: .alert)
                     
@@ -239,6 +253,54 @@ class AccountViewController: UITableViewController, EditProfileDelegate
                 UIApplication.shared.open(url)
             }
             
+        case .contactDevelopers:
+            let body = """
+               Hello,
+
+               I would like to report a bug in the app. Here are the details:
+
+               - App Version: [App Version]
+               - Device: [Device Model]
+               - iOS Version: [iOS Version]
+
+               Bug Description:
+               [Describe the bug you encountered]
+
+               Steps to Reproduce:
+               [Provide steps to reproduce the bug]
+
+               Expected Behavior:
+               [Describe what you expected to happen]
+
+               Actual Behavior:
+               [Describe what actually happened]
+
+               Additional Information:
+               [Provide any additional relevant information]
+
+               Thank you for your attention to this matter.
+
+               Regards,
+               [Your Name]
+               """
+            if MFMailComposeViewController.canSendMail() {
+                let composer = MFMailComposeViewController()
+                composer.mailComposeDelegate = self
+                composer.setToRecipients([Constants.contactEmail])
+                composer.setSubject("Mountain-UI-Companion Bug Report: [Brief Description]")
+
+                composer.setMessageBody(body, isHTML: false)
+                
+                self.present(composer, animated: true)
+            } else {
+                let ac = UIAlertController(title: "Failed to Open Mail", message: "We were unable to open the Mail app. Please send an email to \(Constants.contactEmail). You can copy the bug report template below.", preferredStyle: .alert)
+                ac.addAction(UIAlertAction(title: "Copy Bug Report Template", style: .default) {_ in
+                    UIPasteboard.general.string = body
+                })
+                ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+                self.present(ac, animated: true)
+            }
+            
         default:
             break
         }
@@ -246,3 +308,9 @@ class AccountViewController: UITableViewController, EditProfileDelegate
     }
 }
 
+
+extension AccountViewController: MFMailComposeViewControllerDelegate {
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+}

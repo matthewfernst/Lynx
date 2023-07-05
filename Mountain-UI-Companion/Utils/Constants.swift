@@ -11,6 +11,7 @@ enum Constants
 {
     // Apollo
     static let graphQLEndpoint = "https://7dabklh4i4.execute-api.us-west-1.amazonaws.com/production/graphql"
+
     // Settings
     static let twitter = "https://twitter.com/ErnstMatthew"
     static let github = "https://github.com/matthewfernst/Mountain-UI-Companion-App"
@@ -19,4 +20,7 @@ enum Constants
     
     // Bundle ID
     static let bundleID = "com.matthewfernst.Mountain-UI-Companion"
+    
+    // Email
+    static let contactEmail = "matthew.f.ernst@icloud.com"
 }
