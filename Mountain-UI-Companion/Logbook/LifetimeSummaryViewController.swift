@@ -31,7 +31,7 @@ class LifetimeSummaryViewController: UIViewController, UITableViewDataSource, UI
         super.viewDidLoad()
 
         self.title = "Lifetime"
-        self.navigationController?.navigationBar.prefersLargeTitles = false
+        self.navigationController?.navigationBar.prefersLargeTitles = true
         
         tableView.dataSource = self
         tableView.delegate = self
