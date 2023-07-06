@@ -38,6 +38,10 @@ class LoginViewController: UIViewController
         animateLoginView()
         
         signInExistingUser()
+        
+        if UIScreen.main.bounds.height <= 680 { // For tiny screens
+            appLabel.transform = CGAffineTransform(translationX: 0, y: -80)
+        }
     }
     
     // MARK: - Notifications
