@@ -1,5 +1,5 @@
 import { Context } from "../../index";
-import { checkIsLoggedInAndHasValidToken } from "../../auth";
+import { checkIsLoggedInAndHasValidInvite } from "../../auth";
 import { DYNAMODB_TABLE_USERS, deleteItem } from "../../aws/dynamodb";
 import {
     deleteObjectsInBucket,
@@ -10,7 +10,7 @@ import {
 import { User } from "../../types";
 
 const deleteUser = async (_: any, args: {}, context: Context, info: any): Promise<User> => {
-    await checkIsLoggedInAndHasValidToken(context);
+    await checkIsLoggedInAndHasValidInvite(context);
     await deleteObjectsInBucket(profilePictureBucketName, context.userId as string);
     await deleteObjectsInBucket(fromRunRecordsBucket, context.userId as string);
     await deleteObjectsInBucket(toRunRecordsBucket, context.userId as string);

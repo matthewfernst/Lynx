@@ -20,8 +20,8 @@ interface Args {
     oauthLoginId: {
         type: LoginType;
         id: string;
+        token: string;
     };
-    token: string;
     email?: string;
     userData: {
         key: string;
@@ -41,7 +41,7 @@ const createUserOrSignIn = async (
     context: Context,
     info: any
 ): Promise<AuthorizationToken> => {
-    await verifyToken(args.oauthLoginId.type, args.oauthLoginId.id, args.token);
+    await verifyToken(args.oauthLoginId.type, args.oauthLoginId.id, args.oauthLoginId.token);
     return await oauthLogin(
         idKeyFromIdType(args.oauthLoginId.type),
         args.oauthLoginId.id,
@@ -50,7 +50,7 @@ const createUserOrSignIn = async (
     );
 };
 
-const verifyToken = async (type: LoginType, id: string, token: string) => {
+export const verifyToken = async (type: LoginType, id: string, token: string) => {
     switch (type) {
         case "APPLE":
             return await verifyAppleToken(id, token);

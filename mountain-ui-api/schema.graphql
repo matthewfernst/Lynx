@@ -73,7 +73,8 @@ type LoginTypeCorrelation {
 
 input LoginTypeCorrelationInput {
     type: LoginType!
-    id: String!
+    id: ID!
+    token: ID
 }
 
 input UserDataPair {
@@ -90,11 +91,10 @@ type Query {
 type Mutation {
     createUserOrSignIn(
         oauthLoginId: LoginTypeCorrelationInput!
-        token: ID!
         email: String
         userData: [UserDataPair!]
     ): AuthorizationToken
-    combineOAuthAccounts(combineWith: [LoginTypeCorrelationInput!]!): User!
+    combineOAuthAccounts(combineWith: LoginTypeCorrelationInput!): User!
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
     deleteUser: User!

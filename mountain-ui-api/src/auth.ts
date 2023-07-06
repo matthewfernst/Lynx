@@ -50,14 +50,14 @@ export const checkIsLoggedIn = async (context: Context): Promise<void> => {
     }
 };
 
-export const checkIsLoggedInAndHasValidToken = async (context: Context): Promise<void> => {
+export const checkIsLoggedInAndHasValidInvite = async (context: Context): Promise<void> => {
     if (!context.userId) {
         throw new AuthenticationError("Must Be Logged In");
     }
     const queryOutput = await getItem(DYNAMODB_TABLE_USERS, context.userId);
     const userRecord = getItemFromDynamoDBResult(queryOutput) as User | null;
     if (!userRecord || !userRecord.validatedInvite) {
-        throw new AuthenticationError("User Does Not Exist Or No Validated Token");
+        throw new AuthenticationError("User Does Not Exist Or No Validated Invite");
     }
 };
 

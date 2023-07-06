@@ -1,5 +1,5 @@
 import { Context } from "../../index";
-import { checkIsLoggedInAndHasValidToken } from "../../auth";
+import { checkIsLoggedInAndHasValidInvite } from "../../auth";
 import {
     DYNAMODB_TABLE_USERS,
     getItem,
@@ -16,7 +16,7 @@ interface Args {
 }
 
 const editUser = async (_: any, args: Args, context: Context, info: any): Promise<User> => {
-    await checkIsLoggedInAndHasValidToken(context);
+    await checkIsLoggedInAndHasValidInvite(context);
     for (const data of args.userData) {
         await updateItem(DYNAMODB_TABLE_USERS, context.userId as string, data.key, data.value);
     }
