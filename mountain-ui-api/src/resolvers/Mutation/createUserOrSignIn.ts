@@ -20,7 +20,7 @@ interface Args {
     oauthLoginId: {
         type: LoginType;
         id: string;
-        token: string;
+        token?: string;
     };
     email?: string;
     userData: {
@@ -41,13 +41,12 @@ const createUserOrSignIn = async (
     context: Context,
     info: any
 ): Promise<AuthorizationToken> => {
-    await verifyToken(args.oauthLoginId.type, args.oauthLoginId.id, args.oauthLoginId.token);
-    return await oauthLogin(
-        idKeyFromIdType(args.oauthLoginId.type),
-        args.oauthLoginId.id,
-        args.email,
-        args.userData
-    );
+    const { type, id, token } = args.oauthLoginId;
+    if (!token) {
+        throw new UserInputError("Token Is Mandatory");
+    }
+    await verifyToken(type, id, token);
+    return await oauthLogin(idKeyFromIdType(type), id, args.email, args.userData);
 };
 
 export const verifyToken = async (type: LoginType, id: string, token: string) => {
