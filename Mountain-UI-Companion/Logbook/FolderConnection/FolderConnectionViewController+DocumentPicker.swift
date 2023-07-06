@@ -166,10 +166,12 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                                         if currentFileNumberBeingUploaded == totalNumberOfFiles {
                                             // All files are uploaded, perform cleanup
                                             self.cleanUpSlopeFilesUploadView()
+                                            gpsLogsURL.stopAccessingSecurityScopedResource()
                                         }
                                     case .failure(let error):
                                         Logger.folderConnection.debug("Failed to upload \(fileURL) with error: \(error)")
                                         showErrorUploading()
+                                        gpsLogsURL.stopAccessingSecurityScopedResource()
                                     }
                                 }
                             }
@@ -179,6 +181,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                         
                     case .failure(_):
                         showErrorUploading()
+                        gpsLogsURL.stopAccessingSecurityScopedResource()
                     }
                 }
             } else {
