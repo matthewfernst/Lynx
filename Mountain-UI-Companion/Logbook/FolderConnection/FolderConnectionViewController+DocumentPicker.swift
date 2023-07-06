@@ -247,6 +247,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
         ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: nonUploadedSlopeFiles) { result in
             switch result {
             case .success(var urlsForUpload):
+                label.setActivityIndicatorNextToText()
                 do {
                     let resourceValues = try bookmark.url.resourceValues(forKeys: [.isDirectoryKey])
                     if resourceValues.isDirectory ?? false {

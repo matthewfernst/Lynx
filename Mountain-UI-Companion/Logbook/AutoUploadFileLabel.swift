@@ -1,5 +1,5 @@
 //
-//  WideOvalView.swift
+//  AutoUploadFileLabel.swift
 //  Mountain-UI-Companion
 //
 //  Created by Matthew Ernst on 7/3/23.
@@ -10,7 +10,7 @@ import UIKit
 class AutoUploadFileLabel: UIView {
     private let roundRectLayer = CAShapeLayer()
     public let label = UILabel()
-    private let activityIndicator = UIActivityIndicatorView()
+    private var activityIndicator = UIActivityIndicatorView()
     private let checkmarkImageView = UIImageView(image: UIImage(systemName: "checkmark.circle.fill"))
     
     override init(frame: CGRect) {
@@ -31,7 +31,7 @@ class AutoUploadFileLabel: UIView {
         roundRectLayer.shadowOffset = CGSize(width: 0, height: 2)
         roundRectLayer.shadowRadius = 4
         layer.addSublayer(roundRectLayer)
-
+        
         // Configure the label
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -42,7 +42,7 @@ class AutoUploadFileLabel: UIView {
         // Configure the activity indicator
         activityIndicator.style = .medium
         activityIndicator.color = .gray
-    
+        
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         addSubview(activityIndicator)
         
@@ -51,19 +51,46 @@ class AutoUploadFileLabel: UIView {
             label.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             label.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             
-            activityIndicator.centerYAnchor.constraint(equalTo: label.centerYAnchor),
-            activityIndicator.trailingAnchor.constraint(equalTo: label.text == nil ? label.centerXAnchor : label.leadingAnchor, constant: -10) // Adjust the spacing as needed
+            activityIndicator.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: self.centerXAnchor)
         ])
         
         // Start animating the activity indicator
         activityIndicator.startAnimating()
+    }
+    
+    public func setActivityIndicatorNextToText() {
+        activityIndicator.stopAnimating() // Stop the current activity indicator
+        
+        // Remove the existing activity indicator from superview
+        activityIndicator.removeFromSuperview()
+        
+        // Create a new activity indicator and assign it to the activityIndicator property
+        let newActivityIndicator = UIActivityIndicatorView(style: .medium)
+        newActivityIndicator.color = .gray
+        newActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add the new activity indicator to the view
+        addSubview(newActivityIndicator)
+        
+        // Position the new activity indicator to the left of the label
+        NSLayoutConstraint.activate([
+            newActivityIndicator.centerYAnchor.constraint(equalTo: label.centerYAnchor),
+            newActivityIndicator.trailingAnchor.constraint(equalTo: label.leadingAnchor, constant: -10)
+        ])
+        
+        // Start animating the new activity indicator
+        newActivityIndicator.startAnimating()
+        
+        // Update the reference to the activityIndicator property
+        activityIndicator = newActivityIndicator
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         roundRectLayer.fillColor = UIColor.systemBackground.resolvedColor(with: self.traitCollection).cgColor
     }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -74,7 +101,7 @@ class AutoUploadFileLabel: UIView {
                 yOffset += safeAreaInsets.top
             }
         }
-
+        
         let width: CGFloat = 250
         let height: CGFloat = 44
         let x = (superview?.bounds.width ?? 0) / 2 - (width / 2)
@@ -114,7 +141,7 @@ class AutoUploadFileLabel: UIView {
             completion()
         }
     }
-
+    
     func slideUp() {
         activityIndicator.removeFromSuperview()
         label.removeFromSuperview()
