@@ -21,18 +21,21 @@ class LoginViewController: UIViewController
     private lazy var loginController = LoginController(loginControllerCaller: self)
     private let activityIndicator = UIActivityIndicatorView()
     private lazy var loadingBackground = UIView(frame: self.view.frame)
+    private var signInWithAppleButton: ASAuthorizationAppleIDButton!
+    private var signInWithGoogleButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = .signBackgroundLavendar
+        self.view.backgroundColor = .loginLavendar
         self.appLabel.clipsToBounds = true
         self.appLabel.layer.borderColor = UIColor.black.cgColor
         
         setupLearnMoreButton()
-        
         setupSignInWithAppleButton()
         setupSignInWithGoogleButton()
+        
+        animateLoginView()
         
         signInExistingUser()
     }
@@ -89,7 +92,7 @@ class LoginViewController: UIViewController
     
     // MARK: Apple Sign In
     private func setupSignInWithAppleButton() {
-        let signInWithAppleButton = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .white)
+        signInWithAppleButton = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .white)
         signInWithAppleButton.addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
         self.view.addSubview(signInWithAppleButton)
         
@@ -101,6 +104,36 @@ class LoginViewController: UIViewController
             signInWithAppleButton.widthAnchor.constraint(equalToConstant: self.invisibleViewForCenteringSignInButtons.frame.width / 1.25),
             signInWithAppleButton.heightAnchor.constraint(equalToConstant: 44)
         ])
+    }
+    
+    private func animateLoginView() {
+        appLabel.alpha = 0
+        signInWithAppleButton.alpha = 0
+        signInWithGoogleButton.alpha = 0
+        learnMoreButton.alpha = 0
+        
+        self.signInWithAppleButton.transform = CGAffineTransform(translationX: 0, y: self.view.bounds.height)
+        self.signInWithGoogleButton.transform = CGAffineTransform(translationX: 0, y: self.view.bounds.height)
+                
+        UIView.animate(withDuration: 1.25, delay: 1.0, options: [.curveEaseIn], animations: {
+                self.appLabel.alpha = 1
+                self.appLabel.transform = .identity
+        }, completion: {_ in
+            UIView.animate(withDuration: 1.2, delay: 0.0, options: [.transitionCurlUp], animations: {
+                self.signInWithAppleButton.alpha = 1
+                self.signInWithAppleButton.transform = .identity
+            }, completion: { _ in
+                UIView.animate(withDuration: 1.2, delay: 0.0, options: [.transitionCurlUp], animations: {
+                    self.signInWithGoogleButton.alpha = 1
+                    self.signInWithGoogleButton.transform = .identity
+                }, completion: {_ in
+                    UIView.animate(withDuration: 1.0, delay: 0.5, options: [.curveEaseIn], animations: {
+                            self.learnMoreButton.alpha = 1
+                            self.learnMoreButton.transform = .identity
+                    }, completion: nil)
+                })
+            })
+        })
     }
     
     @objc public func handleAuthorizationAppleIDButtonPress() {
@@ -117,7 +150,7 @@ class LoginViewController: UIViewController
     
     // MARK: Google Sign In
     private func setupSignInWithGoogleButton() {
-        let signInWithGoogleButton = getSignInWithGoogleButton()
+        signInWithGoogleButton = getSignInWithGoogleButton()
         
         signInWithGoogleButton.addTarget(self, action: #selector(handleAuthorizationGoogleButtonPress), for: .touchUpInside)
         self.view.addSubview(signInWithGoogleButton)
