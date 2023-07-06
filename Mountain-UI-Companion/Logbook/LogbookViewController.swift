@@ -37,13 +37,14 @@ class LogbookViewController: UIViewController {
         setupRefreshControl()
         setupTableView()
         setupProfilePicture()
+        refresh()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.prefersLargeTitles = true
         reloadProfile()
-        refresh()
+        autoUploadFiles()
     }
     
     private func autoUploadFiles() {

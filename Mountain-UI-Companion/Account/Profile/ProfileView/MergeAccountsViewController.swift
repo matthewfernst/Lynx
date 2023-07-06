@@ -79,7 +79,7 @@ class MergeAccountsViewController: UIViewController {
             button.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
-
+    
     private func addAppleSignInButton() {
         appleSignInButton?.removeFromSuperview()
         let style: ASAuthorizationAppleIDButton.Style = traitCollection.userInterfaceStyle == .dark ? .white : .black
@@ -96,7 +96,7 @@ class MergeAccountsViewController: UIViewController {
             button.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
-
+    
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -130,43 +130,24 @@ class MergeAccountsViewController: UIViewController {
                 showErrorWithSignIn()
                 return
             }
-            guard let profile = signInResult?.user.profile else {
-                showErrorWithSignIn()
-                return
-            }
+            
             guard let token = signInResult?.user.idToken?.tokenString else {
                 showErrorWithSignIn()
                 return
             }
             
+            let graphQLWrappedToken = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: token)
+            let account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "GOOGLE"), id: googleId, token: graphQLWrappedToken)
             
-            let name = profile.name.components(separatedBy: " ")
-            let (firstName, lastName) = (name[0], name[1])
-            let email = profile.email
-            
-            loginController.handleCommonSignIn(type: SignInType.google.rawValue,
-                                               id: googleId,
-                                               token: token,
-                                               email: email,
-                                               firstName: firstName,
-                                               lastName: lastName,
-                                               profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "") { _ in
-                
-                let graphQLWrappedToken = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: token)
-                let account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "GOOGLE"), id: googleId, token: graphQLWrappedToken)
-                
-                ApolloMountainUIClient.mergeAccount(with: account) { result in
-                    switch result {
-                    case .success(_):
-                        self.showSuccessfullyMerged()
-                        
-                    case .failure(_):
-                        self.showFailedToMerge()
-                    }
+            ApolloMountainUIClient.mergeAccount(with: account) { result in
+                switch result {
+                case .success(_):
+                    self.showSuccessfullyMerged()
                     
+                case .failure(_):
+                    self.showFailedToMerge()
                 }
             }
-            
         }
     }
     
@@ -185,7 +166,10 @@ class MergeAccountsViewController: UIViewController {
     private func showSuccessfullyMerged() {
         let ac = UIAlertController(title: "Successfully Merged Accounts", message: nil, preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel) {_ in
-            self.dismiss(animated: true)
+            guard let accountSettingsViewController = self.navigationController?.viewControllers[0] as? AccountViewController else {
+                return
+            }
+            self.navigationController?.popToViewController(accountSettingsViewController, animated: true)
         })
         present(ac, animated: true)
     }
@@ -203,23 +187,17 @@ extension MergeAccountsViewController: ASAuthorizationControllerDelegate {
                 return
             }
             
-            loginController.handleCommonSignIn(type: SignInType.apple.rawValue,
-                                               id: appleIdCredential.user,
-                                               token: appleJWT,
-                                               email: appleIdCredential.email,
-                                               firstName: appleIdCredential.fullName?.givenName,
-                                               lastName: appleIdCredential.fullName?.familyName) { _ -> Void in
-                let graphQLWrappedToken = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: appleJWT)
-                let account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "APPLE"), id: appleIdCredential.user, token: graphQLWrappedToken)
-                
-                ApolloMountainUIClient.mergeAccount(with: account) { result in
-                    switch result {
-                    case .success(_):
-                        self.showSuccessfullyMerged()
-                        
-                    case .failure(_):
-                        self.showFailedToMerge()
-                    }
+            
+            let graphQLWrappedToken = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: appleJWT)
+            let account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "APPLE"), id: appleIdCredential.user, token: graphQLWrappedToken)
+            
+            ApolloMountainUIClient.mergeAccount(with: account) { result in
+                switch result {
+                case .success(_):
+                    self.showSuccessfullyMerged()
+                    
+                case .failure(_):
+                    self.showFailedToMerge()
                 }
             }
             
