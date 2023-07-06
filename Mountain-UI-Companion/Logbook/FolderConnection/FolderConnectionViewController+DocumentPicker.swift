@@ -79,7 +79,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
         self.checkmarkImageView.tintColor = UIColor.systemGreen
         self.checkmarkImageView.alpha = 0
         self.checkmarkImageView.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-        
+
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
             self.checkmarkImageView.transform = .identity
             self.checkmarkImageView.alpha = 1
@@ -110,7 +110,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
     }
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let url = urls[0] // TODO: Make sure to select only one directory
+        let url = urls[0]
         
         guard url.startAccessingSecurityScopedResource() else {
             // Handle the failure here.
@@ -120,13 +120,11 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
         
         defer { url.stopAccessingSecurityScopedResource() }
         
-        let fileManager = FileManager.default
+        let gpsLogsURL = url.appendingPathComponent("GPSLogs")
         
-        // Find the "GPSLogs" directory within the selected directory
-        let slopsDirectoryURLs = try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
-        if let gpsLogsURL = slopsDirectoryURLs?.first(where: { $0.lastPathComponent == "GPSLogs" }), gpsLogsURL.hasDirectoryPath {
-            // Get the contents of the "GPSLogs" directory
-            guard let contents = try? fileManager.contentsOfDirectory(at: gpsLogsURL, includingPropertiesForKeys: nil) else {
+        if FileManager.default.fileExists(atPath: gpsLogsURL.path) {
+            // Get the contents of the directory
+            guard let contents = try? FileManager.default.contentsOfDirectory(at: gpsLogsURL, includingPropertiesForKeys: nil) else {
                 // Failed to access the directory
                 return
             }
@@ -134,7 +132,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             if contents.allSatisfy({ $0.pathExtension == "slopes" }) {
                 let keys: [URLResourceKey] = [.nameKey, .isDirectoryKey]
                 
-                guard let totalNumberOfFiles = fileManager.enumerator(at: gpsLogsURL, includingPropertiesForKeys: keys)?.allObjects.count else {
+                guard let totalNumberOfFiles = FileManager.default.enumerator(at: gpsLogsURL, includingPropertiesForKeys: keys)?.allObjects.count else {
                     Logger.folderConnection.debug("*** Unable to access the contents of \(gpsLogsURL.path) ***\n")
                     showFileAccessNotAllowed()
                     return
@@ -147,6 +145,12 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                 ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: requestedPathsForUpload) { [unowned self] result in
                     switch result {
                     case .success(let urlsForUpload):
+                        guard url.startAccessingSecurityScopedResource() else {
+                            // Handle the failure here.
+                            showFileAccessNotAllowed()
+                            return
+                        }
+                        
                         guard let fileList = FolderConnectionViewController.getFileList(at: gpsLogsURL, includingPropertiesForKeys: keys) else { return }
                         
                         setupSlopeFilesUploadingView()
@@ -166,22 +170,18 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                                         if currentFileNumberBeingUploaded == totalNumberOfFiles {
                                             // All files are uploaded, perform cleanup
                                             self.cleanUpSlopeFilesUploadView()
-                                            gpsLogsURL.stopAccessingSecurityScopedResource()
                                         }
                                     case .failure(let error):
                                         Logger.folderConnection.debug("Failed to upload \(fileURL) with error: \(error)")
                                         showErrorUploading()
-                                        gpsLogsURL.stopAccessingSecurityScopedResource()
                                     }
                                 }
                             }
                         }
-                        
-                        FolderConnectionViewController.bookmarkManager.saveBookmark(for: gpsLogsURL)
-                        
+                        url.stopAccessingSecurityScopedResource()
+                        FolderConnectionViewController.bookmarkManager.saveBookmark(for: url)
                     case .failure(_):
                         showErrorUploading()
-                        gpsLogsURL.stopAccessingSecurityScopedResource()
                     }
                 }
             } else {
@@ -222,7 +222,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                     completion(nil)
                     return
                 }
-                
+        
                 if nonUploadedSlopeFiles.isEmpty {
                     Logger.folderConnection.debug("No new files found.")
                     completion(nil)
@@ -236,7 +236,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             }
         }
     }
-    
+
     public static func uploadNewFilesWithLabel(label: AutoUploadFileLabel, files nonUploadedSlopeFiles: [String], completion: (() -> Void)?) {
         guard let bookmark = FolderConnectionViewController.bookmarkManager.bookmark else {
             return
@@ -305,8 +305,8 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             }
         }
     }
-    
-    
+
+
     private static func putZipFiles(urlEndPoint: String, zipFilePath: URL, completion: @escaping (Result<Int, Error>) -> Void) {
         let url = URL(string: urlEndPoint)!
         
