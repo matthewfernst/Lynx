@@ -318,7 +318,7 @@ class ApolloMountainUIClient
                     let date1 = dateFormatter.date(from: a.startDate) ?? Date()
                     let date2 = dateFormatter.date(from: b.startDate) ?? Date()
                     
-                    return date1 < date2
+                    return date1 > date2
                 }
                 
                 return completion(.success(logbook))

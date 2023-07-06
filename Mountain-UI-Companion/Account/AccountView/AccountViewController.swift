@@ -218,10 +218,10 @@ class AccountViewController: UITableViewController, EditProfileDelegate
                     }
                     
                     let message = """
-                                  \(firstName) \(lastName) has shared an invitation key to Mountain-UI-Companion App. Open the app and enter the key below.
+                                  \(firstName) \(lastName) has shared an invitation key to Mountain-UI-Companion App. Open the app and enter the key below. This invitation key will expire in 24 hours.
                                   
                                   
-                                  \(inviteKey)
+                                  Invitation Key: \(inviteKey)
                                   """
                     let activityViewController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
                     
@@ -234,8 +234,6 @@ class AccountViewController: UITableViewController, EditProfileDelegate
                         .postToFacebook,
                         .postToTwitter,
                         .postToVimeo,
-                        .postToWeibo,
-                        .postToTencentWeibo,
                     ]
                     
                     self?.present(activityViewController, animated: true)
@@ -256,30 +254,30 @@ class AccountViewController: UITableViewController, EditProfileDelegate
         case .contactDevelopers:
             let body = """
                Hello,
-
+               
                I would like to report a bug in the app. Here are the details:
-
+               
                - App Version: [App Version]
                - Device: [Device Model]
                - iOS Version: [iOS Version]
-
+               
                Bug Description:
                [Describe the bug you encountered]
-
+               
                Steps to Reproduce:
                [Provide steps to reproduce the bug]
-
+               
                Expected Behavior:
                [Describe what you expected to happen]
-
+               
                Actual Behavior:
                [Describe what actually happened]
-
+               
                Additional Information:
                [Provide any additional relevant information]
-
+               
                Thank you for your attention to this matter.
-
+               
                Regards,
                [Your Name]
                """
@@ -288,7 +286,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
                 composer.mailComposeDelegate = self
                 composer.setToRecipients([Constants.contactEmail])
                 composer.setSubject("Mountain-UI-Companion Bug Report: [Brief Description]")
-
+                
                 composer.setMessageBody(body, isHTML: false)
                 
                 self.present(composer, animated: true)

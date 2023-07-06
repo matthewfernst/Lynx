@@ -52,7 +52,7 @@ class AutoUploadFileLabel: UIView {
             label.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             
             activityIndicator.centerYAnchor.constraint(equalTo: label.centerYAnchor),
-            activityIndicator.trailingAnchor.constraint(equalTo: label.leadingAnchor, constant: -10) // Adjust the spacing as needed
+            activityIndicator.trailingAnchor.constraint(equalTo: label.text == nil ? label.centerXAnchor : label.leadingAnchor, constant: -10) // Adjust the spacing as needed
         ])
         
         // Start animating the activity indicator
@@ -63,7 +63,6 @@ class AutoUploadFileLabel: UIView {
         super.traitCollectionDidChange(previousTraitCollection)
         roundRectLayer.fillColor = UIColor.systemBackground.resolvedColor(with: self.traitCollection).cgColor
     }
-
 
     override func layoutSubviews() {
         super.layoutSubviews()

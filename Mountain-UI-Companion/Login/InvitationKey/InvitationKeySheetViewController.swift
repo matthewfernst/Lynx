@@ -99,7 +99,7 @@ class InvitationKeySheetViewController: UIViewController {
     
     private func showInvitationKeyIsInvalidAlert() {
         let ac = UIAlertController(title: "Invalid Key",
-                                   message: "The key entered is not recongized in our system. Please try again.",
+                                   message: "The key entered is not recognized in our system. This could be because your invitation has expired. Please double-check the key and try again. If you believe there is an error, please contact our developers for assistance.",
                                    preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         self.present(ac, animated: true)
