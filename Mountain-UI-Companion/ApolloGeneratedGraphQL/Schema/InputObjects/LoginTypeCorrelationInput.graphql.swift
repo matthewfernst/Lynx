@@ -13,11 +13,13 @@ public extension ApolloGeneratedGraphQL {
 
     public init(
       type: GraphQLEnum<LoginType>,
-      id: String
+      id: ID,
+      token: GraphQLNullable<ID> = nil
     ) {
       __data = InputDict([
         "type": type,
-        "id": id
+        "id": id,
+        "token": token
       ])
     }
 
@@ -26,9 +28,14 @@ public extension ApolloGeneratedGraphQL {
       set { __data["type"] = newValue }
     }
 
-    public var id: String {
+    public var id: ID {
       get { __data["id"] }
       set { __data["id"] = newValue }
+    }
+
+    public var token: GraphQLNullable<ID> {
+      get { __data["token"] }
+      set { __data["token"] = newValue }
     }
   }
 

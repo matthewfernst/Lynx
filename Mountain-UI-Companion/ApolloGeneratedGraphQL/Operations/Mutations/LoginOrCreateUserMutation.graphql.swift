@@ -9,10 +9,9 @@ public extension ApolloGeneratedGraphQL {
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        mutation LoginOrCreateUser($oauthLoginId: LoginTypeCorrelationInput!, $token: ID!, $email: String, $userData: [UserDataPair!]) {
+        mutation LoginOrCreateUser($oauthLoginId: LoginTypeCorrelationInput!, $email: String, $userData: [UserDataPair!]) {
           createUserOrSignIn(
             oauthLoginId: $oauthLoginId
-            token: $token
             email: $email
             userData: $userData
           ) {
@@ -26,25 +25,21 @@ public extension ApolloGeneratedGraphQL {
       ))
 
     public var oauthLoginId: LoginTypeCorrelationInput
-    public var token: ID
     public var email: GraphQLNullable<String>
     public var userData: GraphQLNullable<[UserDataPair]>
 
     public init(
       oauthLoginId: LoginTypeCorrelationInput,
-      token: ID,
       email: GraphQLNullable<String>,
       userData: GraphQLNullable<[UserDataPair]>
     ) {
       self.oauthLoginId = oauthLoginId
-      self.token = token
       self.email = email
       self.userData = userData
     }
 
     public var __variables: Variables? { [
       "oauthLoginId": oauthLoginId,
-      "token": token,
       "email": email,
       "userData": userData
     ] }
@@ -57,7 +52,6 @@ public extension ApolloGeneratedGraphQL {
       public static var __selections: [ApolloAPI.Selection] { [
         .field("createUserOrSignIn", CreateUserOrSignIn?.self, arguments: [
           "oauthLoginId": .variable("oauthLoginId"),
-          "token": .variable("token"),
           "email": .variable("email"),
           "userData": .variable("userData")
         ]),

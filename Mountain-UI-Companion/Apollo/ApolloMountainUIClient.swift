@@ -106,7 +106,8 @@ class ApolloMountainUIClient
         }
         
         let type = GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: type)
-        let oauthLoginId = ApolloGeneratedGraphQL.LoginTypeCorrelationInput(type: type, id: id)
+        let tokenWrappedInGraphQL = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: token)
+        let oauthLoginId = ApolloGeneratedGraphQL.LoginTypeCorrelationInput(type: type, id: id, token: tokenWrappedInGraphQL)
         
         
         let emailNullable: GraphQLNullable<String>
@@ -117,7 +118,6 @@ class ApolloMountainUIClient
         }
         
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.LoginOrCreateUserMutation(oauthLoginId: oauthLoginId,
-                                                                                        token: token,
                                                                                         email: emailNullable,
                                                                                         userData: userDataNullable)) { result in
             switch result {
@@ -355,12 +355,12 @@ class ApolloMountainUIClient
         }
     }
     
-    public static func mergeAccount(with accounts: [ApolloGeneratedGraphQL.LoginTypeCorrelationInput], completion: @escaping ((Result<Void, Error>) -> Void)) {
+    public static func mergeAccount(with account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput, completion: @escaping ((Result<Void, Error>) -> Void)) {
         enum MergeAccountErrors: Error {
             case UnwrapOfReturnedUserFailed
             case BackendCouldntMerge
         }
-        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CombineOAuthAccountsMutation(combineWith: accounts)) { result in
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CombineOAuthAccountsMutation(combineWith: account)) { result in
             
             switch result {
             case .success(let graphQLResult):

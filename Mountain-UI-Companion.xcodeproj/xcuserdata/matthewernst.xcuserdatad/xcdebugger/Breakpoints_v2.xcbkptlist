@@ -224,6 +224,21 @@
                   endingLineNumber = "201"
                   offsetFromSymbolStart = "508">
                </Location>
+               <Location
+                  uuid = "BDF6AD68-1452-4186-8C7B-B4A33582B009 - 638d6edc0f3de502"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Mountain_UI_Companion.LogbookViewController.showConnectedFolder() -&gt; ()"
+                  moduleName = "Mountain-UI-Companion"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Mountain-UI-Companion-App/Mountain-UI-Companion/Logbook/LogbookViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "200"
+                  endingLineNumber = "200"
+                  offsetFromSymbolStart = "508">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>

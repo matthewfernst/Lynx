@@ -152,7 +152,8 @@ class MergeAccountsViewController: UIViewController {
                                                lastName: lastName,
                                                profilePictureURL: profile.imageURL(withDimension: 320)?.absoluteString ?? "") { _ in
                 
-                let account: [ApolloGeneratedGraphQL.LoginTypeCorrelationInput] = [.init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "GOOGLE"), id: googleId)]
+                let graphQLWrappedToken = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: token)
+                let account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "GOOGLE"), id: googleId, token: graphQLWrappedToken)
                 
                 ApolloMountainUIClient.mergeAccount(with: account) { result in
                     switch result {
@@ -208,7 +209,8 @@ extension MergeAccountsViewController: ASAuthorizationControllerDelegate {
                                                email: appleIdCredential.email,
                                                firstName: appleIdCredential.fullName?.givenName,
                                                lastName: appleIdCredential.fullName?.familyName) { _ -> Void in
-                let account: [ApolloGeneratedGraphQL.LoginTypeCorrelationInput] = [.init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "APPLE"), id: appleIdCredential.user)]
+                let graphQLWrappedToken = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: appleJWT)
+                let account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "APPLE"), id: appleIdCredential.user, token: graphQLWrappedToken)
                 
                 ApolloMountainUIClient.mergeAccount(with: account) { result in
                     switch result {

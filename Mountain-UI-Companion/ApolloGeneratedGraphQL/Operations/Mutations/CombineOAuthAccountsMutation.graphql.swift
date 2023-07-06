@@ -9,7 +9,7 @@ public extension ApolloGeneratedGraphQL {
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        mutation CombineOAuthAccounts($combineWith: [LoginTypeCorrelationInput!]!) {
+        mutation CombineOAuthAccounts($combineWith: LoginTypeCorrelationInput!) {
           combineOAuthAccounts(combineWith: $combineWith) {
             __typename
             id
@@ -23,9 +23,9 @@ public extension ApolloGeneratedGraphQL {
         """#
       ))
 
-    public var combineWith: [LoginTypeCorrelationInput]
+    public var combineWith: LoginTypeCorrelationInput
 
-    public init(combineWith: [LoginTypeCorrelationInput]) {
+    public init(combineWith: LoginTypeCorrelationInput) {
       self.combineWith = combineWith
     }
 
