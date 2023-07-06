@@ -33,9 +33,17 @@ class DeleteAccountViewController: UIViewController {
         let button = UIButton(configuration: .filled())
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Confirm Deletion of My Account", for: .normal)
-        button.tintColor = .systemRed
         button.setImage(UIImage(systemName: "trash.fill"), for: .normal)
+        button.tintColor = .systemRed
         return button
+    }()
+    
+    private let activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.color = .white
+        activityIndicator.hidesWhenStopped = true
+        return activityIndicator
     }()
     
     override func viewDidLoad() {
@@ -65,37 +73,27 @@ class DeleteAccountViewController: UIViewController {
     }
     
     @objc private func deleteAccount() {
-        let activityIndicator = UIActivityIndicatorView()
-        activityIndicator.color = .white
-        activityIndicator.color = .white
-        activityIndicator.transform = CGAffineTransformMakeScale(2, 2)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        
-        let loadingBackground = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
-        loadingBackground.backgroundColor = .black.withAlphaComponent(0.5)
-        
-        loadingBackground.addSubview(activityIndicator)
-        
-        self.view.addSubview(loadingBackground)
+        confirmDeletionOfAccountButton.isUserInteractionEnabled = false
+        confirmDeletionOfAccountButton.addSubview(activityIndicator)
+        confirmDeletionOfAccountButton.titleLabel?.isHidden = true
+        confirmDeletionOfAccountButton.imageView?.isHidden = true
         
         NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+            activityIndicator.centerXAnchor.constraint(equalTo: confirmDeletionOfAccountButton.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: confirmDeletionOfAccountButton.centerYAnchor)
         ])
         
         activityIndicator.startAnimating()
         
         ApolloMountainUIClient.deleteAccount() { result in
-            activityIndicator.stopAnimating()
-            loadingBackground.removeFromSuperview()
-            
             switch result {
             case .success(_):
                 let ac = UIAlertController(title: "Successfully Deleted Account", message: nil, preferredStyle: .alert)
-                ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel) { _ in
+                ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel) { [weak self] _ in
+                    self?.resetConfirmDeletionButton()
                     LoginController.signOut()
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                    
+
                     if let vc = storyboard.instantiateInitialViewController() as? LoginViewController {
                         (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(vc)
                     }
@@ -104,12 +102,21 @@ class DeleteAccountViewController: UIViewController {
 
             case .failure(_):
                 let ac = UIAlertController(title: "Failed to Delete Account", message: "Our systems were not able to delete your account. Please try again. If the error persists, please contact the developers.", preferredStyle: .alert)
-                
-                ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
-                
+
+                ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel) {[weak self] _ in
+                    self?.resetConfirmDeletionButton()
+                })
+
                 self.present(ac, animated: true)
             }
         }
+    }
+    
+    func resetConfirmDeletionButton() {
+        self.activityIndicator.stopAnimating()
+        confirmDeletionOfAccountButton.titleLabel?.isHidden = false
+        confirmDeletionOfAccountButton.imageView?.isHidden = false
+        self.confirmDeletionOfAccountButton.isUserInteractionEnabled = true
     }
     
 }

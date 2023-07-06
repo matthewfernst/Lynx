@@ -47,6 +47,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
         self.title = "Uploading New Slope Files"
         self.explanationTextView.text = nil
         self.stepsToUploadImageView.image = nil
+        self.isModalInPresentation = true
     }
     
     private func updateSlopeFilesProgressView(fileBeingUploaded: String, progress: Float) {
@@ -61,6 +62,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             self.uploadProgressView.isHidden = true
             self.manualUploadActivityIndicator.stopAnimating()
             self.uploadProgressView.isHidden = true
+            self.isModalInPresentation = false
             self.showAllSet()
         }
     }
