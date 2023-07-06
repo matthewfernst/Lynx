@@ -79,7 +79,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
         self.checkmarkImageView.tintColor = UIColor.systemGreen
         self.checkmarkImageView.alpha = 0
         self.checkmarkImageView.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-
+        
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
             self.checkmarkImageView.transform = .identity
             self.checkmarkImageView.alpha = 1
@@ -147,12 +147,6 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                 ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: requestedPathsForUpload) { [unowned self] result in
                     switch result {
                     case .success(let urlsForUpload):
-                        guard gpsLogsURL.startAccessingSecurityScopedResource() else {
-                            // Handle the failure here.
-                            showFileAccessNotAllowed()
-                            return
-                        }
-                        
                         guard let fileList = FolderConnectionViewController.getFileList(at: gpsLogsURL, includingPropertiesForKeys: keys) else { return }
                         
                         setupSlopeFilesUploadingView()
@@ -180,8 +174,9 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                                 }
                             }
                         }
-                        gpsLogsURL.stopAccessingSecurityScopedResource()
+                        
                         FolderConnectionViewController.bookmarkManager.saveBookmark(for: gpsLogsURL)
+                        
                     case .failure(_):
                         showErrorUploading()
                     }
@@ -193,7 +188,6 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             showWrongDirectorySelected(directory: url.lastPathComponent)
         }
     }
-
     
     public static func getNonUploadedSlopeFiles(completion: @escaping ([String]?) -> Void) {
         guard let bookmark = FolderConnectionViewController.bookmarkManager.bookmark else {
@@ -225,7 +219,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                     completion(nil)
                     return
                 }
-        
+                
                 if nonUploadedSlopeFiles.isEmpty {
                     Logger.folderConnection.debug("No new files found.")
                     completion(nil)
@@ -239,7 +233,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             }
         }
     }
-
+    
     public static func uploadNewFilesWithLabel(label: AutoUploadFileLabel, files nonUploadedSlopeFiles: [String], completion: (() -> Void)?) {
         guard let bookmark = FolderConnectionViewController.bookmarkManager.bookmark else {
             return
@@ -308,8 +302,8 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             }
         }
     }
-
-
+    
+    
     private static func putZipFiles(urlEndPoint: String, zipFilePath: URL, completion: @escaping (Result<Int, Error>) -> Void) {
         let url = URL(string: urlEndPoint)!
         

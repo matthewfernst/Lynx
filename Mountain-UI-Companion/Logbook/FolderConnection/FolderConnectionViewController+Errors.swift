@@ -51,7 +51,7 @@ extension FolderConnectionViewController {
     
     public func showWrongDirectorySelected(directory: String) {
         let ac = UIAlertController(title: "Wrong Directory Selected",
-                                   message: "The correct directory for uploading Slope files is '/Slopes/GPSLogs', but recieved '\(directory)'. Please try again.",
+                                   message: "The correct directory for uploading 'Slopes', but recieved '\(directory)'. Please try again.",
                                    preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         present(ac, animated: true)

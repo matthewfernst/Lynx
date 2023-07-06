@@ -193,7 +193,7 @@ class LogbookViewController: UIViewController {
     }
     
     @objc private func showConnectedFolder() {
-        guard var connectedFolder = FolderConnectionViewController.bookmarkManager.bookmark?.url.lastPathComponent else {
+        guard let connectedFolder = FolderConnectionViewController.bookmarkManager.bookmark?.url.lastPathComponent else {
             return
         }
         
