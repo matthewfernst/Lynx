@@ -24,3 +24,4 @@ var/
 .vscode
 apollo-ios-cli
 xcshareddata
+.DS_Store
