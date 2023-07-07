@@ -7,7 +7,6 @@
 
 import UIKit
 import MessageUI
-import ClientRuntime
 
 enum AllSettingsSections: Int, CaseIterable
 {

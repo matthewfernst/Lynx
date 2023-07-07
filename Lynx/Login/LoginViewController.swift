@@ -5,7 +5,6 @@
 //  Created by Matthew Ernst on 1/26/23.
 //
 import AuthenticationServices
-import ClientRuntime
 import GoogleSignIn
 import UIKit
 import OSLog
@@ -34,9 +33,9 @@ class LoginViewController: UIViewController
         setupSignInWithAppleButton()
         setupSignInWithGoogleButton()
         
-        animateLoginView()
-        
-        signInExistingUser()
+        signInExistingUser() { [weak self] in
+            self?.animateLoginView()
+        }
         
         if UIScreen.main.bounds.height <= 680 { // For tiny screens
             appLabel.transform = CGAffineTransform(translationX: 0, y: -80)
@@ -304,7 +303,7 @@ class LoginViewController: UIViewController
         return activityIndicator
     }
     
-    private func signInExistingUser() {
+    private func signInExistingUser(completion: (() -> Void)? ) {
         if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSignedIn),
            let type = UserDefaults.standard.string(forKey: UserDefaultsKeys.loginType) {
             let activityIndicator = showSignInActivityIndicator()
@@ -331,6 +330,8 @@ class LoginViewController: UIViewController
             default:
                 break
             }
+        } else {
+            completion?()
         }
     }
 }
