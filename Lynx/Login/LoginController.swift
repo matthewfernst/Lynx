@@ -45,7 +45,7 @@ class LoginController {
         }
     }
 
-    private func loginUser(completion: @escaping (Result<Void, Error>) -> Void) {
+    public func loginUser(completion: @escaping (Result<Void, Error>) -> Void) {
         ApolloMountainUIClient.getProfileInformation() { result in
             switch result {
             case .success(let profileAttributes):

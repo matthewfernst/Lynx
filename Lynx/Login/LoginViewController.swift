@@ -304,24 +304,35 @@ class LoginViewController: UIViewController {
     
     private func signInExistingUser(completion: (() -> Void)? ) {
         if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSignedIn),
-           let type = UserDefaults.standard.string(forKey: UserDefaultsKeys.loginType) {
+           let type = UserDefaults.standard.string(forKey: UserDefaultsKeys.loginType),
+           let id = UserDefaults.standard.string(forKey: UserDefaultsKeys.appleOrGoogleId) {
             let activityIndicator = showSignInActivityIndicator()
             
             switch SignInType(rawValue: type) {
             case .apple:
-                self.performExistingAppleAccountSetupFlows()
+                ASAuthorizationAppleIDProvider().getCredentialState(forUserID: id) { [weak self] credentialState, error in
+                    switch(credentialState) {
+                    case .authorized:
+                        self?.loginController.loginUser { _ in
+                            self?.updateViewFromModel()
+                        }
+                    default:
+                        self?.performExistingAppleAccountSetupFlows()
+                    }
+                }
+                
                 
             case .google:
-                GIDSignIn.sharedInstance.restorePreviousSignIn { [unowned self] user, error in
+                GIDSignIn.sharedInstance.restorePreviousSignIn { [weak self] user, error in
                     if error != nil || user == nil {
                         // Show the app's signed-out state.
                     } else {
                         // Show the app's signed-in state.
                         if let token = user?.idToken?.tokenString,
                            let googleId = user?.userID {
-                            loginController.handleCommonSignIn(type: SignInType.google.rawValue, id: googleId, token: token) { result in
+                            self?.loginController.handleCommonSignIn(type: SignInType.google.rawValue, id: googleId, token: token) { result in
                                 activityIndicator.startAnimating()
-                                self.updateViewFromModel()
+                                self?.updateViewFromModel()
                             }
                         }
                     }

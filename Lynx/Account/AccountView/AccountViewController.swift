@@ -219,32 +219,31 @@ class AccountViewController: UITableViewController, EditProfileDelegate
                     let message = """
                                   \(firstName) \(lastName) has shared an invitation key to Lynx. Open the app and enter the key below. This invitation key will expire in 24 hours.
                                   
-                                  
                                   Invitation Key: \(inviteKey)
                                   """
-                    let activityViewController = UIActivityViewController(activityItems: [message], applicationActivities: nil)
                     
-                    activityViewController.excludedActivityTypes = [
-                        .addToReadingList,
-                        .assignToContact,
-                        .openInIBooks,
-                        .addToHomeScreen,
-                        .airDrop,
-                        .postToFacebook,
-                        .postToTwitter,
-                        .postToVimeo,
-                    ]
-                    
-                    self?.present(activityViewController, animated: true)
+                    if MFMessageComposeViewController.canSendText() {
+                        let messageController = MFMessageComposeViewController()
+                        messageController.body = message
+                        messageController.messageComposeDelegate = self
+                        self?.present(messageController, animated: true, completion: nil)
+                    } else {
+                        let ac = UIAlertController(title: "Failed to Open Messages", message: "We were unable to open the Messages app. Please try again or copy the invitation key.", preferredStyle: .alert)
+                        ac.addAction(UIAlertAction(title: "Copy Invitation Key", style: .default) {_ in
+                            let pasteboard = UIPasteboard.general
+                            pasteboard.string = message
+                        })
+                        ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+                        self?.present(ac, animated: true)
+                    }
                     
                 case .failure(_):
-                    let ac = UIAlertController(title: "Failed to Create Invite Key", message: "Our systems were not able to create a invite key. Please try again.", preferredStyle: .alert)
+                    let ac = UIAlertController(title: "Failed to Create Invite Key", message: "Our systems were not able to create an invite key. Please try again.", preferredStyle: .alert)
                     
-                    ac.addAction(.init(title: "Dismiss", style: .cancel))
+                    ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
                     self?.present(ac, animated: true)
                 }
             }
-            
         case .support:
             if let url = URL(string: self.supportSettings[indexPath.row].link) {
                 UIApplication.shared.open(url)
@@ -308,6 +307,12 @@ class AccountViewController: UITableViewController, EditProfileDelegate
 
 extension AccountViewController: MFMailComposeViewControllerDelegate {
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+}
+
+extension AccountViewController: MFMessageComposeViewControllerDelegate {
+    func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
         controller.dismiss(animated: true, completion: nil)
     }
 }
