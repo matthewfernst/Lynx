@@ -309,10 +309,6 @@ class LoginViewController: UIViewController {
            let id = defaults.string(forKey: UserDefaultsKeys.appleOrGoogleId) {
             let activityIndicator = showSignInActivityIndicator()
             
-            if let connectedFolderNickname = defaults.string(forKey: UserDefaultsKeys.connectedFolderNickname) {
-                FolderConnectionViewController.connectedFolderNickname = connectedFolderNickname
-            }
-            
             switch SignInType(rawValue: type) {
             case .apple:
                 ASAuthorizationAppleIDProvider().getCredentialState(forUserID: id) { [weak self] credentialState, error in

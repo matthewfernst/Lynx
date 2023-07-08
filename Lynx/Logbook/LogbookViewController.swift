@@ -194,9 +194,7 @@ class LogbookViewController: UIViewController {
     }
     
     @objc private func showConnectedFolder() {
-        let connectedFolder = FolderConnectionViewController.connectedFolderNickname
-        
-        let ac = UIAlertController(title: "Successfully Connected to \(connectedFolder)", message: "You have already successfully connected your folder. When you open the app, it will automatically upload new files. Do you wish to connect to a different folder?", preferredStyle: .actionSheet)
+        let ac = UIAlertController(title: "Successfully Connected to Slopes", message: "You have already successfully connected your folder. When you open the app, it will automatically upload new files. Do you wish to connect to a different folder?", preferredStyle: .actionSheet)
         
         ac.addAction(UIAlertAction(title: "Connect to New Folder", style: .default) { [weak self] _ in
             self?.connectSlopesFolder()

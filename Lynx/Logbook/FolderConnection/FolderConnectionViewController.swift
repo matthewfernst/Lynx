@@ -14,7 +14,6 @@ class FolderConnectionViewController: UIViewController {
     private let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.folder], asCopy: false)
     
     public static let bookmarkManager = BookmarkManager()
-    public static var connectedFolderNickname = "Slopes"
     
     public static var isConnected: Bool {
         bookmarkManager.loadAllBookmarks()
