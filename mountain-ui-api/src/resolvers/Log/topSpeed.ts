@@ -9,10 +9,10 @@ interface Args {
 }
 
 const topSpeed = (parent: LogParent, args: Args, context: Context, info: any) => {
-    if (args.system === "METRIC") {
-        return convert(parent.topSpeed).from("m/h").to("km/h");
+    if (args.system === "IMPERIAL") {
+        return convert(parent.topSpeed).from("m/s").to("m/h");
     }
-    return parent.topSpeed;
+    return convert(parent.topSpeed).from("m/s").to("km/h");
 };
 
 export default topSpeed;

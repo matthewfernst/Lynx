@@ -9,8 +9,8 @@ interface Args {
 }
 
 const maxAltitude = (parent: LogDetailParent, args: Args, context: Context, info: any) => {
-    if (args.system === "METRIC") {
-        return convert(parent.maxAlt).from("ft").to("m");
+    if (args.system === "IMPERIAL") {
+        return convert(parent.maxAlt).from("m").to("ft");
     }
     return parent.maxAlt;
 };

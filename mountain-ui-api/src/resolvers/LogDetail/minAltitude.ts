@@ -9,8 +9,8 @@ interface Args {
 }
 
 const minAltitude = (parent: LogDetailParent, args: Args, context: Context, info: any) => {
-    if (args.system === "METRIC") {
-        return convert(parent.minAlt).from("ft").to("m");
+    if (args.system === "IMPERIAL") {
+        return convert(parent.minAlt).from("m").to("ft");
     }
     return parent.minAlt;
 };

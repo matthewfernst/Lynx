@@ -9,8 +9,8 @@ interface Args {
 }
 
 const topSpeedAltitude = (parent: LogDetailParent, args: Args, context: Context, info: any) => {
-    if (args.system === "METRIC") {
-        return convert(parent.topSpeedAlt).from("ft").to("m");
+    if (args.system === "IMPERIAL") {
+        return convert(parent.topSpeedAlt).from("m").to("ft");
     }
     return parent.topSpeedAlt;
 };

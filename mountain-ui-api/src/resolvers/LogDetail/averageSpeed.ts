@@ -9,10 +9,10 @@ interface Args {
 }
 
 const averageSpeed = (parent: LogDetailParent, args: Args, context: Context, info: any) => {
-    if (args.system === "METRIC") {
-        return convert(parent.avgSpeed).from("m/h").to("km/h");
+    if (args.system === "IMPERIAL") {
+        return convert(parent.avgSpeed).from("m/s").to("m/h");
     }
-    return parent.avgSpeed;
+    return convert(parent.avgSpeed).from("m/s").to("km/h");
 };
 
 export default averageSpeed;

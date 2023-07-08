@@ -9,8 +9,8 @@ interface Args {
 }
 
 const verticalDistance = (parent: LogParent, args: Args, context: Context, info: any) => {
-    if (args.system === "METRIC") {
-        return convert(parent.vertical).from("ft").to("m");
+    if (args.system === "IMPERIAL") {
+        return convert(parent.vertical).from("m").to("ft");
     }
     return parent.vertical;
 };

@@ -5,7 +5,7 @@ const targetBucket = "mountain-ui-app-slopes-unzipped";
 
 const renameFileFunction = (originalFileName: string) => {
     return `${originalFileName.split(".")[0]}.xml`;
-}
+};
 
 export async function handler(event, context) {
     const s3Client = new S3({ region: "us-west-1" });
@@ -26,8 +26,10 @@ export async function handler(event, context) {
         await s3Client
             .upload({ Bucket: targetBucket, Key: targetFile, Body: fileStream })
             .promise();
-
         console.log(`File ${targetFile} uploaded to bucket ${targetBucket} successfully.`);
+
+        await s3Client.deleteObject({ Bucket: bucket, Key: fileName });
+        console.log("Zipped file deleted successfully.");
     }
 
     return { statusCode: 200 };

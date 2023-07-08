@@ -81,13 +81,10 @@ export const getRecordFromBucket = async (bucketName: string, key: string): Prom
 export const deleteObjectsInBucket = async (bucketName: string, prefix: string) => {
     const s3Client = createS3Client();
     try {
-        const deleteObjectRequest = new DeleteObjectCommand({
-            Bucket: bucketName,
-            Key: prefix
-        });
+        const deleteObjectRequest = new DeleteObjectCommand({ Bucket: bucketName, Key: prefix });
         await s3Client.send(deleteObjectRequest);
     } catch (err) {
         console.error(err);
-        throw Error(``);
+        throw Error(`Error deleting records from bucket`);
     }
 };
