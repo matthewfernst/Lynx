@@ -10,8 +10,8 @@ import UIKit
 class InvitationKeyInputUIView: UIView, UITextInputTraits {
     var keyboardType: UIKeyboardType = .numberPad
     var textContentType: UITextContentType = .oneTimeCode
-
-    var didFinishEnteringKey:((String)-> Void)?
+    var didFinishEnteringKey: ((String) -> Void)?
+    var editMenuInteraction: UIEditMenuInteraction?
     
     var key: String = "" {
         didSet {
@@ -32,32 +32,59 @@ class InvitationKeyInputUIView: UIView, UITextInputTraits {
         super.init(frame: frame)
         setupUI()
         showKeyboardIfNeeded()
+        setupPasteMenuInteraction()
     }
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-extension InvitationKeyInputUIView {
+    
     override var canBecomeFirstResponder: Bool {
         return true
     }
+    
     private func showKeyboardIfNeeded() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showKeyboard))
         self.addGestureRecognizer(tapGesture)
     }
+    
     @objc private func showKeyboard() {
         self.becomeFirstResponder()
     }
+    
+    private func setupPasteMenuInteraction() {
+        editMenuInteraction = UIEditMenuInteraction(delegate: self)
+        self.addInteraction(editMenuInteraction!)
+        
+        let longPressGestureRecognizer =
+                UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+        self.addGestureRecognizer(longPressGestureRecognizer)
+    }
+    
+    @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        guard gestureRecognizer.state == .began else { return }
+        
+        let configuration = UIEditMenuConfiguration(
+            identifier: "self",
+            sourcePoint: gestureRecognizer.location(in: self)
+        )
+        
+        editMenuInteraction?.presentEditMenu(with: configuration)
+    }
+    
+    @objc private func pasteKey() {
+        if let pasteText = UIPasteboard.general.string {
+            let enteredKey = pasteText.prefix(maxLength)
+            key = String(enteredKey)
+        }
+    }
 }
-
 
 extension InvitationKeyInputUIView: UIKeyInput {
     var hasText: Bool {
         return key.count > 0
     }
+    
     func insertText(_ text: String) {
         if key.count == maxLength {
             return
@@ -107,8 +134,8 @@ extension InvitationKeyInputUIView {
     }
     
     private func updateStack(by key: String) {
-        var emptyDashesLeft: [UIView] = Array(0..<maxLength/2).map { _ in emptyDash() }
-        var emptyDashesRight: [UIView] = Array(0..<maxLength/2).map { _ in emptyDash() }
+        var emptyDashesLeft: [UIView] = Array(0 ..< maxLength / 2).map { _ in emptyDash() }
+        var emptyDashesRight: [UIView] = Array(0 ..< maxLength / 2).map { _ in emptyDash() }
         
         let keyLabels: [UILabel] = Array(key).map { character in
             let label = UILabel()
@@ -135,6 +162,25 @@ extension InvitationKeyInputUIView {
         for view in emptyDashesRight {
             rightStack.addArrangedSubview(view)
         }
+    }
+}
+
+extension InvitationKeyInputUIView: UIEditMenuInteractionDelegate {
+    func editMenuInteraction(_ interaction: UIEditMenuInteraction,
+                             menuFor configuration: UIEditMenuConfiguration,
+                             suggestedActions: [UIMenuElement]) -> UIMenu? {
+        
+        var actions = suggestedActions
+        
+        let customMenu = UIMenu(title: "", options: .displayInline, children: [
+            UIAction(title: "Paste") { [weak self] _ in
+                self?.pasteKey()
+            }
+        ])
+        
+        actions.append(customMenu)
+        
+        return UIMenu(children: actions)
     }
 }
 

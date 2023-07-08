@@ -9,8 +9,7 @@ import GoogleSignIn
 import UIKit
 import OSLog
 
-class LoginViewController: UIViewController
-{
+class LoginViewController: UIViewController {
     @IBOutlet var loginWallpaper: UIImageView!
     @IBOutlet var appLabel: UILabel!
     @IBOutlet var learnMoreButton: UIButton!
@@ -63,7 +62,7 @@ class LoginViewController: UIViewController
         
         let content = UNMutableNotificationContent()
         content.title = "It's been a minute"
-        content.body = "Just a little reminder to come back and upload your Slope data files."
+        content.body = "Just a little reminder to come back and link your any new files."
         content.categoryIdentifier = "recall"
         content.sound = .default
         
