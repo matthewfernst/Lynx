@@ -12,6 +12,7 @@ import {
 import { LoginType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
 import { User } from "../../types";
 import { checkIsLoggedInAndHasValidInvite } from "../../auth";
+import { deleteObjectsInBucket, profilePictureBucketName, toRunRecordsBucket } from "../../aws/s3";
 
 interface Args {
     combineWith: {
@@ -40,6 +41,8 @@ const combineOAuthAccounts = async (
         return await updateUserAndReturnResult(context.userId as string, idKey, id);
     }
     await deleteItem(DYNAMODB_TABLE_USERS, otherUser.id);
+    await deleteObjectsInBucket(profilePictureBucketName, otherUser.id);
+    await deleteObjectsInBucket(toRunRecordsBucket, otherUser.id);
     return await updateUserAndReturnResult(context.userId as string, idKey, id);
 };
 
