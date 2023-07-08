@@ -143,6 +143,7 @@ class ApolloMountainUIClient
                 
             case .failure(let error):
                 Logger.apollo.error("LoginOrCreateUser mutation failed with Error: \(error)")
+                completion(.failure(error))
             }
         }
     }

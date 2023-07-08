@@ -10,7 +10,7 @@ import Foundation
 enum Constants
 {
     // Apollo
-    static let graphQLEndpoint = "https://7dabklh4i4.execute-api.us-west-1.amazonaws.com/production/graphql"
+    static let graphQLEndpoint = "https://nyw0w1k06b.execute-api.us-west-1.amazonaws.com/production/graphql"
 
     // Settings
     static let twitter = "https://twitter.com/ErnstMatthew"

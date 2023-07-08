@@ -11,7 +11,7 @@ class InvitationKeyInputUIView: UIView, UITextInputTraits {
     var keyboardType: UIKeyboardType = .numberPad
     var textContentType: UITextContentType = .oneTimeCode
     var didFinishEnteringKey: ((String) -> Void)?
-    var editMenuInteraction: UIEditMenuInteraction?
+    var pasteMenuInteraction: UIEditMenuInteraction?
     
     var key: String = "" {
         didSet {
@@ -53,23 +53,34 @@ class InvitationKeyInputUIView: UIView, UITextInputTraits {
     }
     
     private func setupPasteMenuInteraction() {
-        editMenuInteraction = UIEditMenuInteraction(delegate: self)
-        self.addInteraction(editMenuInteraction!)
+        pasteMenuInteraction = UIEditMenuInteraction(delegate: self)
+        self.addInteraction(pasteMenuInteraction!)
         
         let longPressGestureRecognizer =
                 UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         self.addGestureRecognizer(longPressGestureRecognizer)
+        
+        let doubleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
+        doubleTapGestureRecognizer.numberOfTapsRequired = 2
+        self.addGestureRecognizer(doubleTapGestureRecognizer)
     }
     
     @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         guard gestureRecognizer.state == .began else { return }
-        
+        commonPasteMenuInteraction()
+    }
+    
+    @objc func handleDoubleTap(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        commonPasteMenuInteraction()
+    }
+    
+    private func commonPasteMenuInteraction() {
         let configuration = UIEditMenuConfiguration(
             identifier: "self",
-            sourcePoint: gestureRecognizer.location(in: self)
+            sourcePoint: CGPoint(x: (rightStack.center.x + leftStack.center.x) / 2, y: leftStack.center.y)
         )
         
-        editMenuInteraction?.presentEditMenu(with: configuration)
+        pasteMenuInteraction?.presentEditMenu(with: configuration)
     }
     
     @objc private func pasteKey() {
