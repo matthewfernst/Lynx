@@ -556,7 +556,7 @@
 				65A4B8212A58961600BC2299 /* TOCropViewController */,
 				65A4B8242A58966600BC2299 /* Apollo */,
 			);
-			productName = "Mountain-UI-Companion";
+			productName = "Lynx";
 			productReference = 65A370D8297E594500E1D851 /* Lynx.app */;
 			productType = "com.apple.product-type.application";
 		};

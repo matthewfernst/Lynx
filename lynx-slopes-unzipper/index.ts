@@ -1,7 +1,7 @@
 import { S3 } from "aws-sdk";
 import { ParseOne } from "unzipper";
 
-const targetBucket = "mountain-ui-app-slopes-unzipped";
+const targetBucket = "lynx-slopes-unzipped";
 
 const renameFileFunction = (originalFileName: string) => {
     return `${originalFileName.split(".")[0]}.xml`;

@@ -1,4 +1,4 @@
-service: mountain-ui-api
+service: lynx-api
 frameworkVersion: "3"
 
 plugins:
@@ -50,15 +50,15 @@ provider:
             - s3:GetObject
             - s3:DeleteObject
           Resource:
-            - arn:aws:s3:::mountain-ui-app-slopes-unzipped
-            - arn:aws:s3:::mountain-ui-app-slopes-unzipped/*
+            - arn:aws:s3:::lynx-slopes-unzipped
+            - arn:aws:s3:::lynx-slopes-unzipped/*
         - Effect: Allow
           Action:
             - s3:PutObject
             - s3:DeleteObject
           Resource:
-            - arn:aws:s3:::mountain-ui-app-slopes-zipped
-            - arn:aws:s3:::mountain-ui-app-slopes-zipped/*
+            - arn:aws:s3:::lynx-slopes-zipped
+            - arn:aws:s3:::lynx-slopes-zipped/*
         - Effect: Allow
           Action: 
             - s3:ListBucket
@@ -66,8 +66,8 @@ provider:
             - s3:PutObject
             - s3:DeleteObject
           Resource:
-            - arn:aws:s3:::mountain-ui-app-profile-pictures
-            - arn:aws:s3:::mountain-ui-app-profile-pictures/*
+            - arn:aws:s3:::lynx-profile-pictures
+            - arn:aws:s3:::lynx-profile-pictures/*
         - Effect: Allow
           Action:
             - dynamodb:GetItem
@@ -77,8 +77,8 @@ provider:
             - dynamodb:Scan
             - dynamodb:UpdateItem
           Resource:
-            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/mountain-ui-app-users
-            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/mountain-ui-app-users/index/*
+            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users
+            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users/index/*
         - Effect: Allow
           Action:
             - dynamodb:GetItem
@@ -86,7 +86,7 @@ provider:
             - dynamodb:PutItem
             - dynamodb:Query
           Resource:
-            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/mountain-ui-app-invites
+            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-invites
        
 functions:
   graphql:
@@ -103,7 +103,7 @@ resources:
     usersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: mountain-ui-app-users
+        TableName: lynx-users
         KeySchema:
           - AttributeName: id
             KeyType: HASH
@@ -131,7 +131,7 @@ resources:
     inviteTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: mountain-ui-app-invites
+        TableName: lynx-invites
         KeySchema:
           - AttributeName: id
             KeyType: HASH
@@ -146,7 +146,7 @@ resources:
     MountainUIProfilePictureBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: mountain-ui-app-profile-pictures
+        BucketName: lynx-profile-pictures
         OwnershipControls:
           Rules:
             - ObjectOwnership: BucketOwnerEnforced
@@ -158,12 +158,12 @@ resources:
     MountainUIProfilePictureBucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
-        Bucket: mountain-ui-app-profile-pictures
+        Bucket: lynx-profile-pictures
         PolicyDocument:
           Statement:
             - Action:
                 - s3:GetObject
               Effect: Allow
               Resource:
-                - arn:aws:s3:::mountain-ui-app-profile-pictures/*
+                - arn:aws:s3:::lynx-profile-pictures/*
               Principal: "*"

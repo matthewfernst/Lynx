@@ -1,6 +1,6 @@
 //
 //  DeleteAccountViewController.swift
-//  Mountain-UI-Companion
+//  Lynx
 //
 //  Created by Matthew Ernst on 7/4/23.
 //

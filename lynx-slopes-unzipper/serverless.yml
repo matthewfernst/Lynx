@@ -1,4 +1,4 @@
-service: mountain-ui-slopes-unzipper
+service: lynx-slopes-unzipper
 frameworkVersion: "3"
 
 custom:
@@ -17,20 +17,20 @@ provider:
           Action:
             - s3:GetObject
           Resource:
-            - arn:aws:s3:::mountain-ui-app-slopes-zipped
-            - arn:aws:s3:::mountain-ui-app-slopes-zipped/*
+            - arn:aws:s3:::lynx-slopes-zipped
+            - arn:aws:s3:::lynx-slopes-zipped/*
         - Effect: Allow
           Action:
             - s3:PutObject
           Resource:
-            - arn:aws:s3:::mountain-ui-app-slopes-unzipped
-            - arn:aws:s3:::mountain-ui-app-slopes-unzipped/*
+            - arn:aws:s3:::lynx-slopes-unzipped
+            - arn:aws:s3:::lynx-slopes-unzipped/*
 
 functions:
-  mountain-ui-unzipper:
+  lynx-unzipper:
     handler: index.handler
     events:
-      - s3: mountain-ui-app-slopes-zipped
+      - s3: lynx-slopes-zipped
 
 plugins:
   - serverless-plugin-typescript
@@ -40,7 +40,7 @@ resources:
     MountainUISlopesUnzippedBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: mountain-ui-app-slopes-unzipped
+        BucketName: lynx-slopes-unzipped
         OwnershipControls:
           Rules:
             - ObjectOwnership: BucketOwnerEnforced

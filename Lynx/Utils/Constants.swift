@@ -1,6 +1,6 @@
 //
 //  Constants.swift
-//  Mountain-UI-Companion
+//  Lynx
 //
 //  Created by Matthew Ernst on 1/22/23.
 //
@@ -19,7 +19,7 @@ enum Constants
     static let mountainUIDisplayGitub = "https://github.com/matthewfernst/Mountain-UI"
     
     // Bundle ID
-    static let bundleID = "com.matthewfernst.Mountain-UI-Companion"
+    static let bundleID = "com.matthewfernst.Lynx"
     
     // Email
     static let contactEmail = "matthew.f.ernst@icloud.com"

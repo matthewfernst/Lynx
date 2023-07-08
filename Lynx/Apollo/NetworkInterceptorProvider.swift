@@ -1,6 +1,6 @@
 //
 //  NetworkInterceptorProvider.swift
-//  Mountain-UI-Companion
+//  Lynx
 //
 //  Created by Matthew Ernst on 4/30/23.
 //

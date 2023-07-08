@@ -1,6 +1,6 @@
 //
 //  SettingsTableViewController.swift
-//  Mountain-UI-Companion
+//  Lynx
 //
 //  Created by Matthew Ernst on 1/25/23.
 //

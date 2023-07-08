@@ -1,6 +1,6 @@
 //
 //  InvitationKeySheetViewController.swift
-//  Mountain-UI-Companion
+//  Lynx
 //
 //  Created by Matthew Ernst on 6/24/23.
 //

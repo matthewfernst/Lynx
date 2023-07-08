@@ -1,4 +1,4 @@
-# Mountain UI API Lambda
+# Mountain UI Slopes Unzipper Lambda
 
 ## Deployment To Cloud
 
@@ -11,12 +11,12 @@ $ serverless deploy
 After running deploy, you should see output similar to:
 
 ```bash
-Deploying mountain-ui-api to stage dev (us-west-1)
+Deploying lynx-slopes-unzipper to stage dev (us-west-1)
 
-✔ Service deployed to stack mountain-ui-api-dev (112s)
+✔ Service deployed to stack lynx-slopes-unzipper-dev (112s)
 
 functions:
-  mountain-ui-api: mountain-ui-api-dev-mountain-ui-api (56 kB)
+  lynx-unzipper: lynx-slopes-unzipper-dev-lynx-unzipper (56 kB)
 ```
 
 ## Invocation
@@ -24,7 +24,7 @@ functions:
 After successful deployment, you can invoke the deployed function by using the following command:
 
 ```bash
-serverless invoke --function mountain-ui-api
+serverless invoke --function lynx-unzipper
 ```
 
 ## Local Development
@@ -32,5 +32,5 @@ serverless invoke --function mountain-ui-api
 You can invoke your function locally by using the following command:
 
 ```bash
-serverless invoke local --function mountain-ui-api
+serverless invoke local --function lynx-unzipper
 ```

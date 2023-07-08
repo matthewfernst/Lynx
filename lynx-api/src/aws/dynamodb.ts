@@ -29,8 +29,8 @@ type DynamoDBResult =
     | UpdateItemOutput
     | DeleteItemOutput;
 
-export const DYNAMODB_TABLE_USERS = "mountain-ui-app-users";
-export const DYNAMODB_TABLE_INVITES = "mountain-ui-app-invites";
+export const DYNAMODB_TABLE_USERS = "lynx-users";
+export const DYNAMODB_TABLE_INVITES = "lynx-invites";
 
 export type Table = typeof DYNAMODB_TABLE_USERS | typeof DYNAMODB_TABLE_INVITES;
 

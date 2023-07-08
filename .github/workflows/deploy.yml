@@ -27,17 +27,17 @@ jobs:
         uses: actions/cache@v2
         id: cache
         with:
-          path: mountain-ui-slopes-unzipper/node_modules
+          path: lynx-slopes-unzipper/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - name: Install Node Modules
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm install --prefix mountain-ui-slopes-unzipper
+        run: npm install --prefix lynx-slopes-unzipper
 
       - name: Deploy
-        run: npm run --prefix mountain-ui-slopes-unzipper deploy
+        run: npm run --prefix lynx-slopes-unzipper deploy
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
 
@@ -61,20 +61,20 @@ jobs:
         uses: actions/cache@v2
         id: cache
         with:
-          path: mountain-ui-api/node_modules
+          path: lynx-api/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - name: Install Node Modules
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm install --prefix mountain-ui-api
+        run: npm install --prefix lynx-api
 
-      - name: Create Mountain-UI .env File
+      - name: Create Lynx .env File
         uses: iamsauravsharma/create-dotenv@v1.2.1
         with:
           env-prefix: 'ENV_'
-          directory: 'mountain-ui-api/'
+          directory: 'lynx-api/'
         env:
           ENV_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           ENV_APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
@@ -82,6 +82,6 @@ jobs:
           ENV_ESCAPE_INVITE_HATCH: ${{ secrets.ESCAPE_INVITE_HATCH }}
 
       - name: Deploy
-        run: npm run --prefix mountain-ui-api deploy
+        run: npm run --prefix lynx-api deploy
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}

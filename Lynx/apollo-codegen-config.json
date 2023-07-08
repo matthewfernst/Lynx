@@ -18,7 +18,7 @@
       "path" : "./ApolloGeneratedGraphQL",
       "moduleType" : {
         "embeddedInTarget" : {
-          "name" : "Mountain-UI-Companion"
+          "name" : "Lynx"
         }
       }
     },

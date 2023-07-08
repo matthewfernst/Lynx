@@ -1,8 +1,8 @@
 {
-    "name": "mountain-ui-api",
+    "name": "lynx-api",
     "version": "1.0.0",
     "description": "A lambda to query slopes data in S3",
-    "repository": "https://github.com/matthewfernst/Mountain-UI-Companion-App",
+    "repository": "https://github.com/matthewfernst/Lynx-Companion-App",
     "license": "MIT",
     "main": "index.js",
     "scripts": {

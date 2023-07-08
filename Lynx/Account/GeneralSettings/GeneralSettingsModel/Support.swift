@@ -1,6 +1,6 @@
 //
 //  Support.swift
-//  Mountain-UI-Companion
+//  Lynx
 //
 //  Created by Matthew Ernst on 1/22/23.
 //
