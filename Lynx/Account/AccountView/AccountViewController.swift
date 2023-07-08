@@ -142,7 +142,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
         case .general:
             return "Settings"
         case .inviteKey:
-            return "Invite key"
+            return "Invitation key"
         case .support:
             return "Show your support"
         case .contactDevelopers:

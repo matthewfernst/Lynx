@@ -57,7 +57,31 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
         }
     }
     
-    private func cleanUpSlopeFilesUploadView() {
+    private func nicknameConnectedFolderAndCleanup() {
+        DispatchQueue.main.async { [weak self] in
+            let ac = UIAlertController(title: "Nickname Folder", message: "Please enter in a nickname for the folder you connected. By default, we will use 'Slopes'.", preferredStyle: .alert)
+            
+            ac.addTextField { textField in
+                textField.placeholder = "Enter a nickname"
+            }
+            ac.addAction(UIAlertAction(title: "Submit", style: .default) { [weak self, weak ac] _ in
+                guard let textField = ac?.textFields?.first,let enteredNickname = textField.text else {
+                    return
+                }
+                FolderConnectionViewController.connectedFolderNickname = enteredNickname
+                self?.cleanupUploadView()
+            })
+            ac.addAction(UIAlertAction(title: "Use Default Name", style: .cancel) { [weak self] _ in
+                FolderConnectionViewController.connectedFolderNickname = "Slopes"
+                self?.cleanupUploadView()
+            })
+            self?.present(ac, animated: true)
+        }
+    }
+    
+    private func cleanupUploadView() {
+        let defaults = UserDefaults.standard
+        defaults.setValue(FolderConnectionViewController.connectedFolderNickname, forKey: UserDefaultsKeys.connectedFolderNickname)
         DispatchQueue.main.async { [unowned self] in
             self.uploadProgressView.isHidden = true
             self.manualUploadActivityIndicator.stopAnimating()
@@ -70,7 +94,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
     private func showAllSet() {
         self.title = "All Set!"
         
-        self.explanationTextView.text = "Your Slopes folder is connected. Your files will be automatically uploaded when you open the app."
+        self.explanationTextView.text = "Your \(FolderConnectionViewController.connectedFolderNickname) folder is connected. Your files will be automatically uploaded when you open the app."
         self.explanationTextView.font = UIFont.systemFont(ofSize: 16)
         self.continueButton.isHidden = true
         self.stepsToUploadImageView.isHidden = true
@@ -81,7 +105,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
         self.checkmarkImageView.tintColor = UIColor.systemGreen
         self.checkmarkImageView.alpha = 0
         self.checkmarkImageView.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
-
+        
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
             self.checkmarkImageView.transform = .identity
             self.checkmarkImageView.alpha = 1
@@ -171,7 +195,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                                         
                                         if currentFileNumberBeingUploaded == totalNumberOfFiles {
                                             // All files are uploaded, perform cleanup
-                                            self.cleanUpSlopeFilesUploadView()
+                                            self.nicknameConnectedFolderAndCleanup()
                                         }
                                     case .failure(let error):
                                         Logger.folderConnection.debug("Failed to upload \(fileURL) with error: \(error)")
@@ -224,7 +248,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                     completion(nil)
                     return
                 }
-        
+                
                 if nonUploadedSlopeFiles.isEmpty {
                     Logger.folderConnection.debug("No new files found.")
                     completion(nil)
@@ -238,7 +262,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             }
         }
     }
-
+    
     public static func uploadNewFilesWithLabel(label: AutoUploadFileLabel, files nonUploadedSlopeFiles: [String], completion: (() -> Void)?) {
         guard let bookmark = FolderConnectionViewController.bookmarkManager.bookmark else {
             return
@@ -308,8 +332,8 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             }
         }
     }
-
-
+    
+    
     private static func putZipFiles(urlEndPoint: String, zipFilePath: URL, completion: @escaping (Result<Int, Error>) -> Void) {
         let url = URL(string: urlEndPoint)!
         

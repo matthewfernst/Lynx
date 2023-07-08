@@ -194,9 +194,7 @@ class LogbookViewController: UIViewController {
     }
     
     @objc private func showConnectedFolder() {
-        guard let connectedFolder = FolderConnectionViewController.bookmarkManager.bookmark?.url.deletingLastPathComponent().lastPathComponent else {
-            return
-        }
+        let connectedFolder = FolderConnectionViewController.connectedFolderNickname
         
         let ac = UIAlertController(title: "Successfully Connected to \(connectedFolder)", message: "You have already successfully connected your folder. When you open the app, it will automatically upload new files. Do you wish to connect to a different folder?", preferredStyle: .actionSheet)
         

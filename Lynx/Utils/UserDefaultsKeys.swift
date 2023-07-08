@@ -12,6 +12,9 @@ struct UserDefaultsKeys
     // TabViewController
     static let theme = "theme"
     
+    // Connected Folder
+    static let connectedFolderNickname = "connectedFolderNickname"
+    
     // Profile
     static let isSignedIn = "isSignedIn"
     static let appleOrGoogleId = "appleOrGoogleId"
@@ -28,7 +31,9 @@ struct UserDefaultsKeys
     // All Keys
     static let allKeys: [String] = [
         theme,
+        connectedFolderNickname,
         isSignedIn,
+        appleOrGoogleId,
         notificationsTurnedOnOrOff,
         authorizationToken,
         authorizationTokenExpirationDate,

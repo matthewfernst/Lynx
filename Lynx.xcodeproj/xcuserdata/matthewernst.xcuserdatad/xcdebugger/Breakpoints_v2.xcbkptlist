@@ -167,64 +167,33 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "45296CEA-7577-468E-84D0-8B1BD8069983"
+            uuid = "EF456A6B-403E-4897-9C0E-DD327D8D4FC8"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Lynx/Login/LoginViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "360"
-            endingLineNumber = "360"
+            startingLineNumber = "387"
+            endingLineNumber = "387"
+            landmarkName = "authorizationController(controller:didCompleteWithError:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "31F9EC94-1419-4D15-B9E6-8CD0F6566CC3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lynx/Login/LoginViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "364"
+            endingLineNumber = "364"
             landmarkName = "authorizationController(controller:didCompleteWithAuthorization:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "45296CEA-7577-468E-84D0-8B1BD8069983 - 80d82ea612790ec6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Lynx.LoginViewController.authorizationController(controller: __C.ASAuthorizationController, didCompleteWithAuthorization: __C.ASAuthorization) -&gt; ()"
-                  moduleName = "Lynx"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Lynx/Lynx/Login/LoginViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "361"
-                  endingLineNumber = "361"
-                  offsetFromSymbolStart = "5324">
-               </Location>
-               <Location
-                  uuid = "45296CEA-7577-468E-84D0-8B1BD8069983 - 80d82ea612790ee7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Lynx.LoginViewController.authorizationController(controller: __C.ASAuthorizationController, didCompleteWithAuthorization: __C.ASAuthorization) -&gt; ()"
-                  moduleName = "Lynx"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Lynx/Lynx/Login/LoginViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "360"
-                  endingLineNumber = "360"
-                  offsetFromSymbolStart = "2872">
-               </Location>
-               <Location
-                  uuid = "45296CEA-7577-468E-84D0-8B1BD8069983 - 80d82ea612790ee7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Lynx.LoginViewController.authorizationController(controller: __C.ASAuthorizationController, didCompleteWithAuthorization: __C.ASAuthorization) -&gt; ()"
-                  moduleName = "Lynx"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Lynx/Lynx/Login/LoginViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "360"
-                  endingLineNumber = "360"
-                  offsetFromSymbolStart = "2472">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

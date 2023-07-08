@@ -303,10 +303,15 @@ class LoginViewController: UIViewController {
     }
     
     private func signInExistingUser(completion: (() -> Void)? ) {
-        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.isSignedIn),
-           let type = UserDefaults.standard.string(forKey: UserDefaultsKeys.loginType),
-           let id = UserDefaults.standard.string(forKey: UserDefaultsKeys.appleOrGoogleId) {
+        let defaults = UserDefaults.standard
+        if defaults.bool(forKey: UserDefaultsKeys.isSignedIn),
+           let type = defaults.string(forKey: UserDefaultsKeys.loginType),
+           let id = defaults.string(forKey: UserDefaultsKeys.appleOrGoogleId) {
             let activityIndicator = showSignInActivityIndicator()
+            
+            if let connectedFolderNickname = defaults.string(forKey: UserDefaultsKeys.connectedFolderNickname) {
+                FolderConnectionViewController.connectedFolderNickname = connectedFolderNickname
+            }
             
             switch SignInType(rawValue: type) {
             case .apple:
@@ -320,7 +325,6 @@ class LoginViewController: UIViewController {
                         self?.performExistingAppleAccountSetupFlows()
                     }
                 }
-                
                 
             case .google:
                 GIDSignIn.sharedInstance.restorePreviousSignIn { [weak self] user, error in
