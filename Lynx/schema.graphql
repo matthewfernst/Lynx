@@ -13,29 +13,29 @@ type Log {
     id: ID!
     originalFileName: String!
     conditions: String
-    distance(system: MeasurementSystem = IMPERIAL): Float!
+    distance(system: MeasurementSystem = METRIC): Float!
     duration: Float!
     startDate: String!
     endDate: String!
     locationName: String!
     runCount: Int!
-    topSpeed(system: MeasurementSystem = IMPERIAL): Float!
-    verticalDistance(system: MeasurementSystem = IMPERIAL): Float!
+    topSpeed(system: MeasurementSystem = METRIC): Float!
+    verticalDistance(system: MeasurementSystem = METRIC): Float!
     details: [LogDetail!]!
 }
 
 type LogDetail {
     type: LogDetailType!
-    averageSpeed(system: MeasurementSystem = IMPERIAL): Float!
-    distance(system: MeasurementSystem = IMPERIAL): Float!
+    averageSpeed(system: MeasurementSystem = METRIC): Float!
+    distance(system: MeasurementSystem = METRIC): Float!
     duration: Float!
     startDate: String!
     endDate: String!
-    maxAltitude(system: MeasurementSystem = IMPERIAL): Float!
-    minAltitude(system: MeasurementSystem = IMPERIAL): Float!
-    topSpeed(system: MeasurementSystem = IMPERIAL): Float!
-    topSpeedAltitude(system: MeasurementSystem = IMPERIAL): Float!
-    verticalDistance(system: MeasurementSystem = IMPERIAL): Float!
+    maxAltitude(system: MeasurementSystem = METRIC): Float!
+    minAltitude(system: MeasurementSystem = METRIC): Float!
+    topSpeed(system: MeasurementSystem = METRIC): Float!
+    topSpeedAltitude(system: MeasurementSystem = METRIC): Float!
+    verticalDistance(system: MeasurementSystem = METRIC): Float!
 }
 
 enum LogDetailType {

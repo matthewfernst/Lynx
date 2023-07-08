@@ -9,34 +9,35 @@ public extension ApolloGeneratedGraphQL {
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        query GetLogs {
+        query GetLogs($system: MeasurementSystem!) {
           selfLookup {
             __typename
             logbook {
               __typename
               id
               originalFileName
-              distance
+              distance(system: $system)
               conditions
               duration
               startDate
               endDate
               locationName
               runCount
-              topSpeed
-              verticalDistance
+              topSpeed(system: $system)
+              verticalDistance(system: $system)
               details {
                 __typename
                 type
-                averageSpeed
+                averageSpeed(system: $system)
+                distance(system: $system)
                 duration
                 startDate
                 endDate
-                maxAltitude
-                minAltitude
-                topSpeed
-                topSpeedAltitude
-                verticalDistance
+                maxAltitude(system: $system)
+                minAltitude(system: $system)
+                topSpeed(system: $system)
+                topSpeedAltitude(system: $system)
+                verticalDistance(system: $system)
               }
             }
           }
@@ -44,7 +45,13 @@ public extension ApolloGeneratedGraphQL {
         """#
       ))
 
-    public init() {}
+    public var system: GraphQLEnum<MeasurementSystem>
+
+    public init(system: GraphQLEnum<MeasurementSystem>) {
+      self.system = system
+    }
+
+    public var __variables: Variables? { ["system": system] }
 
     public struct Data: ApolloGeneratedGraphQL.SelectionSet {
       public let __data: DataDict
@@ -84,15 +91,15 @@ public extension ApolloGeneratedGraphQL {
             .field("__typename", String.self),
             .field("id", ApolloGeneratedGraphQL.ID.self),
             .field("originalFileName", String.self),
-            .field("distance", Double.self),
+            .field("distance", Double.self, arguments: ["system": .variable("system")]),
             .field("conditions", String?.self),
             .field("duration", Double.self),
             .field("startDate", String.self),
             .field("endDate", String.self),
             .field("locationName", String.self),
             .field("runCount", Int.self),
-            .field("topSpeed", Double.self),
-            .field("verticalDistance", Double.self),
+            .field("topSpeed", Double.self, arguments: ["system": .variable("system")]),
+            .field("verticalDistance", Double.self, arguments: ["system": .variable("system")]),
             .field("details", [Detail].self),
           ] }
 
@@ -120,19 +127,21 @@ public extension ApolloGeneratedGraphQL {
             public static var __selections: [ApolloAPI.Selection] { [
               .field("__typename", String.self),
               .field("type", GraphQLEnum<ApolloGeneratedGraphQL.LogDetailType>.self),
-              .field("averageSpeed", Double.self),
+              .field("averageSpeed", Double.self, arguments: ["system": .variable("system")]),
+              .field("distance", Double.self, arguments: ["system": .variable("system")]),
               .field("duration", Double.self),
               .field("startDate", String.self),
               .field("endDate", String.self),
-              .field("maxAltitude", Double.self),
-              .field("minAltitude", Double.self),
-              .field("topSpeed", Double.self),
-              .field("topSpeedAltitude", Double.self),
-              .field("verticalDistance", Double.self),
+              .field("maxAltitude", Double.self, arguments: ["system": .variable("system")]),
+              .field("minAltitude", Double.self, arguments: ["system": .variable("system")]),
+              .field("topSpeed", Double.self, arguments: ["system": .variable("system")]),
+              .field("topSpeedAltitude", Double.self, arguments: ["system": .variable("system")]),
+              .field("verticalDistance", Double.self, arguments: ["system": .variable("system")]),
             ] }
 
             public var type: GraphQLEnum<ApolloGeneratedGraphQL.LogDetailType> { __data["type"] }
             public var averageSpeed: Double { __data["averageSpeed"] }
+            public var distance: Double { __data["distance"] }
             public var duration: Double { __data["duration"] }
             public var startDate: String { __data["startDate"] }
             public var endDate: String { __data["endDate"] }

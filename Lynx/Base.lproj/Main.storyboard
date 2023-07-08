@@ -246,7 +246,8 @@
                         <outlet property="lifetimeRunsLabel" destination="2o5-lC-ZR2" id="x5c-mR-dyG"/>
                         <outlet property="lifetimeRunsTimeLabel" destination="uco-b4-Mxn" id="aAb-Ap-DOc"/>
                         <outlet property="lifetimeSummaryTableView" destination="iaM-1U-51x" id="qzq-50-Mes"/>
-                        <outlet property="lifetimeVerticalFeetLabel" destination="hPG-Db-aC7" id="CGD-g7-7cr"/>
+                        <outlet property="lifetimeVerticalMeasurementSystemLabel" destination="JhK-39-ffW" id="u3z-Kq-7y7"/>
+                        <outlet property="lifetimeVerticalNumbersLabel" destination="hPG-Db-aC7" id="CGD-g7-7cr"/>
                         <outlet property="profilePictureImageView" destination="zeA-Vy-F4b" id="Rgq-de-v63"/>
                     </connections>
                 </viewController>

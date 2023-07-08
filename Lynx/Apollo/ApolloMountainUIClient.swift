@@ -11,9 +11,9 @@ import OSLog
 
 typealias Logbooks = [ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook]
 typealias Logbook = ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook
+typealias MeasurementSystem = ApolloGeneratedGraphQL.MeasurementSystem
 
-class ApolloMountainUIClient
-{
+class ApolloMountainUIClient {
     private static let graphQLEndpoint = Constants.graphQLEndpoint
     
     private static let apolloClient: ApolloClient = {
@@ -301,9 +301,11 @@ class ApolloMountainUIClient
     }
     
     
-    public static func getLogs(completion: @escaping ((Result<Logbooks, Error>) -> Void)) {
+    public static func getLogs(measurementSystem: MeasurementSystem, completion: @escaping ((Result<Logbooks, Error>) -> Void)) {
         
-        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetLogsQuery()) { result in
+        let system = GraphQLEnum<ApolloGeneratedGraphQL.MeasurementSystem>(rawValue: measurementSystem.rawValue)
+        
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetLogsQuery(system: system)) { result in
             switch result {
             case .success(let graphQLResult):
                 guard var logbook = graphQLResult.data?.selfLookup?.logbook else {

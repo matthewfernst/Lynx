@@ -71,10 +71,10 @@ class SessionTableViewCell: UITableViewCell
         resortDateImageView.image = nil
     }
     
-    public func configure(with configuredLogbookData: ConfiguredLogbookData) {
+    public func configure(with configuredLogbookData: ConfiguredLogbookData, measurementSystem milesPerHourOrKilometersPerHour: String) {
         resortNameLabel.text = configuredLogbookData.locationName
         snowboardFigureImageView.tintColor = .secondaryLabel
-        resortStatsLabel.text = "| \(configuredLogbookData.numberOfRuns) runs | \(configuredLogbookData.runDurationHour)H \(configuredLogbookData.runDurationMinutes)M | \(configuredLogbookData.conditions) | \(configuredLogbookData.topSpeed)MPH"
+        resortStatsLabel.text = "| \(configuredLogbookData.numberOfRuns) runs | \(configuredLogbookData.runDurationHour)H \(configuredLogbookData.runDurationMinutes)M | \(configuredLogbookData.conditions) | \(configuredLogbookData.topSpeed)\(milesPerHourOrKilometersPerHour)"
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         

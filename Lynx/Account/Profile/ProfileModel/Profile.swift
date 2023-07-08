@@ -8,9 +8,9 @@
 import Foundation
 import Security
 import UIKit
+import Apollo
 
-class Profile
-{
+class Profile {
     var type: String
     var oauthToken: String
     var id: String
@@ -20,7 +20,7 @@ class Profile
     var profilePicture: UIImage?
     var profilePictureURL: String?
     var appTheme: String = "System"
-    var units: String = "Metric"
+    var measurementSystem: MeasurementSystem = MeasurementSystem.metric
     var notificationsAllowed: Bool?
     
     init(type: String, oauthToken: String, id: String, firstName: String, lastName: String, email: String, profilePicture: UIImage? = nil, profilePictureURL: String? = "") {

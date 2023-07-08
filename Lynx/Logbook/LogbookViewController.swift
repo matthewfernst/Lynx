@@ -16,7 +16,8 @@ enum SessionSection: Int, CaseIterable {
 class LogbookViewController: UIViewController {
     
     @IBOutlet var profilePictureImageView: UIImageView!
-    @IBOutlet var lifetimeVerticalFeetLabel: UILabel!
+    @IBOutlet var lifetimeVerticalNumbersLabel: UILabel!
+    @IBOutlet var lifetimeVerticalMeasurementSystemLabel: UILabel!
     @IBOutlet var lifetimeDaysOnMountainLabel: UILabel!
     @IBOutlet var lifetimeRunsTimeLabel: UILabel!
     @IBOutlet var lifetimeRunsLabel: UILabel!
@@ -45,6 +46,7 @@ class LogbookViewController: UIViewController {
         self.navigationController?.navigationBar.prefersLargeTitles = true
         reloadProfile()
         autoUploadFiles()
+        callGetLogsAndRefresh()
     }
     
     private func autoUploadFiles() {
@@ -143,16 +145,28 @@ class LogbookViewController: UIViewController {
     }
     
     private func setupMainStats() {
-        lifetimeVerticalFeetLabel.text   = logbookStats.lifetimeVerticalFeet
-        lifetimeDaysOnMountainLabel.text = logbookStats.lifetimeDaysOnMountain
-        lifetimeRunsTimeLabel.text       = logbookStats.lifetimeRunsTime
-        lifetimeRunsLabel.text           = logbookStats.lifetimeRuns
+        switch profile.measurementSystem {
+        case .imperial:
+            lifetimeVerticalMeasurementSystemLabel.text = "lifetime vertical ft"
+        case .metric:
+            lifetimeVerticalMeasurementSystemLabel.text = "lifetime vertical m"
+        }
+        
+        lifetimeVerticalNumbersLabel.text = logbookStats.lifetimeVertical
+        lifetimeDaysOnMountainLabel.text  = logbookStats.lifetimeDaysOnMountain
+        lifetimeRunsTimeLabel.text        = logbookStats.lifetimeRunsTime
+        lifetimeRunsLabel.text            = logbookStats.lifetimeRuns
+        
     }
     
     public func refreshUI() {
         updateButtonAvailability()
+        callGetLogsAndRefresh()
+    }
+    
+    private func callGetLogsAndRefresh() {
         ApolloMountainUIClient.clearCache()
-        ApolloMountainUIClient.getLogs { [weak self] result in
+        ApolloMountainUIClient.getLogs(measurementSystem: profile.measurementSystem) { [weak self] result in
             switch result {
             case .success(let logbook):
                 self?.logbookStats.logbooks = logbook
@@ -250,20 +264,34 @@ extension LogbookViewController: UITableViewDelegate, UITableViewDataSource {
         guard let sessionSection = SessionSection(rawValue: indexPath.section) else {
             return UITableViewCell()
         }
+        
+        let feetOrMeters: String
+        let milesPerHourOrKilometersPerHour: String
+        switch profile.measurementSystem {
+        case .imperial:
+            feetOrMeters = "FT"
+            milesPerHourOrKilometersPerHour = "MPH"
+        case .metric:
+            feetOrMeters = "M"
+            milesPerHourOrKilometersPerHour = "KPH"
+        }
+        
         switch sessionSection {
         case .lifetimeSummary:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SeasonSummaryCell", for: indexPath)
             var configuration = cell.defaultContentConfiguration()
             configuration.text = "Season Summary"
-            cell.detailTextLabel?.text = "\(lifetimeRunsLabel.text ?? "-") runs | \(lifetimeDaysOnMountainLabel.text ?? "-") days | \(lifetimeVerticalFeetLabel.text ?? "-") FT"
+            
+            cell.detailTextLabel?.text = "\(lifetimeRunsLabel.text ?? "-") runs | \(lifetimeDaysOnMountainLabel.text ?? "-") days | \(lifetimeVerticalNumbersLabel.text ?? "-") \(feetOrMeters)"
             cell.backgroundColor = .secondarySystemBackground
             return cell
+            
         case .sessionSummary:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: SessionTableViewCell.identifier, for: indexPath) as? SessionTableViewCell else {
                 return UITableViewCell()
             }
             if let configuredLogbookData = logbookStats.getConfiguredLogbookData(at: indexPath.row) {
-                cell.configure(with: configuredLogbookData)
+                cell.configure(with: configuredLogbookData, measurementSystem: milesPerHourOrKilometersPerHour)
             }
             return cell
         }

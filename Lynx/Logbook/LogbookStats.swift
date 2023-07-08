@@ -13,7 +13,29 @@ struct LogbookStats {
     
     // MARK: - Lifetime Stats
     
-    var lifetimeVerticalFeet: String {
+    var feetOrMeters: String {
+        switch TabViewController.profile?.measurementSystem {
+        case .imperial:
+            return "FT"
+        case .metric:
+            return "M"
+        case .none:
+            return ""
+        }
+    }
+    
+    var milesPerHourOrKilometersPerHour: String {
+        switch TabViewController.profile?.measurementSystem {
+        case .imperial:
+            return "MPH"
+        case .metric:
+            return "KPH"
+        case .none:
+            return ""
+        }
+    }
+    
+    var lifetimeVertical: String {
         let totalVerticalFeet = logbooks.map { $0.verticalDistance }.reduce(0, +)
         
         if totalVerticalFeet == 0 { return "--" }
@@ -142,18 +164,24 @@ struct LogbookStats {
         }
         
         if averageVerticalFeet >= 1000 {
-            return String(format: "%.1fk", averageVerticalFeet / 1000)
+            return String(format: "%.1fk \(feetOrMeters)", averageVerticalFeet / 1000)
         }
         
-        return String(format: "%.0f FT", averageVerticalFeet)
+        return String(format: "%.0f \(feetOrMeters)", averageVerticalFeet)
     }
     
     private func calculateAverageDistance() -> String {
         let averageDistance = logbooks.map { $0.distance }.reduce(0.0) {
             return $0 + $1/Double(logbooks.count)
         }
-        
-        return String(format: "%.1f MI", averageDistance.feetToMiles)
+        switch TabViewController.profile?.measurementSystem {
+        case .imperial:
+            return String(format: "%.1f MI", averageDistance.feetToMiles)
+        case .metric:
+            return String(format: "%.1f KM", averageDistance.metersToKilometers)
+        case .none:
+            return ""
+        }
     }
     
     private func calculateAverageSpeed() -> String {
@@ -161,19 +189,26 @@ struct LogbookStats {
             return $0 + $1/Double(logbooks.count)
         }
         
-        return String(format: "%.1f MPH", averageSpeed)
+        return String(format: "%.1f \(milesPerHourOrKilometersPerHour)", averageSpeed)
     }
     
     private func calculateBestTopSpeed() -> String {
-        return String(format: "%.1f MPH", logbooks.map { $0.topSpeed }.max() ?? 0.0)
+        return String(format: "%.1f \(milesPerHourOrKilometersPerHour)", logbooks.map { $0.topSpeed }.max() ?? 0.0)
     }
     
     private func calculateBestTallestRun() -> String {
-        return String(format: "%.1f FT", logbooks.map { $0.verticalDistance }.max() ?? 0.0)
+        return String(format: "%.1f \(feetOrMeters)", logbooks.map { $0.verticalDistance }.max() ?? 0.0)
     }
     
     private func calculateBestLongestRun() -> String {
-        return String(format: "%.1f MI", (logbooks.map { $0.distance }.max() ?? 0.0).feetToMiles)
+        switch TabViewController.profile?.measurementSystem {
+        case .imperial:
+            return String(format: "%.1f MI", (logbooks.map { $0.distance }.max() ?? 0.0).feetToMiles)
+        case .metric:
+            return String(format: "%.1f KM", (logbooks.map { $0.distance }.max() ?? 0.0).metersToKilometers)
+        case .none:
+            return ""
+        }
     }
 }
 
@@ -190,5 +225,9 @@ struct ConfiguredLogbookData {
 extension Double {
     var feetToMiles: Self {
         return self / 5280
+    }
+    
+    var metersToKilometers: Self {
+        return self / 1000
     }
 }

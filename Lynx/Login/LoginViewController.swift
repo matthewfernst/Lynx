@@ -274,7 +274,7 @@ class LoginViewController: UIViewController {
         let message = """
                       It looks like we weren't able to log you in. Please try again. If the issue continues, please contact the developers.
                       """
-        let ac = UIAlertController(title: "Well, This is Awkward", message: message, preferredStyle: .alert)
+        let ac = UIAlertController(title: "Unable to Sign in", message: message, preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         
         present(ac, animated: true)

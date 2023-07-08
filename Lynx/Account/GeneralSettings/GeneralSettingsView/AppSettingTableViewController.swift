@@ -16,7 +16,7 @@ enum AppSettingSections: Int, CaseIterable
 class AppSettingTableViewController: UITableViewController
 {
     
-    static var identitifer = "AppSettingTableView"
+    static var identifier = "AppSettingTableView"
     
     var profile: Profile!
     
@@ -113,11 +113,14 @@ class AppSettingTableViewController: UITableViewController
     private func getUnitMenuActions() -> UIMenu {
         var menuOptions = [UIAction]()
         
-        ["Imperial", "Metric"].forEach { unit in
-            let action = UIAction(title: unit) { [weak self] _ in
-                self?.profile.units = unit
+        ["Imperial", "Metric"].forEach { measurementSystem in
+            let action = UIAction(title: measurementSystem) { [weak self] _ in
+                guard let selectedMeasurementSystem = MeasurementSystem(rawValue: measurementSystem.uppercased()) else {
+                    return
+                }
+                self?.profile.measurementSystem = selectedMeasurementSystem
             }
-            if unit == self.profile.units {
+            if measurementSystem.lowercased() == self.profile.measurementSystem.rawValue.lowercased() {
                 action.state = .on
             }
             menuOptions.append(action)
