@@ -7,14 +7,12 @@
 
 import UIKit
 
-enum AppSettingSections: Int, CaseIterable
-{
+enum AppSettingSections: Int, CaseIterable {
     case units = 0
     case theme = 1
 }
 
-class AppSettingTableViewController: UITableViewController
-{
+class AppSettingTableViewController: UITableViewController {
     
     static var identifier = "AppSettingTableView"
     
@@ -66,8 +64,6 @@ class AppSettingTableViewController: UITableViewController
         let pullDownButton = UIButton()
         
         pullDownButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-        pullDownButton.titleLabel?.preferredMaxLayoutWidth = 100
-        pullDownButton.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20)
         
         let chevronDown = UIImage(systemName: "chevron.down")?.scalePreservingAspectRatio(targetSize: CGSize(width: 14, height: 14)).withTintColor(.lightGray)
         pullDownButton.setImage(chevronDown, for: .normal)
@@ -83,6 +79,10 @@ class AppSettingTableViewController: UITableViewController
         pullDownButton.changesSelectionAsPrimaryAction = true
         pullDownButton.sizeToFit()
         
+        let newWidth: CGFloat = 80
+        let buttonHeight = pullDownButton.bounds.height
+        pullDownButton.frame = CGRect(x: pullDownButton.frame.minX, y: pullDownButton.frame.minY, width: newWidth, height: buttonHeight)
+
         return pullDownButton
     }
     
