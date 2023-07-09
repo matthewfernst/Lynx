@@ -1,0 +1,8 @@
+query GetOAuthLogins {
+  selfLookup {
+     oauthLoginIds {
+        type
+        id
+     }
+  }
+}

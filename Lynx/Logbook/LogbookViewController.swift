@@ -165,8 +165,8 @@ class LogbookViewController: UIViewController {
     }
     
     private func callGetLogsAndRefresh() {
-        ApolloMountainUIClient.clearCache()
-        ApolloMountainUIClient.getLogs(measurementSystem: profile.measurementSystem) { [weak self] result in
+        ApolloLynxClient.clearCache()
+        ApolloLynxClient.getLogs(measurementSystem: profile.measurementSystem) { [weak self] result in
             switch result {
             case .success(let logbook):
                 self?.logbookStats.logbooks = logbook

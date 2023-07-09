@@ -91,7 +91,7 @@ class EditProfileTableViewController: UITableViewController
         var newProfilePictureURL = self.profile.profilePictureURL
         let newProfilePicture = profileChanges.removeValue(forKey: ProfileChangesKeys.profilePicture.rawValue) as? UIImage
         if let newProfilePicture = newProfilePicture {
-            ApolloMountainUIClient.createUserProfilePictureUploadUrl { result in
+            ApolloLynxClient.createUserProfilePictureUploadUrl { result in
                 switch result {
                 case .success(let url):
                     
@@ -142,7 +142,7 @@ class EditProfileTableViewController: UITableViewController
             }
         }
         
-        ApolloMountainUIClient.editUser(profileChanges: profileChanges) { result in
+        ApolloLynxClient.editUser(profileChanges: profileChanges) { result in
             switch result {
             case .success(let returnedProfilePictureUrl):
                 Logger.editProfileTableViewController.info("Retrieved new profile picture URL")

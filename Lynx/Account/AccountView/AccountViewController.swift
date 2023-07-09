@@ -204,7 +204,7 @@ class AccountViewController: UITableViewController, EditProfileDelegate
             
             
         case .inviteKey:
-            ApolloMountainUIClient.createInviteKey { [weak self] result in
+            ApolloLynxClient.createInviteKey { [weak self] result in
                 switch result {
                 case .success(let inviteKey):
                     

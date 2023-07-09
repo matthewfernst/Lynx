@@ -164,53 +164,5 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "EF456A6B-403E-4897-9C0E-DD327D8D4FC8"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Lynx/Login/LoginViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "383"
-            endingLineNumber = "383"
-            landmarkName = "authorizationController(controller:didCompleteWithError:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "EF456A6B-403E-4897-9C0E-DD327D8D4FC8 - dbecda28fc3b1998"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Lynx.LoginViewController.authorizationController(controller: __C.ASAuthorizationController, didCompleteWithError: Swift.Error) -&gt; ()"
-                  moduleName = "Lynx"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Lynx/Lynx/Login/LoginViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "383"
-                  endingLineNumber = "383"
-                  offsetFromSymbolStart = "2056">
-               </Location>
-               <Location
-                  uuid = "EF456A6B-403E-4897-9C0E-DD327D8D4FC8 - dbecda28fc3b1998"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Lynx.LoginViewController.authorizationController(controller: __C.ASAuthorizationController, didCompleteWithError: Swift.Error) -&gt; ()"
-                  moduleName = "Lynx"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/matthewernst/Lynx/Lynx/Login/LoginViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "383"
-                  endingLineNumber = "383"
-                  offsetFromSymbolStart = "2452">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

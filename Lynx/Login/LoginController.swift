@@ -22,7 +22,7 @@ class LoginController {
     }
 
     public func handleCommonSignIn(type: String, id: String, token: String, email: String? = nil, firstName: String? = nil, lastName: String? = nil, profilePictureURL: String = "", completion: @escaping (Result<Void, Error>) -> Void) {
-        ApolloMountainUIClient.loginOrCreateUser(type: type, id: id, token: token, email: email, firstName: firstName, lastName: lastName, profilePictureUrl: profilePictureURL) { result in
+        ApolloLynxClient.loginOrCreateUser(type: type, id: id, token: token, email: email, firstName: firstName, lastName: lastName, profilePictureUrl: profilePictureURL) { result in
             switch result {
             case .success(let validatedInvite):
                 Logger.loginController.info("Authorization Token successfully received.")
@@ -46,7 +46,7 @@ class LoginController {
     }
 
     public func loginUser(completion: @escaping (Result<Void, Error>) -> Void) {
-        ApolloMountainUIClient.getProfileInformation() { result in
+        ApolloLynxClient.getProfileInformation() { result in
             switch result {
             case .success(let profileAttributes):
                 self.signInUser(profileAttributes: profileAttributes, completion: completion)
@@ -65,7 +65,13 @@ class LoginController {
         let defaults = UserDefaults.standard
         defaults.setValue(profileAttributes.type, forKey: UserDefaultsKeys.loginType)
         defaults.setValue(profileAttributes.id, forKey: UserDefaultsKeys.appleOrGoogleId)
-        Profile.createProfile(type: profileAttributes.type, oauthToken: profileAttributes.oauthToken, id: profileAttributes.id, firstName: profileAttributes.firstName, lastName: profileAttributes.lastName, email: profileAttributes.email, profilePictureURL: profileAttributes.profilePictureURL) { profile in
+        Profile.createProfile(type: profileAttributes.type,
+                              oauthToken: profileAttributes.oauthToken,
+                              id: profileAttributes.id,
+                              firstName: profileAttributes.firstName,
+                              lastName: profileAttributes.lastName,
+                              email: profileAttributes.email,
+                              profilePictureURL: profileAttributes.profilePictureURL) { profile in
             createdProfile = profile
             group.leave()
         }
@@ -81,7 +87,7 @@ class LoginController {
 
     public static func signOut() {
         UserManager.shared.token = nil
-        ApolloMountainUIClient.clearCache()
+        ApolloLynxClient.clearCache()
 
         let defaults = UserDefaults.standard
         for key in UserDefaultsKeys.allKeys {

@@ -85,7 +85,7 @@ class DeleteAccountViewController: UIViewController {
         
         activityIndicator.startAnimating()
         
-        ApolloMountainUIClient.deleteAccount() { result in
+        ApolloLynxClient.deleteAccount() { result in
             switch result {
             case .success(_):
                 let ac = UIAlertController(title: "Successfully Deleted Account", message: nil, preferredStyle: .alert)

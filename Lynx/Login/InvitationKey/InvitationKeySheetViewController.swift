@@ -126,7 +126,7 @@ class InvitationKeySheetViewController: UIViewController {
         
         invitationKeyInputView.didFinishEnteringKey = { [unowned self] key in
             startLoadingAnimation()
-            ApolloMountainUIClient.submitInviteKey(with: key) { [unowned self] result in
+            ApolloLynxClient.submitInviteKey(with: key) { [unowned self] result in
                 switch result {
                 case .success(_):
                     Logger.invitationKeySheet.debug("Successfully validated invitation key.")

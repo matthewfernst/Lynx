@@ -12,8 +12,9 @@ import OSLog
 typealias Logbooks = [ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook]
 typealias Logbook = ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook
 typealias MeasurementSystem = ApolloGeneratedGraphQL.MeasurementSystem
+typealias OAuthLoginIds = [ApolloGeneratedGraphQL.GetProfileInformationQuery.Data.SelfLookup.OauthLoginId]
 
-class ApolloMountainUIClient {
+class ApolloLynxClient {
     private static let graphQLEndpoint = Constants.graphQLEndpoint
     
     private static let apolloClient: ApolloClient = {
@@ -52,12 +53,14 @@ class ApolloMountainUIClient {
                 }
                 
                 // TODO: First okay?
-                guard let type = selfLookup.oauthLoginIds.first?.type else {
+                let oauthIds = selfLookup.oauthLoginIds
+
+                guard let type = oauthIds.first?.type else {
                     Logger.apollo.error("oauthLoginIds failed to unwrap type.")
                     return
                 }
                 
-                guard let oauthId = selfLookup.oauthLoginIds.first?.id else {
+                guard let id = oauthIds.first?.id else {
                     Logger.apollo.error("oauthLoginIds failed to unwrap id.")
                     return
                 }
@@ -67,9 +70,10 @@ class ApolloMountainUIClient {
                     return
                 }
                 
+                
                 let profileAttributes = ProfileAttributes(type: type.rawValue,
                                                           oauthToken: oauthToken,
-                                                          id: oauthId,
+                                                          id: id,
                                                           email: selfLookup.email,
                                                           firstName: selfLookup.firstName,
                                                           lastName: selfLookup.lastName,
@@ -83,6 +87,24 @@ class ApolloMountainUIClient {
         }
     }
     
+    public static func getOAuthLoginTypes(completion: @escaping (Result<[String], Error>) -> Void) {
+        
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetOAuthLoginsQuery()) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let oauthLogins = graphQLResult.data?.selfLookup?.oauthLoginIds else {
+                    Logger.apollo.error("OauthLogins failed in getOAuthLogins")
+                    return
+                }
+                
+                completion(.success(oauthLogins.map({ $0.type.rawValue })))
+                
+            case .failure(let error):
+                Logger.apollo.error("Failed to get oauth login ids")
+                completion(.failure(error))
+            }
+        }
+    }
     
     public static func loginOrCreateUser(type: String, id: String, token: String, email: String?, firstName: String?, lastName: String?, profilePictureUrl: String?, completion: @escaping (Result<Bool, Error>) -> Void) {
         

@@ -144,7 +144,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
                 
                 let requestedPathsForUpload = fileList.compactMap { $0.lastPathComponent }
                 
-                ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: requestedPathsForUpload) { [unowned self] result in
+                ApolloLynxClient.createUserRecordUploadUrl(filesToUpload: requestedPathsForUpload) { [unowned self] result in
                     switch result {
                     case .success(let urlsForUpload):
                         guard url.startAccessingSecurityScopedResource() else {
@@ -201,7 +201,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
         }
         
         var nonUploadedSlopeFiles: [String] = []
-        ApolloMountainUIClient.getUploadedLogs { result in
+        ApolloLynxClient.getUploadedLogs { result in
             switch result {
             case .success(let uploadedFiles):
                 do {
@@ -244,7 +244,7 @@ extension FolderConnectionViewController: UIDocumentPickerDelegate {
             return
         }
         
-        ApolloMountainUIClient.createUserRecordUploadUrl(filesToUpload: nonUploadedSlopeFiles) { result in
+        ApolloLynxClient.createUserRecordUploadUrl(filesToUpload: nonUploadedSlopeFiles) { result in
             switch result {
             case .success(var urlsForUpload):
                 label.setActivityIndicatorNextToText()

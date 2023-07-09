@@ -45,7 +45,7 @@ class UserManager {
             return completion(.failure(RenewTokenErrors.noOauthTokenSaved))
         }
         
-        ApolloMountainUIClient.loginOrCreateUser(type: profile.type,
+        ApolloLynxClient.loginOrCreateUser(type: profile.type,
                                                  id: profile.id,
                                                  token: oauthToken,
                                                  email: profile.email,

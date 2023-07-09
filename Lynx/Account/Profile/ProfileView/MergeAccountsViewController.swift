@@ -50,9 +50,32 @@ class MergeAccountsViewController: UIViewController {
     
     private func setupUI() {
         view.addSubview(explanationTextView)
-        addAppleSignInButton()
-        addSignInWithGoogleButton()
+        ApolloLynxClient.clearCache()
+        ApolloLynxClient.getOAuthLoginTypes { [weak self] result in
+            guard case let .success(oauthLoginTypes) = result else {
+                // Handle the failure case
+                return
+            }
+            
+            switch (oauthLoginTypes.contains(ApolloGeneratedGraphQL.LoginType.apple.rawValue),
+                    oauthLoginTypes.contains(ApolloGeneratedGraphQL.LoginType.google.rawValue)) {
+                
+            case (true, true):
+                self?.explanationTextView.text = "You have already connected your Apple and Google accounts. There are no more accounts to merge."
+                
+            case (false, true):
+                self?.addAppleSignInButton()
+                
+            case (true, false):
+                self?.addSignInWithGoogleButton()
+                
+            default:
+                break
+            }
+            
+        }
     }
+    
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
@@ -139,7 +162,7 @@ class MergeAccountsViewController: UIViewController {
             let graphQLWrappedToken = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: token)
             let account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "GOOGLE"), id: googleId, token: graphQLWrappedToken)
             
-            ApolloMountainUIClient.mergeAccount(with: account) { result in
+            ApolloLynxClient.mergeAccount(with: account) { result in
                 switch result {
                 case .success(_):
                     self.showSuccessfullyMerged()
@@ -187,11 +210,10 @@ extension MergeAccountsViewController: ASAuthorizationControllerDelegate {
                 return
             }
             
-            
             let graphQLWrappedToken = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: appleJWT)
             let account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "APPLE"), id: appleIdCredential.user, token: graphQLWrappedToken)
             
-            ApolloMountainUIClient.mergeAccount(with: account) { result in
+            ApolloLynxClient.mergeAccount(with: account) { result in
                 switch result {
                 case .success(_):
                     self.showSuccessfullyMerged()
