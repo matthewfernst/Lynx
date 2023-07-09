@@ -1,6 +1,6 @@
 # Lynx
 
-iOS App for Uploading Slope Files for Mountain-UI
+iOS App for Linking Slope Files for Mountain-UI
 
 <img src="Lynx/Assets.xcassets/AppIcon.appiconset/AppIcon.png" width="300" height="300"/>
 
