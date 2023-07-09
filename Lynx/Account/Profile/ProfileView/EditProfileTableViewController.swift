@@ -8,13 +8,11 @@
 import UIKit
 import OSLog
 
-protocol EditProfileDelegate
-{
+protocol EditProfileDelegate {
     func editProfileCompletionHandler(profile: Profile)
 }
 
-class EditProfileTableViewController: UITableViewController
-{
+class EditProfileTableViewController: UITableViewController {
     public static var identifier = "EditProfileTableViewController"
     
     public var profile: Profile!

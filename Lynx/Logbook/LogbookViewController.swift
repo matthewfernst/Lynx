@@ -126,6 +126,8 @@ class LogbookViewController: UIViewController {
     
     func reloadProfile() {
         // Update the profile picture
+        profilePictureImageView.subviews.forEach { $0.removeFromSuperview() }
+        
         if let profilePicture = profile.profilePicture {
             profilePictureImageView.image = profilePicture
         } else {

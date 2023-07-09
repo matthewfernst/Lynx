@@ -212,6 +212,11 @@ class ApolloLynxClient {
     
     public static func editUser(profileChanges: [String: Any], completion: @escaping ((Result<String, Error>) -> Void)) {
         
+        enum EditUserErrors: Error {
+            case editUserNil
+            case profilePictureURLMissing
+        }
+        
         var userData: [ApolloGeneratedGraphQL.UserDataPair] = []
         for (key, value) in profileChanges {
             let stringValue = String(describing: value)
@@ -223,17 +228,19 @@ class ApolloLynxClient {
             case .success(let graphQLResult):
                 guard let editUser = graphQLResult.data?.editUser else {
                     Logger.apollo.error("editUser unwrapped to nil.")
+                    completion(.failure(EditUserErrors.editUserNil))
                     return
                 }
                 
                 guard let newProfilePictureUrl = editUser.profilePictureUrl else {
                     Logger.apollo.error("Not able to find profilePictureUrl in editUser object.")
+                    completion(.failure(EditUserErrors.profilePictureURLMissing))
                     return
                 }
                 
                 Logger.apollo.info("Successfully got editUser.profilePictureUrl.")
                 print(newProfilePictureUrl)
-                return completion(.success(newProfilePictureUrl))
+                completion(.success(newProfilePictureUrl))
                 
             case .failure(let error):
                 Logger.apollo.error("Failed to Edit User Information. \(error)")

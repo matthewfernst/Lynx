@@ -21,7 +21,7 @@
             <Locations>
                <Location
                   uuid = "DE7C3921-473D-4565-9F9C-3ECC48458DE1 - 44c26bb58741a769"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Mountain_UI_Companion.ApolloGeneratedGraphQL.LoginOrCreateUserMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Mountain_UI_Companion.ApolloMountainUIClient.loginOrCreateUser() -&gt; ()"
@@ -36,7 +36,7 @@
                </Location>
                <Location
                   uuid = "DE7C3921-473D-4565-9F9C-3ECC48458DE1 - 44c26bb58741a769"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Mountain_UI_Companion.ApolloGeneratedGraphQL.LoginOrCreateUserMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Mountain_UI_Companion.ApolloMountainUIClient.loginOrCreateUser() -&gt; ()"
@@ -69,7 +69,7 @@
             <Locations>
                <Location
                   uuid = "6DD7998A-3896-40F2-BB69-BED451DCBE46 - bd325d08a5109b6a"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "Mountain_UI_Companion.UserManager.token.setter : Swift.Optional&lt;Mountain_UI_Companion.ExpirableAuthorizationToken&gt;"
@@ -84,7 +84,7 @@
                </Location>
                <Location
                   uuid = "6DD7998A-3896-40F2-BB69-BED451DCBE46 - bd325d08a5109b6a"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "Mountain_UI_Companion.UserManager.token.setter : Swift.Optional&lt;Mountain_UI_Companion.ExpirableAuthorizationToken&gt;"
@@ -117,7 +117,7 @@
             <Locations>
                <Location
                   uuid = "6F7A198D-C090-4E6C-B72B-225AB1BC652E - ff803f6e53f214fa"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "Mountain_UI_Companion.FolderConnectionViewController.documentPicker(_: __C.UIDocumentPickerViewController, didPickDocumentsAt: Swift.Array&lt;Foundation.URL&gt;) -&gt; ()"
@@ -132,7 +132,7 @@
                </Location>
                <Location
                   uuid = "6F7A198D-C090-4E6C-B72B-225AB1BC652E - ff803f6e53f214fa"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "Mountain_UI_Companion.FolderConnectionViewController.documentPicker(_: __C.UIDocumentPickerViewController, didPickDocumentsAt: Swift.Array&lt;Foundation.URL&gt;) -&gt; ()"
@@ -161,6 +161,38 @@
             startingLineNumber = "149"
             endingLineNumber = "149"
             landmarkName = "documentPicker(_:didPickDocumentsAt:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CB437E09-CF59-4E92-8BF0-73335D6278BB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lynx/Apollo/ApolloLynxClient.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "221"
+            endingLineNumber = "221"
+            landmarkName = "editUser(profileChanges:completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0815B044-F2E0-4505-BB09-BE5BD347C513"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lynx/Apollo/ApolloLynxClient.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
+            landmarkName = "editUser(profileChanges:completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
