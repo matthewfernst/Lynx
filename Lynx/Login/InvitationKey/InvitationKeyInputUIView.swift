@@ -31,7 +31,6 @@ class InvitationKeyInputUIView: UIView, UITextInputTraits {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        showKeyboardIfNeeded()
         setupPasteMenuInteraction()
     }
     
@@ -41,15 +40,6 @@ class InvitationKeyInputUIView: UIView, UITextInputTraits {
     
     override var canBecomeFirstResponder: Bool {
         return true
-    }
-    
-    private func showKeyboardIfNeeded() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showKeyboard))
-        self.addGestureRecognizer(tapGesture)
-    }
-    
-    @objc private func showKeyboard() {
-        self.becomeFirstResponder()
     }
     
     private func setupPasteMenuInteraction() {
@@ -63,6 +53,10 @@ class InvitationKeyInputUIView: UIView, UITextInputTraits {
         let doubleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
         doubleTapGestureRecognizer.numberOfTapsRequired = 2
         self.addGestureRecognizer(doubleTapGestureRecognizer)
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+               tapGestureRecognizer.require(toFail: doubleTapGestureRecognizer)
+               self.addGestureRecognizer(tapGestureRecognizer)
     }
     
     @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
@@ -81,6 +75,10 @@ class InvitationKeyInputUIView: UIView, UITextInputTraits {
         )
         
         pasteMenuInteraction?.presentEditMenu(with: configuration)
+    }
+    
+    @objc private func handleTap(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        pasteMenuInteraction?.dismissMenu()
     }
     
     @objc private func pasteKey() {

@@ -46,6 +46,7 @@ class InvitationKeySheetViewController: UIViewController {
     
     private let invitationKeyInputView: InvitationKeyInputUIView = {
         let view = InvitationKeyInputUIView(frame: .init(x: 0, y: 0, width: 300, height: 44))
+        view.becomeFirstResponder()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
