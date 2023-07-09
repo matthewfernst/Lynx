@@ -20,7 +20,7 @@ class Profile {
     var profilePicture: UIImage?
     var profilePictureURL: String?
     var appTheme: String = "System"
-    var measurementSystem: MeasurementSystem = MeasurementSystem.metric
+    var measurementSystem: MeasurementSystem = Profile.getDefaultMeasurementSystem()
     var notificationsAllowed: Bool?
     
     init(type: String, oauthToken: String, id: String, firstName: String, lastName: String, email: String, profilePicture: UIImage? = nil, profilePictureURL: String? = "") {
@@ -32,6 +32,15 @@ class Profile {
         self.email = email
         self.profilePicture = profilePicture
         self.profilePictureURL = profilePictureURL
+    }
+    
+    private static func getDefaultMeasurementSystem() -> MeasurementSystem {
+        let locale = Locale.current
+        if let countryCode = locale.language.region?.identifier, countryCode == "US" {
+            return .imperial
+        } else {
+            return .metric
+        }
     }
     
     public static func createProfile(type: String, oauthToken: String, id: String, firstName: String, lastName: String, email: String, profilePictureURL: String? = nil, completion: @escaping (Profile) -> Void) {
