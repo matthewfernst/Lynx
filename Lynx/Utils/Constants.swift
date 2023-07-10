@@ -15,7 +15,6 @@ enum Constants
     // Settings
     static let twitter = "https://twitter.com/ErnstMatthew"
     static let github = "https://github.com/matthewfernst/Lynx"
-    static let buyMeCoffee = "https://www.buymeacoffee.com/matthewfernst"
     static let mountainUIDisplayGitub = "https://github.com/matthewfernst/Mountain-UI"
     
     // Bundle ID

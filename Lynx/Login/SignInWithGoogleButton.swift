@@ -7,7 +7,7 @@
 import Foundation
 import UIKit
 
-func getSignInWithGoogleButton(baseBackgroundColor: UIColor = .white) -> UIButton
+func getSignInWithGoogleButton(baseBackgroundColor: UIColor = .black) -> UIButton
 {
     var config = UIButton.Configuration.filled()
     

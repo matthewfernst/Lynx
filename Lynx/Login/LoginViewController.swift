@@ -12,7 +12,6 @@ import OSLog
 class LoginViewController: UIViewController {
     @IBOutlet var loginWallpaper: UIImageView!
     @IBOutlet var appLabel: UILabel!
-    @IBOutlet var learnMoreButton: UIButton!
     @IBOutlet var invisibleViewForCenteringSignInButtons: UIView!
     
     static let identitfier = "LoginViewController"
@@ -28,10 +27,10 @@ class LoginViewController: UIViewController {
         
         setupWallpaperAndInvisibleView()
         setupAppLabel()
-        setupLearnMoreButton()
         setupSignInWithAppleButton()
         setupSignInWithGoogleButton()
         
+                
         signInExistingUser() { [weak self] in
             self?.animateLoginView()
         }
@@ -53,6 +52,30 @@ class LoginViewController: UIViewController {
                 Logger.loginViewController.debug("User has defined notificaitons")
             }
         }
+    }
+    
+    private func animateLoginView() {
+        appLabel.alpha = 0
+        signInWithAppleButton.alpha = 0
+        signInWithGoogleButton.alpha = 0
+        
+        self.signInWithAppleButton.transform = CGAffineTransform(translationX: 0, y: self.view.bounds.height)
+        self.signInWithGoogleButton.transform = CGAffineTransform(translationX: 0, y: self.view.bounds.height)
+        
+        UIView.animate(withDuration: 1.0, delay: 0.75, options: [.curveEaseIn], animations: {
+            self.appLabel.alpha = 1
+            self.appLabel.transform = .identity
+        }, completion: {_ in
+            UIView.animate(withDuration: 0.75, delay: 0.0, options: [.transitionCurlUp], animations: {
+                self.signInWithAppleButton.alpha = 1
+                self.signInWithAppleButton.transform = .identity
+            }, completion: { _ in
+                UIView.animate(withDuration: 0.75, delay: 0.0, options: [.transitionCurlUp], animations: {
+                    self.signInWithGoogleButton.alpha = 1
+                    self.signInWithGoogleButton.transform = .identity
+                })
+            })
+        })
     }
     
     private func scheduleNotificationsForRemindingToUpload() {
@@ -92,40 +115,24 @@ class LoginViewController: UIViewController {
             loginWallpaper.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             
-            invisibleViewForCenteringSignInButtons.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            invisibleViewForCenteringSignInButtons.centerXAnchor.constraint(equalTo: appLabel.centerXAnchor),
             invisibleViewForCenteringSignInButtons.heightAnchor.constraint(equalToConstant: 100),
-            invisibleViewForCenteringSignInButtons.bottomAnchor.constraint(equalTo: learnMoreButton.topAnchor, constant: -5)
+            invisibleViewForCenteringSignInButtons.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            invisibleViewForCenteringSignInButtons.topAnchor.constraint(equalTo: appLabel.bottomAnchor)
         ])
     }
     
     private func setupAppLabel() {
+        appLabel.textColor = .white
         appLabel.clipsToBounds = true
         appLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            appLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            appLabel.bottomAnchor.constraint(equalTo: invisibleViewForCenteringSignInButtons.topAnchor, constant: -5),
-            appLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            appLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            appLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: view.center.y / 3),
+            appLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 40),
         ])
     }
     
-    private func setupLearnMoreButton() {
-        let learnMoreButtonTitle = NSMutableAttributedString(string: "What is Mountain UI? Learn More")
-        learnMoreButtonTitle.addAttributes([.foregroundColor: UIColor.white, .font: UIFont.systemFont(ofSize: 11)], range: NSRange(location: 0, length: 20))
-        learnMoreButtonTitle.addAttributes([.foregroundColor: UIColor.link, .font: UIFont.systemFont(ofSize: 11)], range: NSRange(location: 21, length: 10))
-        
-        learnMoreButton.translatesAutoresizingMaskIntoConstraints = false
-        learnMoreButton.setAttributedTitle(learnMoreButtonTitle, for: .normal)
-        learnMoreButton.addTarget(self, action: #selector(showMountainUIDisplayPage), for: .touchUpInside)
-        
-        NSLayoutConstraint.activate([
-            learnMoreButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            learnMoreButton.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-            learnMoreButton.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
-            learnMoreButton.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
-        ])
-    }
     
     // MARK: Apple Sign In
     private func setupSignInWithAppleButton() {
@@ -136,41 +143,11 @@ class LoginViewController: UIViewController {
         signInWithAppleButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            signInWithAppleButton.centerXAnchor.constraint(equalTo: self.view.layoutMarginsGuide.centerXAnchor),
-            signInWithAppleButton.bottomAnchor.constraint(equalTo: self.invisibleViewForCenteringSignInButtons.centerYAnchor, constant: -5),
-            signInWithAppleButton.widthAnchor.constraint(equalToConstant: self.invisibleViewForCenteringSignInButtons.frame.width / 1.25),
+            signInWithAppleButton.centerXAnchor.constraint(equalTo: appLabel.centerXAnchor),
+            signInWithAppleButton.bottomAnchor.constraint(equalTo: invisibleViewForCenteringSignInButtons.centerYAnchor, constant: -5),
+            signInWithAppleButton.widthAnchor.constraint(equalToConstant: invisibleViewForCenteringSignInButtons.frame.width / 1.75),
             signInWithAppleButton.heightAnchor.constraint(equalToConstant: 44)
         ])
-    }
-    
-    private func animateLoginView() {
-        appLabel.alpha = 0
-        signInWithAppleButton.alpha = 0
-        signInWithGoogleButton.alpha = 0
-        learnMoreButton.alpha = 0
-        
-        self.signInWithAppleButton.transform = CGAffineTransform(translationX: 0, y: self.view.bounds.height)
-        self.signInWithGoogleButton.transform = CGAffineTransform(translationX: 0, y: self.view.bounds.height)
-        
-        UIView.animate(withDuration: 1.0, delay: 0.75, options: [.curveEaseIn], animations: {
-            self.appLabel.alpha = 1
-            self.appLabel.transform = .identity
-        }, completion: {_ in
-            UIView.animate(withDuration: 0.75, delay: 0.0, options: [.transitionCurlUp], animations: {
-                self.signInWithAppleButton.alpha = 1
-                self.signInWithAppleButton.transform = .identity
-            }, completion: { _ in
-                UIView.animate(withDuration: 0.75, delay: 0.0, options: [.transitionCurlUp], animations: {
-                    self.signInWithGoogleButton.alpha = 1
-                    self.signInWithGoogleButton.transform = .identity
-                }, completion: {_ in
-                    UIView.animate(withDuration: 1.0, delay: 0.5, options: [.curveEaseIn], animations: {
-                        self.learnMoreButton.alpha = 1
-                        self.learnMoreButton.transform = .identity
-                    }, completion: nil)
-                })
-            })
-        })
     }
     
     @objc public func handleAuthorizationAppleIDButtonPress() {
@@ -187,7 +164,7 @@ class LoginViewController: UIViewController {
     
     // MARK: Google Sign In
     private func setupSignInWithGoogleButton() {
-        signInWithGoogleButton = getSignInWithGoogleButton()
+        signInWithGoogleButton = getSignInWithGoogleButton(baseBackgroundColor: .white)
         
         signInWithGoogleButton.addTarget(self, action: #selector(handleAuthorizationGoogleButtonPress), for: .touchUpInside)
         self.view.addSubview(signInWithGoogleButton)
@@ -195,9 +172,9 @@ class LoginViewController: UIViewController {
         signInWithGoogleButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            signInWithGoogleButton.centerXAnchor.constraint(equalTo: self.view.layoutMarginsGuide.centerXAnchor),
-            signInWithGoogleButton.topAnchor.constraint(equalTo: self.invisibleViewForCenteringSignInButtons.centerYAnchor, constant: 5),
-            signInWithGoogleButton.widthAnchor.constraint(equalToConstant: self.invisibleViewForCenteringSignInButtons.frame.width / 1.25),
+            signInWithGoogleButton.centerXAnchor.constraint(equalTo: appLabel.centerXAnchor),
+            signInWithGoogleButton.topAnchor.constraint(equalTo: invisibleViewForCenteringSignInButtons.centerYAnchor, constant: 5),
+            signInWithGoogleButton.widthAnchor.constraint(equalToConstant: invisibleViewForCenteringSignInButtons.frame.width / 1.75),
             signInWithGoogleButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }

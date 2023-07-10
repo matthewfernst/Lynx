@@ -18,7 +18,6 @@ extension Support
 {
  static let supportOptions: [Support] = [
         .init(setting: .init(name: "Follow me on GitHub", iconImage: UIImage(named: "githubIcon"), backgroundColor: .black), link: Constants.github),
-        .init(setting: .init(name: "Follow me on Twitter", iconImage: UIImage(named: "twitterIcon"), backgroundColor: .twitterBlue), link: Constants.twitter),
-        .init(setting: .init(name: "Buy me Coffee", iconImage: UIImage(named: "buyMeCoffeeIcon"), backgroundColor: .buyMeCoffeeYellow), link: Constants.buyMeCoffee)
+        .init(setting: .init(name: "Follow me on Twitter", iconImage: UIImage(named: "twitterIcon"), backgroundColor: .twitterBlue), link: Constants.twitter)
     ]
 }

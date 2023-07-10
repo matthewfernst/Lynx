@@ -16,30 +16,21 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="LynxLogin" translatesAutoresizingMaskIntoConstraints="NO" id="EzZ-7f-TgO">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="LynxSignIn" translatesAutoresizingMaskIntoConstraints="NO" id="EzZ-7f-TgO">
                                 <rect key="frame" x="0.0" y="0.0" width="423" height="853"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Lynx" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="30o-R3-J92">
-                                <rect key="frame" x="16" y="640" width="92.666666666666671" height="52.666666666666629"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="44"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aZt-lh-lRI">
                                 <rect key="frame" x="16" y="715.66666666666663" width="361" height="100"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QxK-Ba-fvh">
-                                <rect key="frame" x="90" y="810.66666666666663" width="197.66666666666663" height="27.333333333333371"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Lynx" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="30o-R3-J92">
+                                <rect key="frame" x="16" y="535" width="100" height="53"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="What is Mountain UI? Learn More">
-                                    <fontDescription key="titleFontDescription" type="system" pointSize="11"/>
-                                    <color key="baseForegroundColor" systemColor="linkColor"/>
-                                </buttonConfiguration>
-                            </button>
+                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="44"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Jfu-1C-LNU"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -49,7 +40,6 @@
                     <connections>
                         <outlet property="appLabel" destination="30o-R3-J92" id="Fqb-9t-OlD"/>
                         <outlet property="invisibleViewForCenteringSignInButtons" destination="aZt-lh-lRI" id="z3s-su-nX3"/>
-                        <outlet property="learnMoreButton" destination="QxK-Ba-fvh" id="WER-Ly-BgS"/>
                         <outlet property="loginWallpaper" destination="EzZ-7f-TgO" id="T0W-Od-A4N"/>
                     </connections>
                 </viewController>
@@ -421,12 +411,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LynxLogin" width="1550" height="2272"/>
+        <image name="LynxSignIn" width="587" height="1024"/>
         <image name="book.closed.fill" catalog="system" width="115" height="128"/>
         <image name="person.fill" catalog="system" width="128" height="120"/>
-        <systemColor name="linkColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

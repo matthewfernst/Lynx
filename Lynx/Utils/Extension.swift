@@ -92,10 +92,6 @@ extension UIColor
         return UIColor(red: 29 / 255, green: 161 / 255, blue: 242 / 255, alpha: 1)
     }
     
-    static var buyMeCoffeeYellow: UIColor {
-        return UIColor(red: 255 / 255, green: 221 / 255, blue: 0 / 255, alpha: 1)
-    }
-    
     static var inviteKeyGreen: UIColor {
         return UIColor(red: 50 / 255.0, green: 205 / 255.0, blue: 50 / 255.0, alpha: 1)
     }
