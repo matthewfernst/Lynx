@@ -11,9 +11,8 @@ import OSLog
 
 class LoginViewController: UIViewController {
     @IBOutlet var loginWallpaper: UIImageView!
-    @IBOutlet var appLabel: UILabel!
     @IBOutlet var invisibleViewForCenteringSignInButtons: UIView!
-    
+    @IBOutlet var appLogoImageView: UIImageView!
     static let identitfier = "LoginViewController"
     
     private lazy var loginController = LoginController(loginControllerCaller: self)
@@ -26,7 +25,7 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         
         setupWallpaperAndInvisibleView()
-        setupAppLabel()
+        setupLogo()
         setupSignInWithAppleButton()
         setupSignInWithGoogleButton()
         
@@ -51,7 +50,7 @@ class LoginViewController: UIViewController {
     }
     
     private func animateLoginView() {
-        appLabel.alpha = 0
+        appLogoImageView.alpha = 0
         signInWithAppleButton.alpha = 0
         signInWithGoogleButton.alpha = 0
         
@@ -59,8 +58,8 @@ class LoginViewController: UIViewController {
         self.signInWithGoogleButton.transform = CGAffineTransform(translationX: 0, y: self.view.bounds.height)
         
         UIView.animate(withDuration: 1.0, delay: 0.75, options: [.curveEaseIn], animations: {
-            self.appLabel.alpha = 1
-            self.appLabel.transform = .identity
+            self.appLogoImageView.alpha = 1
+            self.appLogoImageView.transform = .identity
         }, completion: {_ in
             UIView.animate(withDuration: 0.75, delay: 0.0, options: [.transitionCurlUp], animations: {
                 self.signInWithAppleButton.alpha = 1
@@ -96,7 +95,7 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func showMountainUIDisplayPage() {
-        if let url = URL(string: Constants.mountainUIDisplayGitub) {
+        if let url = URL(string: Constants.mountainUIDisplayGithub) {
             UIApplication.shared.open(url)
         }
     }
@@ -104,6 +103,7 @@ class LoginViewController: UIViewController {
     private func setupWallpaperAndInvisibleView() {
         loginWallpaper.translatesAutoresizingMaskIntoConstraints = false
         invisibleViewForCenteringSignInButtons.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             loginWallpaper.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             loginWallpaper.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -111,10 +111,10 @@ class LoginViewController: UIViewController {
             loginWallpaper.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             
-            invisibleViewForCenteringSignInButtons.centerXAnchor.constraint(equalTo: appLabel.centerXAnchor),
+            invisibleViewForCenteringSignInButtons.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             invisibleViewForCenteringSignInButtons.heightAnchor.constraint(equalToConstant: 100),
             invisibleViewForCenteringSignInButtons.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-            invisibleViewForCenteringSignInButtons.topAnchor.constraint(equalTo: appLabel.bottomAnchor, constant: 20)
+            invisibleViewForCenteringSignInButtons.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40)
         ])
         
         let gradientLayer = CAGradientLayer()
@@ -124,14 +124,14 @@ class LoginViewController: UIViewController {
         view.layer.insertSublayer(gradientLayer, at: 1)
     }
     
-    private func setupAppLabel() {
-        appLabel.textColor = .white
-        appLabel.clipsToBounds = true
-        appLabel.translatesAutoresizingMaskIntoConstraints = false
-        
+    private func setupLogo() {
+        appLogoImageView.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
-            appLabel.topAnchor.constraint(equalTo: view.centerYAnchor, constant: view.center.y / 2.5),
-            appLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            appLogoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 120),
+            appLogoImageView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 10),
+            appLogoImageView.widthAnchor.constraint(equalToConstant: 200),
+            appLogoImageView.heightAnchor.constraint(equalToConstant: 110)
         ])
     }
     
@@ -144,7 +144,7 @@ class LoginViewController: UIViewController {
         signInWithAppleButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            signInWithAppleButton.centerXAnchor.constraint(equalTo: appLabel.centerXAnchor),
+            signInWithAppleButton.centerXAnchor.constraint(equalTo: invisibleViewForCenteringSignInButtons.centerXAnchor),
             signInWithAppleButton.bottomAnchor.constraint(equalTo: invisibleViewForCenteringSignInButtons.centerYAnchor, constant: -5),
             signInWithAppleButton.widthAnchor.constraint(equalToConstant: 300),
             signInWithAppleButton.heightAnchor.constraint(equalToConstant: 44)
@@ -173,7 +173,7 @@ class LoginViewController: UIViewController {
         signInWithGoogleButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            signInWithGoogleButton.centerXAnchor.constraint(equalTo: appLabel.centerXAnchor),
+            signInWithGoogleButton.centerXAnchor.constraint(equalTo: invisibleViewForCenteringSignInButtons.centerXAnchor),
             signInWithGoogleButton.topAnchor.constraint(equalTo: invisibleViewForCenteringSignInButtons.centerYAnchor, constant: 5),
             signInWithGoogleButton.widthAnchor.constraint(equalToConstant: 300),
             signInWithGoogleButton.heightAnchor.constraint(equalToConstant: 44)

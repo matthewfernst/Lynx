@@ -196,8 +196,19 @@ class LogbookViewController: UIViewController {
                            Lynx works together with the Slopes App by Breakpoint Studios. Slopes is able to track a skier or snowboarder while they shred it down the mountain. Slopes can track things such as average speed, total vertical feet, and more. Lynx uses the data stored by Slopes and links to your Mountain-UI display.
                        """
         let ac = UIAlertController(title: "Slopes Integration", message: message, preferredStyle: .actionSheet)
+        ac.addAction(UIAlertAction(title: "What is Slopes?", style: .default) { _ in
+            if let url = URL(string: Constants.slopesHomepage) {
+                UIApplication.shared.open(url)
+            }
+        })
+        ac.addAction(UIAlertAction(title: "What is Mountain-UI?", style: .default) { _ in
+            if let url = URL(string: Constants.mountainUIDisplayGithub) {
+                UIApplication.shared.open(url)
+            }
+        })
         ac.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
-        self.present(ac, animated: true)
+        
+        present(ac, animated: true)
     }
     
     @objc private func connectSlopesFolder() {
