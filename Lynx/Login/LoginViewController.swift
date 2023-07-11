@@ -114,8 +114,14 @@ class LoginViewController: UIViewController {
             invisibleViewForCenteringSignInButtons.centerXAnchor.constraint(equalTo: appLabel.centerXAnchor),
             invisibleViewForCenteringSignInButtons.heightAnchor.constraint(equalToConstant: 100),
             invisibleViewForCenteringSignInButtons.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-            invisibleViewForCenteringSignInButtons.topAnchor.constraint(equalTo: appLabel.bottomAnchor)
+            invisibleViewForCenteringSignInButtons.topAnchor.constraint(equalTo: appLabel.bottomAnchor, constant: 20)
         ])
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = view.bounds
+        gradientLayer.colors = [UIColor.clear.cgColor, UIColor.clear.cgColor, UIColor.black.cgColor]
+        gradientLayer.locations = [0.0, 0.25, 1.0]
+        view.layer.insertSublayer(gradientLayer, at: 1)
     }
     
     private func setupAppLabel() {
@@ -124,11 +130,10 @@ class LoginViewController: UIViewController {
         appLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            appLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: view.center.y / 3),
-            appLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 40),
+            appLabel.topAnchor.constraint(equalTo: view.centerYAnchor, constant: view.center.y / 2.5),
+            appLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
-    
     
     // MARK: Apple Sign In
     private func setupSignInWithAppleButton() {
@@ -141,7 +146,7 @@ class LoginViewController: UIViewController {
         NSLayoutConstraint.activate([
             signInWithAppleButton.centerXAnchor.constraint(equalTo: appLabel.centerXAnchor),
             signInWithAppleButton.bottomAnchor.constraint(equalTo: invisibleViewForCenteringSignInButtons.centerYAnchor, constant: -5),
-            signInWithAppleButton.widthAnchor.constraint(equalToConstant: invisibleViewForCenteringSignInButtons.frame.width / 1.75),
+            signInWithAppleButton.widthAnchor.constraint(equalToConstant: 300),
             signInWithAppleButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
@@ -170,7 +175,7 @@ class LoginViewController: UIViewController {
         NSLayoutConstraint.activate([
             signInWithGoogleButton.centerXAnchor.constraint(equalTo: appLabel.centerXAnchor),
             signInWithGoogleButton.topAnchor.constraint(equalTo: invisibleViewForCenteringSignInButtons.centerYAnchor, constant: 5),
-            signInWithGoogleButton.widthAnchor.constraint(equalToConstant: invisibleViewForCenteringSignInButtons.frame.width / 1.75),
+            signInWithGoogleButton.widthAnchor.constraint(equalToConstant: 300),
             signInWithGoogleButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }

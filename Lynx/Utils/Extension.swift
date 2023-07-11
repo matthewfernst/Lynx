@@ -84,9 +84,6 @@ extension String
 
 extension UIColor
 {
-    static var loginLavendar: UIColor {
-        return UIColor(red: 226 / 255, green: 232 / 255, blue: 247 / 255, alpha: 1)
-    }
     
     static var twitterBlue: UIColor {
         return UIColor(red: 29 / 255, green: 161 / 255, blue: 242 / 255, alpha: 1)
