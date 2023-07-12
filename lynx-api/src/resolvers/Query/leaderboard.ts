@@ -19,7 +19,6 @@ const leaderboard = async (_: any, args: Args, context: Context, info: any): Pro
             const sumArray = (array: number[]) => array.reduce((a, b) => a + b, 0);
             return {
                 ...user,
-                logbook: logs,
                 distance: sumArray(logs.map((log) => log.distance)),
                 runCount: sumArray(logs.map((log) => log.runCount)),
                 topSpeed: sumArray(logs.map((log) => log.topSpeed)),
