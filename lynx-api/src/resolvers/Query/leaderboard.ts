@@ -19,6 +19,7 @@ const leaderboard = async (_: any, args: Args, context: Context, info: any): Pro
             const sumArray = (array: number[]) => array.reduce((a, b) => a + b, 0);
             return {
                 ...user,
+                logbook: logs,
                 distance: sumArray(logs.map((log) => log.distance)),
                 runCount: sumArray(logs.map((log) => log.runCount)),
                 topSpeed: sumArray(logs.map((log) => log.topSpeed)),
@@ -29,7 +30,7 @@ const leaderboard = async (_: any, args: Args, context: Context, info: any): Pro
 
     const sortProperty = getSortProperty(args.sortBy);
     return (usersWithPulledLogBook as any[])
-        .sort((a, b) => a[sortProperty] - b[sortProperty])
+        .sort((a, b) => b[sortProperty] - a[sortProperty])
         .slice(0, args.limit || 5);
 };
 
