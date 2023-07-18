@@ -35,17 +35,19 @@ struct LogbookStats {
         }
     }
     
+    public static func getDistanceFormatted(distance: Double) -> String {
+        if distance >= 1000 {
+            return String(format: "%.1fk", Double(distance) / 1000)
+        }
+        return String(distance)
+    }
+ 
     var lifetimeVertical: String {
         let totalVerticalFeet = logbooks.map { $0.verticalDistance }.reduce(0, +)
         
         if totalVerticalFeet == 0 { return "--" }
         
-        if totalVerticalFeet >= 1000 {
-            let formattedVerticalFeet = String(format: "%.1fk", Double(totalVerticalFeet) / 1000)
-            return formattedVerticalFeet
-        }
-        
-        return String(totalVerticalFeet)
+        return Self.getDistanceFormatted(distance: totalVerticalFeet)
     }
     
     var lifetimeDaysOnMountain: String {

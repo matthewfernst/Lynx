@@ -49,18 +49,7 @@ class Profile {
             return
         }
         
-        URLSession.shared.dataTask(with: profilePictureURL) { (data, response, error) in
-            if let error = error {
-                print("Error downloading profile picture: \(error.localizedDescription)")
-                completion(Profile(type: type, oauthToken: oauthToken, id: id, firstName: firstName, lastName: lastName, email: email))
-                return
-            }
-            
-            guard let data = data, let profilePicture = UIImage(data: data) else {
-                completion(Profile(type: type, oauthToken: oauthToken, id: id, firstName: firstName, lastName: lastName, email: email))
-                return
-            }
-            
+        ProfilePictureUtils.downloadProfilePicture(with: profilePictureURL) { profilePicture in
             let profile = Profile(type: type,
                                   oauthToken: oauthToken,
                                   id: id,
@@ -70,7 +59,7 @@ class Profile {
                                   profilePicture: profilePicture,
                                   profilePictureURL: profilePictureURL.absoluteString)
             completion(profile)
-        }.resume()
+        }
     }
     
     public func editAttributes(newFirstName: String?, newLastName: String?, newEmail: String?, newProfilePicture: UIImage?, newProfilePictureURL: String?) {

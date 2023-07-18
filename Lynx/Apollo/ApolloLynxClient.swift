@@ -9,10 +9,18 @@ import Foundation
 import Apollo
 import OSLog
 
-typealias Logbooks = [ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook]
 typealias Logbook = ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook
+typealias Logbooks = [Logbook]
+
 typealias MeasurementSystem = ApolloGeneratedGraphQL.MeasurementSystem
+
 typealias OAuthLoginIds = [ApolloGeneratedGraphQL.GetProfileInformationQuery.Data.SelfLookup.OauthLoginId]
+
+typealias Leaderboard = ApolloGeneratedGraphQL.GetLeadersQuery.Data.Leaderboard
+typealias LeaderboardLeaders = [Leaderboard]
+typealias LeaderboardSort = ApolloGeneratedGraphQL.LeaderboardSort
+typealias LeaderLogbooks = [ApolloGeneratedGraphQL.GetLeadersQuery.Data.Leaderboard.Logbook]
+
 
 class ApolloLynxClient {
     private static let graphQLEndpoint = Constants.graphQLEndpoint
@@ -329,7 +337,6 @@ class ApolloLynxClient {
         }
     }
     
-    
     public static func getLogs(measurementSystem: MeasurementSystem, completion: @escaping ((Result<Logbooks, Error>) -> Void)) {
         
         let system = GraphQLEnum<ApolloGeneratedGraphQL.MeasurementSystem>(rawValue: measurementSystem.rawValue)
@@ -407,6 +414,43 @@ class ApolloLynxClient {
             case .failure(let error):
                 Logger.apollo.error("Failed to merge accounts: \(error)")
                 completion(.failure(MergeAccountErrors.BackendCouldntMerge))
+            }
+        }
+    }
+    
+    public static func getLeaders(for category: ApolloGeneratedGraphQL.LeaderboardSort, limitedTo limit: Int?, usingSytem measurementSystem: MeasurementSystem,  completion: @escaping ((Result<[ApolloGeneratedGraphQL.GetLeadersQuery.Data.Leaderboard], Error>) -> Void))
+    {
+        
+        enum GetLeadersErrors: Error
+        {
+            case unableToUnwrap
+        }
+        
+        let graphQLCategory = GraphQLEnum(category)
+        let system = GraphQLEnum(measurementSystem)
+        
+        let nullableLimit: GraphQLNullable<Int>
+        if let limit = limit {
+            nullableLimit = .init(integerLiteral: limit)
+        } else {
+            nullableLimit = .init(nilLiteral: ())
+        }
+        
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetLeadersQuery(sortBy: graphQLCategory, limit: nullableLimit, measurementSystem: system)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let leaders = graphQLResult.data?.leaderboard else {
+                    Logger.apollo.error("Unable to unwrap graphQL result for leaderboard.")
+                    completion(.failure(GetLeadersErrors.unableToUnwrap))
+                    return
+                }
+                
+                Logger.apollo.info("Successfully fetched top 3 leaders")
+                completion(.success(leaders))
+                
+            case .failure(let error):
+                Logger.apollo.error("Error Fetching Leaders: \(error)")
+                completion(.failure(error))
             }
         }
     }

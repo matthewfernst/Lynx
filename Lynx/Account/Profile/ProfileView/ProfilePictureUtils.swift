@@ -38,5 +38,22 @@ struct ProfilePictureUtils
         }
         return nil
     }
+    
+    public static func downloadProfilePicture(with url: URL, completion: @escaping (UIImage) -> Void) {
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                print("Error downloading profile picture: \(error)")
+                return
+            }
+
+            guard let data = data, let profilePicture = UIImage(data: data) else {
+                print("Unable to extract data to create picture")
+                return
+            }
+
+            print("Picture being returned.")
+            completion(profilePicture)
+        }.resume()
+    }
 
 }

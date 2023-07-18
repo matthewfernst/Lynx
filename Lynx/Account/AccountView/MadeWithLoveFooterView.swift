@@ -24,8 +24,6 @@ class MadeWithLoveFooterView: UITableViewHeaderFooterView
         
         madeWithLoveLabel.font = UIFont.systemFont(ofSize: 11)
         madeWithLoveLabel.textColor = .secondaryLabel
-        
-
     }
     
     required init?(coder: NSCoder) {

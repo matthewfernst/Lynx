@@ -1,0 +1,13 @@
+query GetLeaders($sortBy: LeaderboardSort!, $limit: Int, $measurementSystem: MeasurementSystem!, logbookAttribute: String!) {
+    leaderboard(sortBy: $sortBy, limit: $limit) {
+        profilePictureUrl
+        firstName,
+        lastName,
+        logbook {
+            distance(system: $measurementSystem)
+            runCount
+            topSpeed(system: $measurementSystem)
+            verticalDistance(system: $measurementSystem)
+        }
+    }
+}

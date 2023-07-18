@@ -84,13 +84,25 @@ extension String
 
 extension UIColor
 {
-    
+    private static let base: CGFloat = 255.0
     static var twitterBlue: UIColor {
-        return UIColor(red: 29 / 255, green: 161 / 255, blue: 242 / 255, alpha: 1)
+        return UIColor(red: 29 / base, green: 161 / base, blue: 242 / base, alpha: 1)
     }
     
     static var inviteKeyGreen: UIColor {
-        return UIColor(red: 50 / 255.0, green: 205 / 255.0, blue: 50 / 255.0, alpha: 1)
+        return UIColor(red: 50 / base, green: 205 / base, blue: 50 / base, alpha: 1)
+    }
+    
+    static var gold: UIColor {
+        return UIColor(red: 219 / base, green: 172 / base, blue: 52 / base, alpha: 1)
+    }
+    
+    static var silver: UIColor {
+        return UIColor(red: 170 / base , green: 169 / base, blue: 173 / base, alpha: 1)
+    }
+    
+    static var bronze: UIColor {
+        return UIColor(red: 205 / base , green: 127 / base, blue: 50 / base, alpha: 1)
     }
 }
 

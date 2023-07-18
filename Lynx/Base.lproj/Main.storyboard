@@ -58,6 +58,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="2jz-bu-nGt" kind="relationship" relationship="viewControllers" id="ndX-GQ-OMX"/>
+                        <segue destination="Jiy-nX-rsf" kind="relationship" relationship="viewControllers" id="WJ6-yI-bLF"/>
                         <segue destination="2gt-UY-kCx" kind="relationship" relationship="viewControllers" id="pA4-1c-tfV"/>
                     </connections>
                 </tabBarController>
@@ -240,7 +241,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ybF-G4-hBz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-866.41221374045801" y="1114.7887323943662"/>
+            <point key="canvasLocation" x="-2822" y="1115"/>
         </scene>
         <!--Lifetime Summary View Controller-->
         <scene sceneID="J6F-5x-43I">
@@ -255,7 +256,33 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x9Y-Yi-Qg0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-51" y="1115"/>
+            <point key="canvasLocation" x="-2048" y="1115"/>
+        </scene>
+        <!--Leaderboard View Controller-->
+        <scene sceneID="eUQ-oh-niu">
+            <objects>
+                <viewController id="Jdc-Gt-XEa" customClass="LeaderboardViewController" customModule="Lynx" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="nd5-zC-y91">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="cR9-PQ-zAV">
+                                <rect key="frame" x="0.0" y="103" width="393" height="679"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="PId-W0-RXT"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="heY-hs-juT"/>
+                    <connections>
+                        <outlet property="leaderboardTableView" destination="cR9-PQ-zAV" id="YPR-Jw-N4z"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KUJ-GB-HrG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-866.41221374045801" y="1114.7887323943662"/>
         </scene>
         <!--Account View Controller-->
         <scene sceneID="RMd-vK-uZg">
@@ -387,7 +414,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="i7Q-rm-J4w" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-866" y="456"/>
+            <point key="canvasLocation" x="-2822" y="456"/>
         </scene>
         <!--Account-->
         <scene sceneID="qrp-j1-hmN">
@@ -406,12 +433,30 @@
             </objects>
             <point key="canvasLocation" x="850" y="456"/>
         </scene>
+        <!--Leaderboard-->
+        <scene sceneID="lwj-s3-Mvb">
+            <objects>
+                <navigationController id="Jiy-nX-rsf" customClass="lead" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Leaderboard" image="trophy.fill" catalog="system" id="19m-VL-ER7"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="g9A-5w-A0H">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="Jdc-Gt-XEa" kind="relationship" relationship="rootViewController" id="wZb-8H-EFB"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7nd-gS-9zi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-866" y="456"/>
+        </scene>
     </scenes>
     <resources>
         <image name="LynxLogo" width="507" height="492"/>
         <image name="LynxSignIn" width="587" height="1024"/>
         <image name="book.closed.fill" catalog="system" width="115" height="128"/>
         <image name="person.fill" catalog="system" width="128" height="120"/>
+        <image name="trophy.fill" catalog="system" width="128" height="128"/>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

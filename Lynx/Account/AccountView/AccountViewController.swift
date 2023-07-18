@@ -156,7 +156,11 @@ class AccountViewController: UITableViewController, EditProfileDelegate
         switch AllSettingsSections(rawValue: section) {
         case .contactDevelopers:
             let footer = tableView.dequeueReusableHeaderFooterView(withIdentifier: MadeWithLoveFooterView.identifier) as! MadeWithLoveFooterView
-            footer.appVersionLabel.text = "Version 1.0.0"
+            
+            if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                footer.appVersionLabel.text = "Version \(appVersion)"
+            }
+            
             footer.madeWithLoveLabel.text = "Made with ❤️+☕️ in San Diego, CA and Seattle, WA"
             return footer
         default:
