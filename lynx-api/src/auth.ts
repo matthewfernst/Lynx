@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 import { AuthenticationError, ExpressContext } from "apollo-server-express";
 import { APIGatewayEvent } from "aws-lambda";
 

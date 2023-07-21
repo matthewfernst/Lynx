@@ -14,11 +14,11 @@ import {
 } from "../../aws/dynamodb";
 import { User } from "../../types";
 
-export type LoginType = "APPLE" | "GOOGLE";
+export type OAuthType = "APPLE" | "GOOGLE";
 
 interface Args {
     oauthLoginId: {
-        type: LoginType;
+        type: OAuthType;
         id: string;
         token?: string;
     };
@@ -49,7 +49,7 @@ const createUserOrSignIn = async (
     return await oauthLogin(idKeyFromIdType(type), id, args.email, args.userData);
 };
 
-export const verifyToken = async (type: LoginType, id: string, token: string) => {
+export const verifyToken = async (type: OAuthType, id: string, token: string) => {
     switch (type) {
         case "APPLE":
             return await verifyAppleToken(id, token);
@@ -74,7 +74,7 @@ const verifyGoogleToken = async (id: string, token: string) => {
     return ticket.getUserId() === id;
 };
 
-export const idKeyFromIdType = (idType: LoginType) => {
+export const idKeyFromIdType = (idType: OAuthType) => {
     switch (idType) {
         case "APPLE":
             return "appleId";

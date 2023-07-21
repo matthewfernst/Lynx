@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 import {
     DynamoDBClientConfig,
     DeleteItemOutput,

@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 import { UserInputError } from "apollo-server-lambda";
 
 import { Context } from "../../index";
