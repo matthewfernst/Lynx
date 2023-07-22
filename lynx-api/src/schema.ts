@@ -24,6 +24,9 @@ import email from "./resolvers/User/email";
 import oauthLoginIds from "./resolvers/User/oauthLoginIds";
 import profilePictureUrl from "./resolvers/User/profilePictureUrl";
 import logbook from "./resolvers/User/logbook";
+import userStatsDistance from "./resolvers/UserStats/distance";
+import userStatsTopSpeed from "./resolvers/UserStats/topSpeed";
+import userStatsVerticalDistance from "./resolvers/UserStats/verticalDistance";
 import id from "./resolvers/Log/id";
 import details from "./resolvers/Log/details";
 import logDistance from "./resolvers/Log/distance";
@@ -55,6 +58,11 @@ export const resolvers = {
         resolveInviteKey
     },
     User: { email, oauthLoginIds, profilePictureUrl, logbook },
+    UserStats: {
+        distance: userStatsDistance,
+        topSpeed: userStatsTopSpeed,
+        verticalDistance: userStatsVerticalDistance
+    },
     Log: {
         id,
         details,
