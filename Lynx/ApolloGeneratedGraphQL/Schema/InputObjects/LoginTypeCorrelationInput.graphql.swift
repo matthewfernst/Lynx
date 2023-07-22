@@ -4,7 +4,7 @@
 import ApolloAPI
 
 public extension ApolloGeneratedGraphQL {
-  struct LoginTypeCorrelationInput: InputObject {
+  struct OAuthTypeCorrelationInput: InputObject {
     public private(set) var __data: InputDict
 
     public init(_ data: InputDict) {
@@ -12,7 +12,7 @@ public extension ApolloGeneratedGraphQL {
     }
 
     public init(
-      type: GraphQLEnum<LoginType>,
+      type: GraphQLEnum<OAuthType>,
       id: ID,
       token: GraphQLNullable<ID> = nil
     ) {
@@ -23,7 +23,7 @@ public extension ApolloGeneratedGraphQL {
       ])
     }
 
-    public var type: GraphQLEnum<LoginType> {
+    public var type: GraphQLEnum<OAuthType> {
       get { __data["type"] }
       set { __data["type"] = newValue }
     }

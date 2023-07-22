@@ -67,19 +67,19 @@ public extension ApolloGeneratedGraphQL {
 
         /// SelfLookup.OauthLoginId
         ///
-        /// Parent Type: `LoginTypeCorrelation`
+        /// Parent Type: `OAuthTypeCorrelation`
         public struct OauthLoginId: ApolloGeneratedGraphQL.SelectionSet {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.LoginTypeCorrelation }
+          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.OAuthTypeCorrelation }
           public static var __selections: [ApolloAPI.Selection] { [
             .field("__typename", String.self),
-            .field("type", GraphQLEnum<ApolloGeneratedGraphQL.LoginType>.self),
+            .field("type", GraphQLEnum<ApolloGeneratedGraphQL.OAuthType>.self),
             .field("id", String.self),
           ] }
 
-          public var type: GraphQLEnum<ApolloGeneratedGraphQL.LoginType> { __data["type"] }
+          public var type: GraphQLEnum<ApolloGeneratedGraphQL.OAuthType> { __data["type"] }
           public var id: String { __data["id"] }
         }
       }

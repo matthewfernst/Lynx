@@ -33,7 +33,7 @@ public extension ApolloGeneratedGraphQL {
       switch typename {
       case "Query": return ApolloGeneratedGraphQL.Objects.Query
       case "User": return ApolloGeneratedGraphQL.Objects.User
-      case "LoginTypeCorrelation": return ApolloGeneratedGraphQL.Objects.LoginTypeCorrelation
+      case "OAuthTypeCorrelation": return ApolloGeneratedGraphQL.Objects.OAuthTypeCorrelation
       case "Log": return ApolloGeneratedGraphQL.Objects.Log
       case "LogDetail": return ApolloGeneratedGraphQL.Objects.LogDetail
       case "Mutation": return ApolloGeneratedGraphQL.Objects.Mutation

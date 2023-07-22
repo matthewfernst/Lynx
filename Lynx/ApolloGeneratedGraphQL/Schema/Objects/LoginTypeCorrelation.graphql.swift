@@ -4,8 +4,8 @@
 import ApolloAPI
 
 public extension ApolloGeneratedGraphQL.Objects {
-  static let LoginTypeCorrelation = Object(
-    typename: "LoginTypeCorrelation",
+  static let OAuthTypeCorrelation = Object(
+    typename: "OAuthTypeCorrelation",
     implementedInterfaces: []
   )
 }

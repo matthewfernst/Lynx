@@ -9,14 +9,14 @@ import {
     getItemsByIndex,
     updateItem
 } from "../../aws/dynamodb";
-import { LoginType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
+import { OAuthType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
 import { User } from "../../types";
 import { checkIsLoggedInAndHasValidInvite } from "../../auth";
 import { deleteObjectsInBucket, profilePictureBucketName, toRunRecordsBucket } from "../../aws/s3";
 
 interface Args {
     combineWith: {
-        type: LoginType;
+        type: OAuthType;
         id: string;
         token?: string;
     };

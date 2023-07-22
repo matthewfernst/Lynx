@@ -95,7 +95,7 @@ class ApolloLynxClient {
         }
     }
     
-    public static func getOAuthLoginTypes(completion: @escaping (Result<[String], Error>) -> Void) {
+    public static func getOAuthOAuthTypes(completion: @escaping (Result<[String], Error>) -> Void) {
         
         apolloClient.fetch(query: ApolloGeneratedGraphQL.GetOAuthLoginsQuery()) { result in
             switch result {
@@ -135,9 +135,9 @@ class ApolloLynxClient {
             userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.UserDataPair]>(arrayLiteral: userData[0], userData[1], userData[2])
         }
         
-        let type = GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: type)
+        let type = GraphQLEnum<ApolloGeneratedGraphQL.OAuthType>(rawValue: type)
         let tokenWrappedInGraphQL = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: token)
-        let oauthLoginId = ApolloGeneratedGraphQL.LoginTypeCorrelationInput(type: type, id: id, token: tokenWrappedInGraphQL)
+        let oauthLoginId = ApolloGeneratedGraphQL.OAuthTypeCorrelationInput(type: type, id: id, token: tokenWrappedInGraphQL)
         
         
         let emailNullable: GraphQLNullable<String>
@@ -394,7 +394,7 @@ class ApolloLynxClient {
         }
     }
     
-    public static func mergeAccount(with account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput, completion: @escaping ((Result<Void, Error>) -> Void)) {
+    public static func mergeAccount(with account: ApolloGeneratedGraphQL.OAuthTypeCorrelationInput, completion: @escaping ((Result<Void, Error>) -> Void)) {
         enum MergeAccountErrors: Error {
             case UnwrapOfReturnedUserFailed
             case BackendCouldntMerge

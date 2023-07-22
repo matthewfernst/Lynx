@@ -77,8 +77,8 @@ provider:
             - dynamodb:Scan
             - dynamodb:UpdateItem
           Resource:
-            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users
-            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users/index/*
+            # - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users
+            # - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users/index/*
         - Effect: Allow
           Action:
             - dynamodb:GetItem
@@ -86,7 +86,7 @@ provider:
             - dynamodb:PutItem
             - dynamodb:Query
           Resource:
-            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-invites
+            # - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-invites
        
 functions:
   graphql:
