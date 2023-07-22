@@ -1,5 +1,5 @@
 export interface User {
-    [key: string]: string | boolean | undefined;
+    [key: string]: string | boolean | UserStats | Log[] | undefined;
     id: string;
     appleId?: string;
     googleId?: string;
@@ -8,6 +8,15 @@ export interface User {
     firstName?: string;
     lastName?: string;
     profilePictureUrl?: string;
+    userStats?: UserStats;
+    logbook?: Log[];
+}
+
+export interface UserStats {
+    runCount: number;
+    distance: number;
+    topSpeed: number;
+    verticalDistance: number;
 }
 
 export interface Log {

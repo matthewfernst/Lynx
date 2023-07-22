@@ -6,7 +6,15 @@ type User {
     firstName: String!
     lastName: String!
     profilePictureUrl: String
+    userStats: UserStats
     logbook: [Log!]!
+}
+
+type UserStats {
+    runCount: Int!
+    distance(system: MeasurementSystem = METRIC): Float!
+    topSpeed(system: MeasurementSystem = METRIC): Float!
+    verticalDistance(system: MeasurementSystem = METRIC): Float!
 }
 
 type Log {
@@ -93,7 +101,7 @@ input InvalidateTokenOption {
 
 type Query {
     selfLookup: User
-    userLookup(id: ID!): User
+    userLookupById(id: ID!): User
     leaderboard(sortBy: LeaderboardSort = VERTICAL_DISTANCE, limit: Int): [User!]!
 }
 

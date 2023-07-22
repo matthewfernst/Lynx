@@ -8,7 +8,14 @@ const reverseRenameFileFunction = (originalFileName: string) => {
 };
 
 const logbook = async (parent: any, args: {}, context: Context, info: any): Promise<Log[]> => {
-    const recordNames = await getObjectNamesInBucket(toRunRecordsBucket, parent.id);
+    if (!parent.logbook) {
+        return await getLogbookInformationFromS3(parent.id);
+    }
+    return parent.logbook;
+};
+
+export const getLogbookInformationFromS3 = async (userId: string): Promise<Log[]> => {
+    const recordNames = await getObjectNamesInBucket(toRunRecordsBucket, userId);
     return Promise.all(
         recordNames.map(async (recordName): Promise<Log> => {
             const unzippedRecord = await getRecordFromBucket(toRunRecordsBucket, recordName);

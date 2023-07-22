@@ -1,7 +1,7 @@
 import { Context } from "../../index";
 import { User } from "../../types";
 import { DYNAMODB_TABLE_USERS, scanAllItems } from "../../aws/dynamodb";
-import logbook from "../User/logbook";
+import { populateLogbookDataForUser } from "./selfLookup";
 
 type LeaderboardSort = "DISTANCE" | "RUN_COUNT" | "TOP_SPEED" | "VERTICAL_DISTANCE";
 
@@ -12,24 +12,14 @@ interface Args {
 
 const leaderboard = async (_: any, args: Args, context: Context, info: any): Promise<User[]> => {
     const scanOutput = await scanAllItems(DYNAMODB_TABLE_USERS);
-    const users = scanOutput.Items as unknown[] as User[];
-    const usersWithPulledLogBook = await Promise.all(
-        users.map(async (user) => {
-            const logs = await logbook({ id: user.id }, {}, context, {});
-            const sumArray = (array: number[]) => array.reduce((a, b) => a + b, 0);
-            return {
-                ...user,
-                distance: sumArray(logs.map((log) => log.distance)),
-                runCount: sumArray(logs.map((log) => log.runCount)),
-                topSpeed: sumArray(logs.map((log) => log.topSpeed)),
-                verticalDistance: sumArray(logs.map((log) => log.vertical))
-            };
-        })
+    const rawUsers = scanOutput.Items as unknown[] as User[];
+    const users = await Promise.all(
+        rawUsers.map(async (user) => await populateLogbookDataForUser(user))
     );
 
     const sortProperty = getSortProperty(args.sortBy);
-    return (usersWithPulledLogBook as any[])
-        .sort((a, b) => b[sortProperty] - a[sortProperty])
+    return users
+        .sort((a, b) => b.userStats!![sortProperty] - a.userStats!![sortProperty])
         .slice(0, args.limit || 5);
 };
 
