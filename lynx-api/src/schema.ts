@@ -10,7 +10,7 @@ export const typeDefs = gql(schema);
 export const gqlSchema = buildSchema(schema);
 
 import selfLookup from "./resolvers/Query/selfLookup";
-import userLookup from "./resolvers/Query/userLookup";
+import userLookupById from "./resolvers/Query/userLookupById";
 import leaderboard from "./resolvers/Query/leaderboard";
 import createUserOrSignIn from "./resolvers/Mutation/createUserOrSignIn";
 import combineOAuthAccounts from "./resolvers/Mutation/combineOAuthAccounts";
@@ -46,7 +46,7 @@ import topSpeedAltitude from "./resolvers/LogDetail/topSpeedAltitude";
 import logDetailVerticalDistance from "./resolvers/LogDetail/verticalDistance";
 
 export const resolvers = {
-    Query: { selfLookup, userLookup, leaderboard },
+    Query: { selfLookup, userLookupById, leaderboard },
     Mutation: {
         createUserOrSignIn,
         combineOAuthAccounts,

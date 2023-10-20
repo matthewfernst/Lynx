@@ -6,7 +6,7 @@ interface Args {
     id: string;
 }
 
-const userLookup = async (
+const userLookupById = async (
     _: any,
     args: Args,
     context: Context,
@@ -16,4 +16,4 @@ const userLookup = async (
     return getItemFromDynamoDBResult(queryOutput) as User | null;
 };
 
-export default userLookup;
+export default userLookupById;
