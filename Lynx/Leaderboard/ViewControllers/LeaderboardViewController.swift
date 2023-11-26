@@ -7,8 +7,7 @@
 
 import UIKit
 
-class LeaderboardViewController: UIViewController
-{
+class LeaderboardViewController: UIViewController {
     
     @IBOutlet var leaderboardTableView: UITableView!
     

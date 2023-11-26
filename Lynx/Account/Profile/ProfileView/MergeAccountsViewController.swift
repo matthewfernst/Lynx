@@ -57,8 +57,8 @@ class MergeAccountsViewController: UIViewController {
                 return
             }
             
-            switch (oauthLoginTypes.contains(ApolloGeneratedGraphQL.OAuthType.apple.rawValue),
-                    oauthLoginTypes.contains(ApolloGeneratedGraphQL.OAuthType.google.rawValue)) {
+            switch (oauthOAuthTypes.contains(ApolloGeneratedGraphQL.OAuthType.apple.rawValue),
+                    oauthOAuthTypes.contains(ApolloGeneratedGraphQL.OAuthType.google.rawValue)) {
                 
             case (true, true):
                 self?.explanationTextView.text = "You have already connected your Apple and Google accounts. There are no more accounts to merge."
