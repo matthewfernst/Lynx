@@ -84,8 +84,8 @@ class DeleteAccountViewController: UIViewController {
         ])
         
         activityIndicator.startAnimating()
-        
-        ApolloLynxClient.deleteAccount() { result in
+        let profile = TabViewController.profile!
+        ApolloLynxClient.deleteAccount(token: profile.oauthToken, type: OAuthType(rawValue: profile.type.uppercased())!) { result in
             switch result {
             case .success(_):
                 let ac = UIAlertController(title: "Successfully Deleted Account", message: nil, preferredStyle: .alert)

@@ -1,4 +1,4 @@
-query GetSelectedLeaderboard($limit: Int, $measurementSystem: MeasurementSystem, $selectedLeaderboard: LeaderboardSort!)  {
+query GetSelectedLeaderboard($limit: Int, $measurementSystem: MeasurementSystem!, $selectedLeaderboard: LeaderboardSort!)  {
     leaderboard(sortBy: $selectedLeaderboard, limit: $limit) {
         ...leaderboardFields
         logbook {

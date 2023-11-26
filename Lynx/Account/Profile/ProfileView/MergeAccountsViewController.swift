@@ -57,8 +57,8 @@ class MergeAccountsViewController: UIViewController {
                 return
             }
             
-            switch (oauthLoginTypes.contains(ApolloGeneratedGraphQL.LoginType.apple.rawValue),
-                    oauthLoginTypes.contains(ApolloGeneratedGraphQL.LoginType.google.rawValue)) {
+            switch (oauthLoginTypes.contains(ApolloGeneratedGraphQL.OAuthType.apple.rawValue),
+                    oauthLoginTypes.contains(ApolloGeneratedGraphQL.OAuthType.google.rawValue)) {
                 
             case (true, true):
                 self?.explanationTextView.text = "You have already connected your Apple and Google accounts. There are no more accounts to merge."
@@ -160,7 +160,7 @@ class MergeAccountsViewController: UIViewController {
             }
             
             let graphQLWrappedToken = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: token)
-            let account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "GOOGLE"), id: googleId, token: graphQLWrappedToken)
+            let account: ApolloGeneratedGraphQL.OAuthTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.OAuthType>(rawValue: "GOOGLE"), id: googleId, token: graphQLWrappedToken)
             
             ApolloLynxClient.mergeAccount(with: account) { result in
                 switch result {
@@ -211,7 +211,7 @@ extension MergeAccountsViewController: ASAuthorizationControllerDelegate {
             }
             
             let graphQLWrappedToken = GraphQLNullable<ApolloGeneratedGraphQL.ID>(stringLiteral: appleJWT)
-            let account: ApolloGeneratedGraphQL.LoginTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.LoginType>(rawValue: "APPLE"), id: appleIdCredential.user, token: graphQLWrappedToken)
+            let account: ApolloGeneratedGraphQL.OAuthTypeCorrelationInput = .init(type:GraphQLEnum<ApolloGeneratedGraphQL.OAuthType>(rawValue: "APPLE"), id: appleIdCredential.user, token: graphQLWrappedToken)
             
             ApolloLynxClient.mergeAccount(with: account) { result in
                 switch result {

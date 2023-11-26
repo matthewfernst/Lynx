@@ -57,33 +57,27 @@ class AllLeadersViewController: UIViewController
         getAllLeadersForCategory()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+    }
+    
     private func getAllLeadersForCategory() {
-        let dispatchGroup = DispatchGroup()
-
         guard let leaderCategory = ApolloGeneratedGraphQL.LeaderboardSort(rawValue: category.uppercased().replacingOccurrences(of: " ", with: "_")) else {
             return
         }
 
-        let measurementSystem = TabViewController.profile.measurementSystem
-
-        ApolloLynxClient.getLeaders(for: leaderCategory, limitedTo: nil, usingSytem: measurementSystem) { result in
+        ApolloLynxClient.getSelectedLeaderboard(leaderCategory, limit: nil, inMeasurementSystem: TabViewController.profile.measurementSystem) { result in
             switch result {
             case .success(let leaders):
-                self.leadersForCategory.removeAll()
-                for leader in leaders {
-                    dispatchGroup.enter()
-                    let attributes = LeaderboardAttributes(leader: leader, category: leaderCategory) {
-                        dispatchGroup.leave()
-                    }
-                    self.leadersForCategory.append(attributes)
+                self.leadersForCategory = leaders
+                
+                DispatchQueue.main.async { [weak self] in
+                    self?.isLoadingData = false
+                    self?.allLeadersTableView.reloadData()
                 }
             case .failure(_):
                 break
-            }
-
-            dispatchGroup.notify(queue: .main) { [weak self] in
-                self?.isLoadingData = false
-                self?.allLeadersTableView.reloadData()
             }
         }
     }

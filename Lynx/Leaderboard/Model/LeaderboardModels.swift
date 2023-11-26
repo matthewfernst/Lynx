@@ -15,8 +15,9 @@ class LeaderboardAttributes
     let stat: String
     
     init(leader: Leaderboard, category: LeaderboardSort, completion: (() -> Void)? = nil) {
+
         self.fullName = leader.firstName + " " + leader.lastName
-        self.stat = Self.numericalStat(for: category, logbook: leader.logbook)
+        self.stat = Self.numericalStat(for: category, logbooks: leader.logbooks)
         
         if let profilePictureURL = leader.profilePictureUrl,
            let url = URL(string: profilePictureURL) {
@@ -31,51 +32,71 @@ class LeaderboardAttributes
                 completion?()
             }
         }
-        
     }
-    
-    private static func numericalStat(for category: LeaderboardSort, logbook: LeaderLogbooks) -> String {
-        let numericalStat: String
-        switch category {
-        case .distance:
-            numericalStat = LogbookStats.getDistanceFormatted(distance: logbook.map({
-                $0.distance
-            }).reduce(0, +))
-        case .runCount:
-            numericalStat = String(logbook.map({ $0.runCount }).reduce(0, +))
-        case .topSpeed:
-            numericalStat = String(format: "%.1f", logbook.map({ $0.topSpeed }).max()!)
-        case .verticalDistance:
-            numericalStat = LogbookStats.getDistanceFormatted(distance: logbook.map({
-                $0.verticalDistance
-            }).reduce(0, +))
+
+        private static func numericalStat(for category: LeaderboardSort, logbooks: LeaderLogbooks) -> String {
+            let statData: String
+
+            switch logbooks {
+            case .selectedLeader(let logbook):
+                statData = mapData(logbook: logbook, category: category)
+            default:
+                statData = mapData(logbooks: logbooks)
+            }
+
+            let measurementSystem: String
+            switch category {
+            case .distance, .verticalDistance:
+                measurementSystem = TabViewController.profile?.measurementSystem == .imperial ? "FT" : "M"
+            case .runCount:
+                measurementSystem = "Runs"
+            case .topSpeed:
+                measurementSystem = TabViewController.profile?.measurementSystem == .imperial ? "MPH" : "KPH"
+            }
+
+            return statData + " " + measurementSystem
         }
+
         
-        let measurementSystem: String
-        switch category {
-        case .distance, .verticalDistance:
-            switch TabViewController.profile?.measurementSystem {
-            case .imperial:
-                measurementSystem = "FT"
-            case .metric:
-                measurementSystem = "M"
-            case .none:
-                measurementSystem = ""
+        private static func mapData(logbooks: LeaderLogbooks) -> String {
+            let statData: String
+
+            switch logbooks {
+            case .distanceLogbook(let logbook):
+                statData = mapNumericData(logbook.map(\.distance))
+            case .runCountLogbook(let logbook):
+                statData = mapNumericData(logbook.map({ Double($0.runCount)}))
+            case .topSpeedLogbook(let logbook):
+                statData = String(format: "%.1f", logbook.map(\.topSpeed).max()!)
+            case .verticalDistanceLogbook(let logbook):
+                statData = mapNumericData(logbook.map(\.verticalDistance))
+            default:
+                statData = ""
             }
-        case .runCount:
-            measurementSystem = "Runs"
-        case .topSpeed:
-            switch TabViewController.profile?.measurementSystem {
-            case .imperial:
-                measurementSystem = "MPH"
-            case .metric:
-                measurementSystem = "KPH"
-            case .none:
-                measurementSystem = ""
-            }
+
+            return statData
         }
-        return  numericalStat + " " + measurementSystem
-    }
-    
+
+        private static func mapData(logbook: [ApolloGeneratedGraphQL.GetSelectedLeaderboardQuery.Data.Leaderboard.Logbook], category: LeaderboardSort) -> String {
+            let statData: String
+
+            switch category {
+            case .distance:
+                statData = mapNumericData(logbook.map(\.distance))
+            case .runCount:
+                statData = mapNumericData(logbook.map({ Double($0.runCount)}))
+            case .topSpeed:
+                statData = String(format: "%.1f", logbook.map(\.topSpeed).max()!)
+            case .verticalDistance:
+                statData = mapNumericData(logbook.map(\.verticalDistance))
+            }
+            return statData
+        }
+
+        private static func mapNumericData(_ data: [Double]) -> String {
+            let total: Double = data.reduce(0, +)
+
+            return LogbookStats.getDistanceFormatted(distance: total)
+        }
     
 }

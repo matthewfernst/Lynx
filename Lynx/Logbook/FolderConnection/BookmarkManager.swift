@@ -8,8 +8,7 @@
 import Foundation
 import OSLog
 
-class BookmarkManager
-{
+class BookmarkManager {
     private(set) var bookmark: (id: String, url: URL)?
     
     private static func getAppSandboxDirectory() -> URL {

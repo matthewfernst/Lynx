@@ -1,4 +1,4 @@
-query G($limit: Int, $measurementSystem: MeasurementSystem)  {
+query GetAllLeaderboards($limit: Int, $measurementSystem: MeasurementSystem!)  {
     distanceLeaders: leaderboard(sortBy: DISTANCE, limit: $limit) {
         ...leaderboardFields
                 logbook{
@@ -13,7 +13,7 @@ query G($limit: Int, $measurementSystem: MeasurementSystem)  {
         }
     }
     
-    topSpeadLeaders: leaderboard(sortBy: TOP_SPEED, limit: $limit) {
+    topSpeedLeaders: leaderboard(sortBy: TOP_SPEED, limit: $limit) {
         ...leaderboardFields
         logbook {
             topSpeed(system: $measurementSystem)
