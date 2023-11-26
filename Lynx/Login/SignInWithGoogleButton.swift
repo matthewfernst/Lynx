@@ -14,7 +14,7 @@ func getSignInWithGoogleButton(baseBackgroundColor: UIColor = .black) -> UIButto
     config.cornerStyle = .medium
     config.baseBackgroundColor = baseBackgroundColor
     
-    let googleLogo = UIImage(named: "google_logo.png")?.scalePreservingAspectRatio(targetSize: CGSize(width: 12, height: 12))
+    let googleLogo = UIImage(named: "GoogleLogo.png")?.scalePreservingAspectRatio(targetSize: CGSize(width: 12, height: 12))
     config.image = googleLogo
     config.imagePadding = 4
     config.imagePlacement = .leading
