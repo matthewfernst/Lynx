@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct UserDefaultsKeys
-{
+struct UserDefaultsKeys {
     // TabViewController
     static let theme = "theme"
     

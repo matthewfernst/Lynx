@@ -174,8 +174,8 @@
             filePath = "Lynx/Apollo/ApolloLynxClient.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "229"
-            endingLineNumber = "229"
+            startingLineNumber = "268"
+            endingLineNumber = "268"
             landmarkName = "editUser(profileChanges:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -190,10 +190,243 @@
             filePath = "Lynx/Apollo/ApolloLynxClient.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "236"
-            endingLineNumber = "236"
+            startingLineNumber = "275"
+            endingLineNumber = "275"
             landmarkName = "editUser(profileChanges:completion:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AA9EC6E9-695A-4DED-AA1B-379ABA5119B7"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lynx/Account/Profile/ProfileView/DeleteAccountViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
+            landmarkName = "deleteAccount()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "AA9EC6E9-695A-4DED-AA1B-379ABA5119B7 - 56e763f725c7f4ca"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Lynx.DeleteAccountViewController.deleteAccount() -&gt; ()"
+                  moduleName = "Lynx"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Lynx/Lynx/Account/Profile/ProfileView/DeleteAccountViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "88"
+                  endingLineNumber = "88"
+                  offsetFromSymbolStart = "1256">
+               </Location>
+               <Location
+                  uuid = "AA9EC6E9-695A-4DED-AA1B-379ABA5119B7 - e2a0681b12f8cabb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in Lynx.DeleteAccountViewController.deleteAccount() -&gt; ()"
+                  moduleName = "Lynx"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Lynx/Lynx/Account/Profile/ProfileView/DeleteAccountViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "90"
+                  endingLineNumber = "90"
+                  offsetFromSymbolStart = "108">
+               </Location>
+               <Location
+                  uuid = "AA9EC6E9-695A-4DED-AA1B-379ABA5119B7 - 56e763f725c7f4ca"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Lynx.DeleteAccountViewController.deleteAccount() -&gt; ()"
+                  moduleName = "Lynx"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Lynx/Lynx/Account/Profile/ProfileView/DeleteAccountViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "88"
+                  endingLineNumber = "88"
+                  offsetFromSymbolStart = "1228">
+               </Location>
+               <Location
+                  uuid = "AA9EC6E9-695A-4DED-AA1B-379ABA5119B7 - 123041a9c0a9693c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Lynx.DeleteAccountViewController.deleteAccount() -&gt; ()"
+                  moduleName = "Lynx"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Developer/iOS/Lynx/Lynx/Account/Profile/ProfileView/DeleteAccountViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "88"
+                  endingLineNumber = "88"
+                  offsetFromSymbolStart = "1228">
+               </Location>
+               <Location
+                  uuid = "AA9EC6E9-695A-4DED-AA1B-379ABA5119B7 - a6774a45f79656c9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;(), Swift.Error&gt;) -&gt; () in Lynx.DeleteAccountViewController.deleteAccount() -&gt; ()"
+                  moduleName = "Lynx"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Developer/iOS/Lynx/Lynx/Account/Profile/ProfileView/DeleteAccountViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "90"
+                  endingLineNumber = "90"
+                  offsetFromSymbolStart = "108">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8F96B5D2-4C05-4411-8CB1-16D4B90C8CA3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lynx/Account/Profile/ProfileView/DeleteAccountViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "deleteAccount()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C5A431EF-CAA2-4E12-A312-943CF03D9907"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lynx/Apollo/ApolloLynxClient.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "417"
+            endingLineNumber = "417"
+            landmarkName = "deleteAccount(token:type:completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "560BEB2C-E0ED-414A-92C7-6893C8142C77"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Lynx/Apollo/ApolloLynxClient.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "421"
+            endingLineNumber = "421"
+            landmarkName = "deleteAccount(token:type:completion:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "560BEB2C-E0ED-414A-92C7-6893C8142C77 - a578ee8f3b50299d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Lynx.ApolloGeneratedGraphQL.DeleteAccountMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Lynx.ApolloLynxClient.deleteAccount(token: Swift.String, type: Lynx.ApolloGeneratedGraphQL.OAuthType, completion: (Swift.Result&lt;(), Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "Lynx"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Lynx/Lynx/Apollo/ApolloLynxClient.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "421"
+                  endingLineNumber = "421"
+                  offsetFromSymbolStart = "368">
+               </Location>
+               <Location
+                  uuid = "560BEB2C-E0ED-414A-92C7-6893C8142C77 - a578ee8f3b50299d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Lynx.ApolloGeneratedGraphQL.DeleteAccountMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Lynx.ApolloLynxClient.deleteAccount(token: Swift.String, type: Lynx.ApolloGeneratedGraphQL.OAuthType, completion: (Swift.Result&lt;(), Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "Lynx"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Lynx/Lynx/Apollo/ApolloLynxClient.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "421"
+                  endingLineNumber = "421"
+                  offsetFromSymbolStart = "404">
+               </Location>
+               <Location
+                  uuid = "560BEB2C-E0ED-414A-92C7-6893C8142C77 - a578ee8f3b50299d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Lynx.ApolloGeneratedGraphQL.DeleteAccountMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Lynx.ApolloLynxClient.deleteAccount(token: Swift.String, type: Lynx.ApolloGeneratedGraphQL.OAuthType, completion: (Swift.Result&lt;(), Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "Lynx"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Lynx/Lynx/Apollo/ApolloLynxClient.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "421"
+                  endingLineNumber = "421"
+                  offsetFromSymbolStart = "2060">
+               </Location>
+               <Location
+                  uuid = "560BEB2C-E0ED-414A-92C7-6893C8142C77 - df2a090d0d5e3a84"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Lynx.ApolloGeneratedGraphQL.DeleteAccountMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Lynx.ApolloLynxClient.deleteAccount(token: Swift.String, type: Lynx.ApolloGeneratedGraphQL.OAuthType, completion: (Swift.Result&lt;(), Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "Lynx"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Developer/iOS/Lynx/Lynx/Apollo/ApolloLynxClient.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "421"
+                  endingLineNumber = "421"
+                  offsetFromSymbolStart = "368">
+               </Location>
+               <Location
+                  uuid = "560BEB2C-E0ED-414A-92C7-6893C8142C77 - df2a090d0d5e3a84"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Lynx.ApolloGeneratedGraphQL.DeleteAccountMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Lynx.ApolloLynxClient.deleteAccount(token: Swift.String, type: Lynx.ApolloGeneratedGraphQL.OAuthType, completion: (Swift.Result&lt;(), Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "Lynx"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Developer/iOS/Lynx/Lynx/Apollo/ApolloLynxClient.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "421"
+                  endingLineNumber = "421"
+                  offsetFromSymbolStart = "404">
+               </Location>
+               <Location
+                  uuid = "560BEB2C-E0ED-414A-92C7-6893C8142C77 - df2a090d0d5e3a84"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;Apollo.GraphQLResult&lt;Lynx.ApolloGeneratedGraphQL.DeleteAccountMutation.Data&gt;, Swift.Error&gt;) -&gt; () in static Lynx.ApolloLynxClient.deleteAccount(token: Swift.String, type: Lynx.ApolloGeneratedGraphQL.OAuthType, completion: (Swift.Result&lt;(), Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "Lynx"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/matthewernst/Developer/iOS/Lynx/Lynx/Apollo/ApolloLynxClient.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "421"
+                  endingLineNumber = "421"
+                  offsetFromSymbolStart = "2060">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -68,7 +68,7 @@ enum OAuthType {
 
 type OAuthTypeCorrelation {
     type: OAuthType!
-    id: String!
+    id: ID!
 }
 
 input OAuthTypeCorrelationInput {
@@ -80,6 +80,15 @@ input OAuthTypeCorrelationInput {
 input UserDataPair {
     key: String!
     value: String!
+}
+
+input DeleteUserOptions {
+    tokensToInvalidate: [InvalidateTokenOption!]
+}
+
+input InvalidateTokenOption {
+    token: ID!
+    type: OAuthType!
 }
 
 type Query {
@@ -97,7 +106,7 @@ type Mutation {
     combineOAuthAccounts(combineWith: OAuthTypeCorrelationInput!): User!
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
-    deleteUser: User!
+    deleteUser(options: DeleteUserOptions): User!
     editUser(userData: [UserDataPair!]!): User!
     createInviteKey: String!
     resolveInviteKey(inviteKey: ID!): User!

@@ -61,11 +61,11 @@ public extension ApolloGeneratedGraphQL {
           public static var __selections: [ApolloAPI.Selection] { [
             .field("__typename", String.self),
             .field("type", GraphQLEnum<ApolloGeneratedGraphQL.OAuthType>.self),
-            .field("id", String.self),
+            .field("id", ApolloGeneratedGraphQL.ID.self),
           ] }
 
           public var type: GraphQLEnum<ApolloGeneratedGraphQL.OAuthType> { __data["type"] }
-          public var id: String { __data["id"] }
+          public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
         }
       }
     }

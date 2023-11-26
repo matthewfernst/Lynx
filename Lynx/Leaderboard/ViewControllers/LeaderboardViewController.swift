@@ -31,54 +31,24 @@ class LeaderboardViewController: UIViewController
     }
     
     @objc private func refreshData() {
-        loadLeadersData()
+        loadLeaderboards()
     }
     
-    private func loadLeadersData() {
-        let dispatchGroup = DispatchGroup()
-        var categoryToLeaderAttributes = [LeaderboardSort: [LeaderboardAttributes]]()
-        
-        for category in LeaderboardSort.allCases {
-            dispatchGroup.enter()
-            getLeaders(for: category, usingSystem: TabViewController.profile.measurementSystem) { leaders in
-                if let leaders = leaders {
-                    var attributesArray = [LeaderboardAttributes]()
-                    
-                    // Create an array of LeaderboardAttributes with profile picture URL for each leader
-                    for leader in leaders {
-                        dispatchGroup.enter() // Enter the dispatch group for each profile picture download
-                        let attributes = LeaderboardAttributes(
-                            leader: leader,
-                            category: category
-                        ) {
-                            // This block will be executed when the profile picture is downloaded.
-                            // Leave the dispatch group for this download when it's complete.
-                            dispatchGroup.leave()
-                        }
-                        attributesArray.append(attributes)
-                    }
-                    
-                    // Leave the dispatch group for the category when all profile pictures are scheduled for download.
-                    dispatchGroup.leave()
-                    categoryToLeaderAttributes[category] = attributesArray
-                } else {
-                    // In case there are no leaders for the category, leave the dispatch group.
-                    dispatchGroup.leave()
+    private func loadLeaderboards() {
+        categoryToLeaderAttributes.removeAll()
+        leaderboardTableView.reloadData()
+        ApolloLynxClient.getAllLeaderboards(limit: 3, inMeasurementSystem: TabViewController.profile.measurementSystem) { result in
+            switch result {
+            case .success(let fetchedCategoryToLeaderAttributes):
+                self.categoryToLeaderAttributes = fetchedCategoryToLeaderAttributes
+                DispatchQueue.main.async { [weak self] in
+                    self?.leaderboardTableView.refreshControl?.endRefreshing()
+                    self?.leaderboardTableView.reloadData()
                 }
+            case .failure(_):
+                break
             }
         }
-        
-        dispatchGroup.notify(queue: .main) { [weak self] in
-             // Update the categoryToLeaderAttributes only when all profile pictures are downloaded.
-             self?.categoryToLeaderAttributes = categoryToLeaderAttributes
-             
-             // Call endRefreshing on the main thread to stop the refresh control animation.
-             DispatchQueue.main.async {
-                 self?.leaderboardTableView.refreshControl?.endRefreshing()
-                 self?.leaderboardTableView.reloadData()
-             }
-             
-         }
     }
 
 
@@ -103,17 +73,6 @@ class LeaderboardViewController: UIViewController
         refreshControl.tintColor = .systemGray
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
         leaderboardTableView.refreshControl = refreshControl
-    }
-    
-    private func getLeaders(for category: LeaderboardSort, usingSystem system: MeasurementSystem, completion: @escaping ((LeaderboardLeaders?) -> Void)) {
-        ApolloLynxClient.getLeaders(for: category, limitedTo: 3, usingSytem: system) { result in
-            switch result {
-            case .success(let leaders):
-                completion(leaders)
-            default:
-                completion(nil)
-            }
-        }
     }
 }
 

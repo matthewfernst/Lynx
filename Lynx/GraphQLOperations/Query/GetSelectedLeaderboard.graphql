@@ -1,0 +1,11 @@
+query GetSelectedLeaderboard($limit: Int, $measurementSystem: MeasurementSystem!, $selectedLeaderboard: LeaderboardSort!)  {
+    leaderboard(sortBy: $selectedLeaderboard, limit: $limit) {
+        ...leaderboardFields
+        logbook {
+            distance(system: $measurementSystem)
+            runCount
+            topSpeed(system: $measurementSystem)
+            verticalDistance(system: $measurementSystem)
+        }
+    }
+}

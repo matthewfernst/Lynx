@@ -15,11 +15,50 @@ typealias Logbooks = [Logbook]
 typealias MeasurementSystem = ApolloGeneratedGraphQL.MeasurementSystem
 
 typealias OAuthLoginIds = [ApolloGeneratedGraphQL.GetProfileInformationQuery.Data.SelfLookup.OauthLoginId]
-
-typealias Leaderboard = ApolloGeneratedGraphQL.GetLeadersQuery.Data.Leaderboard
+typealias OAuthType = ApolloGeneratedGraphQL.OAuthType
+protocol Leaderboard {
+    var firstName: String { get }
+    var lastName: String { get }
+    var profilePictureUrl: String? { get }
+    var logbooks: LeaderLogbooks { get }
+}
+extension ApolloGeneratedGraphQL.GetAllLeaderboardsQuery.Data.DistanceLeader: Leaderboard {
+    var logbooks: LeaderLogbooks {
+        .distanceLogbook(self.logbook)
+    }
+}
+extension ApolloGeneratedGraphQL.GetAllLeaderboardsQuery.Data.RunCountLeader: Leaderboard {
+    var logbooks: LeaderLogbooks {
+        .runCountLogbook(self.logbook)
+    }
+}
+extension ApolloGeneratedGraphQL.GetAllLeaderboardsQuery.Data.TopSpeedLeader: Leaderboard {
+    var logbooks: LeaderLogbooks {
+        .topSpeedLogbook(self.logbook)
+    }
+}
+extension ApolloGeneratedGraphQL.GetAllLeaderboardsQuery.Data.VerticalDistanceLeader: Leaderboard {
+    var logbooks: LeaderLogbooks {
+        .verticalDistanceLogbook(self.logbook)
+    }
+}
+extension ApolloGeneratedGraphQL.GetSelectedLeaderboardQuery.Data.Leaderboard: Leaderboard {
+    var logbooks: LeaderLogbooks {
+        .selectedLeader(self.logbook)
+    }
+}
 typealias LeaderboardLeaders = [Leaderboard]
+
 typealias LeaderboardSort = ApolloGeneratedGraphQL.LeaderboardSort
-typealias LeaderLogbooks = [ApolloGeneratedGraphQL.GetLeadersQuery.Data.Leaderboard.Logbook]
+
+enum LeaderLogbooks {
+    case distanceLogbook([ApolloGeneratedGraphQL.GetAllLeaderboardsQuery.Data.DistanceLeader.Logbook])
+    case runCountLogbook([ApolloGeneratedGraphQL.GetAllLeaderboardsQuery.Data.RunCountLeader.Logbook])
+    case topSpeedLogbook([ApolloGeneratedGraphQL.GetAllLeaderboardsQuery.Data.TopSpeedLeader.Logbook])
+    case verticalDistanceLogbook([ApolloGeneratedGraphQL.GetAllLeaderboardsQuery.Data.VerticalDistanceLeader.Logbook])
+    case selectedLeader([ApolloGeneratedGraphQL.GetSelectedLeaderboardQuery.Data.Leaderboard.Logbook])
+}
+
 
 
 class ApolloLynxClient {
@@ -369,13 +408,15 @@ class ApolloLynxClient {
         }
     }
     
-    public static func deleteAccount(completion: @escaping ((Result<Void, Error>) -> Void)) {
+    public static func deleteAccount(token: String, type: ApolloGeneratedGraphQL.OAuthType, completion: @escaping ((Result<Void, Error>) -> Void)) {
         enum DeleteAccountErrors: Error {
             case UnwrapOfReturnedUserFailed
             case BackendCouldntDelete
         }
         
-        apolloClient.perform(mutation: ApolloGeneratedGraphQL.DeleteAccountMutation()) { result in
+        let deleteUserOptions = ApolloGeneratedGraphQL.DeleteUserOptions(tokensToInvalidate: GraphQLNullable<[ApolloGeneratedGraphQL.InvalidateTokenOption]>(arrayLiteral: ApolloGeneratedGraphQL.InvalidateTokenOption(token: token, type: GraphQLEnum(type))))
+        
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.DeleteAccountMutation(options: deleteUserOptions)) { result in
             switch result {
             case .success(let graphQLResult):
                 guard let _ = graphQLResult.data?.deleteUser.id else {
@@ -418,38 +459,105 @@ class ApolloLynxClient {
         }
     }
     
-    public static func getLeaders(for category: ApolloGeneratedGraphQL.LeaderboardSort, limitedTo limit: Int?, usingSytem measurementSystem: MeasurementSystem,  completion: @escaping ((Result<[ApolloGeneratedGraphQL.GetLeadersQuery.Data.Leaderboard], Error>) -> Void))
-    {
-        
-        enum GetLeadersErrors: Error
-        {
+    public static func getAllLeaderboards(limit: Int?, inMeasurementSystem system: MeasurementSystem, completion: @escaping ((Result<[LeaderboardSort: [LeaderboardAttributes]], Error>) -> Void)) {
+        enum GetAllLeadersErrors: Error {
             case unableToUnwrap
         }
-        
-        let graphQLCategory = GraphQLEnum(category)
-        let system = GraphQLEnum(measurementSystem)
-        
-        let nullableLimit: GraphQLNullable<Int>
-        if let limit = limit {
-            nullableLimit = .init(integerLiteral: limit)
-        } else {
-            nullableLimit = .init(nilLiteral: ())
-        }
-        
-        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetLeadersQuery(sortBy: graphQLCategory, limit: nullableLimit, measurementSystem: system)) { result in
+
+        let nullableLimit: GraphQLNullable<Int> = (limit != nil) ? .init(integerLiteral: limit!) : .null
+        let enumSystem = GraphQLEnum<MeasurementSystem>(rawValue: system.rawValue)
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetAllLeaderboardsQuery(limit: nullableLimit, measurementSystem: enumSystem)) { result in
             switch result {
             case .success(let graphQLResult):
-                guard let leaders = graphQLResult.data?.leaderboard else {
-                    Logger.apollo.error("Unable to unwrap graphQL result for leaderboard.")
-                    completion(.failure(GetLeadersErrors.unableToUnwrap))
+
+                guard let data = graphQLResult.data else {
+                    Logger.apollo.error("Error unwrapping All Leaders data")
+                    completion(.failure(GetAllLeadersErrors.unableToUnwrap))
+                    return
+                }
+
+                // Create a dispatch group to track ongoing profile picture downloads
+                let downloadGroup = DispatchGroup()
+
+                var leaderboardAttributes: [LeaderboardSort: [LeaderboardAttributes]] = [:]
+
+                for sort in LeaderboardSort.allCases {
+                    var leadersAttributes: [LeaderboardAttributes] = []
+
+                    let leaders: [Leaderboard]
+
+                    switch sort {
+                    case .distance:
+                        leaders = data.distanceLeaders
+                    case .runCount:
+                        leaders = data.runCountLeaders
+                    case .topSpeed:
+                        leaders = data.topSpeedLeaders
+                    case .verticalDistance:
+                        leaders = data.verticalDistanceLeaders
+                    }
+
+                    for leader in leaders {
+                        downloadGroup.enter()
+                        let attributes = LeaderboardAttributes(leader: leader, category: sort) {
+                            downloadGroup.leave()
+                        }
+                        leadersAttributes.append(attributes)
+                    }
+
+                    leaderboardAttributes[sort] = leadersAttributes
+                }
+
+                // Wait for all profile picture downloads to finish before calling the completion block
+                downloadGroup.notify(queue: .main) {
+                    completion(.success(leaderboardAttributes))
+                }
+
+            case .failure(let error):
+                Logger.apollo.error("Error Fetching All Leaders: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    
+    public static func getSelectedLeaderboard(_ leaderboard: LeaderboardSort, limit: Int?, inMeasurementSystem system: MeasurementSystem, completion: @escaping ((Result<[LeaderboardAttributes], Error>) -> Void)) {
+        
+        enum SelectedLeaderboardError: Error
+        {
+            case unwrapError
+        }
+        
+        let nullableLimit: GraphQLNullable<Int> = (limit != nil) ? .init(integerLiteral: limit!) : .null
+        let enumSystem = GraphQLEnum<MeasurementSystem>(rawValue: system.rawValue)
+        let enumSort = GraphQLEnum<LeaderboardSort>(rawValue: leaderboard.rawValue)
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetSelectedLeaderboardQuery(limit: nullableLimit, measurementSystem: enumSystem, selectedLeaderboard: enumSort)) { result in
+            
+            switch result {
+            case .success(let graphQLResult):
+                guard let selectedLeaderboard = graphQLResult.data?.leaderboard else {
+                    Logger.apollo.error("Failed to unwrap selected leaderboard.")
+                    completion(.failure(SelectedLeaderboardError.unwrapError))
                     return
                 }
                 
-                Logger.apollo.info("Successfully fetched top 3 leaders")
-                completion(.success(leaders))
+                let dispatchGroup = DispatchGroup()
+                var leaderData = [LeaderboardAttributes]()
+                
+                for leader in selectedLeaderboard {
+                    dispatchGroup.enter()
+                    leaderData.append(LeaderboardAttributes(leader: leader, category: leaderboard) {
+                        dispatchGroup.leave()
+                    })
+                }
+                
+                
+                dispatchGroup.notify(queue: .main) {
+                    completion(.success(leaderData))
+                }
                 
             case .failure(let error):
-                Logger.apollo.error("Error Fetching Leaders: \(error)")
+                Logger.apollo.error("Error Fetching Selected Leaderbords: \(error)")
                 completion(.failure(error))
             }
         }

@@ -1,0 +1,35 @@
+query GetAllLeaderboards($limit: Int, $measurementSystem: MeasurementSystem!)  {
+    distanceLeaders: leaderboard(sortBy: DISTANCE, limit: $limit) {
+        ...leaderboardFields
+                logbook{
+            distance(system: $measurementSystem)
+        }
+    }
+    
+    runCountLeaders: leaderboard(sortBy: RUN_COUNT, limit: $limit){
+        ...leaderboardFields
+        logbook {
+            runCount
+        }
+    }
+    
+    topSpeedLeaders: leaderboard(sortBy: TOP_SPEED, limit: $limit) {
+        ...leaderboardFields
+        logbook {
+            topSpeed(system: $measurementSystem)
+        }
+    }
+    
+    verticalDistanceLeaders: leaderboard(sortBy: VERTICAL_DISTANCE, limit: $limit) {
+        ...leaderboardFields
+        logbook {
+            verticalDistance(system: $measurementSystem)
+        }
+    }
+}
+
+fragment leaderboardFields on User {
+  profilePictureUrl
+  firstName
+  lastName
+}

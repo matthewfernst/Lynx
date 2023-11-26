@@ -4,17 +4,15 @@
 @_exported import ApolloAPI
 
 public extension ApolloGeneratedGraphQL {
-  class GetLeadersQuery: GraphQLQuery {
-    public static let operationName: String = "GetLeaders"
+  class GetSelectedLeaderboardQuery: GraphQLQuery {
+    public static let operationName: String = "GetSelectedLeaderboard"
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        query GetLeaders($sortBy: LeaderboardSort!, $limit: Int, $measurementSystem: MeasurementSystem!) {
-          leaderboard(sortBy: $sortBy, limit: $limit) {
+        query GetSelectedLeaderboard($limit: Int, $measurementSystem: MeasurementSystem!, $selectedLeaderboard: LeaderboardSort!) {
+          leaderboard(sortBy: $selectedLeaderboard, limit: $limit) {
             __typename
-            profilePictureUrl
-            firstName
-            lastName
+            ...leaderboardFields
             logbook {
               __typename
               distance(system: $measurementSystem)
@@ -24,27 +22,28 @@ public extension ApolloGeneratedGraphQL {
             }
           }
         }
-        """#
+        """#,
+        fragments: [LeaderboardFields.self]
       ))
 
-    public var sortBy: GraphQLEnum<LeaderboardSort>
     public var limit: GraphQLNullable<Int>
     public var measurementSystem: GraphQLEnum<MeasurementSystem>
+    public var selectedLeaderboard: GraphQLEnum<LeaderboardSort>
 
     public init(
-      sortBy: GraphQLEnum<LeaderboardSort>,
       limit: GraphQLNullable<Int>,
-      measurementSystem: GraphQLEnum<MeasurementSystem>
+      measurementSystem: GraphQLEnum<MeasurementSystem>,
+      selectedLeaderboard: GraphQLEnum<LeaderboardSort>
     ) {
-      self.sortBy = sortBy
       self.limit = limit
       self.measurementSystem = measurementSystem
+      self.selectedLeaderboard = selectedLeaderboard
     }
 
     public var __variables: Variables? { [
-      "sortBy": sortBy,
       "limit": limit,
-      "measurementSystem": measurementSystem
+      "measurementSystem": measurementSystem,
+      "selectedLeaderboard": selectedLeaderboard
     ] }
 
     public struct Data: ApolloGeneratedGraphQL.SelectionSet {
@@ -54,7 +53,7 @@ public extension ApolloGeneratedGraphQL {
       public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Query }
       public static var __selections: [ApolloAPI.Selection] { [
         .field("leaderboard", [Leaderboard].self, arguments: [
-          "sortBy": .variable("sortBy"),
+          "sortBy": .variable("selectedLeaderboard"),
           "limit": .variable("limit")
         ]),
       ] }
@@ -71,16 +70,21 @@ public extension ApolloGeneratedGraphQL {
         public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.User }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("profilePictureUrl", String?.self),
-          .field("firstName", String.self),
-          .field("lastName", String.self),
           .field("logbook", [Logbook].self),
+          .fragment(LeaderboardFields.self),
         ] }
 
+        public var logbook: [Logbook] { __data["logbook"] }
         public var profilePictureUrl: String? { __data["profilePictureUrl"] }
         public var firstName: String { __data["firstName"] }
         public var lastName: String { __data["lastName"] }
-        public var logbook: [Logbook] { __data["logbook"] }
+
+        public struct Fragments: FragmentContainer {
+          public let __data: DataDict
+          public init(_dataDict: DataDict) { __data = _dataDict }
+
+          public var leaderboardFields: LeaderboardFields { _toFragment() }
+        }
 
         /// Leaderboard.Logbook
         ///
