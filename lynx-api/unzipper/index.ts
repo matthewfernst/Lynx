@@ -7,7 +7,7 @@ const renameFileFunction = (originalFileName: string) => {
     return `${originalFileName.split(".")[0]}.xml`;
 };
 
-export async function handler(event, context) {
+export async function handler(event: any, context: any) {
     const s3Client = new S3({ region: "us-west-1" });
 
     for (const record of event.Records) {
@@ -20,7 +20,7 @@ export async function handler(event, context) {
         const fileStream = s3Client
             .getObject({ Bucket: bucket, Key: fileName })
             .createReadStream()
-            .pipe(ParseOne("Metadata.xml", { forceStream: true }));
+            .pipe(ParseOne(/Metadata\.xml/, { forceStream: true }));
 
         const targetFile = renameFileFunction(fileName);
         await s3Client

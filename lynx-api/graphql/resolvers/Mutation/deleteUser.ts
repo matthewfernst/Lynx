@@ -36,7 +36,7 @@ const invalidateToken = async (tokenType: OAuthType, token: string) => {
     }
 };
 
-const invalidateAppleToken = async (token) => {
+const invalidateAppleToken = async (token: string) => {
     const invalidateTokenData = {
         client_id: process.env.APPLE_CLIENT_ID,
         client_secret: process.env.APPLE_CLIENT_SECRET,

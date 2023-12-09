@@ -1,36 +1,45 @@
-import { S3 } from "aws-sdk";
-import { ParseOne } from "unzipper";
+import { UpdateItemOutput } from "@aws-sdk/client-dynamodb";
+import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
-const targetBucket = "lynx-slopes-unzipped";
+import { createDocumentClient } from "../graphql/aws/dynamodb";
+import { getRecordFromBucket } from "../graphql/aws/s3";
+import { xmlToActivity } from "../graphql/resolvers/User/logbook";
+import { leaderboardSortTypesToQueryFields } from "../graphql/resolvers/Query/leaderboard";
 
-const renameFileFunction = (originalFileName: string) => {
-    return `${originalFileName.split(".")[0]}.xml`;
-};
-
-export async function handler(event, context) {
-    const s3Client = new S3({ region: "us-west-1" });
-
+export async function handler(event: any, context: any) {
     for (const record of event.Records) {
         const bucket = decodeURIComponent(record.s3.bucket.name);
-        const fileName = decodeURIComponent(record.s3.object.key)
-            .split("")
-            .map((letter) => (letter === "+" ? " " : letter))
-            .join("");
+        const userId = decodeURIComponent(record.s3.object.key).split("/")[0];
+        const unzippedRecord = await getRecordFromBucket(bucket, record.s3.object.key);
+        const activity = await xmlToActivity(unzippedRecord);
 
-        const fileStream = s3Client
-            .getObject({ Bucket: bucket, Key: fileName })
-            .createReadStream()
-            .pipe(ParseOne("Metadata.xml", { forceStream: true }));
-
-        const targetFile = renameFileFunction(fileName);
-        await s3Client
-            .upload({ Bucket: targetBucket, Key: targetFile, Body: fileStream })
-            .promise();
-        console.log(`File ${targetFile} uploaded to bucket ${targetBucket} successfully.`);
-
-        await s3Client.deleteObject({ Bucket: bucket, Key: fileName });
-        console.log("Zipped file deleted successfully.");
+        Object.values(leaderboardSortTypesToQueryFields).forEach(async (key) => {
+            const activityKey = key == "verticalDistance" ? "vertical" : activity[key]
+            await updateItem(userId, key, activityKey);
+        })
     }
-
     return { statusCode: 200 };
 }
+
+export const updateItem = async (
+    id: string,
+    key: string,
+    value: any
+): Promise<UpdateItemOutput> => {
+    const documentClient = createDocumentClient();
+    try {
+        console.log(`Updating item in table lynx-users with id ${id}. Adding ${value} to ${key}`);
+        const updateItemRequest = new UpdateCommand({
+            TableName: "lynx-users",
+            Key: { id },
+            UpdateExpression: "set #updateKey = #updateKey + :value",
+            ExpressionAttributeNames: { "#updateKey": key },
+            ExpressionAttributeValues: { ":value": value },
+            ReturnValues: "ALL_NEW"
+        });
+        return await documentClient.send(updateItemRequest);
+    } catch (err) {
+        console.error(err);
+        throw Error("DynamoDB Update Call Failed");
+    }
+};

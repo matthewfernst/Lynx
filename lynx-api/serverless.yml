@@ -1,6 +1,5 @@
 service: lynx-api
 frameworkVersion: "3"
-
 plugins:
   - serverless-prune-plugin
   - serverless-dotenv-plugin
@@ -8,11 +7,10 @@ plugins:
   - serverless-dynamodb-local
   - serverless-offline-ses
   - serverless-offline
-
 custom:
   stage: ${opt:stage, self:provider.stage}
   serverlessPluginTypescript:
-    tsConfigFileLocation: "./tsconfig.lambda.json"
+    tsConfigFileLocation: ./tsconfig.lambda.json
   dynamodb:
     stages:
       - ${opt:stage, self:provider.stage}
@@ -29,85 +27,38 @@ custom:
     stages:
       - dev
     clean: true
-    outputDir: "./.build/ses_output"
-
-package:
-  patterns:
-    - schema.graphql
-
+    outputDir: ./.build/ses_output
 provider:
   name: aws
   stage: dev
   region: us-west-1
   runtime: nodejs18.x
   memorySize: 1024
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - s3:ListBucket
-            - s3:GetObject
-            - s3:DeleteObject
-          Resource:
-            - arn:aws:s3:::lynx-slopes-unzipped
-            - arn:aws:s3:::lynx-slopes-unzipped/*
-        - Effect: Allow
-          Action:
-            - s3:PutObject
-            - s3:DeleteObject
-          Resource:
-            - arn:aws:s3:::lynx-slopes-zipped
-            - arn:aws:s3:::lynx-slopes-zipped/*
-        - Effect: Allow
-          Action: 
-            - s3:ListBucket
-            - s3:GetObject
-            - s3:PutObject
-            - s3:DeleteObject
-          Resource:
-            - arn:aws:s3:::lynx-profile-pictures
-            - arn:aws:s3:::lynx-profile-pictures/*
-        - Effect: Allow
-          Action:
-            - dynamodb:GetItem
-            - dynamodb:DeleteItem
-            - dynamodb:PutItem
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:UpdateItem
-          Resource:
-            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users
-            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users/index/*
-        - Effect: Allow
-          Action:
-            - dynamodb:GetItem
-            - dynamodb:DeleteItem
-            - dynamodb:PutItem
-            - dynamodb:Query
-          Resource:
-            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-invites
-       
 functions:
   graphql:
     description: GraphQL API
     handler: ./graphql/index.handler
+    role: GraphQLAPILambdaRole
     events:
       - http:
           path: /graphql
           method: post
           cors: true
+    package:
+      patterns:
+        - schema.graphql
+  lynx-reducer:
+    description: Reduces User Information For Leaderboard Tracking
+    handler: ./reducer/index.handler
+    role: ReducerLambdaRole
+    events:
+      - s3: lynx-slopes-unzipped
   lynx-unzipper:
     description: Unzips Uploaded Slopes Files
     handler: ./unzipper/index.handler
+    role: UnzipperLambdaRole
     events:
       - s3: lynx-slopes-zipped
-  lynx-leaderboard-reducer:
-    description: Reduces User Information For Leaderboard Tracking
-    handler: ./reducer/index.handler
-    events:
-      - s3: lynx-slopes-unzipped
-
 resources:
   Resources:
     usersTable:
@@ -125,13 +76,13 @@ resources:
           - AttributeName: googleId
             AttributeType: S
           - AttributeName: distance
-            AttributeType: N
+            AttributeType: "N"
           - AttributeName: runCount
-            AttributeType: N
+            AttributeType: "N"
           - AttributeName: topSpeed
-            AttributeType: N
+            AttributeType: "N"
           - AttributeName: verticalDistance
-            AttributeType: N
+            AttributeType: "N"
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
           - IndexName: appleId
@@ -140,14 +91,16 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: INCLUDE
-              NonKeyAttributes: [validatedInvite]
+              NonKeyAttributes:
+                - validatedInvite
           - IndexName: googleId
             KeySchema:
               - AttributeName: googleId
                 KeyType: HASH
             Projection:
               ProjectionType: INCLUDE
-              NonKeyAttributes: [validatedInvite]
+              NonKeyAttributes:
+                - validatedInvite
           - IndexName: distance
             KeySchema:
               - AttributeName: distance
@@ -186,8 +139,7 @@ resources:
         TimeToLiveSpecification:
           AttributeName: ttl
           Enabled: true
-
-    MountainUIProfilePictureBucket:
+    LynxProfilePictureBucket:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: lynx-profile-pictures
@@ -199,8 +151,9 @@ resources:
           BlockPublicPolicy: false
           IgnorePublicAcls: false
           RestrictPublicBuckets: false
-    MountainUIProfilePictureBucketPolicy:
+    LynxProfilePictureBucketPolicy:
       Type: AWS::S3::BucketPolicy
+      DependsOn: [ LynxProfilePictureBucket ]
       Properties:
         Bucket: lynx-profile-pictures
         PolicyDocument:
@@ -211,19 +164,144 @@ resources:
               Resource:
                 - arn:aws:s3:::lynx-profile-pictures/*
               Principal: "*"
-
-iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - s3:GetObject
-          Resource:
-            - arn:aws:s3:::lynx-slopes-zipped
-            - arn:aws:s3:::lynx-slopes-zipped/*
-        - Effect: Allow
-          Action:
-            - s3:PutObject
-          Resource:
-            - arn:aws:s3:::lynx-slopes-unzipped
-            - arn:aws:s3:::lynx-slopes-unzipped/*
+    GraphQLAPILambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: GraphQLAPILambdaRole
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: GraphQLAPILambdaRolePolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                    - logs:TagResource
+                  Resource:
+                    - arn:aws:logs:${aws:region}:${aws:accountId}:log-group:/aws/lambda/*:*:*
+                - Effect: Allow
+                  Action:
+                    - s3:ListBucket
+                    - s3:GetObject
+                    - s3:DeleteObject
+                  Resource:
+                    - arn:aws:s3:::lynx-slopes-unzipped
+                    - arn:aws:s3:::lynx-slopes-unzipped/*
+                - Effect: Allow
+                  Action:
+                    - s3:PutObject
+                    - s3:DeleteObject
+                  Resource:
+                    - arn:aws:s3:::lynx-slopes-zipped
+                    - arn:aws:s3:::lynx-slopes-zipped/*
+                - Effect: Allow
+                  Action:
+                    - s3:ListBucket
+                    - s3:GetObject
+                    - s3:PutObject
+                    - s3:DeleteObject
+                  Resource:
+                    - arn:aws:s3:::lynx-profile-pictures
+                    - arn:aws:s3:::lynx-profile-pictures/*
+                - Effect: Allow
+                  Action:
+                    - dynamodb:GetItem
+                    - dynamodb:DeleteItem
+                    - dynamodb:PutItem
+                    - dynamodb:Query
+                    - dynamodb:Scan
+                    - dynamodb:UpdateItem
+                  Resource:
+                    - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users
+                    - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users/index/*
+                - Effect: Allow
+                  Action:
+                    - dynamodb:GetItem
+                    - dynamodb:DeleteItem
+                    - dynamodb:PutItem
+                    - dynamodb:Query
+                  Resource:
+                    - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-invites
+    ReducerLambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ReducerLambdaRole
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: GraphQLAPILambdaRolePolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                    - logs:TagResource
+                  Resource:
+                    - arn:aws:logs:${aws:region}:${aws:accountId}:log-group:/aws/lambda/*:*:*
+                - Effect: Allow
+                  Action:
+                    - s3:GetObject
+                  Resource:
+                    - arn:aws:s3:::lynx-slopes-zipped
+                    - arn:aws:s3:::lynx-slopes-zipped/*
+                - Effect: Allow
+                  Action:
+                    - s3:PutObject
+                  Resource:
+                    - arn:aws:s3:::lynx-slopes-unzipped
+                    - arn:aws:s3:::lynx-slopes-unzipped/*
+    UnzipperLambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: UnzipperLambdaRole
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: GraphQLAPILambdaRolePolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                    - logs:TagResource
+                  Resource:
+                    - arn:aws:logs:${aws:region}:${aws:accountId}:log-group:/aws/lambda/*:*:*
+                - Effect: Allow
+                  Action:
+                    - s3:GetObject
+                  Resource:
+                    - arn:aws:s3:::lynx-slopes-unzipped
+                    - arn:aws:s3:::lynx-slopes-unzipped/*
+                - Effect: Allow
+                  Action:
+                    - dynamodb:UpdateItem
+                  Resource:
+                    - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users

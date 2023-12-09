@@ -10,6 +10,13 @@ interface Args {
     limit: number;
 }
 
+export const leaderboardSortTypesToQueryFields: { [key in LeaderboardSort]: string } = {
+    DISTANCE: "distance",
+    RUN_COUNT: "runCount",
+    TOP_SPEED: "topSpeed",
+    VERTICAL_DISTANCE: "verticalDistance"
+};
+
 const leaderboard = async (_: any, args: Args, context: Context, info: any): Promise<User[]> => {
     const scanOutput = await scanAllItems(DYNAMODB_TABLE_USERS);
     const rawUsers = scanOutput.Items as unknown[] as User[];
@@ -17,23 +24,10 @@ const leaderboard = async (_: any, args: Args, context: Context, info: any): Pro
         rawUsers.map(async (user) => await populateLogbookDataForUser(user))
     );
 
-    const sortProperty = getSortProperty(args.sortBy);
+    const sortProperty = leaderboardSortTypesToQueryFields[args.sortBy];
     return users
         .sort((a, b) => b.userStats!![sortProperty] - a.userStats!![sortProperty])
         .slice(0, args.limit || 5);
-};
-
-const getSortProperty = (type: LeaderboardSort) => {
-    switch (type) {
-        case "DISTANCE":
-            return "distance";
-        case "RUN_COUNT":
-            return "runCount";
-        case "TOP_SPEED":
-            return "topSpeed";
-        case "VERTICAL_DISTANCE":
-            return "verticalDistance";
-    }
 };
 
 export default leaderboard;

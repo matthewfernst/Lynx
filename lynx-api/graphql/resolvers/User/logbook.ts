@@ -19,19 +19,24 @@ export const getLogbookInformationFromS3 = async (userId: string): Promise<Log[]
     return Promise.all(
         recordNames.map(async (recordName): Promise<Log> => {
             const unzippedRecord = await getRecordFromBucket(toRunRecordsBucket, recordName);
-            const { activity } = await parseStringPromise(unzippedRecord, {
-                normalize: true,
-                mergeAttrs: true,
-                explicitArray: false,
-                tagNameProcessors: [processors.firstCharLowerCase],
-                attrNameProcessors: [processors.firstCharLowerCase],
-                valueProcessors: [processors.parseBooleans, processors.parseNumbers],
-                attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
-            });
+            const activity = await xmlToActivity(unzippedRecord);
             activity.originalFileName = reverseRenameFileFunction(recordName);
             return activity;
         })
     );
 };
+
+export const xmlToActivity = async (xml: string): Promise<Log> => {
+    const { activity } = await parseStringPromise(xml, {
+        normalize: true,
+        mergeAttrs: true,
+        explicitArray: false,
+        tagNameProcessors: [processors.firstCharLowerCase],
+        attrNameProcessors: [processors.firstCharLowerCase],
+        valueProcessors: [processors.parseBooleans, processors.parseNumbers],
+        attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
+    });
+    return activity;
+}
 
 export default logbook;

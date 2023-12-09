@@ -32,7 +32,7 @@ export const DYNAMODB_TABLE_INVITES = "lynx-invites";
 
 export type Table = typeof DYNAMODB_TABLE_USERS | typeof DYNAMODB_TABLE_INVITES;
 
-const createDocumentClient = (): DynamoDBDocument => {
+export const createDocumentClient = (): DynamoDBDocument => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
 
     const serviceConfigOptions: DynamoDBClientConfig = {

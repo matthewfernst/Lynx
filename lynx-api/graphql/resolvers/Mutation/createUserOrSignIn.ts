@@ -102,17 +102,17 @@ const oauthLogin = async (
         if (!email || !userData) {
             throw new UserInputError("Must Provide Email And UserData On Account Creation");
         }
-        const mountainAppId = uuid();
+        const lynxAppId = uuid();
         const validatedInvite = false;
         await putItem(DYNAMODB_TABLE_USERS, {
-            id: mountainAppId,
+            id: lynxAppId,
             [idFieldName]: id,
             validatedInvite,
             email,
             ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
         });
         return {
-            token: generateToken(mountainAppId),
+            token: generateToken(lynxAppId),
             expiryDate: oneHourFromNow,
             validatedInvite
         };

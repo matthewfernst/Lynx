@@ -1,4 +1,4 @@
-# Mountain UI API Lambda
+# Lynx API Lambda
 
 ## Deployment To Cloud
 
