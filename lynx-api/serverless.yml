@@ -91,12 +91,22 @@ provider:
 functions:
   graphql:
     description: GraphQL API
-    handler: ./src/index.handler
+    handler: ./graphql/index.handler
     events:
       - http:
           path: /graphql
           method: post
           cors: true
+  lynx-unzipper:
+    description: Unzips Uploaded Slopes Files
+    handler: ./unzipper/index.handler
+    events:
+      - s3: lynx-slopes-zipped
+  lynx-leaderboard-reducer:
+    description: Reduces User Information For Leaderboard Tracking
+    handler: ./reducer/index.handler
+    events:
+      - s3: lynx-slopes-unzipped
 
 resources:
   Resources:
@@ -114,6 +124,14 @@ resources:
             AttributeType: S
           - AttributeName: googleId
             AttributeType: S
+          - AttributeName: distance
+            AttributeType: N
+          - AttributeName: runCount
+            AttributeType: N
+          - AttributeName: topSpeed
+            AttributeType: N
+          - AttributeName: verticalDistance
+            AttributeType: N
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
           - IndexName: appleId
@@ -121,13 +139,39 @@ resources:
               - AttributeName: appleId
                 KeyType: HASH
             Projection:
-              ProjectionType: ALL
+              ProjectionType: INCLUDE
+              NonKeyAttributes: [validatedInvite]
           - IndexName: googleId
             KeySchema:
               - AttributeName: googleId
                 KeyType: HASH
             Projection:
-              ProjectionType: ALL
+              ProjectionType: INCLUDE
+              NonKeyAttributes: [validatedInvite]
+          - IndexName: distance
+            KeySchema:
+              - AttributeName: distance
+                KeyType: HASH
+            Projection:
+              ProjectionType: KEYS_ONLY
+          - IndexName: runCount
+            KeySchema:
+              - AttributeName: runCount
+                KeyType: HASH
+            Projection:
+              ProjectionType: KEYS_ONLY
+          - IndexName: topSpeed
+            KeySchema:
+              - AttributeName: topSpeed
+                KeyType: HASH
+            Projection:
+              ProjectionType: KEYS_ONLY
+          - IndexName: verticalDistance
+            KeySchema:
+              - AttributeName: verticalDistance
+                KeyType: HASH
+            Projection:
+              ProjectionType: KEYS_ONLY
     inviteTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -167,3 +211,19 @@ resources:
               Resource:
                 - arn:aws:s3:::lynx-profile-pictures/*
               Principal: "*"
+
+iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+          Resource:
+            - arn:aws:s3:::lynx-slopes-zipped
+            - arn:aws:s3:::lynx-slopes-zipped/*
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+          Resource:
+            - arn:aws:s3:::lynx-slopes-unzipped
+            - arn:aws:s3:::lynx-slopes-unzipped/*
