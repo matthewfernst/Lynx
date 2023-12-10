@@ -49,7 +49,7 @@ functions:
     package:
       include:
         - ./schema.graphql
-        - ./graphql/index.ts
+        - ./graphql/index.handler
   lynx-reducer:
     description: Reduces User Information For Leaderboard Tracking
     handler: ./reducer/index.handler
