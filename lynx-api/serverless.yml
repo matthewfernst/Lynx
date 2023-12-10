@@ -28,6 +28,8 @@ custom:
       - dev
     clean: true
     outputDir: ./.build/ses_output
+package:
+  individually: true
 provider:
   name: aws
   stage: dev
