@@ -47,7 +47,7 @@ functions:
           method: post
           cors: true
     package:
-      include:
+      patterns:
         - ./schema.graphql
         - ./graphql/index.handler
   lynx-reducer:
