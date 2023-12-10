@@ -5,9 +5,7 @@ import { gql } from "apollo-server-express";
 
 import { buildSchema } from "graphql";
 
-console.log("HERE");
-console.log(fs.readdir(__dirname));
-
+console.log("Contents of the directory:", fs.readdirSync(__dirname));
 const schema = fs.readFileSync(path.join(__dirname, "../schema.graphql"), "utf8");
 export const typeDefs = gql(schema);
 export const gqlSchema = buildSchema(schema);
