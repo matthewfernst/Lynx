@@ -13,8 +13,8 @@
         "moduleResolution": "Node",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "jsx": "react-jsx"
+        "jsx": "react-jsx",
+        "typeRoots": ["node_modules/@types", "src/@types"]
     },
-    "files": ["graphql/@types/graphql.d.ts"],
     "$schema": "https://json.schemastore.org/tsconfig"
 }
