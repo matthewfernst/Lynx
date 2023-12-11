@@ -13,6 +13,7 @@ export interface User {
 }
 
 export interface UserStats {
+    [key: string]: number;
     runCount: number;
     distance: number;
     topSpeed: number;
