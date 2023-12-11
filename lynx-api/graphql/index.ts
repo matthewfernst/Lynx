@@ -5,7 +5,7 @@ import { ApolloServer } from "apollo-server-lambda";
 import typeDefs from "./schema.graphql";
 
 import { authenticateHTTPAccessToken } from "./auth";
-import { resolvers } from "./schema";
+import { resolvers } from "./resolvers";
 
 export interface Context {
     userId: string | null;
