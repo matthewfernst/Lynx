@@ -47,10 +47,8 @@ functions:
           method: post
           cors: true
     package:
-      include:
-        - ./schema.graphql
       patterns:
-        - ./graphql/index.handler
+        - ./graphql/schema.graphql
   lynx-reducer:
     description: Reduces User Information For Leaderboard Tracking
     handler: ./reducer/index.handler
