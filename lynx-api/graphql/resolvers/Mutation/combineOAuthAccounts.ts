@@ -1,4 +1,4 @@
-import { UserInputError } from "apollo-server-lambda";
+import { GraphQLError } from "graphql";
 
 import { Context } from "../../index";
 import {
@@ -35,7 +35,7 @@ const combineOAuthAccounts = async (
     const otherUser = getItemFromDynamoDBResult(userQuery) as User | null;
     if (!otherUser) {
         if (!token) {
-            throw new UserInputError("User Does Not Exist and No Token Provided");
+            throw new GraphQLError("User Does Not Exist and No Token Provided");
         }
         await verifyToken(type, id, token);
         return await updateUserAndReturnResult(context.userId as string, idKey, id);

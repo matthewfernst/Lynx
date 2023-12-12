@@ -1,8 +1,8 @@
-import { v4 as uuid } from "uuid";
-import { DateTime } from "luxon";
 import AppleSignIn from "apple-signin-auth";
 import { OAuth2Client } from "google-auth-library";
-import { UserInputError } from "apollo-server-lambda";
+import { GraphQLError } from "graphql";
+import { DateTime } from "luxon";
+import { v4 as uuid } from "uuid";
 
 import { generateToken } from "../../auth";
 import { Context } from "../../index";
@@ -43,7 +43,7 @@ const createUserOrSignIn = async (
 ): Promise<AuthorizationToken> => {
     const { type, id, token } = args.oauthLoginId;
     if (!token) {
-        throw new UserInputError("Token Is Mandatory");
+        throw new GraphQLError("Token Is Mandatory");
     }
     await verifyToken(type, id, token);
     return await oauthLogin(idKeyFromIdType(type), id, args.email, args.userData);
@@ -100,7 +100,7 @@ const oauthLogin = async (
         };
     } else {
         if (!email || !userData) {
-            throw new UserInputError("Must Provide Email And UserData On Account Creation");
+            throw new GraphQLError("Must Provide Email And UserData On Account Creation");
         }
         const lynxAppId = uuid();
         const validatedInvite = false;
