@@ -3,8 +3,8 @@ import { GraphQLError } from "graphql";
 import { Context } from "../../index";
 import { BAD_REQUEST, checkIsLoggedIn } from "../../auth";
 import {
-    DYNAMODB_TABLE_INVITES,
-    DYNAMODB_TABLE_USERS,
+    INVITES_TABLE,
+    USERS_TABLE,
     deleteItem,
     getItem,
     getItemFromDynamoDBResult,
@@ -18,7 +18,7 @@ interface Args {
 
 const resolveInviteKey = async (_: any, args: Args, context: Context, info: any): Promise<User> => {
     await checkIsLoggedIn(context);
-    const queryOutput = await getItem(DYNAMODB_TABLE_INVITES, args.inviteKey);
+    const queryOutput = await getItem(INVITES_TABLE, args.inviteKey);
     const inviteInfo = (await getItemFromDynamoDBResult(queryOutput)) as Invite | null;
     if (!inviteInfo && args.inviteKey !== process.env.ESCAPE_INVITE_HATCH) {
         throw new GraphQLError("Invalid Invite Token Provided", {
@@ -26,12 +26,12 @@ const resolveInviteKey = async (_: any, args: Args, context: Context, info: any)
         });
     }
     const updateOutput = await updateItem(
-        DYNAMODB_TABLE_USERS,
+        USERS_TABLE,
         context.userId as string,
         "validatedInvite",
         true
     );
-    await deleteItem(DYNAMODB_TABLE_INVITES, args.inviteKey);
+    await deleteItem(INVITES_TABLE, args.inviteKey);
     return getItemFromDynamoDBResult(updateOutput) as User;
 };
 

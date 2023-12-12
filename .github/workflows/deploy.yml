@@ -37,16 +37,16 @@ jobs:
         run: npm install --prefix lynx-api
 
       - name: Create Lynx .env File
-        uses: iamsauravsharma/create-dotenv@v1.2.1
+        uses: iamsauravsharma/create-dotenv@v2.0.1
         with:
-          env-prefix: 'ENV_'
-          directory: 'lynx-api/'
+          file-path: 'lynx-api/.env'
         env:
-          ENV_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          ENV_APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
-          ENV_APPLE_CLIENT_SECRET: ${{ secrets.APPLE_CLIENT_SECRET }}
-          ENV_AUTH_KEY: ${{ secrets.AUTH_KEY }}
-          ENV_ESCAPE_INVITE_HATCH: ${{ secrets.ESCAPE_INVITE_HATCH }}
+          APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
+          APPLE_CLIENT_SECRET: ${{ secrets.APPLE_CLIENT_SECRET }}
+          AUTH_KEY: ${{ secrets.AUTH_KEY }}
+          ESCAPE_INVITE_HATCH: ${{ secrets.ESCAPE_INVITE_HATCH }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          NODE_ENV: "production"
 
       - name: Deploy
         run: npm run --prefix lynx-api deploy

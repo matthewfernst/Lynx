@@ -1,6 +1,6 @@
 import { Context } from "../../index";
 import { User } from "../../types";
-import { DYNAMODB_TABLE_USERS, getItem, getItemFromDynamoDBResult } from "../../aws/dynamodb";
+import { USERS_TABLE, getItem, getItemFromDynamoDBResult } from "../../aws/dynamodb";
 
 interface Args {
     id: string;
@@ -12,7 +12,7 @@ const userLookupById = async (
     context: Context,
     info: any
 ): Promise<User | null> => {
-    const queryOutput = await getItem(DYNAMODB_TABLE_USERS, args.id);
+    const queryOutput = await getItem(USERS_TABLE, args.id);
     return getItemFromDynamoDBResult(queryOutput) as User | null;
 };
 

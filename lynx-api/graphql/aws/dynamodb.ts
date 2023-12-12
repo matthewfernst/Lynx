@@ -27,10 +27,10 @@ type DynamoDBResult =
     | UpdateItemOutput
     | DeleteItemOutput;
 
-export const DYNAMODB_TABLE_USERS = "lynx-users";
-export const DYNAMODB_TABLE_INVITES = "lynx-invites";
+export const USERS_TABLE = "lynx-users";
+export const INVITES_TABLE = "lynx-invites";
 
-export type Table = typeof DYNAMODB_TABLE_USERS | typeof DYNAMODB_TABLE_INVITES;
+export type Table = typeof USERS_TABLE | typeof INVITES_TABLE;
 
 export const createDocumentClient = (): DynamoDBDocument => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");

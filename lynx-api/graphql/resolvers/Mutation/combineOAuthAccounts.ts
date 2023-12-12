@@ -2,7 +2,7 @@ import { GraphQLError } from "graphql";
 
 import { Context } from "../../index";
 import {
-    DYNAMODB_TABLE_USERS,
+    USERS_TABLE,
     deleteItem,
     getItem,
     getItemFromDynamoDBResult,
@@ -31,7 +31,7 @@ const combineOAuthAccounts = async (
     checkIsLoggedInAndHasValidInvite(context);
     const { type, id, token } = args.combineWith;
     const idKey = idKeyFromIdType(type);
-    const userQuery = await getItemsByIndex(DYNAMODB_TABLE_USERS, idKey, id);
+    const userQuery = await getItemsByIndex(USERS_TABLE, idKey, id);
     const otherUser = getItemFromDynamoDBResult(userQuery) as User | null;
     if (!otherUser) {
         if (!token) {
@@ -42,15 +42,15 @@ const combineOAuthAccounts = async (
         await verifyToken(type, id, token);
         return await updateUserAndReturnResult(context.userId as string, idKey, id);
     }
-    await deleteItem(DYNAMODB_TABLE_USERS, otherUser.id);
+    await deleteItem(USERS_TABLE, otherUser.id);
     await deleteObjectsInBucket(profilePictureBucketName, otherUser.id);
     await deleteObjectsInBucket(toRunRecordsBucket, otherUser.id);
     return await updateUserAndReturnResult(context.userId as string, idKey, id);
 };
 
 const updateUserAndReturnResult = async (userId: string, idKey: string, id: string) => {
-    await updateItem(DYNAMODB_TABLE_USERS, userId, idKey, id);
-    const queryOutput = await getItem(DYNAMODB_TABLE_USERS, userId);
+    await updateItem(USERS_TABLE, userId, idKey, id);
+    const queryOutput = await getItem(USERS_TABLE, userId);
     return getItemFromDynamoDBResult(queryOutput) as User;
 };
 

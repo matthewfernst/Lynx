@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 
 import { Context } from "./index";
 import { User } from "./types";
-import { DYNAMODB_TABLE_USERS, getItem, getItemFromDynamoDBResult } from "./aws/dynamodb";
+import { USERS_TABLE, getItem, getItemFromDynamoDBResult } from "./aws/dynamodb";
 
 export const BAD_REQUEST = "BAD_REQUEST";
 export const UNAUTHENTICATED = "UNAUTHENTICATED";
@@ -47,11 +47,9 @@ export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string |
 
 export const checkIsLoggedIn = async (context: Context): Promise<void> => {
     if (!context.userId) {
-        throw new GraphQLError("Must Be Logged In", {
-            extensions: { code: FORBIDDEN }
-        });
+        throw new GraphQLError("Must Be Logged In", { extensions: { code: FORBIDDEN } });
     }
-    const queryOutput = await getItem(DYNAMODB_TABLE_USERS, context.userId);
+    const queryOutput = await getItem(USERS_TABLE, context.userId);
     const userRecord = getItemFromDynamoDBResult(queryOutput);
     if (!userRecord) {
         throw new GraphQLError("User Does Not Exist", {
@@ -62,11 +60,9 @@ export const checkIsLoggedIn = async (context: Context): Promise<void> => {
 
 export const checkIsLoggedInAndHasValidInvite = async (context: Context): Promise<void> => {
     if (!context.userId) {
-        throw new GraphQLError("Must Be Logged In", {
-            extensions: { code: FORBIDDEN }
-        });
+        throw new GraphQLError("Must Be Logged In", { extensions: { code: FORBIDDEN } });
     }
-    const queryOutput = await getItem(DYNAMODB_TABLE_USERS, context.userId);
+    const queryOutput = await getItem(USERS_TABLE, context.userId);
     const userRecord = getItemFromDynamoDBResult(queryOutput) as User | null;
     if (!userRecord || !userRecord.validatedInvite) {
         throw new GraphQLError("User Does Not Exist Or No Validated Invite", {

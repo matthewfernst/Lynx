@@ -6,10 +6,10 @@
     "license": "MIT",
     "main": "index.js",
     "scripts": {
-        "types": "tsc -p ./tsconfig.lambda.json && rm -rf ./graphql/**/*.js ./reducer/**/*.js ./unzipper/**/*.js",
+        "types": "tsc -p ./tsconfig.lambda.json && npm run clean",
         "lint": "eslint ./**/*.ts",
         "check": "npm run types && npm run lint",
-        "clean": "rm -rf .build .serverless coverage dist",
+        "clean": "rm -rf .build .serverless coverage dist ./graphql/**/*.js ./reducer/**/*.js ./unzipper/**/*.js",
         "start": "npm run clean && serverless offline start",
         "deploy": "serverless deploy --stage production"
     },

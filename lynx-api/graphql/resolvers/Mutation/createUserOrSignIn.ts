@@ -7,7 +7,7 @@ import { v4 as uuid } from "uuid";
 import { BAD_REQUEST, generateToken } from "../../auth";
 import { Context } from "../../index";
 import {
-    DYNAMODB_TABLE_USERS,
+    USERS_TABLE,
     getItemFromDynamoDBResult,
     getItemsByIndex,
     putItem
@@ -91,7 +91,7 @@ const oauthLogin = async (
     email?: string,
     userData?: { key: string; value: string }[]
 ): Promise<AuthorizationToken> => {
-    const dynamodbResult = await getItemsByIndex(DYNAMODB_TABLE_USERS, idFieldName, id);
+    const dynamodbResult = await getItemsByIndex(USERS_TABLE, idFieldName, id);
     const user = (await getItemFromDynamoDBResult(dynamodbResult)) as User | null;
     const oneHourFromNow = DateTime.now().plus({ hours: 1 }).toMillis().toString();
     if (user) {
@@ -108,7 +108,7 @@ const oauthLogin = async (
         }
         const lynxAppId = uuid();
         const validatedInvite = false;
-        await putItem(DYNAMODB_TABLE_USERS, {
+        await putItem(USERS_TABLE, {
             id: lynxAppId,
             [idFieldName]: id,
             validatedInvite,

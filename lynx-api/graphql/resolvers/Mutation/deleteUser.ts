@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { Context } from "../../index";
 import { checkIsLoggedInAndHasValidInvite } from "../../auth";
-import { DYNAMODB_TABLE_USERS, deleteItem } from "../../aws/dynamodb";
+import { USERS_TABLE, deleteItem } from "../../aws/dynamodb";
 import { deleteObjectsInBucket, profilePictureBucketName, toRunRecordsBucket } from "../../aws/s3";
 import { User } from "../../types";
 import { OAuthType } from "./createUserOrSignIn";
@@ -25,7 +25,7 @@ const deleteUser = async (_: any, args: Args, context: Context, info: any): Prom
     }
     await deleteObjectsInBucket(profilePictureBucketName, context.userId as string);
     await deleteObjectsInBucket(toRunRecordsBucket, context.userId as string);
-    const result = await deleteItem(DYNAMODB_TABLE_USERS, context.userId as string);
+    const result = await deleteItem(USERS_TABLE, context.userId as string);
     return result.Attributes as unknown as User;
 };
 
