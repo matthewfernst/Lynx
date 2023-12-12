@@ -1,8 +1,9 @@
 import "dotenv/config";
 
-import { ApolloServer } from "apollo-server-lambda";
-
-import typeDefs from "./schema.graphql";
+import { ApolloServer } from "@apollo/server";
+import { startServerAndCreateLambdaHandler, handlers } from "@as-integrations/aws-lambda";
+import { loadSchemaSync } from "@graphql-tools/load";
+import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 
 import { authenticateHTTPAccessToken } from "./auth";
 import { resolvers } from "./resolvers";
@@ -11,8 +12,8 @@ export interface Context {
     userId: string | null;
 }
 
-const server = new ApolloServer({
-    typeDefs,
+const server = new ApolloServer<Context>({
+    typeDefs: loadSchemaSync(__dirname + "/schema.graphql", { loaders: [new GraphQLFileLoader()] }),
     resolvers,
     formatError: (err) => {
         if (!err.extensions) {
@@ -26,17 +27,23 @@ const server = new ApolloServer({
             console.log(err);
         }
         return err;
-    },
-    context: async ({ express }): Promise<Context> => ({
-        userId: authenticateHTTPAccessToken(express.req)
-    })
-});
-
-exports.handler = server.createHandler({
-    expressGetMiddlewareOptions: {
-        cors: {
-            origin: true,
-            credentials: true
-        }
     }
 });
+
+exports.handler = startServerAndCreateLambdaHandler(
+    server,
+    handlers.createAPIGatewayProxyEventRequestHandler(),
+    {
+        context: async ({ event }) => ({
+            userId: authenticateHTTPAccessToken(event)
+        }),
+        // CORS
+        middleware: [
+            async (event) => {
+                return async (result) => {
+                    result.headers = { ...result.headers };
+                };
+            }
+        ]
+    }
+);

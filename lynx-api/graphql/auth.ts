@@ -1,5 +1,6 @@
-import { AuthenticationError, ExpressContext } from "apollo-server-express";
-import { APIGatewayEvent } from "aws-lambda";
+import { GraphQLError } from "graphql";
+
+import { APIGatewayProxyEvent } from "aws-lambda";
 
 import jwt from "jsonwebtoken";
 
@@ -21,46 +22,44 @@ export const decryptToken = (token: string): User => {
     return jwt.verify(token, process.env.AUTH_KEY || "AUTH") as User;
 };
 
-export const authenticateHTTPAccessToken = (
-    req: ExpressContext["req"] | APIGatewayEvent
-): string | null => {
+export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string | null => {
     const authHeader = req.headers?.authorization;
     if (!authHeader) return null;
 
     const token = authHeader.split(" ")[1];
-    if (!token) throw new AuthenticationError("Authentication Token Not Specified");
+    if (!token) throw new GraphQLError("Authentication Token Not Specified");
 
     try {
         return decryptToken(token).id;
     } catch (err) {
-        throw new AuthenticationError("Invalid Authentication Token");
+        throw new GraphQLError("Invalid Authentication Token");
     }
 };
 
 export const checkIsLoggedIn = async (context: Context): Promise<void> => {
     if (!context.userId) {
-        throw new AuthenticationError("Must Be Logged In");
+        throw new GraphQLError("Must Be Logged In");
     }
     const queryOutput = await getItem(DYNAMODB_TABLE_USERS, context.userId);
     const userRecord = getItemFromDynamoDBResult(queryOutput);
     if (!userRecord) {
-        throw new AuthenticationError("User Does Not Exist");
+        throw new GraphQLError("User Does Not Exist");
     }
 };
 
 export const checkIsLoggedInAndHasValidInvite = async (context: Context): Promise<void> => {
     if (!context.userId) {
-        throw new AuthenticationError("Must Be Logged In");
+        throw new GraphQLError("Must Be Logged In");
     }
     const queryOutput = await getItem(DYNAMODB_TABLE_USERS, context.userId);
     const userRecord = getItemFromDynamoDBResult(queryOutput) as User | null;
     if (!userRecord || !userRecord.validatedInvite) {
-        throw new AuthenticationError("User Does Not Exist Or No Validated Invite");
+        throw new GraphQLError("User Does Not Exist Or No Validated Invite");
     }
 };
 
 export const checkIsMe = async (parent: Parent, context: Context): Promise<void> => {
     if (!context.userId || parent.id?.toString() !== context.userId) {
-        throw new AuthenticationError("Permissions Invalid For Requested Field");
+        throw new GraphQLError("Permissions Invalid For Requested Field");
     }
 };
