@@ -39,14 +39,15 @@ jobs:
       - name: Create Lynx .env File
         uses: iamsauravsharma/create-dotenv@v2.0.1
         with:
+          input-prefix: 'LYNX_' # Needed To Prevent GitHub Variables From Propagating To Lambda
           file-path: 'lynx-api/.env'
         env:
-          APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
-          APPLE_CLIENT_SECRET: ${{ secrets.APPLE_CLIENT_SECRET }}
-          AUTH_KEY: ${{ secrets.AUTH_KEY }}
-          ESCAPE_INVITE_HATCH: ${{ secrets.ESCAPE_INVITE_HATCH }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          NODE_ENV: "production"
+          LYNX_APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
+          LYNX_APPLE_CLIENT_SECRET: ${{ secrets.APPLE_CLIENT_SECRET }}
+          LYNX_AUTH_KEY: ${{ secrets.AUTH_KEY }}
+          LYNX_ESCAPE_INVITE_HATCH: ${{ secrets.ESCAPE_INVITE_HATCH }}
+          LYNX_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          LYNX_NODE_ENV: "production"
 
       - name: Deploy
         run: npm run --prefix lynx-api deploy
