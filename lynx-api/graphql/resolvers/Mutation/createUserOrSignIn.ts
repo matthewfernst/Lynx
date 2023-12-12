@@ -4,7 +4,7 @@ import { GraphQLError } from "graphql";
 import { DateTime } from "luxon";
 import { v4 as uuid } from "uuid";
 
-import { generateToken } from "../../auth";
+import { BAD_REQUEST, generateToken } from "../../auth";
 import { Context } from "../../index";
 import {
     DYNAMODB_TABLE_USERS,
@@ -43,7 +43,9 @@ const createUserOrSignIn = async (
 ): Promise<AuthorizationToken> => {
     const { type, id, token } = args.oauthLoginId;
     if (!token) {
-        throw new GraphQLError("Token Is Mandatory");
+        throw new GraphQLError("Token Is Mandatory", {
+            extensions: { code: BAD_REQUEST }
+        });
     }
     await verifyToken(type, id, token);
     return await oauthLogin(idKeyFromIdType(type), id, args.email, args.userData);
@@ -100,7 +102,9 @@ const oauthLogin = async (
         };
     } else {
         if (!email || !userData) {
-            throw new GraphQLError("Must Provide Email And UserData On Account Creation");
+            throw new GraphQLError("Must Provide Email And UserData On Account Creation", {
+                extensions: { code: BAD_REQUEST }
+            });
         }
         const lynxAppId = uuid();
         const validatedInvite = false;

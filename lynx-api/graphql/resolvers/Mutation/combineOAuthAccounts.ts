@@ -11,7 +11,7 @@ import {
 } from "../../aws/dynamodb";
 import { OAuthType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
 import { User } from "../../types";
-import { checkIsLoggedInAndHasValidInvite } from "../../auth";
+import { BAD_REQUEST, checkIsLoggedInAndHasValidInvite } from "../../auth";
 import { deleteObjectsInBucket, profilePictureBucketName, toRunRecordsBucket } from "../../aws/s3";
 
 interface Args {
@@ -35,7 +35,9 @@ const combineOAuthAccounts = async (
     const otherUser = getItemFromDynamoDBResult(userQuery) as User | null;
     if (!otherUser) {
         if (!token) {
-            throw new GraphQLError("User Does Not Exist and No Token Provided");
+            throw new GraphQLError("User Does Not Exist and No Token Provided", {
+                extensions: { code: BAD_REQUEST }
+            });
         }
         await verifyToken(type, id, token);
         return await updateUserAndReturnResult(context.userId as string, idKey, id);

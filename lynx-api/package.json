@@ -29,7 +29,6 @@
         "serverless-offline-ses": "^0.0.7",
         "serverless-plugin-typescript": "^2.1.5",
         "serverless-prune-plugin": "^2.0.2",
-        "ts-node": "^10.9.2",
         "typescript": "^5.3.3"
     },
     "dependencies": {
@@ -53,7 +52,6 @@
         "dotenv": "^16.3.1",
         "google-auth-library": "^9.4.1",
         "graphql": "^16.8.1",
-        "graphql-ws": "^5.14.2",
         "jsonwebtoken": "^9.0.2",
         "luxon": "^3.4.4",
         "unzipper": "^0.10.14",

@@ -8,6 +8,10 @@ import { Context } from "./index";
 import { User } from "./types";
 import { DYNAMODB_TABLE_USERS, getItem, getItemFromDynamoDBResult } from "./aws/dynamodb";
 
+export const BAD_REQUEST = "BAD_REQUEST";
+export const UNAUTHENTICATED = "UNAUTHENTICATED";
+export const FORBIDDEN = "FORBIDDEN";
+
 interface Parent {
     id: string;
 }
@@ -27,39 +31,54 @@ export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string |
     if (!authHeader) return null;
 
     const token = authHeader.split(" ")[1];
-    if (!token) throw new GraphQLError("Authentication Token Not Specified");
+    if (!token)
+        throw new GraphQLError("Authentication Token Not Specified", {
+            extensions: { code: UNAUTHENTICATED }
+        });
 
     try {
         return decryptToken(token).id;
     } catch (err) {
-        throw new GraphQLError("Invalid Authentication Token");
+        throw new GraphQLError("Invalid Authentication Token", {
+            extensions: { code: UNAUTHENTICATED, token }
+        });
     }
 };
 
 export const checkIsLoggedIn = async (context: Context): Promise<void> => {
     if (!context.userId) {
-        throw new GraphQLError("Must Be Logged In");
+        throw new GraphQLError("Must Be Logged In", {
+            extensions: { code: FORBIDDEN }
+        });
     }
     const queryOutput = await getItem(DYNAMODB_TABLE_USERS, context.userId);
     const userRecord = getItemFromDynamoDBResult(queryOutput);
     if (!userRecord) {
-        throw new GraphQLError("User Does Not Exist");
+        throw new GraphQLError("User Does Not Exist", {
+            extensions: { code: UNAUTHENTICATED, userId: context.userId }
+        });
     }
 };
 
 export const checkIsLoggedInAndHasValidInvite = async (context: Context): Promise<void> => {
     if (!context.userId) {
-        throw new GraphQLError("Must Be Logged In");
+        throw new GraphQLError("Must Be Logged In", {
+            extensions: { code: FORBIDDEN }
+        });
     }
     const queryOutput = await getItem(DYNAMODB_TABLE_USERS, context.userId);
     const userRecord = getItemFromDynamoDBResult(queryOutput) as User | null;
     if (!userRecord || !userRecord.validatedInvite) {
-        throw new GraphQLError("User Does Not Exist Or No Validated Invite");
+        throw new GraphQLError("User Does Not Exist Or No Validated Invite", {
+            extensions: { code: UNAUTHENTICATED, userId: context.userId }
+        });
     }
 };
 
 export const checkIsMe = async (parent: Parent, context: Context): Promise<void> => {
     if (!context.userId || parent.id?.toString() !== context.userId) {
-        throw new GraphQLError("Permissions Invalid For Requested Field");
+        throw new GraphQLError("Permissions Invalid For Requested Field", {
+            extensions: { code: FORBIDDEN, userId: context.userId }
+        });
     }
 };
