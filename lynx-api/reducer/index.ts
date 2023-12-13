@@ -9,14 +9,22 @@ import { leaderboardSortTypesToQueryFields } from "../graphql/resolvers/Query/le
 export async function handler(event: any, context: any) {
     for (const record of event.Records) {
         const bucket = decodeURIComponent(record.s3.bucket.name);
-        const userId = decodeURIComponent(record.s3.object.key).split("/")[0];
-        const unzippedRecord = await getRecordFromBucket(bucket, record.s3.object.key);
+        const objectKey = decodeURIComponent(record.s3.object.key);
+
+        console.log(`Retrieving unzipped record from ${bucket} with key ${objectKey}`);
+        const unzippedRecord = await getRecordFromBucket(bucket, objectKey);
         const activity = await xmlToActivity(unzippedRecord);
 
         Object.values(leaderboardSortTypesToQueryFields).forEach(async (key) => {
-            const activityKey = key == "verticalDistance" ? "vertical" : activity[key]
-            await updateItem(userId, key, activityKey);
-        })
+            const userId = objectKey.split("/")[0];
+            const value = key == "verticalDistance" ? activity.vertical : activity[key];
+            const updateOutput = await updateItem(userId, key, value);
+            if (updateOutput.Attributes) {
+                Object.keys(updateOutput.Attributes).forEach((attribute) => {
+                    console.log(`Added ${value} to ${attribute} for user ${userId}`);
+                });
+            }
+        });
     }
     return { statusCode: 200 };
 }
@@ -35,7 +43,7 @@ export const updateItem = async (
             UpdateExpression: "set #updateKey = #updateKey + :value",
             ExpressionAttributeNames: { "#updateKey": key },
             ExpressionAttributeValues: { ":value": value },
-            ReturnValues: "ALL_NEW"
+            ReturnValues: "UPDATED_NEW"
         });
         return await documentClient.send(updateItemRequest);
     } catch (err) {

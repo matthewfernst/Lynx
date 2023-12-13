@@ -75,6 +75,8 @@ resources:
             AttributeType: S
           - AttributeName: googleId
             AttributeType: S
+          - AttributeName: GSI_partition
+            AttributeType: "N"
           - AttributeName: distance
             AttributeType: "N"
           - AttributeName: runCount
@@ -103,26 +105,34 @@ resources:
                 - validatedInvite
           - IndexName: distance
             KeySchema:
-              - AttributeName: distance
+              - AttributeName: GSI_partition
                 KeyType: HASH
+              - AttributeName: distance
+                KeyType: RANGE
             Projection:
               ProjectionType: KEYS_ONLY
           - IndexName: runCount
             KeySchema:
-              - AttributeName: runCount
+              - AttributeName: GSI_partition
                 KeyType: HASH
+              - AttributeName: runCount
+                KeyType: RANGE
             Projection:
               ProjectionType: KEYS_ONLY
           - IndexName: topSpeed
             KeySchema:
-              - AttributeName: topSpeed
+              - AttributeName: GSI_partition
                 KeyType: HASH
+              - AttributeName: topSpeed
+                KeyType: RANGE
             Projection:
               ProjectionType: KEYS_ONLY
           - IndexName: verticalDistance
             KeySchema:
-              - AttributeName: verticalDistance
+              - AttributeName: GSI_partition
                 KeyType: HASH
+              - AttributeName: verticalDistance
+                KeyType: RANGE
             Projection:
               ProjectionType: KEYS_ONLY
     inviteTable:

@@ -10,6 +10,7 @@ interface Args {
     limit: number;
 }
 
+export const LEADERBOARD_PARTITIONS = 2;
 export const leaderboardSortTypesToQueryFields: { [key in LeaderboardSort]: string } = {
     DISTANCE: "distance",
     RUN_COUNT: "runCount",

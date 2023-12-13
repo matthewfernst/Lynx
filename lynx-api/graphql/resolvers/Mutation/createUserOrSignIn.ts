@@ -8,6 +8,7 @@ import { BAD_REQUEST, generateToken } from "../../auth";
 import { Context } from "../../index";
 import { USERS_TABLE, getItemsByIndex, putItem } from "../../aws/dynamodb";
 import { User } from "../../types";
+import { LEADERBOARD_PARTITIONS } from "../Query/leaderboard";
 
 export type OAuthType = "APPLE" | "GOOGLE";
 
@@ -101,6 +102,7 @@ const oauthLogin = async (
             id: lynxAppId,
             [idFieldName]: id,
             validatedInvite,
+            GSI_partition: Math.floor(Math.random() * LEADERBOARD_PARTITIONS),
             email,
             ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
         });
