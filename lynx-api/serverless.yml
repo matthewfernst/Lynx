@@ -4,14 +4,14 @@ plugins:
   - serverless-prune-plugin
   - serverless-dotenv-plugin
   - serverless-plugin-typescript
-  - serverless-dynamodb-local
+  - serverless-dynamodb
   - serverless-offline-ses
   - serverless-offline
 custom:
   stage: ${opt:stage, self:provider.stage}
   serverlessPluginTypescript:
     tsConfigFileLocation: ./tsconfig.lambda.json
-  dynamodb:
+  serverless-dynamodb:
     stages:
       - ${opt:stage, self:provider.stage}
     start:

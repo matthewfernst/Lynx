@@ -27,7 +27,7 @@ export const decryptToken = (token: string): User => {
 };
 
 export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string | null => {
-    const authHeader = req.headers?.authorization;
+    const authHeader = req.headers?.Authorization;
     if (!authHeader) return null;
 
     const token = authHeader.split(" ")[1];
@@ -46,7 +46,6 @@ export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string |
 };
 
 export const checkIsLoggedIn = async (context: Context): Promise<void> => {
-    console.log(context);
     if (!context.userId) {
         throw new GraphQLError("Must Be Logged In", { extensions: { code: FORBIDDEN } });
     }

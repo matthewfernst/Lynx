@@ -54,6 +54,7 @@
         "graphql": "^16.8.1",
         "jsonwebtoken": "^9.0.2",
         "luxon": "^3.4.4",
+        "serverless-dynamodb": "^0.2.47",
         "unzipper": "^0.10.14",
         "uuid": "^9.0.1",
         "xml2js": "^0.6.2"
