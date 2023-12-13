@@ -20,7 +20,7 @@ interface Args {
     oauthLoginId: {
         type: OAuthType;
         id: string;
-        token?: string;
+        token: string;
     };
     email?: string;
     userData: {
@@ -42,11 +42,6 @@ const createUserOrSignIn = async (
     info: any
 ): Promise<AuthorizationToken> => {
     const { type, id, token } = args.oauthLoginId;
-    if (!token) {
-        throw new GraphQLError("Token Is Mandatory", {
-            extensions: { code: BAD_REQUEST }
-        });
-    }
     await verifyToken(type, id, token);
     return await oauthLogin(idKeyFromIdType(type), id, args.email, args.userData);
 };

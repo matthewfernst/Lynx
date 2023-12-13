@@ -46,6 +46,7 @@ export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string |
 };
 
 export const checkIsLoggedIn = async (context: Context): Promise<void> => {
+    console.log(context);
     if (!context.userId) {
         throw new GraphQLError("Must Be Logged In", { extensions: { code: FORBIDDEN } });
     }
