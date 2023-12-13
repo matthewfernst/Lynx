@@ -1,14 +1,18 @@
 import { Context } from "../../index";
 import { User, UserStats } from "../../types";
-import { USERS_TABLE, getItem, getItemFromDynamoDBResult } from "../../aws/dynamodb";
+import { USERS_TABLE, getItem } from "../../aws/dynamodb";
 import { getLogbookInformationFromS3 } from "../User/logbook";
 
-const selfLookup = async (_: any, args: {}, context: Context, info: any): Promise<User | null> => {
+const selfLookup = async (
+    _: any,
+    args: {},
+    context: Context,
+    info: any
+): Promise<User | undefined> => {
     if (!context.userId) {
-        return null;
+        return undefined;
     }
-    const queryOutput = await getItem(USERS_TABLE, context.userId);
-    let userInformation = getItemFromDynamoDBResult(queryOutput) as User | null;
+    let userInformation = await getItem(USERS_TABLE, context.userId);
     if (userInformation) {
         userInformation = await populateLogbookDataForUser(userInformation);
     }

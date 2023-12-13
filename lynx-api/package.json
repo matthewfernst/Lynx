@@ -9,7 +9,7 @@
         "types": "tsc -p ./tsconfig.lambda.json && npm run clean",
         "lint": "eslint ./**/*.ts",
         "check": "npm run types && npm run lint",
-        "clean": "rm -rf .build .serverless coverage dist ./graphql/**/*.js ./reducer/**/*.js ./unzipper/**/*.js",
+        "clean": "rm -rf graphql/**/*.js reducer/**/*.js unzipper/**/*.js .build .serverless coverage dist",
         "start": "npm run clean && serverless offline start",
         "deploy": "serverless deploy --stage production"
     },

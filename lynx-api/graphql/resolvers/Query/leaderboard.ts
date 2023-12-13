@@ -18,12 +18,10 @@ export const leaderboardSortTypesToQueryFields: { [key in LeaderboardSort]: stri
 };
 
 const leaderboard = async (_: any, args: Args, context: Context, info: any): Promise<User[]> => {
-    const scanOutput = await scanAllItems(USERS_TABLE);
-    const rawUsers = scanOutput.Items as unknown[] as User[];
+    const rawUsers = (await scanAllItems(USERS_TABLE)) as User[];
     const users = await Promise.all(
         rawUsers.map(async (user) => await populateLogbookDataForUser(user))
     );
-
     const sortProperty = leaderboardSortTypesToQueryFields[args.sortBy];
     return users
         .sort((a, b) => b.userStats!![sortProperty] - a.userStats!![sortProperty])

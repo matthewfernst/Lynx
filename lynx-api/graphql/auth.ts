@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 
 import { Context } from "./index";
 import { User } from "./types";
-import { USERS_TABLE, getItem, getItemFromDynamoDBResult } from "./aws/dynamodb";
+import { USERS_TABLE, getItem } from "./aws/dynamodb";
 
 export const BAD_REQUEST = "BAD_REQUEST";
 export const UNAUTHENTICATED = "UNAUTHENTICATED";
@@ -45,30 +45,27 @@ export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string |
     }
 };
 
-export const checkIsLoggedIn = async (context: Context): Promise<void> => {
+export const checkIsLoggedIn = async (context: Context): Promise<User> => {
     if (!context.userId) {
         throw new GraphQLError("Must Be Logged In", { extensions: { code: FORBIDDEN } });
     }
-    const queryOutput = await getItem(USERS_TABLE, context.userId);
-    const userRecord = getItemFromDynamoDBResult(queryOutput);
+    const userRecord = await getItem(USERS_TABLE, context.userId);
     if (!userRecord) {
         throw new GraphQLError("User Does Not Exist", {
             extensions: { code: UNAUTHENTICATED, userId: context.userId }
         });
     }
+    return userRecord;
 };
 
-export const checkIsLoggedInAndHasValidInvite = async (context: Context): Promise<void> => {
-    if (!context.userId) {
-        throw new GraphQLError("Must Be Logged In", { extensions: { code: FORBIDDEN } });
-    }
-    const queryOutput = await getItem(USERS_TABLE, context.userId);
-    const userRecord = getItemFromDynamoDBResult(queryOutput) as User | null;
-    if (!userRecord || !userRecord.validatedInvite) {
-        throw new GraphQLError("User Does Not Exist Or No Validated Invite", {
+export const checkIsLoggedInAndHasValidInvite = async (context: Context): Promise<User> => {
+    const userRecord = await checkIsLoggedIn(context);
+    if (!userRecord.validatedInvite) {
+        throw new GraphQLError("No Validated Invite", {
             extensions: { code: UNAUTHENTICATED, userId: context.userId }
         });
     }
+    return userRecord;
 };
 
 export const checkIsMe = async (parent: Parent, context: Context): Promise<void> => {

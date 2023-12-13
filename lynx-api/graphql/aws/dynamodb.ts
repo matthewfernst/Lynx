@@ -1,13 +1,4 @@
-import {
-    DynamoDBClientConfig,
-    DeleteItemOutput,
-    GetItemOutput,
-    PutItemOutput,
-    QueryOutput,
-    ScanOutput,
-    UpdateItemOutput,
-    DynamoDB
-} from "@aws-sdk/client-dynamodb";
+import { DynamoDBClientConfig, DynamoDB } from "@aws-sdk/client-dynamodb";
 import {
     DynamoDBDocument,
     DeleteCommand,
@@ -20,17 +11,15 @@ import {
 
 import { Invite, User } from "../types";
 
-type DynamoDBResult =
-    | GetItemOutput
-    | QueryOutput
-    | PutItemOutput
-    | UpdateItemOutput
-    | DeleteItemOutput;
-
 export const USERS_TABLE = "lynx-users";
 export const INVITES_TABLE = "lynx-invites";
 
 export type Table = typeof USERS_TABLE | typeof INVITES_TABLE;
+
+type ObjectType<T extends Table> = 
+    T extends typeof USERS_TABLE ? User :
+    T extends typeof INVITES_TABLE ? Invite :
+    unknown;
 
 export const createDocumentClient = (): DynamoDBDocument => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
@@ -44,26 +33,30 @@ export const createDocumentClient = (): DynamoDBDocument => {
     return DynamoDBDocument.from(dynamodbClient);
 };
 
-export const getItem = async (table: Table, id: string): Promise<GetItemOutput> => {
+export const getItem = async <T extends Table>(
+    table: T,
+    id: string
+): Promise<ObjectType<T> | undefined> => {
     const documentClient = createDocumentClient();
     try {
-        console.log(`Getting item from table ${table} with id ${id}`);
+        console.log(`Getting item from ${table} with id ${id}`);
         const getItemRequest = new GetCommand({ TableName: table, Key: { id } });
-        return await documentClient.send(getItemRequest);
+        const itemOutput = await documentClient.send(getItemRequest);
+        return itemOutput.Item as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
         throw Error("DynamoDB Get Call Failed");
     }
 };
 
-export const getItemsByIndex = async (
-    table: Table,
+export const getItemsByIndex = async <T extends Table>(
+    table: T,
     key: string,
     value: string
-): Promise<QueryOutput> => {
+): Promise<ObjectType<T>[] | undefined> => {
     const documentClient = createDocumentClient();
     try {
-        console.log(`Getting item from table ${table} with ${key} ${value}`);
+        console.log(`Getting item from ${table} with ${key} ${value}`);
         const queryRequest = new QueryCommand({
             TableName: table,
             IndexName: key,
@@ -71,50 +64,58 @@ export const getItemsByIndex = async (
             ExpressionAttributeNames: { "#indexKey": key },
             ExpressionAttributeValues: { ":value": value }
         });
-        return await documentClient.send(queryRequest);
+        const itemOutput = await documentClient.send(queryRequest);
+        return itemOutput.Items as ObjectType<T>[] | undefined;
     } catch (err) {
         console.error(err);
         throw Error("DynamoDB Query Call Failed");
     }
 };
 
-export const scanAllItems = async (table: Table): Promise<ScanOutput> => {
+export const scanAllItems = async <T extends Table>(
+    table: T
+): Promise<ObjectType<T>[] | undefined> => {
     const documentClient = createDocumentClient();
     try {
         console.log(`Getting all items from table ${table}`);
         const scanRequest = new ScanCommand({ TableName: table });
-        return await documentClient.send(scanRequest);
+        const itemOutput = await documentClient.send(scanRequest);
+        return itemOutput.Items as ObjectType<T>[] | undefined;
     } catch (err) {
         console.error(err);
         throw Error("DynamoDB Scan Call Failed");
     }
 };
 
-export const putItem = async (table: Table, item: Object): Promise<PutItemOutput> => {
+export const putItem = async <T extends Table>(
+    table: T,
+    item: Object
+): Promise<ObjectType<T> | undefined> => {
     const documentClient = createDocumentClient();
     try {
-        console.log(`Putting item into table ${table}`);
+        console.log(`Putting item into ${table}`);
         const putItemRequest = new PutCommand({
             TableName: table,
             Item: item,
             ReturnValues: "ALL_OLD"
         });
-        return await documentClient.send(putItemRequest);
+        const itemOutput = await documentClient.send(putItemRequest);
+        return itemOutput.Attributes as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
         throw Error("DynamoDB Put Call Failed");
     }
 };
 
-export const updateItem = async (
-    table: Table,
+export const updateItem = async <T extends Table>(
+    table: T,
     id: string,
     key: string,
     value: any
-): Promise<UpdateItemOutput> => {
+): Promise<ObjectType<T> | undefined> => {
     const documentClient = createDocumentClient();
     try {
-        console.log(`Updating item in table ${table} with id ${id}. New ${key} is ${value}`);
+        console.log(`Updating item in ${table} with id ${id}. New ${key} is ${value}`);
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
@@ -123,23 +124,24 @@ export const updateItem = async (
             ExpressionAttributeValues: { ":value": value },
             ReturnValues: "ALL_NEW"
         });
-        return await documentClient.send(updateItemRequest);
+        const itemOutput = await documentClient.send(updateItemRequest);
+        return itemOutput.Attributes as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
         throw Error("DynamoDB Update Call Failed");
     }
 };
 
-export const addItemsToArray = async (
-    table: Table,
+export const addItemsToArray = async <T extends Table>(
+    table: T,
     id: string,
     key: string,
     values: string[]
-): Promise<UpdateItemOutput> => {
+): Promise<ObjectType<T> | undefined> => {
     const documentClient = createDocumentClient();
     try {
         console.log(
-            `Updating item in table ${table} with id ${id}. ${key} now has the following as values: ${values}`
+            `Updating item in ${table} with id ${id}. ${key} now has the following as values: ${values}`
         );
         const updateItemRequest = new UpdateCommand({
             TableName: table,
@@ -149,25 +151,26 @@ export const addItemsToArray = async (
             ExpressionAttributeValues: { ":value": values },
             ReturnValues: "ALL_NEW"
         });
-        return await documentClient.send(updateItemRequest);
+        const itemOutput = await documentClient.send(updateItemRequest);
+        return itemOutput.Attributes as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
         throw Error("DynamoDB Update Call Failed");
     }
 };
 
-export const deleteItemsFromArray = async (
-    table: Table,
+export const deleteItemsFromArray = async <T extends Table>(
+    table: T,
     id: string,
     key: string,
     values: string[]
-): Promise<UpdateItemOutput> => {
+): Promise<ObjectType<T> | undefined> => {
     const documentClient = createDocumentClient();
     try {
         console.log(
-            `Updating item in table ${table} with id ${id}. ${key} no longer has the following as values ${values}`
+            `Updating item in ${table} with id ${id}. ${key} no longer has the following as values: ${values}`
         );
-        const item = getItemFromDynamoDBResult(await getItem(table, id));
+        const item = await getItem(table, id);
         if (!item) {
             throw new Error("Error finding item for this userId");
         }
@@ -188,38 +191,30 @@ export const deleteItemsFromArray = async (
             ExpressionAttributeNames: { "#updateKey": key },
             ReturnValues: "ALL_NEW"
         });
-        return await documentClient.send(updateItemRequest);
+        const itemOutput = await documentClient.send(updateItemRequest);
+        return itemOutput.Attributes as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
         throw Error("DynamoDB Update Call Failed");
     }
 };
 
-export const deleteItem = async (table: Table, id: string): Promise<DeleteItemOutput> => {
+export const deleteItem = async <T extends Table>(
+    table: T,
+    id: string
+): Promise<ObjectType<T> | undefined> => {
     const documentClient = createDocumentClient();
     try {
-        console.log(`Deleting item from table ${table} with id ${id}`);
+        console.log(`Deleting item from ${table} with id ${id}`);
         const deleteItemRequest = new DeleteCommand({
             TableName: table,
             Key: { id },
             ReturnValues: "ALL_OLD"
         });
-        return await documentClient.send(deleteItemRequest);
+        const itemOutput = await documentClient.send(deleteItemRequest);
+        return itemOutput.Attributes as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
         throw Error("DynamoDB Delete Call Failed");
     }
-};
-
-export const getItemFromDynamoDBResult = (dynamodbResult: DynamoDBResult): User | Invite | null => {
-    if ("Item" in dynamodbResult && dynamodbResult.Item) {
-        return dynamodbResult.Item as any;
-    }
-    if ("Items" in dynamodbResult && dynamodbResult.Items) {
-        return dynamodbResult.Items[0] as any;
-    }
-    if ("Attributes" in dynamodbResult && dynamodbResult.Attributes) {
-        return dynamodbResult.Attributes as any;
-    }
-    return null;
 };

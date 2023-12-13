@@ -1,11 +1,6 @@
 import { Context } from "../../index";
 import { checkIsLoggedInAndHasValidInvite } from "../../auth";
-import {
-    USERS_TABLE,
-    getItem,
-    getItemFromDynamoDBResult,
-    updateItem
-} from "../../aws/dynamodb";
+import { USERS_TABLE, getItem, updateItem } from "../../aws/dynamodb";
 import { User } from "../../types";
 
 interface Args {
@@ -20,8 +15,7 @@ const editUser = async (_: any, args: Args, context: Context, info: any): Promis
     for (const data of args.userData) {
         await updateItem(USERS_TABLE, context.userId as string, data.key, data.value);
     }
-    const queryOutput = await getItem(USERS_TABLE, context.userId as string);
-    return getItemFromDynamoDBResult(queryOutput) as User;
+    return await getItem(USERS_TABLE, context.userId as string) as User;
 };
 
 export default editUser;

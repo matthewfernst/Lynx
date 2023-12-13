@@ -6,12 +6,7 @@ import { v4 as uuid } from "uuid";
 
 import { BAD_REQUEST, generateToken } from "../../auth";
 import { Context } from "../../index";
-import {
-    USERS_TABLE,
-    getItemFromDynamoDBResult,
-    getItemsByIndex,
-    putItem
-} from "../../aws/dynamodb";
+import { USERS_TABLE, getItemsByIndex, putItem } from "../../aws/dynamodb";
 import { User } from "../../types";
 
 export type OAuthType = "APPLE" | "GOOGLE";
@@ -86,8 +81,7 @@ const oauthLogin = async (
     email?: string,
     userData?: { key: string; value: string }[]
 ): Promise<AuthorizationToken> => {
-    const dynamodbResult = await getItemsByIndex(USERS_TABLE, idFieldName, id);
-    const user = (await getItemFromDynamoDBResult(dynamodbResult)) as User | null;
+    const user = ((await getItemsByIndex(USERS_TABLE, idFieldName, id)) as User[])[0];
     const oneHourFromNow = DateTime.now().plus({ hours: 1 }).toMillis().toString();
     if (user) {
         return {

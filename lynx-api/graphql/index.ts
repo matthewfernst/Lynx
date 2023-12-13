@@ -34,14 +34,14 @@ exports.handler = startServerAndCreateLambdaHandler(
     server,
     handlers.createAPIGatewayProxyEventRequestHandler(),
     {
-        context: async ({ event }) => ({
-            userId: authenticateHTTPAccessToken(event)
-        }),
-        // CORS
+        context: async ({ event }) => ({ userId: authenticateHTTPAccessToken(event) }),
         middleware: [
             async (event) => {
                 return async (result) => {
-                    result.headers = { ...result.headers };
+                    result.headers = {
+                        "Access-Control-Allow-Origin": event.headers.Origin || "*",
+                        ...result.headers
+                    };
                 };
             }
         ]

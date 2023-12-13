@@ -1,14 +1,7 @@
 import { GraphQLError } from "graphql";
 
 import { Context } from "../../index";
-import {
-    USERS_TABLE,
-    deleteItem,
-    getItem,
-    getItemFromDynamoDBResult,
-    getItemsByIndex,
-    updateItem
-} from "../../aws/dynamodb";
+import { USERS_TABLE, deleteItem, getItem, getItemsByIndex, updateItem } from "../../aws/dynamodb";
 import { OAuthType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
 import { User } from "../../types";
 import { BAD_REQUEST, checkIsLoggedInAndHasValidInvite } from "../../auth";
@@ -31,8 +24,7 @@ const combineOAuthAccounts = async (
     checkIsLoggedInAndHasValidInvite(context);
     const { type, id, token } = args.combineWith;
     const idKey = idKeyFromIdType(type);
-    const userQuery = await getItemsByIndex(USERS_TABLE, idKey, id);
-    const otherUser = getItemFromDynamoDBResult(userQuery) as User | null;
+    const otherUser = ((await getItemsByIndex(USERS_TABLE, idKey, id)) as User[])[0];
     if (!otherUser) {
         if (!token) {
             throw new GraphQLError("User Does Not Exist and No Token Provided", {
@@ -40,18 +32,12 @@ const combineOAuthAccounts = async (
             });
         }
         await verifyToken(type, id, token);
-        return await updateUserAndReturnResult(context.userId as string, idKey, id);
+        return (await updateItem(USERS_TABLE, context.userId as string, idKey, id)) as User;
     }
     await deleteItem(USERS_TABLE, otherUser.id);
     await deleteObjectsInBucket(profilePictureBucketName, otherUser.id);
     await deleteObjectsInBucket(toRunRecordsBucket, otherUser.id);
-    return await updateUserAndReturnResult(context.userId as string, idKey, id);
-};
-
-const updateUserAndReturnResult = async (userId: string, idKey: string, id: string) => {
-    await updateItem(USERS_TABLE, userId, idKey, id);
-    const queryOutput = await getItem(USERS_TABLE, userId);
-    return getItemFromDynamoDBResult(queryOutput) as User;
+    return (await updateItem(USERS_TABLE, context.userId as string, idKey, id)) as User;
 };
 
 export default combineOAuthAccounts;

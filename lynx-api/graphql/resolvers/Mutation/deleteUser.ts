@@ -25,8 +25,7 @@ const deleteUser = async (_: any, args: Args, context: Context, info: any): Prom
     }
     await deleteObjectsInBucket(profilePictureBucketName, context.userId as string);
     await deleteObjectsInBucket(toRunRecordsBucket, context.userId as string);
-    const result = await deleteItem(USERS_TABLE, context.userId as string);
-    return result.Attributes as unknown as User;
+    return await deleteItem(USERS_TABLE, context.userId as string) as User;
 };
 
 const invalidateToken = async (tokenType: OAuthType, token: string) => {
