@@ -1,5 +1,5 @@
 export interface User {
-    [key: string]: string | boolean | UserStats | Log[] | undefined;
+    [key: string]: string | number | boolean | UserStats | Log[] | undefined;
     id: string;
     appleId?: string;
     googleId?: string;

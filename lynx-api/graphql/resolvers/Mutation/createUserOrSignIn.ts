@@ -6,7 +6,7 @@ import { v4 as uuid } from "uuid";
 
 import { BAD_REQUEST, generateToken } from "../../auth";
 import { Context } from "../../index";
-import { USERS_TABLE, getItemsByIndex, putItem } from "../../aws/dynamodb";
+import { USERS_TABLE, getItemByIndex, putItem } from "../../aws/dynamodb";
 import { User } from "../../types";
 import { LEADERBOARD_PARTITIONS } from "../Query/leaderboard";
 
@@ -82,7 +82,7 @@ const oauthLogin = async (
     email?: string,
     userData?: { key: string; value: string }[]
 ): Promise<AuthorizationToken> => {
-    const user = ((await getItemsByIndex(USERS_TABLE, idFieldName, id)) as User[])[0];
+    const user = await getItemByIndex(USERS_TABLE, idFieldName, id);
     const oneHourFromNow = DateTime.now().plus({ hours: 1 }).toMillis().toString();
     if (user) {
         return {

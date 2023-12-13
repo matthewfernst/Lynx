@@ -1,7 +1,7 @@
 import { GraphQLError } from "graphql";
 
 import { Context } from "../../index";
-import { USERS_TABLE, deleteItem, getItem, getItemsByIndex, updateItem } from "../../aws/dynamodb";
+import { USERS_TABLE, deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
 import { OAuthType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
 import { User } from "../../types";
 import { BAD_REQUEST, checkIsLoggedInAndHasValidInvite } from "../../auth";
@@ -24,7 +24,7 @@ const combineOAuthAccounts = async (
     checkIsLoggedInAndHasValidInvite(context);
     const { type, id, token } = args.combineWith;
     const idKey = idKeyFromIdType(type);
-    const otherUser = ((await getItemsByIndex(USERS_TABLE, idKey, id)) as User[])[0];
+    const otherUser = (await getItemByIndex(USERS_TABLE, idKey, id)) as User;
     if (!otherUser) {
         if (!token) {
             throw new GraphQLError("User Does Not Exist and No Token Provided", {

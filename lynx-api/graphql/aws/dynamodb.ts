@@ -16,10 +16,11 @@ export const INVITES_TABLE = "lynx-invites";
 
 export type Table = typeof USERS_TABLE | typeof INVITES_TABLE;
 
-type ObjectType<T extends Table> = 
-    T extends typeof USERS_TABLE ? User :
-    T extends typeof INVITES_TABLE ? Invite :
-    unknown;
+type ObjectType<T extends Table> = T extends typeof USERS_TABLE
+    ? User
+    : T extends typeof INVITES_TABLE
+    ? Invite
+    : unknown;
 
 export const createDocumentClient = (): DynamoDBDocument => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
@@ -49,11 +50,11 @@ export const getItem = async <T extends Table>(
     }
 };
 
-export const getItemsByIndex = async <T extends Table>(
+export const getItemByIndex = async <T extends Table>(
     table: T,
     key: string,
     value: string
-): Promise<ObjectType<T>[] | undefined> => {
+): Promise<ObjectType<T> | undefined> => {
     const documentClient = createDocumentClient();
     try {
         console.log(`Getting item from ${table} with ${key} ${value}`);
@@ -65,25 +66,36 @@ export const getItemsByIndex = async <T extends Table>(
             ExpressionAttributeValues: { ":value": value }
         });
         const itemOutput = await documentClient.send(queryRequest);
-        return itemOutput.Items as ObjectType<T>[] | undefined;
+        return itemOutput.Items?.[0] as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
         throw Error("DynamoDB Query Call Failed");
     }
 };
 
-export const scanAllItems = async <T extends Table>(
-    table: T
-): Promise<ObjectType<T>[] | undefined> => {
+export const getItemsByIndex = async <T extends Table>(
+    table: T,
+    partition: number,
+    index: string,
+    limit: number,
+    forward: boolean = false
+): Promise<ObjectType<T>[]> => {
     const documentClient = createDocumentClient();
     try {
-        console.log(`Getting all items from table ${table}`);
-        const scanRequest = new ScanCommand({ TableName: table });
-        const itemOutput = await documentClient.send(scanRequest);
-        return itemOutput.Items as ObjectType<T>[] | undefined;
+        console.log(`Getting items from ${table} with partition ${partition} sorted by ${index}`);
+        const queryRequest = new QueryCommand({
+            TableName: table,
+            IndexName: index,
+            KeyConditionExpression: "GSI_partition = :value",
+            ExpressionAttributeValues: { ":value": partition },
+            ScanIndexForward: forward,
+            Limit: limit
+        });
+        const itemOutput = await documentClient.send(queryRequest);
+        return itemOutput.Items as ObjectType<T>[];
     } catch (err) {
         console.error(err);
-        throw Error("DynamoDB Scan Call Failed");
+        throw Error("DynamoDB Query Call Failed");
     }
 };
 

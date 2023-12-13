@@ -1,6 +1,6 @@
 import { Context } from "../../index";
 import { User } from "../../types";
-import { USERS_TABLE, scanAllItems } from "../../aws/dynamodb";
+import { USERS_TABLE, getItemsByIndex } from "../../aws/dynamodb";
 import { populateLogbookDataForUser } from "./selfLookup";
 
 type LeaderboardSort = "DISTANCE" | "RUN_COUNT" | "TOP_SPEED" | "VERTICAL_DISTANCE";
@@ -19,14 +19,29 @@ export const leaderboardSortTypesToQueryFields: { [key in LeaderboardSort]: stri
 };
 
 const leaderboard = async (_: any, args: Args, context: Context, info: any): Promise<User[]> => {
-    const rawUsers = (await scanAllItems(USERS_TABLE)) as User[];
-    const users = await Promise.all(
-        rawUsers.map(async (user) => await populateLogbookDataForUser(user))
+    const usersByPartition = (
+        await Promise.all(
+            [...Array(LEADERBOARD_PARTITIONS).keys()].map(async (partition) => {
+                return await getItemsByIndex(
+                    USERS_TABLE,
+                    partition,
+                    leaderboardSortTypesToQueryFields[args.sortBy],
+                    args.limit,
+                    false
+                );
+            })
+        )
+    )
+        .flat()
+        .sort(
+            (a, b) =>
+                (b[leaderboardSortTypesToQueryFields[args.sortBy]] as number) -
+                (a[leaderboardSortTypesToQueryFields[args.sortBy]] as number)
+        )
+        .slice(0, args.limit);
+    return await Promise.all(
+        usersByPartition.map(async (user) => await populateLogbookDataForUser(user))
     );
-    const sortProperty = leaderboardSortTypesToQueryFields[args.sortBy];
-    return users
-        .sort((a, b) => b.userStats!![sortProperty] - a.userStats!![sortProperty])
-        .slice(0, args.limit || 5);
 };
 
 export default leaderboard;

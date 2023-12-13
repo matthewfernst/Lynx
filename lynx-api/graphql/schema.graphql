@@ -102,7 +102,7 @@ input InvalidateTokenOption {
 type Query {
     selfLookup: User
     userLookupById(id: ID!): User
-    leaderboard(sortBy: LeaderboardSort = VERTICAL_DISTANCE, limit: Int): [User!]!
+    leaderboard(sortBy: LeaderboardSort = VERTICAL_DISTANCE, limit: Int = 5): [User!]!
 }
 
 type Mutation {
