@@ -24,7 +24,7 @@
         "eslint-config-prettier": "^9.1.0",
         "serverless": "^3.38.0",
         "serverless-dotenv-plugin": "^6.0.0",
-        "serverless-dynamodb-local": "^0.2.40",
+        "serverless-dynamodb": "^0.2.47",
         "serverless-offline": "^13.3.1",
         "serverless-offline-ses": "^0.0.7",
         "serverless-plugin-typescript": "^2.1.5",
@@ -54,7 +54,6 @@
         "graphql": "^16.8.1",
         "jsonwebtoken": "^9.0.2",
         "luxon": "^3.4.4",
-        "serverless-dynamodb": "^0.2.47",
         "unzipper": "^0.10.14",
         "uuid": "^9.0.1",
         "xml2js": "^0.6.2"
