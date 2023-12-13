@@ -110,7 +110,9 @@ resources:
               - AttributeName: distance
                 KeyType: RANGE
             Projection:
-              ProjectionType: KEYS_ONLY
+              ProjectionType: INCLUDE
+              NonKeyAttributes:
+                - id
           - IndexName: runCount
             KeySchema:
               - AttributeName: GSI_partition
@@ -118,7 +120,9 @@ resources:
               - AttributeName: runCount
                 KeyType: RANGE
             Projection:
-              ProjectionType: KEYS_ONLY
+              ProjectionType: INCLUDE
+              NonKeyAttributes:
+                - id
           - IndexName: topSpeed
             KeySchema:
               - AttributeName: GSI_partition
@@ -126,7 +130,9 @@ resources:
               - AttributeName: topSpeed
                 KeyType: RANGE
             Projection:
-              ProjectionType: KEYS_ONLY
+              ProjectionType: INCLUDE
+              NonKeyAttributes:
+                - id
           - IndexName: verticalDistance
             KeySchema:
               - AttributeName: GSI_partition
@@ -134,7 +140,9 @@ resources:
               - AttributeName: verticalDistance
                 KeyType: RANGE
             Projection:
-              ProjectionType: KEYS_ONLY
+              ProjectionType: INCLUDE
+              NonKeyAttributes:
+                - id
     inviteTable:
       Type: AWS::DynamoDB::Table
       Properties:
