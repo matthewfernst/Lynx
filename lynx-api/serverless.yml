@@ -177,7 +177,7 @@ resources:
                   - lambda.amazonaws.com
               Action: sts:AssumeRole
         Policies:
-          - PolicyName: GraphQLAPILambdaRolePolicy
+          - PolicyName: DefaultLambdaRolePolicy
             PolicyDocument:
               Version: "2012-10-17"
               Statement:
@@ -189,6 +189,10 @@ resources:
                     - logs:TagResource
                   Resource:
                     - arn:aws:logs:${aws:region}:${aws:accountId}:log-group:/aws/lambda/*:*:*
+          - PolicyName: GraphQLAPILambdaRolePolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
                 - Effect: Allow
                   Action:
                     - s3:ListBucket
@@ -245,7 +249,7 @@ resources:
                   - lambda.amazonaws.com
               Action: sts:AssumeRole
         Policies:
-          - PolicyName: GraphQLAPILambdaRolePolicy
+          - PolicyName: DefaultLambdaRolePolicy
             PolicyDocument:
               Version: "2012-10-17"
               Statement:
@@ -257,18 +261,21 @@ resources:
                     - logs:TagResource
                   Resource:
                     - arn:aws:logs:${aws:region}:${aws:accountId}:log-group:/aws/lambda/*:*:*
+          - PolicyName: ReducerLambdaRolePolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
                 - Effect: Allow
                   Action:
                     - s3:GetObject
                   Resource:
-                    - arn:aws:s3:::lynx-slopes-zipped
-                    - arn:aws:s3:::lynx-slopes-zipped/*
-                - Effect: Allow
-                  Action:
-                    - s3:PutObject
-                  Resource:
                     - arn:aws:s3:::lynx-slopes-unzipped
                     - arn:aws:s3:::lynx-slopes-unzipped/*
+                - Effect: Allow
+                  Action:
+                    - dynamodb:UpdateItem
+                  Resource:
+                    - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users
     UnzipperLambdaRole:
       Type: AWS::IAM::Role
       Properties:
@@ -282,7 +289,7 @@ resources:
                   - lambda.amazonaws.com
               Action: sts:AssumeRole
         Policies:
-          - PolicyName: GraphQLAPILambdaRolePolicy
+          - PolicyName: DefaultLambdaRolePolicy
             PolicyDocument:
               Version: "2012-10-17"
               Statement:
@@ -294,14 +301,20 @@ resources:
                     - logs:TagResource
                   Resource:
                     - arn:aws:logs:${aws:region}:${aws:accountId}:log-group:/aws/lambda/*:*:*
+          - PolicyName: UnzipperLambdaRolePolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
                 - Effect: Allow
                   Action:
                     - s3:GetObject
                   Resource:
-                    - arn:aws:s3:::lynx-slopes-unzipped
-                    - arn:aws:s3:::lynx-slopes-unzipped/*
+                    - arn:aws:s3:::lynx-slopes-zipped
+                    - arn:aws:s3:::lynx-slopes-zipped/*
                 - Effect: Allow
                   Action:
-                    - dynamodb:UpdateItem
+                    - s3:PutObject
                   Resource:
-                    - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/lynx-users
+                    - arn:aws:s3:::lynx-slopes-unzipped
+                    - arn:aws:s3:::lynx-slopes-unzipped/*
+                
