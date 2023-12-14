@@ -143,4 +143,5 @@ type Mutation {
     editUser(userData: [UserDataPair!]!): User!
     createInviteKey: String!
     resolveInviteKey(inviteKey: ID!): User!
+    createParty(name: String!): Party!
 }

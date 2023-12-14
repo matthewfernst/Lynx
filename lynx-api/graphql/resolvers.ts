@@ -9,10 +9,12 @@ import deleteUser from "./resolvers/Mutation/deleteUser";
 import editUser from "./resolvers/Mutation/editUser";
 import createInviteKey from "./resolvers/Mutation/createInviteKey";
 import resolveInviteKey from "./resolvers/Mutation/resolveInviteKey";
+import createParty from "./resolvers/Mutation/createParty";
 import email from "./resolvers/User/email";
 import oauthLoginIds from "./resolvers/User/oauthLoginIds";
 import profilePictureUrl from "./resolvers/User/profilePictureUrl";
 import logbook from "./resolvers/User/logbook";
+import parties from "./resolvers/User/parties";
 import userStatsDistance from "./resolvers/UserStats/distance";
 import userStatsTopSpeed from "./resolvers/UserStats/topSpeed";
 import userStatsVerticalDistance from "./resolvers/UserStats/verticalDistance";
@@ -33,6 +35,8 @@ import maxAltitude from "./resolvers/LogDetail/maxAltitude";
 import logDetailTopSpeed from "./resolvers/LogDetail/topSpeed";
 import topSpeedAltitude from "./resolvers/LogDetail/topSpeedAltitude";
 import logDetailVerticalDistance from "./resolvers/LogDetail/verticalDistance";
+import partyLeaderboard from "./resolvers/Party/leaderboard";
+import partyUsers from "./resolvers/Party/users";
 
 export const resolvers = {
     Query: { selfLookup, userLookupById, leaderboard },
@@ -44,9 +48,10 @@ export const resolvers = {
         deleteUser,
         editUser,
         createInviteKey,
-        resolveInviteKey
+        resolveInviteKey,
+        createParty
     },
-    User: { email, oauthLoginIds, profilePictureUrl, logbook },
+    User: { email, oauthLoginIds, profilePictureUrl, logbook, parties },
     UserStats: {
         distance: userStatsDistance,
         topSpeed: userStatsTopSpeed,
@@ -72,5 +77,9 @@ export const resolvers = {
         topSpeed: logDetailTopSpeed,
         topSpeedAltitude,
         verticalDistance: logDetailVerticalDistance
+    },
+    Leaderboard: {
+        leaderboard: partyLeaderboard,
+        users: partyUsers
     }
 };

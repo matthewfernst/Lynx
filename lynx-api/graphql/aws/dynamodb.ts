@@ -15,15 +15,15 @@ export const LEADERBOARD_TABLE = "leaderboard-table";
 export const INVITES_TABLE = "lynx-invites";
 export const PARTIES_TABLE = "lynx-parties";
 
-export type Table = 
-    typeof USERS_TABLE |
-    typeof LEADERBOARD_TABLE |
-    typeof INVITES_TABLE |
-    typeof PARTIES_TABLE;
+export type Table =
+    | typeof USERS_TABLE
+    | typeof LEADERBOARD_TABLE
+    | typeof INVITES_TABLE
+    | typeof PARTIES_TABLE;
 
 type ObjectType<T extends Table> = 
     T extends typeof USERS_TABLE ? User :
-    T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry : 
+    T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry :
     T extends typeof INVITES_TABLE ? Invite :
     T extends typeof PARTIES_TABLE ? Party :
     unknown;
@@ -79,10 +79,7 @@ export const getItemByIndex = async <T extends Table>(
     }
 };
 
-export const putItem = async <T extends Table>(
-    table: T,
-    item: Object
-): Promise<ObjectType<T> | undefined> => {
+export const putItem = async <T extends Table>(table: T, item: Object): Promise<ObjectType<T>> => {
     const documentClient = createDocumentClient();
     try {
         console.log(`Putting item into ${table}`);
@@ -92,7 +89,7 @@ export const putItem = async <T extends Table>(
             ReturnValues: "ALL_OLD"
         });
         const itemOutput = await documentClient.send(putItemRequest);
-        return itemOutput.Attributes as ObjectType<T> | undefined;
+        return itemOutput.Attributes as ObjectType<T>;
     } catch (err) {
         console.error(err);
         throw Error("DynamoDB Put Call Failed");
