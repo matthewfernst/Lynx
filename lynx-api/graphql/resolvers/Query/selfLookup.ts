@@ -2,6 +2,7 @@ import { Context } from "../../index";
 import { User, UserStats } from "../../types";
 import { USERS_TABLE, getItem } from "../../aws/dynamodb";
 import { getLogbookInformationFromS3 } from "../User/logbook";
+import { checkHasUserId } from "../../auth";
 
 const selfLookup = async (
     _: any,
@@ -9,10 +10,8 @@ const selfLookup = async (
     context: Context,
     info: any
 ): Promise<User | undefined> => {
-    if (!context.userId) {
-        return undefined;
-    }
-    let userInformation = await getItem(USERS_TABLE, context.userId);
+    const userId = checkHasUserId(context.userId);
+    let userInformation = await getItem(USERS_TABLE, userId);
     if (userInformation) {
         userInformation = await populateLogbookDataForUser(userInformation);
     }

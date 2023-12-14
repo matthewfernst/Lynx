@@ -7,7 +7,7 @@ interface Parent {
 }
 
 const email = (parent: Parent, args: any, context: Context, info: any) => {
-    checkIsMe(parent, context);
+    checkIsMe(parent, context.userId);
     return parent.email;
 };
 

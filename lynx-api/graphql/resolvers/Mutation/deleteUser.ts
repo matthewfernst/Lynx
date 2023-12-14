@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import { Context } from "../../index";
-import { checkIsLoggedInAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
 import { USERS_TABLE, deleteItem } from "../../aws/dynamodb";
 import { deleteObjectsInBucket, profilePictureBucketName, toRunRecordsBucket } from "../../aws/s3";
 import { User } from "../../types";
@@ -17,15 +17,16 @@ interface Args {
 }
 
 const deleteUser = async (_: any, args: Args, context: Context, info: any): Promise<User> => {
-    await checkIsLoggedInAndHasValidInvite(context);
+    const userId = checkHasUserId(context.userId);
+    await checkIsLoggedInAndHasValidInvite(userId);
     if (args.options?.tokensToInvalidate) {
         args.options.tokensToInvalidate.forEach(
             async (token) => await invalidateToken(token.type, token.token)
         );
     }
-    await deleteObjectsInBucket(profilePictureBucketName, context.userId as string);
-    await deleteObjectsInBucket(toRunRecordsBucket, context.userId as string);
-    return await deleteItem(USERS_TABLE, context.userId as string) as User;
+    await deleteObjectsInBucket(profilePictureBucketName, userId);
+    await deleteObjectsInBucket(toRunRecordsBucket, userId);
+    return (await deleteItem(USERS_TABLE, userId)) as User;
 };
 
 const invalidateToken = async (tokenType: OAuthType, token: string) => {

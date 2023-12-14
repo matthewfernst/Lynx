@@ -1,6 +1,6 @@
 import { createSignedUploadUrl, fromRunRecordsBucket } from "../../aws/s3";
 import { Context } from "../../index";
-import { checkIsLoggedInAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
 
 interface Args {
     requestedPaths: string[];
@@ -12,11 +12,12 @@ const createUserRecordUploadUrl = async (
     context: Context,
     info: any
 ): Promise<string[]> => {
-    await checkIsLoggedInAndHasValidInvite(context);
-    console.log(`Creating UserRecord Upload URL For User ID ${context.userId}`);
+    const userId = checkHasUserId(context.userId);
+    await checkIsLoggedInAndHasValidInvite(userId);
+    console.log(`Creating UserRecord Upload URL For User ID ${userId}`);
     return await Promise.all(
         args.requestedPaths.map((requestedPath) =>
-            createSignedUploadUrl(fromRunRecordsBucket, `${context.userId}/${requestedPath}`)
+            createSignedUploadUrl(fromRunRecordsBucket, `${userId}/${requestedPath}`)
         )
     );
 };

@@ -1,5 +1,5 @@
 import { Context } from "../../index";
-import { checkIsLoggedInAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
 import { USERS_TABLE, getItem, updateItem } from "../../aws/dynamodb";
 import { User } from "../../types";
 
@@ -11,11 +11,12 @@ interface Args {
 }
 
 const editUser = async (_: any, args: Args, context: Context, info: any): Promise<User> => {
-    await checkIsLoggedInAndHasValidInvite(context);
+    const userId = checkHasUserId(context.userId);
+    await checkIsLoggedInAndHasValidInvite(userId);
     for (const data of args.userData) {
-        await updateItem(USERS_TABLE, context.userId as string, data.key, data.value);
+        await updateItem(USERS_TABLE, userId, data.key, data.value);
     }
-    return await getItem(USERS_TABLE, context.userId as string) as User;
+    return (await getItem(USERS_TABLE, userId)) as User;
 };
 
 export default editUser;

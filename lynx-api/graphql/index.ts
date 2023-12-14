@@ -9,7 +9,7 @@ import { authenticateHTTPAccessToken } from "./auth";
 import { resolvers } from "./resolvers";
 
 export interface Context {
-    userId: string | null;
+    userId: string | undefined;
 }
 
 const server = new ApolloServer<Context>({

@@ -1,10 +1,7 @@
 import { GraphQLError } from "graphql";
-
 import { APIGatewayProxyEvent } from "aws-lambda";
-
 import jwt from "jsonwebtoken";
 
-import { Context } from "./index";
 import { User } from "./types";
 import { USERS_TABLE, getItem } from "./aws/dynamodb";
 
@@ -26,9 +23,9 @@ export const decryptToken = (token: string): User => {
     return jwt.verify(token, process.env.AUTH_KEY || "AUTH") as User;
 };
 
-export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string | null => {
+export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string | undefined => {
     const authHeader = req.headers?.Authorization;
-    if (!authHeader) return null;
+    if (!authHeader) return undefined;
 
     const token = authHeader.split(" ")[1];
     if (!token)
@@ -45,33 +42,38 @@ export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string |
     }
 };
 
-export const checkIsLoggedIn = async (context: Context): Promise<User> => {
-    if (!context.userId) {
+export const checkHasUserId = (userId: string | undefined): string => {
+    if (!userId) {
         throw new GraphQLError("Must Be Logged In", { extensions: { code: FORBIDDEN } });
     }
-    const userRecord = await getItem(USERS_TABLE, context.userId);
+    return userId;
+};
+
+export const checkIsLoggedIn = async (userId: string): Promise<User> => {
+    const userRecord = await getItem(USERS_TABLE, userId);
     if (!userRecord) {
         throw new GraphQLError("User Does Not Exist", {
-            extensions: { code: UNAUTHENTICATED, userId: context.userId }
+            extensions: { code: UNAUTHENTICATED, userId }
         });
     }
     return userRecord;
 };
 
-export const checkIsLoggedInAndHasValidInvite = async (context: Context): Promise<User> => {
-    const userRecord = await checkIsLoggedIn(context);
+export const checkIsLoggedInAndHasValidInvite = async (userId: string): Promise<User> => {
+    const userRecord = await checkIsLoggedIn(userId);
     if (!userRecord.validatedInvite) {
         throw new GraphQLError("No Validated Invite", {
-            extensions: { code: UNAUTHENTICATED, userId: context.userId }
+            extensions: { code: UNAUTHENTICATED, userId: userId }
         });
     }
     return userRecord;
 };
 
-export const checkIsMe = async (parent: Parent, context: Context): Promise<void> => {
-    if (!context.userId || parent.id?.toString() !== context.userId) {
+export const checkIsMe = async (parent: Parent, userId: string | undefined): Promise<string> => {
+    if (!userId || parent.id?.toString() !== userId) {
         throw new GraphQLError("Permissions Invalid For Requested Field", {
-            extensions: { code: FORBIDDEN, userId: context.userId }
+            extensions: { code: FORBIDDEN, userId }
         });
     }
+    return userId;
 };
