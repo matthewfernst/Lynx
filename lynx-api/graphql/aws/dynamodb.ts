@@ -21,12 +21,15 @@ export type Table =
     | typeof INVITES_TABLE
     | typeof PARTIES_TABLE;
 
-type ObjectType<T extends Table> = 
-    T extends typeof USERS_TABLE ? User :
-    T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry :
-    T extends typeof INVITES_TABLE ? Invite :
-    T extends typeof PARTIES_TABLE ? Party :
-    unknown;
+type ObjectType<T extends Table> = T extends typeof USERS_TABLE
+    ? User
+    : T extends typeof LEADERBOARD_TABLE
+    ? LeaderboardEntry
+    : T extends typeof INVITES_TABLE
+    ? Invite
+    : T extends typeof PARTIES_TABLE
+    ? Party
+    : unknown;
 
 export const createDocumentClient = (): DynamoDBDocument => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
@@ -159,13 +162,11 @@ export const deleteItemsFromArray = async <T extends Table>(
         console.log(
             `Updating item in ${table} with id ${id}. ${key} no longer has the following as values: ${values}`
         );
-        const item = await getItem(table, id);
+        const item = (await getItem(table, id)) as any;
         if (!item) {
             throw new Error("Error finding item for this userId");
         }
-        const indices = (item[key] as unknown as any[]).map((listItem: string) =>
-            (item[key] as unknown as any[]).indexOf(listItem)
-        );
+        const indices = item[key].map((listItem: string) => item[key].indexOf(listItem));
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
