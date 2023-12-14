@@ -69,7 +69,7 @@ export const checkIsLoggedInAndHasValidInvite = async (userId: string): Promise<
     return userRecord;
 };
 
-export const checkIsMe = async (parent: Parent, userId: string | undefined): Promise<string> => {
+export const checkIsMe = (parent: Parent, userId: string | undefined): string => {
     if (!userId || parent.id?.toString() !== userId) {
         throw new GraphQLError("Permissions Invalid For Requested Field", {
             extensions: { code: FORBIDDEN, userId }

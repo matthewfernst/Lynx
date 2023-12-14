@@ -2,12 +2,14 @@ import { Context } from "../../index";
 import { Log } from "../../types";
 import { getObjectNamesInBucket, getRecordFromBucket, toRunRecordsBucket } from "../../aws/s3";
 import { parseStringPromise, processors } from "xml2js";
+import { checkIsMe } from "../../auth";
 
 const reverseRenameFileFunction = (originalFileName: string) => {
     return `${originalFileName.split(".")[0]}.slopes`;
 };
 
 const logbook = async (parent: any, args: {}, context: Context, info: any): Promise<Log[]> => {
+    checkIsMe(parent.id, context.userId);
     if (!parent.logbook) {
         return await getLogbookInformationFromS3(parent.id);
     }
@@ -37,6 +39,6 @@ export const xmlToActivity = async (xml: string): Promise<Log> => {
         attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
     });
     return activity;
-}
+};
 
 export default logbook;
