@@ -1,3 +1,5 @@
+import { Timeframe } from "./resolvers/Query/leaderboard";
+
 export interface User {
     [key: string]: string | number | boolean | UserStats | Log[] | undefined;
     id: string;
@@ -57,7 +59,22 @@ export type MeasurementSystem = "METRIC" | "IMPERIAL";
 export type LogDetailType = "RUN" | "LIFT";
 
 export interface Invite {
-    [key: string]: string | number;
     id: string;
     ttl: number;
+}
+
+export interface LeaderboardEntry {
+    id: string;
+    timeframe: Timeframe;
+    distance: number;
+    runCount: number;
+    topSpeed: number;
+    verticalDistance: number;
+    ttl: number;
+}
+
+export interface Party {
+    id: string;
+    name: string;
+    users: string[];
 }

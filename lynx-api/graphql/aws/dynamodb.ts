@@ -5,22 +5,28 @@ import {
     GetCommand,
     UpdateCommand,
     PutCommand,
-    QueryCommand,
-    ScanCommand
+    QueryCommand
 } from "@aws-sdk/lib-dynamodb";
 
-import { Invite, User } from "../types";
+import { Invite, LeaderboardEntry, Party, User } from "../types";
 
 export const USERS_TABLE = "lynx-users";
+export const LEADERBOARD_TABLE = "leaderboard-table";
 export const INVITES_TABLE = "lynx-invites";
+export const PARTIES_TABLE = "lynx-parties";
 
-export type Table = typeof USERS_TABLE | typeof INVITES_TABLE;
+export type Table = 
+    typeof USERS_TABLE |
+    typeof LEADERBOARD_TABLE |
+    typeof INVITES_TABLE |
+    typeof PARTIES_TABLE;
 
-type ObjectType<T extends Table> = T extends typeof USERS_TABLE
-    ? User
-    : T extends typeof INVITES_TABLE
-    ? Invite
-    : unknown;
+type ObjectType<T extends Table> = 
+    T extends typeof USERS_TABLE ? User :
+    T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry : 
+    T extends typeof INVITES_TABLE ? Invite :
+    T extends typeof PARTIES_TABLE ? Party :
+    unknown;
 
 export const createDocumentClient = (): DynamoDBDocument => {
     if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
@@ -67,32 +73,6 @@ export const getItemByIndex = async <T extends Table>(
         });
         const itemOutput = await documentClient.send(queryRequest);
         return itemOutput.Items?.[0] as ObjectType<T> | undefined;
-    } catch (err) {
-        console.error(err);
-        throw Error("DynamoDB Query Call Failed");
-    }
-};
-
-export const getItemsByIndex = async <T extends Table>(
-    table: T,
-    partition: number,
-    index: string,
-    limit: number,
-    forward: boolean = false
-): Promise<ObjectType<T>[]> => {
-    const documentClient = createDocumentClient();
-    try {
-        console.log(`Getting items from ${table} with partition ${partition} sorted by ${index}`);
-        const queryRequest = new QueryCommand({
-            TableName: table,
-            IndexName: index,
-            KeyConditionExpression: "GSI_partition = :value",
-            ExpressionAttributeValues: { ":value": partition },
-            ScanIndexForward: forward,
-            Limit: limit
-        });
-        const itemOutput = await documentClient.send(queryRequest);
-        return itemOutput.Items as ObjectType<T>[];
     } catch (err) {
         console.error(err);
         throw Error("DynamoDB Query Call Failed");

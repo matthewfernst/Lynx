@@ -2,12 +2,16 @@ import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { DateTime } from "luxon";
 
 import { Context } from "../../index";
-import { LeaderboardEntry, User } from "../../types";
-import { LEADERBOARD_TABLE, USERS_TABLE, createDocumentClient, getItem } from "../../aws/dynamodb";
-import { populateLogbookDataForUser } from "./selfLookup";
-
-export type LeaderboardSort = "DISTANCE" | "RUN_COUNT" | "TOP_SPEED" | "VERTICAL_DISTANCE";
-export type Timeframe = "DAY" | "WEEK" | "MONTH" | "YEAR" | "ALL_TIME";
+import { LeaderboardEntry, Party, User } from "../../types";
+import {
+    LEADERBOARD_TABLE,
+    PARTIES_TABLE,
+    USERS_TABLE,
+    createDocumentClient,
+    getItem
+} from "../../aws/dynamodb";
+import { populateLogbookDataForUser } from "../Query/selfLookup";
+import { LeaderboardSort, Timeframe } from "../Query/leaderboard";
 
 interface Args {
     sortBy: LeaderboardSort;
@@ -22,11 +26,17 @@ export const leaderboardSortTypesToQueryFields: { [key in LeaderboardSort]: stri
     VERTICAL_DISTANCE: "verticalDistance"
 };
 
-const leaderboard = async (_: any, args: Args, context: Context, info: any): Promise<User[]> => {
+const leaderboard = async (
+    parent: Party,
+    args: Args,
+    context: Context,
+    info: any
+): Promise<User[]> => {
     const leaderboardEntries = await getTimeframeRankingByIndex(
         leaderboardSortTypesToQueryFields[args.sortBy],
         valueFromTimeframe(args.timeframe),
-        args.limit
+        args.limit,
+        parent.id
     );
     return await Promise.all(
         leaderboardEntries.map(async ({ id }) => {
@@ -60,8 +70,10 @@ const valueFromTimeframe = (timeframe: Timeframe): string => {
 const getTimeframeRankingByIndex = async (
     index: string,
     timeframe: string,
-    limit: number
+    limit: number,
+    partyId: string
 ): Promise<LeaderboardEntry[]> => {
+    const usersInParty = getUserIdsInParty(partyId);
     const documentClient = createDocumentClient();
     try {
         console.log(`Getting items with timeframe ${timeframe} sorted by ${index}`);
@@ -69,9 +81,10 @@ const getTimeframeRankingByIndex = async (
             TableName: LEADERBOARD_TABLE,
             IndexName: index,
             KeyConditionExpression: "timeframe = :value",
-            ExpressionAttributeValues: { ":value": timeframe },
+            ExpressionAttributeValues: { ":value": timeframe, ":users": usersInParty },
             ScanIndexForward: false,
-            Limit: limit
+            Limit: limit,
+            FilterExpression: "id IN :users"
         });
         const itemOutput = await documentClient.send(queryRequest);
         return itemOutput.Items as LeaderboardEntry[];
@@ -79,6 +92,11 @@ const getTimeframeRankingByIndex = async (
         console.error(err);
         throw Error("DynamoDB Query Call Failed");
     }
+};
+
+const getUserIdsInParty = async (partyId: string): Promise<string[]> => {
+    const party = (await getItem(PARTIES_TABLE, partyId)) as Party;
+    return party.users;
 };
 
 export default leaderboard;

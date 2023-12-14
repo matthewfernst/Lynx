@@ -1,10 +1,11 @@
 import { UpdateItemOutput } from "@aws-sdk/client-dynamodb";
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
-import { createDocumentClient } from "../graphql/aws/dynamodb";
+import { LEADERBOARD_TABLE, createDocumentClient } from "../graphql/aws/dynamodb";
 import { getRecordFromBucket } from "../graphql/aws/s3";
 import { xmlToActivity } from "../graphql/resolvers/User/logbook";
 import { leaderboardSortTypesToQueryFields } from "../graphql/resolvers/Query/leaderboard";
+import { DateTime } from "luxon";
 
 export async function handler(event: any, context: any) {
     for (const record of event.Records) {
@@ -15,22 +16,33 @@ export async function handler(event: any, context: any) {
         const unzippedRecord = await getRecordFromBucket(bucket, objectKey);
         const activity = await xmlToActivity(unzippedRecord);
 
-        Object.values(leaderboardSortTypesToQueryFields).forEach(async (key) => {
-            const userId = objectKey.split("/")[0];
-            const value = key == "verticalDistance" ? activity.vertical : activity[key];
-            const updateOutput = await updateItem(userId, key, value);
-            if (updateOutput.Attributes) {
-                Object.keys(updateOutput.Attributes).forEach((attribute) => {
-                    console.log(`Added ${value} to ${attribute} for user ${userId}`);
-                });
-            }
+        const userId = objectKey.split("/")[0];
+        const timeframes = processTimeframes(activity.end);
+
+        timeframes.forEach((timeframe) => {
+            Object.values(leaderboardSortTypesToQueryFields).forEach(async (key) => {
+                const value = key == "verticalDistance" ? activity.vertical : activity[key];
+                await updateItem(userId, timeframe, key, value);
+            });
         });
     }
     return { statusCode: 200 };
 }
 
-export const updateItem = async (
+const processTimeframes = (activityEnd: string): string[] => {
+    const time = DateTime.fromFormat(activityEnd, "yyyy-MM-dd HH:mm:ss ZZZ");
+    return [
+        `day-${time.ordinal}`,
+        `week-${time.weekNumber}`,
+        `month-${time.month}`,
+        `year-${time.year}`,
+        "all"
+    ];
+};
+
+const updateItem = async (
     id: string,
+    timeframe: string,
     key: string,
     value: any
 ): Promise<UpdateItemOutput> => {
@@ -38,8 +50,8 @@ export const updateItem = async (
     try {
         console.log(`Updating item in table lynx-users with id ${id}. Adding ${value} to ${key}`);
         const updateItemRequest = new UpdateCommand({
-            TableName: "lynx-users",
-            Key: { id },
+            TableName: LEADERBOARD_TABLE,
+            Key: { id, timeframe },
             UpdateExpression: "set #updateKey = #updateKey + :value",
             ExpressionAttributeNames: { "#updateKey": key },
             ExpressionAttributeValues: { ":value": value },

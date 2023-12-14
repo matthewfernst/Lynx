@@ -75,16 +75,6 @@ resources:
             AttributeType: S
           - AttributeName: googleId
             AttributeType: S
-          - AttributeName: GSI_partition
-            AttributeType: "N"
-          - AttributeName: distance
-            AttributeType: "N"
-          - AttributeName: runCount
-            AttributeType: "N"
-          - AttributeName: topSpeed
-            AttributeType: "N"
-          - AttributeName: verticalDistance
-            AttributeType: "N"
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
           - IndexName: appleId
@@ -103,9 +93,36 @@ resources:
               ProjectionType: INCLUDE
               NonKeyAttributes:
                 - validatedInvite
+    leaderboardTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: lynx-leaderboard
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: timeframe
+            KeyType: RANGE
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: timeframe
+            AttributeType: S
+          - AttributeName: distance
+            AttributeType: "N"
+          - AttributeName: runCount
+            AttributeType: "N"
+          - AttributeName: topSpeed
+            AttributeType: "N"
+          - AttributeName: verticalDistance
+            AttributeType: "N"
+        BillingMode: PAY_PER_REQUEST
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+        GlobalSecondaryIndexes:
           - IndexName: distance
             KeySchema:
-              - AttributeName: GSI_partition
+              - AttributeName: timeframe
                 KeyType: HASH
               - AttributeName: distance
                 KeyType: RANGE
@@ -115,7 +132,7 @@ resources:
                 - id
           - IndexName: runCount
             KeySchema:
-              - AttributeName: GSI_partition
+              - AttributeName: timeframe
                 KeyType: HASH
               - AttributeName: runCount
                 KeyType: RANGE
@@ -125,7 +142,7 @@ resources:
                 - id
           - IndexName: topSpeed
             KeySchema:
-              - AttributeName: GSI_partition
+              - AttributeName: timeframe
                 KeyType: HASH
               - AttributeName: topSpeed
                 KeyType: RANGE
@@ -135,7 +152,7 @@ resources:
                 - id
           - IndexName: verticalDistance
             KeySchema:
-              - AttributeName: GSI_partition
+              - AttributeName: timeframe
                 KeyType: HASH
               - AttributeName: verticalDistance
                 KeyType: RANGE
@@ -143,6 +160,17 @@ resources:
               ProjectionType: INCLUDE
               NonKeyAttributes:
                 - id
+    partiesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: lynx-parties
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
     inviteTable:
       Type: AWS::DynamoDB::Table
       Properties:
