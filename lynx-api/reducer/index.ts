@@ -52,9 +52,9 @@ const updateItem = async (
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
             Key: { id, timeframe },
-            UpdateExpression: "set #updateKey = #updateKey + :value",
+            UpdateExpression: "set #updateKey = #updateKey + :value AND set ttl = :ttl",
             ExpressionAttributeNames: { "#updateKey": key },
-            ExpressionAttributeValues: { ":value": value },
+            ExpressionAttributeValues: { ":value": value, ":ttl": getTTLFromTimeframe(timeframe) },
             ReturnValues: "UPDATED_NEW"
         });
         return await documentClient.send(updateItemRequest);
@@ -63,3 +63,18 @@ const updateItem = async (
         throw Error("DynamoDB Update Call Failed");
     }
 };
+
+const getTTLFromTimeframe = (timeframe: string): number | undefined => {
+    const timeframeSegments = timeframe.split("-");
+    const timeframeType = timeframeSegments[0];
+    const timeframeValue = parseInt(timeframeSegments[1]);
+
+    if (timeframeType === "all") return undefined;
+
+    const now = DateTime.now();
+    const day = timeframeType === "day" ? timeframeValue + 1 : now.ordinal;
+    const week = timeframeType === "week" ? timeframeValue + 1 : now.weekNumber;
+    const month = timeframeType === "month" ? timeframeValue + 1 : now.month;
+    const year = timeframeType === "year" ? timeframeValue + 1 : now.year;
+    return DateTime.fromFormat(`${year} ${month} ${week} ${day}`, "yyyy L W o").toSeconds();
+}
