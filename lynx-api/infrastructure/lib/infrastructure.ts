@@ -45,7 +45,7 @@ export class LynxAPIStack extends Stack {
             domainName: {
                 domainName: "serverless-lynx-api.com",
                 certificate: new Certificate(this, "lynxCertificate", {
-                    domainName: "*.serverless-lynx-api.com",
+                    domainName: "serverless-lynx-api.com",
                     validation: CertificateValidation.fromDns(
                         new HostedZone(this, "lynxHostedZone", {
                             zoneName: "serverless-lynx-api.com"
