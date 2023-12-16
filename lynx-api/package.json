@@ -10,7 +10,7 @@
         "build": "tsc -p ./tsconfig.lambda.json",
         "lint": "eslint ./**/*.ts",
         "cdk": "cdk",
-        "deploy": "cdk deploy"
+        "deploy": "npm run build && cdk deploy"
     },
     "devDependencies": {
         "@types/crypto-js": "^4.2.1",
