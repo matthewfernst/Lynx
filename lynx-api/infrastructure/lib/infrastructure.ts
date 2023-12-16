@@ -1,5 +1,6 @@
-import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
+import { Arn, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
+import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
 import { AttributeType, BillingMode, ProjectionType, Table } from "aws-cdk-lib/aws-dynamodb";
 import {
     AnyPrincipal,
@@ -10,11 +11,12 @@ import {
     ServicePrincipal
 } from "aws-cdk-lib/aws-iam";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { HostedZone } from "aws-cdk-lib/aws-route53";
 import { Bucket } from "aws-cdk-lib/aws-s3";
 
 import { Construct } from "constructs";
 
-export class InfrastructureStack extends Stack {
+export class LynxAPIStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
@@ -39,10 +41,27 @@ export class InfrastructureStack extends Stack {
 
         const api = new RestApi(this, "graphqlAPI", {
             restApiName: "GraphQL API",
-            description: "The service endpoint for Lynx's GraphQL API"
+            description: "The service endpoint for Lynx's GraphQL API",
+            domainName: {
+                domainName: "serverless-lynx-api.com",
+                certificate: new Certificate(this, "lynxCertificate", {
+                    domainName: "*.serverless-lynx-api.com",
+                    validation: CertificateValidation.fromDns(
+                        new HostedZone(this, "lynxHostedZone", {
+                            zoneName: "serverless-lynx-api.com"
+                        })
+                    )
+                })
+            },
+            disableExecuteApiEndpoint: true,
+            deployOptions: {
+                tracingEnabled: true
+            }
         });
 
-        api.root.addResource("graphql").addMethod("POST", new LambdaIntegration(graphqlLambda));
+        api.root
+            .addResource("graphql")
+            .addMethod("POST", new LambdaIntegration(graphqlLambda, { allowTestInvoke: false }));
 
         this.createReducerLambda(slopesUnzippedBucket, leaderboardTable);
         this.createUnzipperLambda(slopesZippedBucket, slopesUnzippedBucket);

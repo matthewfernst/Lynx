@@ -6,9 +6,9 @@
     "license": "MIT",
     "main": "index.js",
     "scripts": {
-        "build": "tsc -p ./tsconfig.lambda.json && npm run clean",
+        "clean": "rm -rf cdk.out dist",
+        "build": "tsc -p ./tsconfig.lambda.json",
         "lint": "eslint ./**/*.ts",
-        "clean": "rm -rf graphql/**/*.js reducer/**/*.js unzipper/**/*.js dist",
         "cdk": "cdk",
         "deploy": "cdk deploy"
     },

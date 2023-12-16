@@ -1,19 +1,20 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "noEmit": false,
         "target": "ESNext",
-        "useDefineForClassFields": true,
         "lib": ["DOM", "DOM.Iterable", "ESNext"],
-        "skipLibCheck": true,
-        "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "strict": true,
+        "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "Node",
-        "resolveJsonModule": true,
+        "inlineSourceMap": true,
+        "inlineSources": true,
         "isolatedModules": true,
-        "jsx": "react-jsx"
+        "moduleResolution": "Node",
+        "outDir": "dist",
+        "strict": true,
+        "skipLibCheck": true,
+        "useDefineForClassFields": true
     },
-    "$schema": "https://json.schemastore.org/tsconfig"
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "exclude": ["node_modules", "cdk.out", "dist", "infrastructure"]
 }
