@@ -1,7 +1,11 @@
-#!/usr/bin/env node
 import "source-map-support/register";
-import { App } from "aws-cdk-lib";
+
+import { App, Environment } from "aws-cdk-lib";
 import { LynxAPIStack } from "./lib/infrastructure";
 
 const app = new App();
-new LynxAPIStack(app, "LynxAPIStack");
+const env: Environment = {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION
+};
+new LynxAPIStack(app, "LynxAPIStack", { env });
