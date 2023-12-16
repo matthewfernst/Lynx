@@ -1,4 +1,4 @@
-import { Stack, StackProps } from "aws-cdk-lib";
+import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { AttributeType, BillingMode, ProjectionType, Table } from "aws-cdk-lib/aws-dynamodb";
 import {
@@ -52,7 +52,8 @@ export class InfrastructureStack extends Stack {
         const usersTable = new Table(this, "usersTable", {
             tableName: "lynx-users",
             partitionKey: { name: "id", type: AttributeType.STRING },
-            billingMode: BillingMode.PAY_PER_REQUEST
+            billingMode: BillingMode.PAY_PER_REQUEST,
+            removalPolicy: RemovalPolicy.DESTROY
         });
         const oauthSecondaryIndices = ["appleId", "googleId"];
         oauthSecondaryIndices.map((indexName) => {
@@ -72,6 +73,7 @@ export class InfrastructureStack extends Stack {
             partitionKey: { name: "id", type: AttributeType.STRING },
             sortKey: { name: "timeframe", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
+            removalPolicy: RemovalPolicy.DESTROY,
             timeToLiveAttribute: "ttl"
         });
         const timeframeSecondaryIndices = ["distance", "runCount", "topSpeed", "verticalDistance"];
@@ -91,7 +93,8 @@ export class InfrastructureStack extends Stack {
         return new Table(this, "partiesTable", {
             tableName: "lynx-parties",
             partitionKey: { name: "id", type: AttributeType.STRING },
-            billingMode: BillingMode.PAY_PER_REQUEST
+            billingMode: BillingMode.PAY_PER_REQUEST,
+            removalPolicy: RemovalPolicy.DESTROY
         });
     }
 
@@ -100,13 +103,15 @@ export class InfrastructureStack extends Stack {
             tableName: "lynx-invites",
             partitionKey: { name: "id", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
+            removalPolicy: RemovalPolicy.DESTROY,
             timeToLiveAttribute: "ttl"
         });
     }
 
     private createProfilePictureBucket(): Bucket {
         const profilePictureBucket = new Bucket(this, "profilePictureBucket", {
-            bucketName: "lynx-profile-pictures"
+            bucketName: "lynx-profile-pictures",
+            removalPolicy: RemovalPolicy.DESTROY
         });
         profilePictureBucket.addToResourcePolicy(
             new PolicyStatement({
@@ -120,13 +125,15 @@ export class InfrastructureStack extends Stack {
 
     private createSlopesZippedBucket(): Bucket {
         return new Bucket(this, "slopesZippedBucket", {
-            bucketName: "lynx-slopes-zipped"
+            bucketName: "lynx-slopes-zipped",
+            removalPolicy: RemovalPolicy.DESTROY
         });
     }
 
     private createSlopesUnzippedBucket(): Bucket {
         return new Bucket(this, "slopesUnzippedBucket", {
-            bucketName: "lynx-slopes-unzipped"
+            bucketName: "lynx-slopes-unzipped",
+            removalPolicy: RemovalPolicy.DESTROY
         });
     }
 
