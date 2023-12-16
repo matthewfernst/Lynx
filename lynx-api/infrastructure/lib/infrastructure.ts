@@ -43,14 +43,10 @@ export class LynxAPIStack extends Stack {
             restApiName: "GraphQL API",
             description: "The service endpoint for Lynx's GraphQL API",
             domainName: {
-                domainName: "serverless-lynx-api.com",
+                domainName: "lynx-api.com",
                 certificate: new Certificate(this, "lynxCertificate", {
-                    domainName: "serverless-lynx-api.com",
-                    validation: CertificateValidation.fromDns(
-                        new HostedZone(this, "lynxHostedZone", {
-                            zoneName: "serverless-lynx-api.com"
-                        })
-                    )
+                    domainName: "lynx-api.com",
+                    validation: CertificateValidation.fromDns()
                 })
             },
             disableExecuteApiEndpoint: true,
