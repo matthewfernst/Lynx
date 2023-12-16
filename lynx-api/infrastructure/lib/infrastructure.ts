@@ -111,6 +111,12 @@ export class InfrastructureStack extends Stack {
     private createProfilePictureBucket(): Bucket {
         const profilePictureBucket = new Bucket(this, "profilePictureBucket", {
             bucketName: "lynx-profile-pictures",
+            blockPublicAccess: {
+                blockPublicAcls: true,
+                blockPublicPolicy: false,
+                ignorePublicAcls: true,
+                restrictPublicBuckets: false
+            },
             removalPolicy: RemovalPolicy.DESTROY
         });
         profilePictureBucket.addToResourcePolicy(
