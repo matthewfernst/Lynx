@@ -9,11 +9,11 @@ jobs:
 
   deploy-serverless:
     
-    name: Deploy AWS Lambdas Via Serverless
+    name: Deploy CDK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
@@ -48,6 +48,12 @@ jobs:
           LYNX_ESCAPE_INVITE_HATCH: ${{ secrets.ESCAPE_INVITE_HATCH }}
           LYNX_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           LYNX_NODE_ENV: "production"
+
+      - name: Build
+        run: npm run --prefix lynx-api build
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
       
       - name: Bootstrap
         run: npm run --prefix lynx-api cdk bootstrap
