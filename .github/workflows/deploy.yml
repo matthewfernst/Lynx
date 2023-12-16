@@ -55,9 +55,9 @@ jobs:
       - name: Bootstrap
         run: npm run --prefix lynx-api cdk bootstrap
         env:
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
 
       - name: Deploy
         run: npm run --prefix lynx-api deploy
         env:
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
