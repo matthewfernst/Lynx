@@ -1,0 +1,317 @@
+import { Stack, StackProps } from "aws-cdk-lib";
+import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
+import { AttributeType, BillingMode, ProjectionType, Table } from "aws-cdk-lib/aws-dynamodb";
+import {
+    AnyPrincipal,
+    ManagedPolicy,
+    PolicyDocument,
+    PolicyStatement,
+    Role,
+    ServicePrincipal
+} from "aws-cdk-lib/aws-iam";
+import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Bucket } from "aws-cdk-lib/aws-s3";
+
+import { Construct } from "constructs";
+
+export class InfrastructureStack extends Stack {
+    constructor(scope: Construct, id: string, props?: StackProps) {
+        super(scope, id, props);
+
+        const usersTable = this.createUsersTable();
+        const leaderboardTable = this.createLeaderboardTable();
+        const partiesTable = this.createPartiesTable();
+        const invitesTable = this.createInvitesTable();
+
+        const profilePictureBucket = this.createProfilePictureBucket();
+        const slopesZippedBucket = this.createSlopesZippedBucket();
+        const slopesUnzippedBucket = this.createSlopesUnzippedBucket();
+
+        const graphqlLambda = this.createGraphqlAPILambda(
+            profilePictureBucket,
+            slopesZippedBucket,
+            slopesUnzippedBucket,
+            usersTable,
+            leaderboardTable,
+            invitesTable,
+            partiesTable
+        );
+
+        const api = new RestApi(this, "graphqlAPI", {
+            restApiName: "GraphQL API",
+            description: "The service endpoint for Lynx's GraphQL API"
+        });
+
+        api.root.addResource("graphql").addMethod("POST", new LambdaIntegration(graphqlLambda));
+
+        this.createReducerLambda(slopesUnzippedBucket, leaderboardTable);
+        this.createUnzipperLambda(slopesZippedBucket, slopesUnzippedBucket);
+    }
+
+    private createUsersTable(): Table {
+        const usersTable = new Table(this, "usersTable", {
+            tableName: "lynx-users",
+            partitionKey: { name: "id", type: AttributeType.STRING },
+            billingMode: BillingMode.PAY_PER_REQUEST
+        });
+        const oauthSecondaryIndices = ["appleId", "googleId"];
+        oauthSecondaryIndices.map((indexName) => {
+            usersTable.addGlobalSecondaryIndex({
+                indexName,
+                partitionKey: { name: indexName, type: AttributeType.STRING },
+                projectionType: ProjectionType.INCLUDE,
+                nonKeyAttributes: ["validatedInvite"]
+            });
+        });
+        return usersTable;
+    }
+
+    private createLeaderboardTable(): Table {
+        const leaderboardTable = new Table(this, "leaderboardTable", {
+            tableName: "lynx-leaderboard",
+            partitionKey: { name: "id", type: AttributeType.STRING },
+            sortKey: { name: "timeframe", type: AttributeType.STRING },
+            billingMode: BillingMode.PAY_PER_REQUEST,
+            timeToLiveAttribute: "ttl"
+        });
+        const timeframeSecondaryIndices = ["distance", "runCount", "topSpeed", "verticalDistance"];
+        timeframeSecondaryIndices.map((indexName) => {
+            leaderboardTable.addGlobalSecondaryIndex({
+                indexName,
+                partitionKey: { name: "timeframe", type: AttributeType.STRING },
+                sortKey: { name: indexName, type: AttributeType.NUMBER },
+                projectionType: ProjectionType.INCLUDE,
+                nonKeyAttributes: ["id"]
+            });
+        });
+        return leaderboardTable;
+    }
+
+    private createPartiesTable(): Table {
+        return new Table(this, "partiesTable", {
+            tableName: "lynx-parties",
+            partitionKey: { name: "id", type: AttributeType.STRING },
+            billingMode: BillingMode.PAY_PER_REQUEST
+        });
+    }
+
+    private createInvitesTable(): Table {
+        return new Table(this, "invitesTable", {
+            tableName: "lynx-invites",
+            partitionKey: { name: "id", type: AttributeType.STRING },
+            billingMode: BillingMode.PAY_PER_REQUEST,
+            timeToLiveAttribute: "ttl"
+        });
+    }
+
+    private createProfilePictureBucket(): Bucket {
+        const profilePictureBucket = new Bucket(this, "profilePictureBucket", {
+            bucketName: "lynx-profile-pictures"
+        });
+        profilePictureBucket.addToResourcePolicy(
+            new PolicyStatement({
+                principals: [new AnyPrincipal()],
+                actions: ["s3:GetObject"],
+                resources: [profilePictureBucket.arnForObjects("*")]
+            })
+        );
+        return profilePictureBucket;
+    }
+
+    private createSlopesZippedBucket(): Bucket {
+        return new Bucket(this, "slopesZippedBucket", {
+            bucketName: "lynx-slopes-zipped"
+        });
+    }
+
+    private createSlopesUnzippedBucket(): Bucket {
+        return new Bucket(this, "slopesUnzippedBucket", {
+            bucketName: "lynx-slopes-unzipped"
+        });
+    }
+
+    private createGraphqlAPILambda(
+        profilePictureBucket: Bucket,
+        slopesZippedBucket: Bucket,
+        slopesUnzippedBucket: Bucket,
+        usersTable: Table,
+        leaderboardTable: Table,
+        invitesTable: Table,
+        partiesTable: Table
+    ): Function {
+        return new Function(this, "graphqlLambda", {
+            functionName: "lynx-graphql",
+            runtime: Runtime.NODEJS_LATEST,
+            handler: "index.handler",
+            code: Code.fromAsset("graphql"),
+            role: this.createGraphqlAPILambdaRole(
+                profilePictureBucket,
+                slopesZippedBucket,
+                slopesUnzippedBucket,
+                usersTable,
+                leaderboardTable,
+                invitesTable,
+                partiesTable
+            )
+        });
+    }
+
+    private createGraphqlAPILambdaRole(
+        profilePictureBucket: Bucket,
+        slopesZippedBucket: Bucket,
+        slopesUnzippedBucket: Bucket,
+        usersTable: Table,
+        leaderboardTable: Table,
+        invitesTable: Table,
+        partiesTable: Table
+    ): Role {
+        return new Role(this, "GraphQLAPILambdaRole", {
+            roleName: "GraphQLAPILambdaRole",
+            assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+            managedPolicies: [
+                ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
+            ],
+            inlinePolicies: {
+                BucketAccessPolicy: new PolicyDocument({
+                    statements: [
+                        new PolicyStatement({
+                            actions: [
+                                "s3:ListBucket",
+                                "s3:GetObject",
+                                "s3:PutObject",
+                                "s3:DeleteObject"
+                            ],
+                            resources: [
+                                profilePictureBucket.bucketArn,
+                                profilePictureBucket.arnForObjects("*")
+                            ]
+                        }),
+                        new PolicyStatement({
+                            actions: ["s3:PutObject", "s3:DeleteObject"],
+                            resources: [
+                                slopesZippedBucket.bucketArn,
+                                slopesZippedBucket.arnForObjects("*")
+                            ]
+                        }),
+                        new PolicyStatement({
+                            actions: ["s3:ListBucket", "s3:GetObject", "s3:DeleteObject"],
+                            resources: [
+                                slopesUnzippedBucket.bucketArn,
+                                slopesUnzippedBucket.arnForObjects("*")
+                            ]
+                        })
+                    ]
+                }),
+                TableAccessPolicy: new PolicyDocument({
+                    statements: [
+                        new PolicyStatement({
+                            actions: ["dynamodb:Query"],
+                            resources: [leaderboardTable.tableArn + "/index/*"]
+                        }),
+                        new PolicyStatement({
+                            actions: [
+                                "dynamodb:GetItem",
+                                "dynamodb:DeleteItem",
+                                "dynamodb:PutItem",
+                                "dynamodb:Query",
+                                "dynamodb:UpdateItem"
+                            ],
+                            resources: [usersTable.tableArn, usersTable.tableArn + "/index/*"]
+                        }),
+                        new PolicyStatement({
+                            actions: [
+                                "dynamodb:GetItem",
+                                "dynamodb:DeleteItem",
+                                "dynamodb:PutItem"
+                            ],
+                            resources: [invitesTable.tableArn, partiesTable.tableArn]
+                        })
+                    ]
+                })
+            }
+        });
+    }
+
+    private createReducerLambda(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Function {
+        return new Function(this, "reducerLambda", {
+            functionName: "lynx-reducer",
+            runtime: Runtime.NODEJS_LATEST,
+            handler: "index.handler",
+            code: Code.fromAsset("reducer"),
+            role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable)
+        });
+    }
+
+    private createReducerLambdaRole(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Role {
+        return new Role(this, "ReducerLambdaRole", {
+            roleName: "ReducerLambdaRole",
+            assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+            managedPolicies: [
+                ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
+            ],
+            inlinePolicies: {
+                BucketAccessPolicy: new PolicyDocument({
+                    statements: [
+                        new PolicyStatement({
+                            actions: ["s3:GetObject"],
+                            resources: [
+                                slopesUnzippedBucket.bucketArn,
+                                slopesUnzippedBucket.arnForObjects("*")
+                            ]
+                        }),
+                        new PolicyStatement({
+                            actions: ["dynamodb:UpdateItem"],
+                            resources: [leaderboardTable.tableArn]
+                        })
+                    ]
+                })
+            }
+        });
+    }
+
+    private createUnzipperLambda(
+        slopesZippedBucket: Bucket,
+        slopesUnzippedBucket: Bucket
+    ): Function {
+        return new Function(this, "unzipperLambda", {
+            functionName: "lynx-unzipper",
+            runtime: Runtime.NODEJS_LATEST,
+            handler: "index.handler",
+            code: Code.fromAsset("unzipper"),
+            role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket)
+        });
+    }
+
+    private createUnzipperLambdaRole(
+        slopesZippedBucket: Bucket,
+        slopesUnzippedBucket: Bucket
+    ): Role {
+        return new Role(this, "UnzipperLambdaRole", {
+            roleName: "UnzipperLambdaRole",
+            assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+            managedPolicies: [
+                ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
+            ],
+            inlinePolicies: {
+                BucketAccessPolicy: new PolicyDocument({
+                    statements: [
+                        new PolicyStatement({
+                            actions: ["s3:GetObject"],
+                            resources: [
+                                slopesZippedBucket.bucketArn,
+                                slopesZippedBucket.arnForObjects("*")
+                            ]
+                        }),
+                        new PolicyStatement({
+                            actions: ["s3:PutObject"],
+                            resources: [
+                                slopesUnzippedBucket.bucketArn,
+                                slopesUnzippedBucket.arnForObjects("*")
+                            ]
+                        })
+                    ]
+                })
+            }
+        });
+    }
+}

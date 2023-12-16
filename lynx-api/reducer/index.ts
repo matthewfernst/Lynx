@@ -26,7 +26,6 @@ export async function handler(event: any, context: any) {
             });
         });
     }
-    return { statusCode: 200 };
 }
 
 const processTimeframes = (activityEnd: string): string[] => {
@@ -77,4 +76,4 @@ const getTTLFromTimeframe = (timeframe: string): number | undefined => {
     const month = timeframeType === "month" ? timeframeValue + 1 : now.month;
     const year = timeframeType === "year" ? timeframeValue + 1 : now.year;
     return DateTime.fromFormat(`${year} ${month} ${week} ${day}`, "yyyy L W o").toSeconds();
-}
+};
