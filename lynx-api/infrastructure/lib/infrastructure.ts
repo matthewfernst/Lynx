@@ -11,7 +11,8 @@ import {
     ServicePrincipal
 } from "aws-cdk-lib/aws-iam";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
-import { Bucket } from "aws-cdk-lib/aws-s3";
+import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
+import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 
 import { Construct } from "constructs";
 import { config } from "dotenv";
@@ -262,13 +263,17 @@ export class LynxAPIStack extends Stack {
     }
 
     private createReducerLambda(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Function {
-        return new Function(this, "reducerLambda", {
+        const reducerLambda = new Function(this, "reducerLambda", {
             functionName: "lynx-reducer",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
             code: Code.fromAsset("dist/reducer"),
             role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable)
         });
+        reducerLambda.addEventSource(
+            new S3EventSource(slopesUnzippedBucket, { events: [EventType.OBJECT_CREATED] })
+        );
+        return reducerLambda;
     }
 
     private createReducerLambdaRole(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Role {
@@ -302,13 +307,17 @@ export class LynxAPIStack extends Stack {
         slopesZippedBucket: Bucket,
         slopesUnzippedBucket: Bucket
     ): Function {
-        return new Function(this, "unzipperLambda", {
+        const unzipperLambda = new Function(this, "unzipperLambda", {
             functionName: "lynx-unzipper",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
             code: Code.fromAsset("dist/unzipper"),
             role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket)
         });
+        unzipperLambda.addEventSource(
+            new S3EventSource(slopesZippedBucket, { events: [EventType.OBJECT_CREATED] })
+        );
+        return unzipperLambda;
     }
 
     private createUnzipperLambdaRole(
