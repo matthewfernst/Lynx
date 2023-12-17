@@ -1,13 +1,6 @@
 import { build } from "esbuild";
 import { copyFile } from "fs/promises";
 
-buildLambdaFunction("reducer");
-buildLambdaFunction("unzipper");
-
-const packageName = "graphql";
-buildLambdaFunction(packageName);
-copyFile(`${packageName}/schema.graphql`, `dist/${packageName}/schema.graphql`);
-
 const buildLambdaFunction = async (packageName) => {
     await build({
         bundle: true,
@@ -17,3 +10,10 @@ const buildLambdaFunction = async (packageName) => {
         target: "node18"
     });
 };
+
+await buildLambdaFunction("reducer");
+await buildLambdaFunction("unzipper");
+
+const packageName = "graphql";
+await buildLambdaFunction(packageName);
+await copyFile(`${packageName}/schema.graphql`, `dist/${packageName}/schema.graphql`);
