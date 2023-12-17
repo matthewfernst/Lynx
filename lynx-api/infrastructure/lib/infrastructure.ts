@@ -52,7 +52,7 @@ export class LynxAPIStack extends Stack {
             description: "The service endpoint for Lynx's GraphQL API",
             endpointTypes: [EndpointType.REGIONAL],
             domainName: {
-                domainName: "lynx-api.com",
+                domainName: "production.lynx-api.com",
                 certificate: new Certificate(this, "lynxCertificate", {
                     domainName: "*.lynx-api.com",
                     validation: CertificateValidation.fromDns()
