@@ -78,7 +78,7 @@ export const resolvers = {
         topSpeedAltitude,
         verticalDistance: logDetailVerticalDistance
     },
-    Leaderboard: {
+    Party: {
         leaderboard: partyLeaderboard,
         users: partyUsers
     }

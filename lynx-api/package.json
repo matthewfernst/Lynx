@@ -7,7 +7,7 @@
     "main": "index.js",
     "scripts": {
         "clean": "rm -rf cdk.out dist",
-        "build": "tsc -p ./tsconfig.lambda.json",
+        "build": "node esbuild.mjs",
         "lint": "eslint ./**/*.ts",
         "cdk": "cdk",
         "deploy": "cdk deploy --require-approval=never"
@@ -21,6 +21,7 @@
         "@types/uuid": "^9.0.7",
         "@typescript-eslint/eslint-plugin": "^6.13.2",
         "aws-cdk": "2.115.0",
+        "esbuild": "0.19.9",
         "eslint": "^8.55.0",
         "eslint-config-prettier": "^9.1.0",
         "ts-node": "^10.9.2",
@@ -40,8 +41,8 @@
         "@types/xml2js": "^0.4.14",
         "apple-signin-auth": "^1.7.5",
         "aws-cdk-lib": "2.115.0",
-        "constructs": "^10.0.0",
         "axios": "^1.6.2",
+        "constructs": "^10.0.0",
         "convert-units": "^2.3.4",
         "crypto-js": "^4.2.0",
         "dotenv": "^16.3.1",

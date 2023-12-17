@@ -1,4 +1,4 @@
-import "dotenv/config";
+import dotenv from "dotenv";
 
 import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateLambdaHandler, handlers } from "@as-integrations/aws-lambda";
@@ -11,6 +11,8 @@ import { resolvers } from "./resolvers";
 export interface Context {
     userId: string | undefined;
 }
+
+dotenv.config();
 
 const server = new ApolloServer<Context>({
     typeDefs: loadSchemaSync(__dirname + "/schema.graphql", { loaders: [new GraphQLFileLoader()] }),
@@ -30,7 +32,7 @@ const server = new ApolloServer<Context>({
     }
 });
 
-exports.handler = startServerAndCreateLambdaHandler(
+export const handler = startServerAndCreateLambdaHandler(
     server,
     handlers.createAPIGatewayProxyEventRequestHandler(),
     {
