@@ -1,5 +1,6 @@
 import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import {
+    Cors,
     EndpointType,
     LambdaIntegration,
     MethodLoggingLevel,
@@ -61,6 +62,9 @@ export class LynxAPIStack extends Stack {
             deployOptions: {
                 dataTraceEnabled: true,
                 tracingEnabled: true
+            },
+            defaultCorsPreflightOptions: {
+                allowOrigins: Cors.ALL_ORIGINS
             }
         });
 
