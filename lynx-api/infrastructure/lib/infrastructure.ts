@@ -68,17 +68,9 @@ export class LynxAPIStack extends Stack {
             }
         });
 
-        const apiResource = api.root.addResource("graphql");
-        apiResource.addMethod(
-            "POST",
-            new LambdaIntegration(graphqlLambda, { allowTestInvoke: false })
-        );
-        apiResource.addMethod(
-            "GET",
-            new MockIntegration({
-                integrationResponses: [{ statusCode: "200" }]
-            })
-        );
+        api.root
+            .addResource("graphql")
+            .addMethod("POST", new LambdaIntegration(graphqlLambda, { allowTestInvoke: false }));
 
         this.createReducerLambda(slopesUnzippedBucket, leaderboardTable);
         this.createUnzipperLambda(slopesZippedBucket, slopesUnzippedBucket);
