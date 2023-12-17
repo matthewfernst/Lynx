@@ -1,5 +1,5 @@
 import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
-import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
+import { EndpointType, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
 import { AttributeType, BillingMode, ProjectionType, Table } from "aws-cdk-lib/aws-dynamodb";
 import {
@@ -43,6 +43,7 @@ export class LynxAPIStack extends Stack {
         const api = new RestApi(this, "graphqlAPI", {
             restApiName: "GraphQL API",
             description: "The service endpoint for Lynx's GraphQL API",
+            endpointTypes: [EndpointType.REGIONAL],
             domainName: {
                 domainName: "lynx-api.com",
                 certificate: new Certificate(this, "lynxCertificate", {
@@ -50,7 +51,7 @@ export class LynxAPIStack extends Stack {
                     validation: CertificateValidation.fromDns()
                 })
             },
-            disableExecuteApiEndpoint: true,
+            disableExecuteApiEndpoint: false,
             deployOptions: {
                 dataTraceEnabled: true,
                 tracingEnabled: true
