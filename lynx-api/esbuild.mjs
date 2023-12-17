@@ -7,13 +7,17 @@ const buildLambdaFunction = async (packageName) => {
         entryPoints: [`${packageName}/index.ts`],
         outdir: `dist/${packageName}`,
         platform: "node",
-        target: "node18"
+        target: "node18",
+        sourcemap: "inline"
     });
 };
 
 await buildLambdaFunction("reducer");
 await buildLambdaFunction("unzipper");
 
-const packageName = "graphql";
-await buildLambdaFunction(packageName);
-await copyFile(`${packageName}/schema.graphql`, `dist/${packageName}/schema.graphql`);
+const graphqlDirectoryName = "graphql";
+await buildLambdaFunction(graphqlDirectoryName);
+await copyFile(
+    `${graphqlDirectoryName}/schema.graphql`,
+    `dist/${graphqlDirectoryName}/schema.graphql`
+);

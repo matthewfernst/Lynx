@@ -182,7 +182,10 @@ export class LynxAPIStack extends Stack {
                 invitesTable,
                 partiesTable
             ),
-            environment: config().parsed
+            environment: {
+                ...config().parsed,
+                NODE_OPTIONS: "--enable-source-maps"
+            }
         });
     }
 
