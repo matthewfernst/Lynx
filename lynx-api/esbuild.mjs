@@ -1,33 +1,19 @@
 import { build } from "esbuild";
 import { copyFile } from "fs/promises";
 
-const commonOptions = { bundle: true, platform: "node", target: "node18" };
-const buildGraphQLFunction = async () => {
-    const packageName = "graphql";
+buildLambdaFunction("reducer");
+buildLambdaFunction("unzipper");
+
+const packageName = "graphql";
+buildLambdaFunction(packageName);
+copyFile(`${packageName}/schema.graphql`, `dist/${packageName}/schema.graphql`);
+
+const buildLambdaFunction = async (packageName) => {
     await build({
+        bundle: true,
         entryPoints: [`${packageName}/index.ts`],
-        outdir: "dist/graphql",
-        ...commonOptions
-    });
-    copyFile(`${packageName}/schema.graphql`, `dist/${packageName}/schema.graphql`);
-};
-
-const buildReducerFunction = async () => {
-    await build({
-        entryPoints: ["reducer/index.ts"],
-        outdir: "dist/reducer",
-        ...commonOptions
+        outdir: `dist/${packageName}`,
+        platform: "node",
+        target: "node18"
     });
 };
-
-const buildUnzipperFunction = async () => {
-    await build({
-        entryPoints: ["unzipper/index.ts"],
-        outdir: "dist/unzipper",
-        ...commonOptions
-    });
-};
-
-buildGraphQLFunction();
-buildReducerFunction();
-buildUnzipperFunction();
