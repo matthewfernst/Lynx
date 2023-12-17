@@ -1,12 +1,5 @@
 import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
-import {
-    Cors,
-    EndpointType,
-    LambdaIntegration,
-    MethodLoggingLevel,
-    MockIntegration,
-    RestApi
-} from "aws-cdk-lib/aws-apigateway";
+import { Cors, EndpointType, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
 import { AttributeType, BillingMode, ProjectionType, Table } from "aws-cdk-lib/aws-dynamodb";
 import {
@@ -60,7 +53,6 @@ export class LynxAPIStack extends Stack {
             },
             disableExecuteApiEndpoint: true,
             deployOptions: {
-                dataTraceEnabled: true,
                 tracingEnabled: true
             },
             defaultCorsPreflightOptions: {
