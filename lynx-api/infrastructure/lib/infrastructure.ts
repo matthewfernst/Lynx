@@ -52,6 +52,7 @@ export class LynxAPIStack extends Stack {
             },
             disableExecuteApiEndpoint: true,
             deployOptions: {
+                dataTraceEnabled: true,
                 tracingEnabled: true
             }
         });
