@@ -72,7 +72,7 @@ export class LynxAPIStack extends Stack {
         apiResource.addMethod(
             "GET",
             new MockIntegration({
-                requestTemplates: { "application/json": '{ "statusCode": 200 }' }
+                integrationResponses: [{ statusCode: "200" }]
             })
         );
 
