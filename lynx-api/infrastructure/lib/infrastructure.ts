@@ -174,6 +174,7 @@ export class LynxAPIStack extends Stack {
             functionName: "lynx-graphql",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
+            memorySize: 1024,
             code: Code.fromAsset("dist/graphql"),
             role: this.createGraphqlAPILambdaRole(
                 profilePictureBucket,
@@ -272,6 +273,7 @@ export class LynxAPIStack extends Stack {
             functionName: "lynx-reducer",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
+            memorySize: 1024,
             code: Code.fromAsset("dist/reducer"),
             role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable)
         });
@@ -316,6 +318,7 @@ export class LynxAPIStack extends Stack {
             functionName: "lynx-unzipper",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
+            memorySize: 1024,
             code: Code.fromAsset("dist/unzipper"),
             role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket)
         });
