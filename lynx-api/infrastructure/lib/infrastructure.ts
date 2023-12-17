@@ -58,7 +58,7 @@ export class LynxAPIStack extends Stack {
                     validation: CertificateValidation.fromDns()
                 })
             },
-            disableExecuteApiEndpoint: false,
+            disableExecuteApiEndpoint: true,
             deployOptions: {
                 dataTraceEnabled: true,
                 tracingEnabled: true
