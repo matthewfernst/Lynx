@@ -14,6 +14,7 @@ import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { Bucket } from "aws-cdk-lib/aws-s3";
 
 import { Construct } from "constructs";
+import { config } from "dotenv";
 
 export class LynxAPIStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
@@ -179,7 +180,8 @@ export class LynxAPIStack extends Stack {
                 leaderboardTable,
                 invitesTable,
                 partiesTable
-            )
+            ),
+            environment: config().parsed
         });
     }
 
