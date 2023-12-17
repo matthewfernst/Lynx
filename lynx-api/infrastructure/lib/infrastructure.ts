@@ -1,5 +1,5 @@
 import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
-import { EndpointType, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
+import { EndpointType, LambdaIntegration, MethodLoggingLevel, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
 import { AttributeType, BillingMode, ProjectionType, Table } from "aws-cdk-lib/aws-dynamodb";
 import {
@@ -54,6 +54,7 @@ export class LynxAPIStack extends Stack {
             disableExecuteApiEndpoint: false,
             deployOptions: {
                 dataTraceEnabled: true,
+                loggingLevel: MethodLoggingLevel.INFO,
                 tracingEnabled: true
             }
         });
