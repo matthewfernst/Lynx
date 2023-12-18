@@ -1,9 +1,6 @@
-import {
-    DeleteObjectCommand,
-    GetObjectCommand,
-    PutObjectCommand,
-    S3Client
-} from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
+
 import { Readable } from "stream";
 import { ParseOne } from "unzipper";
 
@@ -34,12 +31,11 @@ export async function handler(event: any, context: any) {
         );
 
         const targetFile = renameFileFunction(fileName);
-        const putObjectRequest = new PutObjectCommand({
-            Bucket: targetBucket,
-            Key: targetFile,
-            Body: fileStream
+        const upload = new Upload({
+            client: s3Client,
+            params: { Bucket: targetBucket, Key: targetFile, Body: fileStream }
         });
-        await s3Client.send(putObjectRequest);
+        await upload.done();
         console.log(`File ${targetFile} uploaded to bucket ${targetBucket} successfully.`);
 
         const deleteObjectRequest = new DeleteObjectCommand({ Bucket: bucket, Key: fileName });

@@ -273,7 +273,8 @@ export class LynxAPIStack extends Stack {
             handler: "index.handler",
             memorySize: 1024,
             code: Code.fromAsset("dist/reducer"),
-            role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable)
+            role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable),
+            environment: { NODE_OPTIONS: "--enable-source-maps" }
         });
         reducerLambda.addEventSource(
             new S3EventSource(slopesUnzippedBucket, { events: [EventType.OBJECT_CREATED] })
@@ -318,7 +319,8 @@ export class LynxAPIStack extends Stack {
             handler: "index.handler",
             memorySize: 1024,
             code: Code.fromAsset("dist/unzipper"),
-            role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket)
+            role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket),
+            environment: { NODE_OPTIONS: "--enable-source-maps" }
         });
         unzipperLambda.addEventSource(
             new S3EventSource(slopesZippedBucket, { events: [EventType.OBJECT_CREATED] })
