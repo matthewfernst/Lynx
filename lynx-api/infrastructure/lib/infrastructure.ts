@@ -52,12 +52,8 @@ export class LynxAPIStack extends Stack {
                 })
             },
             disableExecuteApiEndpoint: true,
-            deployOptions: {
-                tracingEnabled: true
-            },
-            defaultCorsPreflightOptions: {
-                allowOrigins: Cors.ALL_ORIGINS
-            }
+            deployOptions: { tracingEnabled: true },
+            defaultCorsPreflightOptions: { allowOrigins: Cors.ALL_ORIGINS }
         });
 
         api.root
