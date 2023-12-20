@@ -342,7 +342,7 @@ export class LynxAPIStack extends Stack {
                 BucketAccessPolicy: new PolicyDocument({
                     statements: [
                         new PolicyStatement({
-                            actions: ["s3:GetObject"],
+                            actions: ["s3:GetObject", "s3:DeleteObject"],
                             resources: [
                                 slopesZippedBucket.bucketArn,
                                 slopesZippedBucket.arnForObjects("*")
