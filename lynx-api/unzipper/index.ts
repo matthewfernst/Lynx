@@ -17,17 +17,14 @@ const renameFileFunction = (originalFileName: string) => {
 export async function handler(event: any, context: any) {
     for (const record of event.Records) {
         const bucket = decodeURIComponent(record.s3.bucket.name);
-        const fileName = decodeURIComponent(record.s3.object.key)
-            .split("")
-            .map((letter) => (letter === "+" ? " " : letter))
-            .join("");
+        const objectKey = decodeURIComponent(record.s3.object.key).replaceAll("+", " ");
 
-        const targetFile = renameFileFunction(fileName);
-        const getObjectRequest = new GetObjectCommand({ Bucket: bucket, Key: fileName });
+        const targetFile = renameFileFunction(objectKey);
+        const getObjectRequest = new GetObjectCommand({ Bucket: bucket, Key: objectKey });
         const getObjectResponse = await s3Client.send(getObjectRequest);
         const objectBody = getObjectResponse.Body;
         if (!objectBody) {
-            throw new Error(`No body found for object ${fileName} in bucket ${bucket}`);
+            throw new Error(`No body found for object ${objectKey} in bucket ${bucket}`);
         }
 
         const outputStream = objectBody.pipe(Parse({ forceStream: true })) as ParseStream;
@@ -42,7 +39,7 @@ export async function handler(event: any, context: any) {
             await upload.done();
             console.log(`File ${targetFile} uploaded to bucket ${targetBucket} successfully.`);
 
-            const deleteObjectRequest = new DeleteObjectCommand({ Bucket: bucket, Key: fileName });
+            const deleteObjectRequest = new DeleteObjectCommand({ Bucket: bucket, Key: objectKey });
             await s3Client.send(deleteObjectRequest);
             console.log("Zipped file deleted successfully.");
         }

@@ -10,7 +10,7 @@ import { DateTime } from "luxon";
 export async function handler(event: any, context: any) {
     for (const record of event.Records) {
         const bucket = decodeURIComponent(record.s3.bucket.name);
-        const objectKey = decodeURIComponent(record.s3.object.key);
+        const objectKey = decodeURIComponent(record.s3.object.key).replaceAll("+", " ");
 
         console.log(`Retrieving unzipped record from ${bucket} with key ${objectKey}`);
         const unzippedRecord = await getRecordFromBucket(bucket, objectKey);
