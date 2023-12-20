@@ -21,33 +21,27 @@ export type Table =
     | typeof INVITES_TABLE
     | typeof PARTIES_TABLE;
 
-type ObjectType<T extends Table> = T extends typeof USERS_TABLE
-    ? User
-    : T extends typeof LEADERBOARD_TABLE
-    ? LeaderboardEntry
-    : T extends typeof INVITES_TABLE
-    ? Invite
-    : T extends typeof PARTIES_TABLE
-    ? Party
-    : unknown;
+type ObjectType<T extends Table> = 
+    T extends typeof USERS_TABLE ? User :
+    T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry :
+    T extends typeof INVITES_TABLE ? Invite :
+    T extends typeof PARTIES_TABLE ? Party :
+    unknown;
 
-export const createDocumentClient = (): DynamoDBDocument => {
-    if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
+if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
 
-    const serviceConfigOptions: DynamoDBClientConfig = {
-        region: process.env.AWS_REGION,
-        ...(process.env.IS_OFFLINE && { endpoint: "http://localhost:8080" })
-    };
-
-    const dynamodbClient = new DynamoDB(serviceConfigOptions);
-    return DynamoDBDocument.from(dynamodbClient);
+const serviceConfigOptions: DynamoDBClientConfig = {
+    region: process.env.AWS_REGION,
+    ...(process.env.IS_OFFLINE && { endpoint: "http://localhost:8080" })
 };
+
+const dynamodbClient = new DynamoDB(serviceConfigOptions);
+export const documentClient = DynamoDBDocument.from(dynamodbClient);
 
 export const getItem = async <T extends Table>(
     table: T,
     id: string
 ): Promise<ObjectType<T> | undefined> => {
-    const documentClient = createDocumentClient();
     try {
         console.log(`Getting item from ${table} with id ${id}`);
         const getItemRequest = new GetCommand({ TableName: table, Key: { id } });
@@ -64,7 +58,6 @@ export const getItemByIndex = async <T extends Table>(
     key: string,
     value: string
 ): Promise<ObjectType<T> | undefined> => {
-    const documentClient = createDocumentClient();
     try {
         console.log(`Getting item from ${table} with ${key} ${value}`);
         const queryRequest = new QueryCommand({
@@ -83,7 +76,6 @@ export const getItemByIndex = async <T extends Table>(
 };
 
 export const putItem = async <T extends Table>(table: T, item: Object): Promise<ObjectType<T>> => {
-    const documentClient = createDocumentClient();
     try {
         console.log(`Putting item into ${table}`);
         const putItemRequest = new PutCommand({
@@ -105,7 +97,6 @@ export const updateItem = async <T extends Table>(
     key: string,
     value: any
 ): Promise<ObjectType<T> | undefined> => {
-    const documentClient = createDocumentClient();
     try {
         console.log(`Updating item in ${table} with id ${id}. New ${key} is ${value}`);
         const updateItemRequest = new UpdateCommand({
@@ -130,7 +121,6 @@ export const addItemsToArray = async <T extends Table>(
     key: string,
     values: string[]
 ): Promise<ObjectType<T> | undefined> => {
-    const documentClient = createDocumentClient();
     try {
         console.log(
             `Updating item in ${table} with id ${id}. ${key} now has the following as values: ${values}`
@@ -157,7 +147,6 @@ export const deleteItemsFromArray = async <T extends Table>(
     key: string,
     values: string[]
 ): Promise<ObjectType<T> | undefined> => {
-    const documentClient = createDocumentClient();
     try {
         console.log(
             `Updating item in ${table} with id ${id}. ${key} no longer has the following as values: ${values}`
@@ -193,7 +182,6 @@ export const deleteItem = async <T extends Table>(
     table: T,
     id: string
 ): Promise<ObjectType<T> | undefined> => {
-    const documentClient = createDocumentClient();
     try {
         console.log(`Deleting item from ${table} with id ${id}`);
         const deleteItemRequest = new DeleteCommand({

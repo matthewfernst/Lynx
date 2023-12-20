@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 
 import { Context } from "../../index";
 import { LeaderboardEntry, User } from "../../types";
-import { LEADERBOARD_TABLE, USERS_TABLE, createDocumentClient, getItem } from "../../aws/dynamodb";
+import { LEADERBOARD_TABLE, USERS_TABLE, documentClient, getItem } from "../../aws/dynamodb";
 import { populateLogbookDataForUser } from "./selfLookup";
 
 export type LeaderboardSort = "DISTANCE" | "RUN_COUNT" | "TOP_SPEED" | "VERTICAL_DISTANCE";
@@ -62,7 +62,6 @@ const getTimeframeRankingByIndex = async (
     timeframe: string,
     limit: number
 ): Promise<LeaderboardEntry[]> => {
-    const documentClient = createDocumentClient();
     try {
         console.log(`Getting items with timeframe ${timeframe} sorted by ${index}`);
         const queryRequest = new QueryCommand({

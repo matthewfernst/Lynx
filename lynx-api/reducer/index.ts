@@ -1,7 +1,7 @@
 import { UpdateItemOutput } from "@aws-sdk/client-dynamodb";
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
-import { LEADERBOARD_TABLE, createDocumentClient } from "../graphql/aws/dynamodb";
+import { LEADERBOARD_TABLE, documentClient } from "../graphql/aws/dynamodb";
 import { getRecordFromBucket } from "../graphql/aws/s3";
 import { xmlToActivity } from "../graphql/resolvers/User/logbook";
 import { leaderboardSortTypesToQueryFields } from "../graphql/resolvers/Query/leaderboard";
@@ -45,7 +45,6 @@ const updateItem = async (
     key: string,
     value: any
 ): Promise<UpdateItemOutput> => {
-    const documentClient = createDocumentClient();
     try {
         console.log(`Updating item in table lynx-users with id ${id}. Adding ${value} to ${key}`);
         const updateItemRequest = new UpdateCommand({

@@ -7,7 +7,7 @@ import {
     LEADERBOARD_TABLE,
     PARTIES_TABLE,
     USERS_TABLE,
-    createDocumentClient,
+    documentClient,
     getItem
 } from "../../aws/dynamodb";
 import { populateLogbookDataForUser } from "../Query/selfLookup";
@@ -74,7 +74,6 @@ const getTimeframeRankingByIndex = async (
     partyId: string
 ): Promise<LeaderboardEntry[]> => {
     const usersInParty = getUserIdsInParty(partyId);
-    const documentClient = createDocumentClient();
     try {
         console.log(`Getting items with timeframe ${timeframe} sorted by ${index}`);
         const queryRequest = new QueryCommand({
