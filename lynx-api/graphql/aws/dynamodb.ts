@@ -11,7 +11,7 @@ import {
 import { Invite, LeaderboardEntry, Party, User } from "../types";
 
 export const USERS_TABLE = "lynx-users";
-export const LEADERBOARD_TABLE = "leaderboard-table";
+export const LEADERBOARD_TABLE = "lynx-leaderboard";
 export const INVITES_TABLE = "lynx-invites";
 export const PARTIES_TABLE = "lynx-parties";
 

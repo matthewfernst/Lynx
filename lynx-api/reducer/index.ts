@@ -46,7 +46,7 @@ const updateItem = async (
     value: any
 ): Promise<UpdateItemOutput> => {
     try {
-        console.log(`Updating item in table lynx-users with id ${id}. Adding ${value} to ${key}`);
+        console.log(`Updating item in table lynx-leadererboard with id ${id}. Updating ${value} to ${key}`);
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
             Key: { id, timeframe },
