@@ -9,6 +9,9 @@ import { xmlToActivity } from "../graphql/resolvers/User/logbook";
 import { leaderboardSortTypesToQueryFields } from "../graphql/resolvers/Query/leaderboard";
 import { LEADERBOARD_TABLE } from "../infrastructure/lib/infrastructure";
 
+const timeframes = ["day", "week", "month", "year", "all"] as const;
+type Timeframe = (typeof timeframes)[number];
+
 export async function handler(event: any, context: any) {
     for (const record of event.Records) {
         const bucket = decodeURIComponent(record.s3.bucket.name);
@@ -19,42 +22,39 @@ export async function handler(event: any, context: any) {
         const activity = await xmlToActivity(unzippedRecord);
 
         const userId = objectKey.split("/")[0];
-        const timeframes = processTimeframes(activity.end);
+        const endTime = DateTime.fromFormat(activity.end, "yyyy-MM-dd HH:mm:ss ZZZ");
 
         timeframes.forEach((timeframe) => {
-            Object.values(leaderboardSortTypesToQueryFields).forEach(async (key) => {
-                const value = key == "verticalDistance" ? activity.vertical : activity[key];
-                await updateItem(userId, timeframe, key, value);
+            Object.values(leaderboardSortTypesToQueryFields).forEach(async (sortType) => {
+                const value =
+                    sortType == "verticalDistance" ? activity.vertical : activity[sortType];
+                await updateItem(userId, endTime, timeframe, sortType, value);
             });
         });
     }
 }
 
-const processTimeframes = (activityEnd: string): string[] => {
-    const time = DateTime.fromFormat(activityEnd, "yyyy-MM-dd HH:mm:ss ZZZ");
-    return [
-        `day-${time.ordinal}`,
-        `week-${time.weekNumber}`,
-        `month-${time.month}`,
-        `year-${time.year}`,
-        "all"
-    ];
-};
-
 const updateItem = async (
     id: string,
-    timeframe: string,
-    key: string,
+    endTime: DateTime,
+    timeframe: Timeframe,
+    sortType: string,
     value: any
 ): Promise<UpdateItemOutput> => {
+    if (timeframe === "all") {
+        return await updateAllTimeframe(id, sortType, value);
+    }
     try {
-        console.log(`Updating item in table lynx-leadererboard with id ${id}. Updating ${value} to ${key}`);
+        const updateTimeframe = `${timeframe}-${getNumericValue(endTime, timeframe)}`;
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
-            Key: { id, timeframe },
+            Key: { id, timeframe: updateTimeframe },
             UpdateExpression: "set #updateKey = #updateKey + :value AND set ttl = :ttl",
-            ExpressionAttributeNames: { "#updateKey": key },
-            ExpressionAttributeValues: { ":value": value, ":ttl": getTTLFromTimeframe(timeframe) },
+            ExpressionAttributeNames: { "#updateKey": sortType },
+            ExpressionAttributeValues: {
+                ":value": value,
+                ":ttl": getTimeToLive(endTime, timeframe)
+            },
             ReturnValues: "UPDATED_NEW"
         });
         return await documentClient.send(updateItemRequest);
@@ -64,17 +64,49 @@ const updateItem = async (
     }
 };
 
-const getTTLFromTimeframe = (timeframe: string): number | undefined => {
-    const timeframeSegments = timeframe.split("-");
-    const timeframeType = timeframeSegments[0];
-    const timeframeValue = parseInt(timeframeSegments[1]);
+const updateAllTimeframe = async (
+    id: string,
+    sortType: string,
+    value: any
+): Promise<UpdateItemOutput> => {
+    try {
+        const updateItemRequest = new UpdateCommand({
+            TableName: LEADERBOARD_TABLE,
+            Key: { id, timeframe: "all" },
+            UpdateExpression: "set #updateKey = #updateKey + :value",
+            ExpressionAttributeNames: { "#updateKey": sortType },
+            ExpressionAttributeValues: { ":value": value },
+            ReturnValues: "UPDATED_NEW"
+        });
+        return await documentClient.send(updateItemRequest);
+    } catch (err) {
+        console.error(err);
+        throw Error("DynamoDB Update Call Failed");
+    }
+};
 
-    if (timeframeType === "all") return undefined;
+const getNumericValue = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">): number => {
+    switch (timeframe) {
+        case "day":
+            return endTime.ordinal;
+        case "week":
+            return endTime.weekNumber;
+        case "month":
+            return endTime.month;
+        case "year":
+            return endTime.year;
+    }
+};
 
-    const now = DateTime.now();
-    const day = timeframeType === "day" ? timeframeValue + 1 : now.ordinal;
-    const week = timeframeType === "week" ? timeframeValue + 1 : now.weekNumber;
-    const month = timeframeType === "month" ? timeframeValue + 1 : now.month;
-    const year = timeframeType === "year" ? timeframeValue + 1 : now.year;
-    return DateTime.fromFormat(`${year} ${month} ${week} ${day}`, "yyyy L W o").toSeconds();
+const getTimeToLive = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">): number => {
+    switch (timeframe) {
+        case "day":
+            return endTime.plus({ days: 1 }).toSeconds();
+        case "week":
+            return endTime.plus({ weeks: 1 }).toSeconds();
+        case "month":
+            return endTime.plus({ months: 1 }).toSeconds();
+        case "year":
+            return endTime.plus({ years: 1 }).toSeconds();
+    }
 };
