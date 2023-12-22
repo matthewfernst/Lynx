@@ -24,7 +24,7 @@ export async function handler(event: any, context: any) {
         const outputStream = objectBody.pipe(Parse({ forceStream: true })) as ParseStream;
         for await (const entry of outputStream) {
             if (entry.path === "Metadata.xml") {
-                await uploadAndDelete(bucket, objectKey, entry);
+                return await uploadAndDelete(bucket, objectKey, entry);
             } else {
                 entry.autodrain();
             }
@@ -34,11 +34,10 @@ export async function handler(event: any, context: any) {
 
 const uploadAndDelete = async (bucket: string, objectKey: string, entry: Entry) => {
     const targetFile = renameFileFunction(objectKey);
-    const upload = new Upload({
+    await new Upload({
         client: s3Client,
         params: { Bucket: SLOPES_UNZIPPED_BUCKET, Key: targetFile, Body: entry }
-    });
-    await upload.done();
+    }).done();
     console.log(`File ${targetFile} uploaded to bucket ${SLOPES_UNZIPPED_BUCKET} successfully.`);
 
     const deleteObjectRequest = new DeleteObjectCommand({ Bucket: bucket, Key: objectKey });
