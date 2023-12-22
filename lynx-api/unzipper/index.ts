@@ -3,6 +3,7 @@ import { Upload } from "@aws-sdk/lib-storage";
 import { Entry, Parse, ParseStream as IncompleteTypedParseStream } from "unzipper";
 
 import { s3Client } from "../graphql/aws/s3";
+import { SLOPES_UNZIPPED_BUCKET } from "../infrastructure/lib/infrastructure";
 
 type ParseStream = IncompleteTypedParseStream & {
     [Symbol.asyncIterator]: () => AsyncIterableIterator<Entry>;
@@ -32,10 +33,12 @@ export async function handler(event: any, context: any) {
             }
             const upload = new Upload({
                 client: s3Client,
-                params: { Bucket: targetBucket, Key: targetFile, Body: entry }
+                params: { Bucket: SLOPES_UNZIPPED_BUCKET, Key: targetFile, Body: entry }
             });
             await upload.done();
-            console.log(`File ${targetFile} uploaded to bucket ${targetBucket} successfully.`);
+            console.log(
+                `File ${targetFile} uploaded to bucket ${SLOPES_UNZIPPED_BUCKET} successfully.`
+            );
 
             const deleteObjectRequest = new DeleteObjectCommand({ Bucket: bucket, Key: objectKey });
             await s3Client.send(deleteObjectRequest);
