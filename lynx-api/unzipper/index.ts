@@ -28,7 +28,7 @@ export async function handler(event: any, context: any) {
 
         const outputStream = objectBody.pipe(Parse({ forceStream: true })) as ParseStream;
         for await (const entry of outputStream) {
-            if (entry.type !== "File" && entry.path !== "Metadata.xml") {
+            if (entry.type !== "File" || entry.path !== "Metadata.xml") {
                 entry.autodrain();
             }
             const upload = new Upload({
