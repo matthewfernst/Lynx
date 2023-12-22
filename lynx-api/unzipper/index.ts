@@ -28,9 +28,11 @@ export async function handler(event: any, context: any) {
 
         const outputStream = objectBody.pipe(Parse({ forceStream: true })) as ParseStream;
         for await (const entry of outputStream) {
+            console.log(`Processing entry with type ${entry.type} and name ${entry.path}`);
             if (entry.type !== "File" || entry.path !== "Metadata.xml") {
                 entry.autodrain();
             }
+            console.log(`Uploading file with name ${targetFile} from entry ${entry.path}`)
             const upload = new Upload({
                 client: s3Client,
                 params: { Bucket: SLOPES_UNZIPPED_BUCKET, Key: targetFile, Body: entry }
