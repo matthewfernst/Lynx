@@ -2,11 +2,11 @@ import { GraphQLError } from "graphql";
 
 import { deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
 import { BAD_REQUEST, checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
-import { deleteObjectsInBucket, profilePictureBucketName, toRunRecordsBucket } from "../../aws/s3";
+import { deleteObjectsInBucket } from "../../aws/s3";
 import { OAuthType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
 import { Context } from "../../index";
 import { User } from "../../types";
-import { USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
+import { USERS_TABLE, PROFILE_PICS_BUCKET, SLOPES_UNZIPPED_BUCKET } from "../../../infrastructure/lib/infrastructure";
 
 interface Args {
     combineWith: {
@@ -37,8 +37,8 @@ const combineOAuthAccounts = async (
         return (await updateItem(USERS_TABLE, userId, idKey, id)) as User;
     }
     await deleteItem(USERS_TABLE, otherUser.id);
-    await deleteObjectsInBucket(profilePictureBucketName, otherUser.id);
-    await deleteObjectsInBucket(toRunRecordsBucket, otherUser.id);
+    await deleteObjectsInBucket(PROFILE_PICS_BUCKET, otherUser.id);
+    await deleteObjectsInBucket(SLOPES_UNZIPPED_BUCKET, otherUser.id);
     return (await updateItem(USERS_TABLE, userId, idKey, id)) as User;
 };
 

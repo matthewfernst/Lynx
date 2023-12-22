@@ -2,11 +2,15 @@ import axios from "axios";
 
 import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
 import { deleteItem } from "../../aws/dynamodb";
-import { deleteObjectsInBucket, profilePictureBucketName, toRunRecordsBucket } from "../../aws/s3";
+import { deleteObjectsInBucket } from "../../aws/s3";
 import { OAuthType } from "./createUserOrSignIn";
 import { Context } from "../../index";
 import { User } from "../../types";
-import { USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
+import {
+    USERS_TABLE,
+    PROFILE_PICS_BUCKET,
+    SLOPES_UNZIPPED_BUCKET
+} from "../../../infrastructure/lib/infrastructure";
 
 interface Args {
     options?: {
@@ -25,8 +29,8 @@ const deleteUser = async (_: any, args: Args, context: Context, info: any): Prom
             async (token) => await invalidateToken(token.type, token.token)
         );
     }
-    await deleteObjectsInBucket(profilePictureBucketName, userId);
-    await deleteObjectsInBucket(toRunRecordsBucket, userId);
+    await deleteObjectsInBucket(PROFILE_PICS_BUCKET, userId);
+    await deleteObjectsInBucket(SLOPES_UNZIPPED_BUCKET, userId);
     return (await deleteItem(USERS_TABLE, userId)) as User;
 };
 

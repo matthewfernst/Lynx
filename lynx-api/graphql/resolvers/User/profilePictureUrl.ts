@@ -1,6 +1,6 @@
 import { Context } from "../../index";
 import { checkIfObjectInBucket } from "../../aws/s3";
-import { profilePictureBucketName } from "../../aws/s3";
+import { PROFILE_PICS_BUCKET } from "../../../infrastructure/lib/infrastructure";
 
 const profilePictureUrl = async (
     parent: any,
@@ -8,9 +8,9 @@ const profilePictureUrl = async (
     context: Context,
     info: any
 ): Promise<string | null> => {
-    if (await checkIfObjectInBucket(profilePictureBucketName, parent.id)) {
+    if (await checkIfObjectInBucket(PROFILE_PICS_BUCKET, parent.id)) {
         console.log(`Found S3 profile picture for user ${parent.id}`);
-        return `https://${profilePictureBucketName}.s3.us-west-1.amazonaws.com/${parent.id}`;
+        return `https://${PROFILE_PICS_BUCKET}.s3.us-west-1.amazonaws.com/${parent.id}`;
     } else if (parent.profilePictureUrl) {
         return parent.profilePictureUrl;
     } else {

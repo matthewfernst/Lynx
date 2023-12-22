@@ -9,10 +9,6 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { NodeJsClient } from "@smithy/types";
 
-export const profilePictureBucketName = "lynx-profile-pictures";
-export const fromRunRecordsBucket = "lynx-slopes-zipped";
-export const toRunRecordsBucket = "lynx-slopes-unzipped";
-
 if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
 export const s3Client = new S3Client({ region: process.env.AWS_REGION }) as NodeJsClient<S3Client>;
 

@@ -22,6 +22,10 @@ export const LEADERBOARD_TABLE = "lynx-leaderboard";
 export const PARTIES_TABLE = "lynx-parties";
 export const INVITES_TABLE = "lynx-invites";
 
+export const PROFILE_PICS_BUCKET = "lynx-profile-pictures";
+export const SLOPES_ZIPPED_BUCKET = "lynx-slopes-zipped";
+export const SLOPES_UNZIPPED_BUCKET = "lynx-slopes-unzipped";
+
 export class LynxAPIStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
@@ -131,7 +135,7 @@ export class LynxAPIStack extends Stack {
 
     private createProfilePictureBucket(): Bucket {
         const profilePictureBucket = new Bucket(this, "profilePictureBucket", {
-            bucketName: "lynx-profile-pictures",
+            bucketName: PROFILE_PICS_BUCKET,
             blockPublicAccess: {
                 blockPublicAcls: true,
                 blockPublicPolicy: false,
@@ -152,14 +156,14 @@ export class LynxAPIStack extends Stack {
 
     private createSlopesZippedBucket(): Bucket {
         return new Bucket(this, "slopesZippedBucket", {
-            bucketName: "lynx-slopes-zipped",
+            bucketName: SLOPES_ZIPPED_BUCKET,
             removalPolicy: RemovalPolicy.DESTROY
         });
     }
 
     private createSlopesUnzippedBucket(): Bucket {
         return new Bucket(this, "slopesUnzippedBucket", {
-            bucketName: "lynx-slopes-unzipped",
+            bucketName: SLOPES_UNZIPPED_BUCKET,
             removalPolicy: RemovalPolicy.DESTROY
         });
     }

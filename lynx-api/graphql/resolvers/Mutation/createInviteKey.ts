@@ -2,7 +2,8 @@ import { DateTime } from "luxon";
 
 import { Context } from "../../index";
 import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
-import { INVITES_TABLE, putItem } from "../../aws/dynamodb";
+import { putItem } from "../../aws/dynamodb";
+import { INVITES_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 const createInviteKey = async (_: any, args: any, context: Context, info: any): Promise<string> => {
     const userId = checkHasUserId(context.userId);

@@ -4,8 +4,6 @@ import { Entry, Parse, ParseStream as IncompleteTypedParseStream } from "unzippe
 
 import { s3Client } from "../graphql/aws/s3";
 
-const targetBucket = "lynx-slopes-unzipped";
-
 type ParseStream = IncompleteTypedParseStream & {
     [Symbol.asyncIterator]: () => AsyncIterableIterator<Entry>;
 };

@@ -1,8 +1,10 @@
+import { parseStringPromise, processors } from "xml2js";
+
+import { checkIsMe } from "../../auth";
 import { Context } from "../../index";
 import { Log } from "../../types";
-import { getObjectNamesInBucket, getRecordFromBucket, toRunRecordsBucket } from "../../aws/s3";
-import { parseStringPromise, processors } from "xml2js";
-import { checkIsMe } from "../../auth";
+import { getObjectNamesInBucket, getRecordFromBucket } from "../../aws/s3";
+import { SLOPES_UNZIPPED_BUCKET } from "../../../infrastructure/lib/infrastructure";
 
 const reverseRenameFileFunction = (originalFileName: string) => {
     return `${originalFileName.split(".")[0]}.slopes`;
@@ -17,10 +19,10 @@ const logbook = async (parent: any, args: {}, context: Context, info: any): Prom
 };
 
 export const getLogbookInformationFromS3 = async (userId: string): Promise<Log[]> => {
-    const recordNames = await getObjectNamesInBucket(toRunRecordsBucket, userId);
+    const recordNames = await getObjectNamesInBucket(SLOPES_UNZIPPED_BUCKET, userId);
     return Promise.all(
         recordNames.map(async (recordName): Promise<Log> => {
-            const unzippedRecord = await getRecordFromBucket(toRunRecordsBucket, recordName);
+            const unzippedRecord = await getRecordFromBucket(SLOPES_UNZIPPED_BUCKET, recordName);
             const activity = await xmlToActivity(unzippedRecord);
             activity.originalFileName = reverseRenameFileFunction(recordName);
             return activity;

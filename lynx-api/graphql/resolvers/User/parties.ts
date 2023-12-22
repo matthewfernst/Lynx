@@ -1,6 +1,7 @@
-import { PARTIES_TABLE, getItem } from "../../aws/dynamodb";
+import { getItem } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { Party } from "../../types";
+import { PARTIES_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 interface Parent {
     id: string;
