@@ -3,15 +3,10 @@ import { DateTime } from "luxon";
 
 import { Context } from "../../index";
 import { LeaderboardEntry, Party, User } from "../../types";
-import {
-    LEADERBOARD_TABLE,
-    PARTIES_TABLE,
-    USERS_TABLE,
-    documentClient,
-    getItem
-} from "../../aws/dynamodb";
+import { documentClient, getItem } from "../../aws/dynamodb";
 import { populateLogbookDataForUser } from "../Query/selfLookup";
 import { LeaderboardSort, Timeframe } from "../Query/leaderboard";
+import { LEADERBOARD_TABLE, PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 interface Args {
     sortBy: LeaderboardSort;

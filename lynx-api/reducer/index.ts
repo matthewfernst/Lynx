@@ -1,11 +1,13 @@
 import { UpdateItemOutput } from "@aws-sdk/client-dynamodb";
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
-import { LEADERBOARD_TABLE, documentClient } from "../graphql/aws/dynamodb";
+import { DateTime } from "luxon";
+
+import { documentClient } from "../graphql/aws/dynamodb";
 import { getRecordFromBucket } from "../graphql/aws/s3";
 import { xmlToActivity } from "../graphql/resolvers/User/logbook";
 import { leaderboardSortTypesToQueryFields } from "../graphql/resolvers/Query/leaderboard";
-import { DateTime } from "luxon";
+import { LEADERBOARD_TABLE } from "../infrastructure/lib/infrastructure";
 
 export async function handler(event: any, context: any) {
     for (const record of event.Records) {

@@ -9,11 +9,12 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 
 import { Invite, LeaderboardEntry, Party, User } from "../types";
-
-export const USERS_TABLE = "lynx-users";
-export const LEADERBOARD_TABLE = "lynx-leaderboard";
-export const INVITES_TABLE = "lynx-invites";
-export const PARTIES_TABLE = "lynx-parties";
+import {
+    USERS_TABLE,
+    LEADERBOARD_TABLE,
+    INVITES_TABLE,
+    PARTIES_TABLE
+} from "../../infrastructure/lib/infrastructure";
 
 export type Table =
     | typeof USERS_TABLE

@@ -1,8 +1,9 @@
 import { Context } from "../../index";
 import { User, UserStats } from "../../types";
-import { USERS_TABLE, getItem } from "../../aws/dynamodb";
+import { getItem } from "../../aws/dynamodb";
 import { getLogbookInformationFromS3 } from "../User/logbook";
 import { checkHasUserId } from "../../auth";
+import { USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 const selfLookup = async (
     _: any,

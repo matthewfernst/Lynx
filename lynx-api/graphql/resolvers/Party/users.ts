@@ -1,4 +1,5 @@
-import { USERS_TABLE, getItem } from "../../aws/dynamodb";
+import { USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
+import { getItem } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { Party, User } from "../../types";
 

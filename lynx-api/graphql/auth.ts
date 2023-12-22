@@ -3,7 +3,8 @@ import { APIGatewayProxyEvent } from "aws-lambda";
 import jwt from "jsonwebtoken";
 
 import { User } from "./types";
-import { USERS_TABLE, getItem } from "./aws/dynamodb";
+import { getItem } from "./aws/dynamodb";
+import { USERS_TABLE } from "../infrastructure/lib/infrastructure";
 
 export const BAD_REQUEST = "BAD_REQUEST";
 export const UNAUTHENTICATED = "UNAUTHENTICATED";

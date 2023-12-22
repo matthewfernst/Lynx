@@ -17,6 +17,11 @@ import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 import { config } from "dotenv";
 
+export const USERS_TABLE = "lynx-users";
+export const LEADERBOARD_TABLE = "lynx-leaderboard";
+export const PARTIES_TABLE = "lynx-parties";
+export const INVITES_TABLE = "lynx-invites";
+
 export class LynxAPIStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
@@ -66,7 +71,7 @@ export class LynxAPIStack extends Stack {
 
     private createUsersTable(): Table {
         const usersTable = new Table(this, "usersTable", {
-            tableName: "lynx-users",
+            tableName: USERS_TABLE,
             partitionKey: { name: "id", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
             removalPolicy: RemovalPolicy.DESTROY
@@ -85,7 +90,7 @@ export class LynxAPIStack extends Stack {
 
     private createLeaderboardTable(): Table {
         const leaderboardTable = new Table(this, "leaderboardTable", {
-            tableName: "lynx-leaderboard",
+            tableName: LEADERBOARD_TABLE,
             partitionKey: { name: "id", type: AttributeType.STRING },
             sortKey: { name: "timeframe", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
@@ -107,7 +112,7 @@ export class LynxAPIStack extends Stack {
 
     private createPartiesTable(): Table {
         return new Table(this, "partiesTable", {
-            tableName: "lynx-parties",
+            tableName: PARTIES_TABLE,
             partitionKey: { name: "id", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
             removalPolicy: RemovalPolicy.DESTROY
@@ -116,7 +121,7 @@ export class LynxAPIStack extends Stack {
 
     private createInvitesTable(): Table {
         return new Table(this, "invitesTable", {
-            tableName: "lynx-invites",
+            tableName: INVITES_TABLE,
             partitionKey: { name: "id", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
             removalPolicy: RemovalPolicy.DESTROY,

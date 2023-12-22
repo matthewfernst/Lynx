@@ -3,8 +3,9 @@ import { DateTime } from "luxon";
 
 import { Context } from "../../index";
 import { LeaderboardEntry, User } from "../../types";
-import { LEADERBOARD_TABLE, USERS_TABLE, documentClient, getItem } from "../../aws/dynamodb";
+import { documentClient, getItem } from "../../aws/dynamodb";
 import { populateLogbookDataForUser } from "./selfLookup";
+import { LEADERBOARD_TABLE, USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 export type LeaderboardSort = "DISTANCE" | "RUN_COUNT" | "TOP_SPEED" | "VERTICAL_DISTANCE";
 export type Timeframe = "DAY" | "WEEK" | "MONTH" | "YEAR" | "ALL_TIME";

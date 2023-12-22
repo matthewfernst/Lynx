@@ -1,9 +1,10 @@
 import { v4 as uuid } from "uuid";
 
-import { Context } from "../../index";
 import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
-import { PARTIES_TABLE, USERS_TABLE, addItemsToArray, putItem } from "../../aws/dynamodb";
+import { addItemsToArray, putItem } from "../../aws/dynamodb";
+import { Context } from "../../index";
 import { Party } from "../../types";
+import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 interface Args {
     name: string;

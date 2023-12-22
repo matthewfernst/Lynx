@@ -1,11 +1,12 @@
 import axios from "axios";
 
-import { Context } from "../../index";
 import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
-import { USERS_TABLE, deleteItem } from "../../aws/dynamodb";
+import { deleteItem } from "../../aws/dynamodb";
 import { deleteObjectsInBucket, profilePictureBucketName, toRunRecordsBucket } from "../../aws/s3";
-import { User } from "../../types";
 import { OAuthType } from "./createUserOrSignIn";
+import { Context } from "../../index";
+import { User } from "../../types";
+import { USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 interface Args {
     options?: {

@@ -1,11 +1,12 @@
 import { GraphQLError } from "graphql";
 
-import { Context } from "../../index";
-import { USERS_TABLE, deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
-import { OAuthType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
-import { User } from "../../types";
+import { deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
 import { BAD_REQUEST, checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
 import { deleteObjectsInBucket, profilePictureBucketName, toRunRecordsBucket } from "../../aws/s3";
+import { OAuthType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
+import { Context } from "../../index";
+import { User } from "../../types";
+import { USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 interface Args {
     combineWith: {

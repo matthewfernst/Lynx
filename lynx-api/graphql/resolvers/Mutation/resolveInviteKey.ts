@@ -1,9 +1,10 @@
 import { GraphQLError } from "graphql";
 
-import { Context } from "../../index";
 import { BAD_REQUEST, checkHasUserId, checkIsLoggedIn } from "../../auth";
-import { INVITES_TABLE, USERS_TABLE, deleteItem, getItem, updateItem } from "../../aws/dynamodb";
+import { deleteItem, getItem, updateItem } from "../../aws/dynamodb";
+import { Context } from "../../index";
 import { User } from "../../types";
+import { INVITES_TABLE, USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 interface Args {
     inviteKey: string;
