@@ -1,4 +1,4 @@
-import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
+import { Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import { Cors, EndpointType, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
 import { AttributeType, BillingMode, ProjectionType, Table } from "aws-cdk-lib/aws-dynamodb";
@@ -280,7 +280,8 @@ export class LynxAPIStack extends Stack {
             functionName: "lynx-reducer",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
-            memorySize: 1024,
+            memorySize: 1536,
+            timeout: Duration.seconds(60),
             code: Code.fromAsset("dist/reducer"),
             role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable),
             environment: { NODE_OPTIONS: "--enable-source-maps" }
@@ -327,6 +328,7 @@ export class LynxAPIStack extends Stack {
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
             memorySize: 1024,
+            timeout: Duration.seconds(60),
             code: Code.fromAsset("dist/unzipper"),
             role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket),
             environment: { NODE_OPTIONS: "--enable-source-maps" }
