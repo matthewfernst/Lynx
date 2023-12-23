@@ -9,8 +9,7 @@ import { xmlToActivity } from "../graphql/resolvers/User/logbook";
 import { leaderboardSortTypesToQueryFields } from "../graphql/resolvers/Query/leaderboard";
 import { LEADERBOARD_TABLE } from "../infrastructure/lib/infrastructure";
 
-const timeframes = ["all"] as const;
-// const timeframes = ["day", "week", "month", "year", "all"] as const;
+const timeframes = ["day", "week", "month", "year", "all"] as const;
 type Timeframe = (typeof timeframes)[number];
 
 export async function handler(event: any, context: any) {
@@ -30,9 +29,7 @@ export async function handler(event: any, context: any) {
                 Object.values(leaderboardSortTypesToQueryFields).map(async (sortType) => {
                     const activityKey = sortType === "verticalDistance" ? "vertical" : sortType;
                     const value = activity[activityKey] as number;
-                    const thing = await updateItem(userId, endTime, timeframe, sortType, value);
-                    console.log(thing);
-                    return thing;
+                    return await updateItem(userId, endTime, timeframe, sortType, value);
                 })
             );
             console.log(`Successfully updated leaderboard for timeframe "${timeframe}".`);
@@ -48,12 +45,10 @@ const updateItem = async (
     sortType: string,
     value: number
 ): Promise<UpdateItemOutput> => {
-    console.log(timeframe, timeframe === "all");
     if (timeframe === "all") {
         return await updateAllTimeframe(id, sortType, value);
     }
     try {
-        console.log("HEREHEHRHERHEH");
         const updateTimeframe = `${timeframe}-${getNumericValue(endTime, timeframe)}`;
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
@@ -94,7 +89,7 @@ const updateAllTimeframe = async (
     }
 };
 
-const getNumericValue = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">): number | undefined => {
+const getNumericValue = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">): number => {
     switch (timeframe) {
         case "day":
             return endTime.ordinal;
@@ -107,10 +102,7 @@ const getNumericValue = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">
     }
 };
 
-const getTimeToLive = (
-    endTime: DateTime,
-    timeframe: Exclude<Timeframe, "all">
-): number | undefined => {
+const getTimeToLive = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">): number => {
     switch (timeframe) {
         case "day":
             return endTime.plus({ days: 1 }).toSeconds();
