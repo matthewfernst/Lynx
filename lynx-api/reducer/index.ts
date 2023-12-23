@@ -55,12 +55,15 @@ const updateItem = async (
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
             Key: { id, timeframe: updateTimeframe },
-            UpdateExpression: "ADD #updateKey :value SET #ttl = :ttl",
+            UpdateExpression: generateUpdateExpression(sortType),
             ExpressionAttributeNames: { "#updateKey": sortType, "#ttl": "ttl" },
             ExpressionAttributeValues: {
                 ":value": value,
                 ":ttl": getTimeToLive(endTime, timeframe)
             },
+            ...(isMaximumSortType(sortType) && {
+                ConditionExpression: "attribute_not_exists(#updateKey) OR #updateKey < :value"
+            }),
             ReturnValues: "UPDATED_NEW"
         });
         return await documentClient.send(updateItemRequest);
@@ -89,6 +92,18 @@ const updateAllTimeframe = async (
         console.error(err);
         throw Error("DynamoDB Update Call Failed");
     }
+};
+
+const generateUpdateExpression = (sortKey: string) => {
+    if (isMaximumSortType(sortKey)) {
+        return "SET #updateKey = :value, #ttl = :ttl";
+    } else {
+        return "ADD #updateKey :value SET #ttl = :ttl";
+    }
+};
+
+const isMaximumSortType = (sortType: string) => {
+    return sortType.includes("top");
 };
 
 const getNumericValue = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">): number => {
