@@ -24,12 +24,16 @@ export async function handler(event: any, context: any) {
         const userId = objectKey.split("/")[0];
         const endTime = DateTime.fromFormat(activity.end, "yyyy-MM-dd HH:mm:ss ZZZ");
 
-        timeframes.forEach((timeframe) => {
-            Object.values(leaderboardSortTypesToQueryFields).forEach(async (sortType) => {
-                const value =
-                    sortType == "verticalDistance" ? activity.vertical : activity[sortType];
-                await updateItem(userId, endTime, timeframe, sortType, value);
-            });
+        timeframes.forEach(async (timeframe) => {
+            const resultsForTimeframe = await Promise.all(
+                Object.values(leaderboardSortTypesToQueryFields).map(async (sortType) => {
+                    const activityKey = sortType === "verticalDistance" ? "vertical" : sortType;
+                    const value = activity[activityKey] as number;
+                    return await updateItem(userId, endTime, timeframe, sortType, value);
+                })
+            );
+            console.log(`Successfully updated leaderboard for timeframe "${timeframe}".`);
+            return resultsForTimeframe;
         });
     }
 }
@@ -39,7 +43,7 @@ const updateItem = async (
     endTime: DateTime,
     timeframe: Timeframe,
     sortType: string,
-    value: any
+    value: number
 ): Promise<UpdateItemOutput> => {
     if (timeframe === "all") {
         return await updateAllTimeframe(id, sortType, value);
@@ -49,8 +53,8 @@ const updateItem = async (
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
             Key: { id, timeframe: updateTimeframe },
-            UpdateExpression: "set #updateKey = #updateKey + :value AND set ttl = :ttl",
-            ExpressionAttributeNames: { "#updateKey": sortType },
+            UpdateExpression: "ADD #updateKey :value SET #ttl = :ttl",
+            ExpressionAttributeNames: { "#updateKey": sortType, "#ttl": "ttl" },
             ExpressionAttributeValues: {
                 ":value": value,
                 ":ttl": getTimeToLive(endTime, timeframe)
@@ -67,13 +71,13 @@ const updateItem = async (
 const updateAllTimeframe = async (
     id: string,
     sortType: string,
-    value: any
+    value: number
 ): Promise<UpdateItemOutput> => {
     try {
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
             Key: { id, timeframe: "all" },
-            UpdateExpression: "set #updateKey = #updateKey + :value",
+            UpdateExpression: "ADD #updateKey :value",
             ExpressionAttributeNames: { "#updateKey": sortType },
             ExpressionAttributeValues: { ":value": value },
             ReturnValues: "UPDATED_NEW"
