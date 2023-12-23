@@ -76,5 +76,6 @@ export interface LeaderboardEntry {
 export interface Party {
     id: string;
     name: string;
+    partyManager: string;
     users: string[];
 }

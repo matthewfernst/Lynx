@@ -9,6 +9,7 @@ type User {
     userStats: UserStats
     logbook: [Log!]!
     parties: [Party!]!
+    partyInvites: [Party!]!
 }
 
 type UserStats {
@@ -60,6 +61,7 @@ enum MeasurementSystem {
 type Party {
     id: ID!
     name: String!
+    partyManager: User!
     users: [User!]!
     leaderboard(
         sortBy: LeaderboardSort = VERTICAL_DISTANCE
@@ -144,4 +146,10 @@ type Mutation {
     createInviteKey: String!
     resolveInviteKey(inviteKey: ID!): User!
     createParty(name: String!): Party!
+    removeUserFromParty(partyId: ID!, userId: ID!): Party!
+    deleteParty(partyId: ID!): Party!
+    createPartyInvite(partyId: ID!, userId: ID!): Party!
+    deletePartyInvite(partyId: ID!, userId: ID!): Party!
+    joinParty(partyId: ID!): Party!
+    leaveParty(partyId: ID!): Party!
 }

@@ -37,6 +37,7 @@ import topSpeedAltitude from "./resolvers/LogDetail/topSpeedAltitude";
 import logDetailVerticalDistance from "./resolvers/LogDetail/verticalDistance";
 import partyLeaderboard from "./resolvers/Party/leaderboard";
 import partyUsers from "./resolvers/Party/users";
+import partyManager from "./resolvers/Party/partyManager";
 
 export const resolvers = {
     Query: { selfLookup, userLookupById, leaderboard },
@@ -79,7 +80,8 @@ export const resolvers = {
         verticalDistance: logDetailVerticalDistance
     },
     Party: {
-        leaderboard: partyLeaderboard,
-        users: partyUsers
+        partyManager: partyManager,
+        users: partyUsers,
+        leaderboard: partyLeaderboard
     }
 };

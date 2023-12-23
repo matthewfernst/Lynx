@@ -18,6 +18,7 @@ const createParty = async (_: any, args: Args, context: Context, info: any): Pro
     const party = await putItem(PARTIES_TABLE, {
         id: partyId,
         name: args.name,
+        partyManager: userId,
         users: [userId]
     });
     await addItemsToArray(USERS_TABLE, userId, "parties", [partyId]);

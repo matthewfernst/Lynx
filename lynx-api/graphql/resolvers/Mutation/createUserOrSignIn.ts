@@ -102,7 +102,6 @@ const oauthLogin = async (
             [idFieldName]: id,
             validatedInvite,
             email,
-            parties: [],
             ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
         });
         return {

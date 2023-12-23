@@ -103,7 +103,7 @@ export const updateItem = async <T extends Table>(
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
-            UpdateExpression: "set #updateKey = :value",
+            UpdateExpression: "SET #updateKey = :value",
             ExpressionAttributeNames: { "#updateKey": key },
             ExpressionAttributeValues: { ":value": value },
             ReturnValues: "ALL_NEW"
@@ -129,9 +129,10 @@ export const addItemsToArray = async <T extends Table>(
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
-            UpdateExpression: "set #updateKey = list_append(#updateKey, :value)",
+            UpdateExpression:
+                "SET #updateKey = list_append(if_not_exists(#updateKey, :empty_list), :value)",
             ExpressionAttributeNames: { "#updateKey": key },
-            ExpressionAttributeValues: { ":value": values },
+            ExpressionAttributeValues: { "empty_list": [], ":value": values },
             ReturnValues: "ALL_NEW"
         });
         const itemOutput = await documentClient.send(updateItemRequest);
@@ -161,7 +162,7 @@ export const deleteItemsFromArray = async <T extends Table>(
             TableName: table,
             Key: { id },
             UpdateExpression:
-                "remove " +
+                "REMOVE " +
                 indices.map((index: number, arrayIndex: number) => {
                     if (arrayIndex + 1 === indices.length) {
                         return `#updateKey[${index}]`;
