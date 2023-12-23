@@ -182,7 +182,7 @@ export class LynxAPIStack extends Stack {
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
             memorySize: 1536,
-            timeout: Duration.seconds(5),
+            timeout: Duration.seconds(29),
             code: Code.fromAsset("dist/graphql"),
             role: this.createGraphqlAPILambdaRole(
                 profilePictureBucket,

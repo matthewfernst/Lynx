@@ -14,7 +14,7 @@ const parties = async (
     context: Context,
     info: any
 ): Promise<Party[]> => {
-    return Promise.all(
+    return await Promise.all(
         parent.parties.map(async (party) => (await getItem(PARTIES_TABLE, party)) as Party)
     );
 };

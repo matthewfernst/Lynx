@@ -48,27 +48,27 @@ const updateItem = async (
     sortType: string,
     value: number
 ): Promise<UpdateItemOutput> => {
-    // if (timeframe === "all") {
+    if (timeframe === "all") {
         return await updateAllTimeframe(id, sortType, value);
-    // }
-    // try {
-    //     const updateTimeframe = `${timeframe}-${getNumericValue(endTime, timeframe)}`;
-    //     const updateItemRequest = new UpdateCommand({
-    //         TableName: LEADERBOARD_TABLE,
-    //         Key: { id, timeframe: updateTimeframe },
-    //         UpdateExpression: "ADD #updateKey :value SET #ttl = :ttl",
-    //         ExpressionAttributeNames: { "#updateKey": sortType, "#ttl": "ttl" },
-    //         ExpressionAttributeValues: {
-    //             ":value": value,
-    //             ":ttl": getTimeToLive(endTime, timeframe)
-    //         },
-    //         ReturnValues: "UPDATED_NEW"
-    //     });
-    //     return await documentClient.send(updateItemRequest);
-    // } catch (err) {
-    //     console.error(err);
-    //     throw Error("DynamoDB Update Call Failed");
-    // }
+    }
+    try {
+        const updateTimeframe = `${timeframe}-${getNumericValue(endTime, timeframe)}`;
+        const updateItemRequest = new UpdateCommand({
+            TableName: LEADERBOARD_TABLE,
+            Key: { id, timeframe: updateTimeframe },
+            UpdateExpression: "ADD #updateKey :value SET #ttl = :ttl",
+            ExpressionAttributeNames: { "#updateKey": sortType, "#ttl": "ttl" },
+            ExpressionAttributeValues: {
+                ":value": value,
+                ":ttl": getTimeToLive(endTime, timeframe)
+            },
+            ReturnValues: "UPDATED_NEW"
+        });
+        return await documentClient.send(updateItemRequest);
+    } catch (err) {
+        console.error(err);
+        throw Error("DynamoDB Update Call Failed");
+    }
 };
 
 const updateAllTimeframe = async (
@@ -92,28 +92,34 @@ const updateAllTimeframe = async (
     }
 };
 
-// const getNumericValue = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">): number => {
-//     switch (timeframe) {
-//         case "day":
-//             return endTime.ordinal;
-//         case "week":
-//             return endTime.weekNumber;
-//         case "month":
-//             return endTime.month;
-//         case "year":
-//             return endTime.year;
-//     }
-// };
+const getNumericValue = (
+    endTime: DateTime,
+    timeframe: Exclude<Timeframe, "all">
+): number | undefined => {
+    switch (timeframe) {
+        case "day":
+            return endTime.ordinal;
+        case "week":
+            return endTime.weekNumber;
+        case "month":
+            return endTime.month;
+        case "year":
+            return endTime.year;
+    }
+};
 
-// const getTimeToLive = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">): number => {
-//     switch (timeframe) {
-//         case "day":
-//             return endTime.plus({ days: 1 }).toSeconds();
-//         case "week":
-//             return endTime.plus({ weeks: 1 }).toSeconds();
-//         case "month":
-//             return endTime.plus({ months: 1 }).toSeconds();
-//         case "year":
-//             return endTime.plus({ years: 1 }).toSeconds();
-//     }
-// };
+const getTimeToLive = (
+    endTime: DateTime,
+    timeframe: Exclude<Timeframe, "all">
+): number | undefined => {
+    switch (timeframe) {
+        case "day":
+            return endTime.plus({ days: 1 }).toSeconds();
+        case "week":
+            return endTime.plus({ weeks: 1 }).toSeconds();
+        case "month":
+            return endTime.plus({ months: 1 }).toSeconds();
+        case "year":
+            return endTime.plus({ years: 1 }).toSeconds();
+    }
+};

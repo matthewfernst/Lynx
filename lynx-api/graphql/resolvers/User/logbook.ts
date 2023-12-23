@@ -20,7 +20,8 @@ const logbook = async (parent: any, args: {}, context: Context, info: any): Prom
 
 export const getLogbookInformationFromS3 = async (userId: string): Promise<Log[]> => {
     const recordNames = await getObjectNamesInBucket(SLOPES_UNZIPPED_BUCKET, userId);
-    return Promise.all(
+    console.log(`Retriving records with names ${recordNames}.`);
+    return await Promise.all(
         recordNames.map(async (recordName): Promise<Log> => {
             const unzippedRecord = await getRecordFromBucket(SLOPES_UNZIPPED_BUCKET, recordName);
             const activity = await xmlToActivity(unzippedRecord);
