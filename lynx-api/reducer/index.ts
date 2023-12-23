@@ -48,10 +48,12 @@ const updateItem = async (
     sortType: string,
     value: number
 ): Promise<UpdateItemOutput> => {
+    console.log(timeframe, timeframe === "all");
     if (timeframe === "all") {
         return await updateAllTimeframe(id, sortType, value);
     }
     try {
+        console.log("HEREHEHRHERHEH");
         const updateTimeframe = `${timeframe}-${getNumericValue(endTime, timeframe)}`;
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
@@ -92,10 +94,7 @@ const updateAllTimeframe = async (
     }
 };
 
-const getNumericValue = (
-    endTime: DateTime,
-    timeframe: Exclude<Timeframe, "all">
-): number | undefined => {
+const getNumericValue = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">): number | undefined => {
     switch (timeframe) {
         case "day":
             return endTime.ordinal;

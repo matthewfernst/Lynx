@@ -6,12 +6,17 @@ import { Log } from "../../types";
 import { getObjectNamesInBucket, getRecordFromBucket } from "../../aws/s3";
 import { SLOPES_UNZIPPED_BUCKET } from "../../../infrastructure/lib/infrastructure";
 
+interface Parent {
+    id: string;
+    logbook?: Log[];
+}
+
 const reverseRenameFileFunction = (originalFileName: string) => {
     return `${originalFileName.split(".")[0]}.slopes`;
 };
 
-const logbook = async (parent: any, args: {}, context: Context, info: any): Promise<Log[]> => {
-    checkIsMe(parent.id, context.userId);
+const logbook = async (parent: Parent, args: {}, context: Context, info: any): Promise<Log[]> => {
+    checkIsMe(parent, context.userId);
     if (!parent.logbook) {
         return await getLogbookInformationFromS3(parent.id);
     }
@@ -20,7 +25,7 @@ const logbook = async (parent: any, args: {}, context: Context, info: any): Prom
 
 export const getLogbookInformationFromS3 = async (userId: string): Promise<Log[]> => {
     const recordNames = await getObjectNamesInBucket(SLOPES_UNZIPPED_BUCKET, userId);
-    console.log(`Retriving records with names ${recordNames}.`);
+    console.log(`Retriving records with names [${recordNames}].`);
     return await Promise.all(
         recordNames.map(async (recordName): Promise<Log> => {
             const unzippedRecord = await getRecordFromBucket(SLOPES_UNZIPPED_BUCKET, recordName);
