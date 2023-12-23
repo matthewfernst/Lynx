@@ -24,17 +24,19 @@ export async function handler(event: any, context: any) {
         const userId = objectKey.split("/")[0];
         const endTime = DateTime.fromFormat(activity.end, "yyyy-MM-dd HH:mm:ss ZZZ");
 
-        timeframes.forEach(async (timeframe) => {
-            const resultsForTimeframe = await Promise.all(
-                Object.values(leaderboardSortTypesToQueryFields).map(async (sortType) => {
-                    const activityKey = sortType === "verticalDistance" ? "vertical" : sortType;
-                    const value = activity[activityKey] as number;
-                    return await updateItem(userId, endTime, timeframe, sortType, value);
-                })
-            );
-            console.log(`Successfully updated leaderboard for timeframe "${timeframe}".`);
-            return resultsForTimeframe;
-        });
+        await Promise.all(
+            timeframes.map(async (timeframe) => {
+                const resultsForTimeframe = await Promise.all(
+                    Object.values(leaderboardSortTypesToQueryFields).map(async (sortType) => {
+                        const activityKey = sortType === "verticalDistance" ? "vertical" : sortType;
+                        const value = activity[activityKey] as number;
+                        return await updateItem(userId, endTime, timeframe, sortType, value);
+                    })
+                );
+                console.log(`Successfully updated leaderboard for timeframe "${timeframe}".`);
+                return resultsForTimeframe;
+            })
+        );
     }
 }
 
