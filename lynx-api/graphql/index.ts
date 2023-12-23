@@ -12,16 +12,19 @@ export interface Context {
     userId: string | undefined;
 }
 
+export const BAD_REQUEST = "BAD_REQUEST";
+export const UNAUTHENTICATED = "UNAUTHENTICATED";
+export const FORBIDDEN = "FORBIDDEN";
+export const DEPENDENCY_ERROR = "DEPENDENCY_ERROR";
+export const INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
+
 dotenv.config();
 
 const server = new ApolloServer<Context>({
     typeDefs: loadSchemaSync(__dirname + "/schema.graphql", { loaders: [new GraphQLFileLoader()] }),
     resolvers,
     formatError: (err) => {
-        if (!err.extensions) {
-            throw Error("Extensions Object Does Not Exist On Error");
-        }
-        if (err.extensions.code === "INTERNAL_SERVER_ERROR") {
+        if (err.extensions?.code === INTERNAL_SERVER_ERROR) {
             if (err.extensions) console.error(`${err.extensions.code}: ${err.message}`);
             else console.error(err);
         }

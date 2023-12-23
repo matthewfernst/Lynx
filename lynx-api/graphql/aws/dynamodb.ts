@@ -7,6 +7,7 @@ import {
     PutCommand,
     QueryCommand
 } from "@aws-sdk/lib-dynamodb";
+import { GraphQLError } from "graphql";
 
 import { Invite, LeaderboardEntry, Party, User } from "../types";
 import {
@@ -15,6 +16,7 @@ import {
     INVITES_TABLE,
     PARTIES_TABLE
 } from "../../infrastructure/lib/infrastructure";
+import { DEPENDENCY_ERROR, INTERNAL_SERVER_ERROR } from "../index";
 
 export type Table =
     | typeof USERS_TABLE
@@ -22,14 +24,14 @@ export type Table =
     | typeof INVITES_TABLE
     | typeof PARTIES_TABLE;
 
-type ObjectType<T extends Table> = 
+type ObjectType<T extends Table> =
     T extends typeof USERS_TABLE ? User :
     T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry :
     T extends typeof INVITES_TABLE ? Invite :
     T extends typeof PARTIES_TABLE ? Party :
     unknown;
 
-if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
+if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
 
 const serviceConfigOptions: DynamoDBClientConfig = {
     region: process.env.AWS_REGION,
@@ -50,7 +52,9 @@ export const getItem = async <T extends Table>(
         return itemOutput.Item as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
-        throw Error("DynamoDB Get Call Failed");
+        throw new GraphQLError("DynamoDB Get Call Failed", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };
 
@@ -72,7 +76,9 @@ export const getItemByIndex = async <T extends Table>(
         return itemOutput.Items?.[0] as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
-        throw Error("DynamoDB Query Call Failed");
+        throw new GraphQLError("DynamoDB Query Call Failed", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };
 
@@ -88,7 +94,9 @@ export const putItem = async <T extends Table>(table: T, item: Object): Promise<
         return itemOutput.Attributes as ObjectType<T>;
     } catch (err) {
         console.error(err);
-        throw Error("DynamoDB Put Call Failed");
+        throw new GraphQLError("DynamoDB Put Call Failed", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };
 
@@ -112,7 +120,9 @@ export const updateItem = async <T extends Table>(
         return itemOutput.Attributes as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
-        throw Error("DynamoDB Update Call Failed");
+        throw new GraphQLError("DynamoDB Update Call Failed", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };
 
@@ -132,14 +142,16 @@ export const addItemsToArray = async <T extends Table>(
             UpdateExpression:
                 "SET #updateKey = list_append(if_not_exists(#updateKey, :empty_list), :value)",
             ExpressionAttributeNames: { "#updateKey": key },
-            ExpressionAttributeValues: { "empty_list": [], ":value": values },
+            ExpressionAttributeValues: { empty_list: [], ":value": values },
             ReturnValues: "ALL_NEW"
         });
         const itemOutput = await documentClient.send(updateItemRequest);
         return itemOutput.Attributes as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
-        throw Error("DynamoDB Update Call Failed");
+        throw new GraphQLError("DynamoDB Update Call Failed", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };
 
@@ -155,9 +167,11 @@ export const deleteItemsFromArray = async <T extends Table>(
         );
         const item = (await getItem(table, id)) as any;
         if (!item) {
-            throw new Error("Error finding item for this userId");
+            throw new GraphQLError("Error finding item for this userId", {
+                extensions: { code: INTERNAL_SERVER_ERROR }
+            });
         }
-        const indices = item[key].map((listItem: string) => item[key].indexOf(listItem));
+        const indices = values.map((value: string) => item[key].indexOf(value));
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
@@ -176,7 +190,9 @@ export const deleteItemsFromArray = async <T extends Table>(
         return itemOutput.Attributes as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
-        throw Error("DynamoDB Update Call Failed");
+        throw new GraphQLError("DynamoDB Update Call Failed", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };
 
@@ -195,6 +211,8 @@ export const deleteItem = async <T extends Table>(
         return itemOutput.Attributes as ObjectType<T> | undefined;
     } catch (err) {
         console.error(err);
-        throw Error("DynamoDB Delete Call Failed");
+        throw new GraphQLError("DynamoDB Delete Call Failed", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };

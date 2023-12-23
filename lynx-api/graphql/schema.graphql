@@ -63,6 +63,7 @@ type Party {
     name: String!
     partyManager: User!
     users: [User!]!
+    invitedUsers: [User!]!
     leaderboard(
         sortBy: LeaderboardSort = VERTICAL_DISTANCE
         timeframe: Timeframe = ALL_TIME
@@ -146,10 +147,10 @@ type Mutation {
     createInviteKey: String!
     resolveInviteKey(inviteKey: ID!): User!
     createParty(name: String!): Party!
-    removeUserFromParty(partyId: ID!, userId: ID!): Party!
     deleteParty(partyId: ID!): Party!
     createPartyInvite(partyId: ID!, userId: ID!): Party!
     deletePartyInvite(partyId: ID!, userId: ID!): Party!
-    joinParty(partyId: ID!): Party!
-    leaveParty(partyId: ID!): Party!
+    removeUserFromParty(partyId: ID!, userId: ID!): Party!
+    joinParty(partyId: ID!): User!
+    leaveParty(partyId: ID!): User!
 }

@@ -4,8 +4,8 @@ import { GraphQLError } from "graphql";
 import { DateTime } from "luxon";
 import { v4 as uuid } from "uuid";
 
-import { BAD_REQUEST, generateToken } from "../../auth";
-import { Context } from "../../index";
+import { generateToken } from "../../auth";
+import { BAD_REQUEST, Context } from "../../index";
 import { getItemByIndex, putItem } from "../../aws/dynamodb";
 import { USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
 

@@ -1,8 +1,8 @@
 import { GraphQLError } from "graphql";
 
-import { BAD_REQUEST, checkHasUserId, checkIsLoggedIn } from "../../auth";
+import { checkHasUserId, checkIsLoggedIn } from "../../auth";
 import { deleteItem, getItem, updateItem } from "../../aws/dynamodb";
-import { Context } from "../../index";
+import { BAD_REQUEST, Context } from "../../index";
 import { User } from "../../types";
 import { INVITES_TABLE, USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
 
@@ -16,7 +16,7 @@ const resolveInviteKey = async (_: any, args: Args, context: Context, info: any)
     const inviteInfo = await getItem(INVITES_TABLE, args.inviteKey);
     if (!inviteInfo && args.inviteKey !== process.env.ESCAPE_INVITE_HATCH) {
         throw new GraphQLError("Invalid Invite Token Provided", {
-            extensions: { code: BAD_REQUEST }
+            extensions: { code: BAD_REQUEST, inviteKey: args.inviteKey }
         });
     }
     const updateOutput = (await updateItem(USERS_TABLE, userId, "validatedInvite", true)) as User;

@@ -29,6 +29,7 @@ const deleteUser = async (_: any, args: Args, context: Context, info: any): Prom
             async (token) => await invalidateToken(token.type, token.token)
         );
     }
+    console.log(`Deleting user with id ${userId}`);
     await deleteObjectsInBucket(PROFILE_PICS_BUCKET, userId);
     await deleteObjectsInBucket(SLOPES_UNZIPPED_BUCKET, userId);
     return (await deleteItem(USERS_TABLE, userId)) as User;

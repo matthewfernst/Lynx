@@ -8,8 +8,11 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { NodeJsClient } from "@smithy/types";
+import { GraphQLError } from "graphql";
 
-if (!process.env.AWS_REGION) throw new Error("AWS_REGION Is Not Defined");
+import { DEPENDENCY_ERROR } from "../index";
+
+if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
 export const s3Client = new S3Client({ region: process.env.AWS_REGION }) as NodeJsClient<S3Client>;
 
 export const createSignedUploadUrl = async (bucketName: string, path: string): Promise<string> => {
@@ -18,7 +21,9 @@ export const createSignedUploadUrl = async (bucketName: string, path: string): P
         return await getSignedUrl(s3Client, command);
     } catch (err) {
         console.error(err);
-        throw Error("Error creating url for file upload");
+        throw new GraphQLError("Error creating url for file upload", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };
 
@@ -46,7 +51,9 @@ export const getObjectNamesInBucket = async (
         return listObjectsResponse.Contents.filter(predicate).map(predicate);
     } catch (err) {
         console.error(err);
-        throw Error(`Error retrieving records from bucket with prefix ${prefix}`);
+        throw new GraphQLError(`Error retrieving records from bucket with prefix ${prefix}`, {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };
 
@@ -55,12 +62,14 @@ export const getRecordFromBucket = async (bucketName: string, key: string): Prom
         const getObjectRequest = new GetObjectCommand({ Bucket: bucketName, Key: key });
         const getObjectResponse = await s3Client.send(getObjectRequest);
         if (!getObjectResponse.Body) {
-            throw new Error(`Error reading information about item in bucket`);
+            throw new GraphQLError(`Error reading information about item in bucket`);
         }
         return await getObjectResponse.Body.transformToString();
     } catch (err) {
         console.error(err);
-        throw Error(`Error retrieving record from bucket`);
+        throw new GraphQLError(`Error retrieving record from bucket`, {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };
 
@@ -70,6 +79,8 @@ export const deleteObjectsInBucket = async (bucketName: string, prefix: string) 
         await s3Client.send(deleteObjectRequest);
     } catch (err) {
         console.error(err);
-        throw Error(`Error deleting records from bucket`);
+        throw new GraphQLError(`Error deleting records from bucket`, {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };

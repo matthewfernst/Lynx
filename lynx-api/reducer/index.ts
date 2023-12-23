@@ -1,6 +1,5 @@
 import { UpdateItemOutput } from "@aws-sdk/client-dynamodb";
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
-
 import { DateTime } from "luxon";
 
 import { documentClient } from "../graphql/aws/dynamodb";
@@ -69,7 +68,7 @@ const updateItem = async (
         return await documentClient.send(updateItemRequest);
     } catch (err) {
         console.error(err);
-        throw Error("DynamoDB Update Call Failed");
+        throw new Error("DynamoDB Update Call Failed");
     }
 };
 
@@ -90,7 +89,7 @@ const updateAllTimeframe = async (
         return await documentClient.send(updateItemRequest);
     } catch (err) {
         console.error(err);
-        throw Error("DynamoDB Update Call Failed");
+        throw new Error("DynamoDB Update Call Failed");
     }
 };
 

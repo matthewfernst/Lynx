@@ -1,5 +1,6 @@
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { DateTime } from "luxon";
+import { GraphQLError } from "graphql";
 
 import { Context } from "../../index";
 import { LeaderboardEntry, User } from "../../types";
@@ -77,7 +78,7 @@ const getTimeframeRankingByIndex = async (
         return itemOutput.Items as LeaderboardEntry[];
     } catch (err) {
         console.error(err);
-        throw Error("DynamoDB Query Call Failed");
+        throw new GraphQLError("DynamoDB Query Call Failed");
     }
 };
 

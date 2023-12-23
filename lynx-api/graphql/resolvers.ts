@@ -10,6 +10,12 @@ import editUser from "./resolvers/Mutation/editUser";
 import createInviteKey from "./resolvers/Mutation/createInviteKey";
 import resolveInviteKey from "./resolvers/Mutation/resolveInviteKey";
 import createParty from "./resolvers/Mutation/createParty";
+import deleteParty from "./resolvers/Mutation/deleteParty";
+import createPartyInvite from "./resolvers/Mutation/createPartyInvite";
+import deletePartyInvite from "./resolvers/Mutation/deletePartyInvite";
+import removeUserFromParty from "./resolvers/Mutation/removeUserFromParty";
+import joinParty from "./resolvers/Mutation/joinParty";
+import leaveParty from "./resolvers/Mutation/leaveParty";
 import email from "./resolvers/User/email";
 import oauthLoginIds from "./resolvers/User/oauthLoginIds";
 import profilePictureUrl from "./resolvers/User/profilePictureUrl";
@@ -50,7 +56,13 @@ export const resolvers = {
         editUser,
         createInviteKey,
         resolveInviteKey,
-        createParty
+        createParty,
+        deleteParty,
+        createPartyInvite,
+        deletePartyInvite,
+        removeUserFromParty,
+        joinParty,
+        leaveParty
     },
     User: { email, oauthLoginIds, profilePictureUrl, logbook, parties },
     UserStats: {

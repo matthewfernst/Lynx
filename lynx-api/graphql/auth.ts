@@ -2,13 +2,10 @@ import { GraphQLError } from "graphql";
 import { APIGatewayProxyEvent } from "aws-lambda";
 import jwt from "jsonwebtoken";
 
-import { User } from "./types";
+import { BAD_REQUEST, FORBIDDEN, UNAUTHENTICATED } from "./index";
+import { Party, User } from "./types";
 import { getItem } from "./aws/dynamodb";
-import { USERS_TABLE } from "../infrastructure/lib/infrastructure";
-
-export const BAD_REQUEST = "BAD_REQUEST";
-export const UNAUTHENTICATED = "UNAUTHENTICATED";
-export const FORBIDDEN = "FORBIDDEN";
+import { PARTIES_TABLE, USERS_TABLE } from "../infrastructure/lib/infrastructure";
 
 interface Parent {
     id: string;
@@ -77,4 +74,32 @@ export const checkIsMe = (parent: Parent, userId: string | undefined): string =>
         });
     }
     return userId;
+};
+
+export const checkIsValidUser = async (userId: string): Promise<void> => {
+    const user = await getItem(USERS_TABLE, userId);
+    if (!user) {
+        throw new GraphQLError(`User Does Not Exist`, {
+            extensions: { code: BAD_REQUEST, userId }
+        });
+    }
+};
+
+export const checkIsValidParty = async (partyId: string): Promise<Party> => {
+    const party = await getItem(PARTIES_TABLE, partyId);
+    if (!party) {
+        throw new GraphQLError(`Party Does Not Exist`, {
+            extensions: { code: BAD_REQUEST, partyId }
+        });
+    }
+    return party;
+};
+
+export const checkIsPartyOwner = async (userId: string, partyId: string) => {
+    const party = await checkIsValidParty(partyId);
+    if (party.partyManager !== userId) {
+        throw new GraphQLError("User Is Not Party Owner", {
+            extensions: { code: FORBIDDEN, userId, partyId }
+        });
+    }
 };
