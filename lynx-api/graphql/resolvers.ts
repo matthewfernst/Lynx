@@ -1,65 +1,72 @@
+const getDefault = async (path: string) => {
+    const module = await import(path);
+    return module.default;
+};
+
 export default {
     Query: {
-        selfLookup: import("./resolvers/Query/selfLookup"),
-        userLookupById: import("./resolvers/Query/userLookupById"),
-        leaderboard: import("./resolvers/Query/leaderboard")
+        selfLookup: await getDefault("./resolvers/Query/selfLookup"),
+        userLookupById: await getDefault("./resolvers/Query/userLookupById"),
+        leaderboard: await getDefault("./resolvers/Query/leaderboard")
     },
     Mutation: {
-        createUserOrSignIn: import("./resolvers/Mutation/createUserOrSignIn"),
-        combineOAuthAccounts: import("./resolvers/Mutation/combineOAuthAccounts"),
-        createUserProfilePictureUploadUrl: import(
+        createUserOrSignIn: await getDefault("./resolvers/Mutation/createUserOrSignIn"),
+        combineOAuthAccounts: await getDefault("./resolvers/Mutation/combineOAuthAccounts"),
+        createUserProfilePictureUploadUrl: await getDefault(
             "./resolvers/Mutation/createUserProfilePictureUploadUrl"
         ),
-        createUserRecordUploadUrl: import("./resolvers/Mutation/createUserRecordUploadUrl"),
-        deleteUser: import("./resolvers/Mutation/deleteUser"),
-        editUser: import("./resolvers/Mutation/editUser"),
-        createInviteKey: import("./resolvers/Mutation/createInviteKey"),
-        resolveInviteKey: import("./resolvers/Mutation/resolveInviteKey"),
-        createParty: import("./resolvers/Mutation/createParty"),
-        deleteParty: import("./resolvers/Mutation/deleteParty"),
-        createPartyInvite: import("./resolvers/Mutation/createPartyInvite"),
-        deletePartyInvite: import("./resolvers/Mutation/deletePartyInvite"),
-        removeUserFromParty: import("./resolvers/Mutation/removeUserFromParty"),
-        joinParty: import("./resolvers/Mutation/joinParty"),
-        leaveParty: import("./resolvers/Mutation/leaveParty")
+        createUserRecordUploadUrl: await getDefault(
+            "./resolvers/Mutation/createUserRecordUploadUrl"
+        ),
+        deleteUser: await getDefault("./resolvers/Mutation/deleteUser"),
+        editUser: await getDefault("./resolvers/Mutation/editUser"),
+        createInviteKey: await getDefault("./resolvers/Mutation/createInviteKey"),
+        resolveInviteKey: await getDefault("./resolvers/Mutation/resolveInviteKey"),
+        createParty: await getDefault("./resolvers/Mutation/createParty"),
+        deleteParty: await getDefault("./resolvers/Mutation/deleteParty"),
+        createPartyInvite: await getDefault("./resolvers/Mutation/createPartyInvite"),
+        deletePartyInvite: await getDefault("./resolvers/Mutation/deletePartyInvite"),
+        removeUserFromParty: await getDefault("./resolvers/Mutation/removeUserFromParty"),
+        joinParty: await getDefault("./resolvers/Mutation/joinParty"),
+        leaveParty: await getDefault("./resolvers/Mutation/leaveParty")
     },
     User: {
-        email: import("./resolvers/User/email"),
-        oauthLoginIds: import("./resolvers/User/oauthLoginIds"),
-        profilePictureUrl: import("./resolvers/User/profilePictureUrl"),
-        stats: import("./resolvers/User/stats"),
-        logbook: import("./resolvers/User/logbook"),
-        parties: import("./resolvers/User/parties")
+        email: await getDefault("./resolvers/User/email"),
+        oauthLoginIds: await getDefault("./resolvers/User/oauthLoginIds"),
+        profilePictureUrl: await getDefault("./resolvers/User/profilePictureUrl"),
+        stats: await getDefault("./resolvers/User/stats"),
+        logbook: await getDefault("./resolvers/User/logbook"),
+        parties: await getDefault("./resolvers/User/parties")
     },
     UserStats: {
-        distance: import("./resolvers/UserStats/distance"),
-        topSpeed: import("./resolvers/UserStats/topSpeed"),
-        verticalDistance: import("./resolvers/UserStats/verticalDistance")
+        distance: await getDefault("./resolvers/UserStats/distance"),
+        topSpeed: await getDefault("./resolvers/UserStats/topSpeed"),
+        verticalDistance: await getDefault("./resolvers/UserStats/verticalDistance")
     },
     Log: {
-        id: import("./resolvers/Log/id"),
-        details: import("./resolvers/Log/details"),
-        distance: import("./resolvers/Log/distance"),
-        startDate: import("./resolvers/Log/startDate"),
-        endDate: import("./resolvers/Log/endDate"),
-        topSpeed: import("./resolvers/Log/topSpeed"),
-        verticalDistance: import("./resolvers/Log/verticalDistance")
+        id: await getDefault("./resolvers/Log/id"),
+        details: await getDefault("./resolvers/Log/details"),
+        distance: await getDefault("./resolvers/Log/distance"),
+        startDate: await getDefault("./resolvers/Log/startDate"),
+        endDate: await getDefault("./resolvers/Log/endDate"),
+        topSpeed: await getDefault("./resolvers/Log/topSpeed"),
+        verticalDistance: await getDefault("./resolvers/Log/verticalDistance")
     },
     LogDetail: {
-        type: import("./resolvers/LogDetail/type"),
-        averageSpeed: import("./resolvers/LogDetail/averageSpeed"),
-        distance: import("./resolvers/LogDetail/distance"),
-        startDate: import("./resolvers/LogDetail/startDate"),
-        endDate: import("./resolvers/LogDetail/endDate"),
-        minAltitude: import("./resolvers/LogDetail/minAltitude"),
-        maxAltitude: import("./resolvers/LogDetail/maxAltitude"),
-        topSpeed: import("./resolvers/LogDetail/topSpeed"),
-        topSpeedAltitude: import("./resolvers/LogDetail/topSpeedAltitude"),
-        verticalDistance: import("./resolvers/LogDetail/verticalDistance")
+        type: await getDefault("./resolvers/LogDetail/type"),
+        averageSpeed: await getDefault("./resolvers/LogDetail/averageSpeed"),
+        distance: await getDefault("./resolvers/LogDetail/distance"),
+        startDate: await getDefault("./resolvers/LogDetail/startDate"),
+        endDate: await getDefault("./resolvers/LogDetail/endDate"),
+        minAltitude: await getDefault("./resolvers/LogDetail/minAltitude"),
+        maxAltitude: await getDefault("./resolvers/LogDetail/maxAltitude"),
+        topSpeed: await getDefault("./resolvers/LogDetail/topSpeed"),
+        topSpeedAltitude: await getDefault("./resolvers/LogDetail/topSpeedAltitude"),
+        verticalDistance: await getDefault("./resolvers/LogDetail/verticalDistance")
     },
     Party: {
-        partyManager: import("./resolvers/Party/partyManager"),
-        users: import("./resolvers/Party/users"),
-        leaderboard: import("./resolvers/Party/leaderboard")
+        partyManager: await getDefault("./resolvers/Party/partyManager"),
+        users: await getDefault("./resolvers/Party/users"),
+        leaderboard: await getDefault("./resolvers/Party/leaderboard")
     }
 };
