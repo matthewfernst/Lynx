@@ -24,12 +24,15 @@ export type Table =
     | typeof INVITES_TABLE
     | typeof PARTIES_TABLE;
 
-type ObjectType<T extends Table> =
-    T extends typeof USERS_TABLE ? User :
-    T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry :
-    T extends typeof INVITES_TABLE ? Invite :
-    T extends typeof PARTIES_TABLE ? Party :
-    unknown;
+type ObjectType<T extends Table> = T extends typeof USERS_TABLE
+    ? User
+    : T extends typeof LEADERBOARD_TABLE
+    ? LeaderboardEntry
+    : T extends typeof INVITES_TABLE
+    ? Invite
+    : T extends typeof PARTIES_TABLE
+    ? Party
+    : unknown;
 
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
 

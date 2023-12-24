@@ -10,8 +10,8 @@ export interface User {
     firstName?: string;
     lastName?: string;
     profilePictureUrl?: string;
-    userStats?: UserStats;
-    logbook?: Log[];
+    stats?: UserStats;
+    logbook: Log[];
 }
 
 export interface UserStats {

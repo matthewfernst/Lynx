@@ -19,6 +19,7 @@ import leaveParty from "./resolvers/Mutation/leaveParty";
 import email from "./resolvers/User/email";
 import oauthLoginIds from "./resolvers/User/oauthLoginIds";
 import profilePictureUrl from "./resolvers/User/profilePictureUrl";
+import stats from "./resolvers/User/stats";
 import logbook from "./resolvers/User/logbook";
 import parties from "./resolvers/User/parties";
 import userStatsDistance from "./resolvers/UserStats/distance";
@@ -64,7 +65,7 @@ export const resolvers = {
         joinParty,
         leaveParty
     },
-    User: { email, oauthLoginIds, profilePictureUrl, logbook, parties },
+    User: { email, oauthLoginIds, profilePictureUrl, stats, logbook, parties },
     UserStats: {
         distance: userStatsDistance,
         topSpeed: userStatsTopSpeed,

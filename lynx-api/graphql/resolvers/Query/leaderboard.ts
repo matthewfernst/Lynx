@@ -2,7 +2,7 @@ import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { DateTime } from "luxon";
 import { GraphQLError } from "graphql";
 
-import { Context } from "../../index";
+import { Context, DEPENDENCY_ERROR } from "../../index";
 import { LeaderboardEntry, User } from "../../types";
 import { documentClient, getItem } from "../../aws/dynamodb";
 import { populateLogbookDataForUser } from "./selfLookup";
@@ -27,7 +27,7 @@ export const leaderboardSortTypesToQueryFields: { [key in LeaderboardSort]: stri
 const leaderboard = async (_: any, args: Args, context: Context, info: any): Promise<User[]> => {
     const leaderboardEntries = await getTimeframeRankingByIndex(
         leaderboardSortTypesToQueryFields[args.sortBy],
-        valueFromTimeframe(args.timeframe),
+        leaderboardTimeframeFromQueryArgument(args.timeframe),
         args.limit
     );
     return await Promise.all(
@@ -38,22 +38,17 @@ const leaderboard = async (_: any, args: Args, context: Context, info: any): Pro
     );
 };
 
-const valueFromTimeframe = (timeframe: Timeframe): string => {
+export const leaderboardTimeframeFromQueryArgument = (timeframe: Timeframe): string => {
     const now = DateTime.now();
-    const day = now.ordinal;
-    const week = now.weekNumber;
-    const month = now.month;
-    const year = now.year;
-
     switch (timeframe) {
         case "DAY":
-            return `day-${day}`;
+            return `day-${now.ordinal}`;
         case "WEEK":
-            return `week-${week}`;
+            return `week-${now.weekNumber}`;
         case "MONTH":
-            return `month-${month}`;
+            return `month-${now.month}`;
         case "YEAR":
-            return `year-${year}`;
+            return `year-${now.year}`;
         case "ALL_TIME":
             return "all";
     }
@@ -78,7 +73,9 @@ const getTimeframeRankingByIndex = async (
         return itemOutput.Items as LeaderboardEntry[];
     } catch (err) {
         console.error(err);
-        throw new GraphQLError("DynamoDB Query Call Failed");
+        throw new GraphQLError("DynamoDB Query Call Failed", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };
 

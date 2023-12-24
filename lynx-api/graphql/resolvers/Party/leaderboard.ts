@@ -1,13 +1,20 @@
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { DateTime } from "luxon";
 import { GraphQLError } from "graphql";
 
 import { Context } from "../../index";
 import { LeaderboardEntry, Party, User } from "../../types";
 import { documentClient, getItem } from "../../aws/dynamodb";
 import { populateLogbookDataForUser } from "../Query/selfLookup";
-import { LeaderboardSort, Timeframe } from "../Query/leaderboard";
-import { LEADERBOARD_TABLE, PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
+import {
+    LeaderboardSort,
+    Timeframe,
+    leaderboardTimeframeFromQueryArgument
+} from "../Query/leaderboard";
+import {
+    LEADERBOARD_TABLE,
+    PARTIES_TABLE,
+    USERS_TABLE
+} from "../../../infrastructure/lib/infrastructure";
 
 interface Args {
     sortBy: LeaderboardSort;
@@ -30,7 +37,7 @@ const leaderboard = async (
 ): Promise<User[]> => {
     const leaderboardEntries = await getTimeframeRankingByIndex(
         leaderboardSortTypesToQueryFields[args.sortBy],
-        valueFromTimeframe(args.timeframe),
+        leaderboardTimeframeFromQueryArgument(args.timeframe),
         args.limit,
         parent.id
     );
@@ -40,27 +47,6 @@ const leaderboard = async (
             return await populateLogbookDataForUser(user);
         })
     );
-};
-
-const valueFromTimeframe = (timeframe: Timeframe): string => {
-    const now = DateTime.now();
-    const day = now.ordinal;
-    const week = now.weekNumber;
-    const month = now.month;
-    const year = now.year;
-
-    switch (timeframe) {
-        case "DAY":
-            return `day-${day}`;
-        case "WEEK":
-            return `week-${week}`;
-        case "MONTH":
-            return `month-${month}`;
-        case "YEAR":
-            return `year-${year}`;
-        case "ALL_TIME":
-            return "all";
-    }
 };
 
 const getTimeframeRankingByIndex = async (

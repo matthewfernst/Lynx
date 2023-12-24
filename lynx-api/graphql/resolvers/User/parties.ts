@@ -4,7 +4,6 @@ import { Party } from "../../types";
 import { PARTIES_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 interface Parent {
-    id: string;
     parties: string[];
 }
 

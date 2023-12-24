@@ -6,7 +6,7 @@ type User {
     firstName: String!
     lastName: String!
     profilePictureUrl: String
-    userStats: UserStats
+    stats(timeframe: Timeframe = ALL_TIME): UserStats
     logbook: [Log!]!
     parties: [Party!]!
     partyInvites: [Party!]!
