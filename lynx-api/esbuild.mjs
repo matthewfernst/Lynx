@@ -8,6 +8,7 @@ const buildLambdaFunction = async (packageName) => {
         outdir: `dist/${packageName}`,
         platform: "node",
         target: "node18",
+        minify: true,
         sourcemap: true
     });
 };

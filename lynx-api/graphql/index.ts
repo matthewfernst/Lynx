@@ -6,7 +6,8 @@ import { loadSchemaSync } from "@graphql-tools/load";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 
 import { authenticateHTTPAccessToken } from "./auth";
-import { resolvers } from "./resolvers";
+import resolvers from "./resolvers";
+import dataloaders from "./dataloaders";
 
 export interface Context {
     userId: string | undefined;
@@ -39,7 +40,7 @@ export const handler = startServerAndCreateLambdaHandler(
     server,
     handlers.createAPIGatewayProxyEventRequestHandler(),
     {
-        context: async ({ event }) => ({ userId: authenticateHTTPAccessToken(event) }),
+        context: async ({ event }) => ({ userId: authenticateHTTPAccessToken(event), dataloaders }),
         middleware: [
             async (event) => {
                 return async (result) => {

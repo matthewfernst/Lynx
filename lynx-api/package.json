@@ -14,6 +14,7 @@
     },
     "devDependencies": {
         "@smithy/types": "^2.7.0",
+        "@tsconfig/node18": "^18.2.2",
         "@types/convert-units": "^2.3.9",
         "@types/crypto-js": "^4.2.1",
         "@types/jest": "^29.5.11",
@@ -47,6 +48,7 @@
         "constructs": "^10.3.0",
         "convert-units": "^2.3.4",
         "crypto-js": "^4.2.0",
+        "dataloader": "^2.2.2",
         "dotenv": "^16.3.1",
         "google-auth-library": "^9.4.1",
         "graphql": "^16.8.1",

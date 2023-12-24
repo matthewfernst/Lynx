@@ -1,14 +1,9 @@
 {
     "compilerOptions": {
-        "noEmit": false,
-        "module": "NodeNext",
-        "target": "ES6",
-        "useDefineForClassFields": true,
-        "lib": ["DOM", "ESNext"],
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "strict": true,
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
         "isolatedModules": true
     },
+    "extends": "@tsconfig/node18/tsconfig.json",
     "$schema": "https://json.schemastore.org/tsconfig"
 }
