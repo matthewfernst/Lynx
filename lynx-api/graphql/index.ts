@@ -6,8 +6,10 @@ import { loadSchemaSync } from "@graphql-tools/load";
 import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 
 import { authenticateHTTPAccessToken } from "./auth";
-import resolvers from "./resolvers";
 import dataloaders from "./dataloaders";
+
+// @ts-ignore
+import resolvers from "./resolvers/**/*";
 
 export interface Context {
     userId: string | undefined;

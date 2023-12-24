@@ -1,15 +1,18 @@
-import { build } from "esbuild";
+import esbuild from "esbuild";
+import globImport from "esbuild-plugin-glob-import";
+
 import { copyFile } from "fs/promises";
 
 const buildLambdaFunction = async (packageName) => {
-    await build({
+    await esbuild.build({
         bundle: true,
         entryPoints: [`${packageName}/index.ts`],
         outdir: `dist/${packageName}`,
         platform: "node",
         target: "node18",
         minify: true,
-        sourcemap: true
+        sourcemap: true,
+        plugins: [globImport()]
     });
 };
 

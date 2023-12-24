@@ -50,6 +50,7 @@
         "crypto-js": "^4.2.0",
         "dataloader": "^2.2.2",
         "dotenv": "^16.3.1",
+        "esbuild-plugin-glob-import": "^0.2.0",
         "google-auth-library": "^9.4.1",
         "graphql": "^16.8.1",
         "jsonwebtoken": "^9.0.2",
