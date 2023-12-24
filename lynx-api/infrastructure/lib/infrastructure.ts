@@ -249,7 +249,10 @@ export class LynxAPIStack extends Stack {
                 TableAccessPolicy: new PolicyDocument({
                     statements: [
                         new PolicyStatement({
-                            actions: ["dynamodb:Query"],
+                            actions: [
+                                "dynamodb:Query",
+                                "dynamodb:GetItem"
+                            ],
                             resources: [leaderboardTable.tableArn + "/index/*"]
                         }),
                         new PolicyStatement({
