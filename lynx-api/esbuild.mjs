@@ -7,18 +7,9 @@ const buildLambdaFunction = async (packageName) => {
         entryPoints: [`${packageName}/index.ts`],
         outdir: `dist/${packageName}`,
         platform: "node",
-        target: "esnext",
-        format: "esm",
-        outExtension: { ".js": ".mjs" },
-        sourcemap: true,
-        banner: {
-            js: `
-                const require = await (async () => {
-                    const { createRequire } = await import("node:module");
-                    return createRequire(import.meta.url);
-                })();
-            `
-        }
+        target: "node18",
+        minify: true,
+        sourcemap: true
     });
 };
 

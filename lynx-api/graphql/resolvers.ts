@@ -1,72 +1,100 @@
-const getDefault = async (path: string) => {
-    const module = await import(path);
-    return module.default;
-};
+import selfLookup from "./resolvers/Query/selfLookup";
+import userLookupById from "./resolvers/Query/userLookupById";
+import leaderboard from "./resolvers/Query/leaderboard";
+import createUserOrSignIn from "./resolvers/Mutation/createUserOrSignIn";
+import combineOAuthAccounts from "./resolvers/Mutation/combineOAuthAccounts";
+import createUserProfilePictureUploadUrl from "./resolvers/Mutation/createUserProfilePictureUploadUrl";
+import createUserRecordUploadUrl from "./resolvers/Mutation/createUserRecordUploadUrl";
+import deleteUser from "./resolvers/Mutation/deleteUser";
+import editUser from "./resolvers/Mutation/editUser";
+import createInviteKey from "./resolvers/Mutation/createInviteKey";
+import resolveInviteKey from "./resolvers/Mutation/resolveInviteKey";
+import createParty from "./resolvers/Mutation/createParty";
+import deleteParty from "./resolvers/Mutation/deleteParty";
+import createPartyInvite from "./resolvers/Mutation/createPartyInvite";
+import deletePartyInvite from "./resolvers/Mutation/deletePartyInvite";
+import removeUserFromParty from "./resolvers/Mutation/removeUserFromParty";
+import joinParty from "./resolvers/Mutation/joinParty";
+import leaveParty from "./resolvers/Mutation/leaveParty";
+import email from "./resolvers/User/email";
+import oauthLoginIds from "./resolvers/User/oauthLoginIds";
+import profilePictureUrl from "./resolvers/User/profilePictureUrl";
+import stats from "./resolvers/User/stats";
+import logbook from "./resolvers/User/logbook";
+import parties from "./resolvers/User/parties";
+import userStatsDistance from "./resolvers/UserStats/distance";
+import userStatsTopSpeed from "./resolvers/UserStats/topSpeed";
+import userStatsVerticalDistance from "./resolvers/UserStats/verticalDistance";
+import id from "./resolvers/Log/id";
+import details from "./resolvers/Log/details";
+import logDistance from "./resolvers/Log/distance";
+import logStartDate from "./resolvers/Log/startDate";
+import logEndDate from "./resolvers/Log/endDate";
+import logTopSpeed from "./resolvers/Log/topSpeed";
+import logVerticalDistance from "./resolvers/Log/verticalDistance";
+import logDetailType from "./resolvers/LogDetail/type";
+import averageSpeed from "./resolvers/LogDetail/averageSpeed";
+import logDetailDistance from "./resolvers/LogDetail/distance";
+import logDetailStartDate from "./resolvers/LogDetail/startDate";
+import logDetailEndDate from "./resolvers/LogDetail/endDate";
+import minAltitude from "./resolvers/LogDetail/minAltitude";
+import maxAltitude from "./resolvers/LogDetail/maxAltitude";
+import logDetailTopSpeed from "./resolvers/LogDetail/topSpeed";
+import topSpeedAltitude from "./resolvers/LogDetail/topSpeedAltitude";
+import logDetailVerticalDistance from "./resolvers/LogDetail/verticalDistance";
+import partyLeaderboard from "./resolvers/Party/leaderboard";
+import partyUsers from "./resolvers/Party/users";
+import partyManager from "./resolvers/Party/partyManager";
 
 export default {
-    Query: {
-        selfLookup: await getDefault("./resolvers/Query/selfLookup"),
-        userLookupById: await getDefault("./resolvers/Query/userLookupById"),
-        leaderboard: await getDefault("./resolvers/Query/leaderboard")
-    },
+    Query: { selfLookup, userLookupById, leaderboard },
     Mutation: {
-        createUserOrSignIn: await getDefault("./resolvers/Mutation/createUserOrSignIn"),
-        combineOAuthAccounts: await getDefault("./resolvers/Mutation/combineOAuthAccounts"),
-        createUserProfilePictureUploadUrl: await getDefault(
-            "./resolvers/Mutation/createUserProfilePictureUploadUrl"
-        ),
-        createUserRecordUploadUrl: await getDefault(
-            "./resolvers/Mutation/createUserRecordUploadUrl"
-        ),
-        deleteUser: await getDefault("./resolvers/Mutation/deleteUser"),
-        editUser: await getDefault("./resolvers/Mutation/editUser"),
-        createInviteKey: await getDefault("./resolvers/Mutation/createInviteKey"),
-        resolveInviteKey: await getDefault("./resolvers/Mutation/resolveInviteKey"),
-        createParty: await getDefault("./resolvers/Mutation/createParty"),
-        deleteParty: await getDefault("./resolvers/Mutation/deleteParty"),
-        createPartyInvite: await getDefault("./resolvers/Mutation/createPartyInvite"),
-        deletePartyInvite: await getDefault("./resolvers/Mutation/deletePartyInvite"),
-        removeUserFromParty: await getDefault("./resolvers/Mutation/removeUserFromParty"),
-        joinParty: await getDefault("./resolvers/Mutation/joinParty"),
-        leaveParty: await getDefault("./resolvers/Mutation/leaveParty")
+        createUserOrSignIn,
+        combineOAuthAccounts,
+        createUserProfilePictureUploadUrl,
+        createUserRecordUploadUrl,
+        deleteUser,
+        editUser,
+        createInviteKey,
+        resolveInviteKey,
+        createParty,
+        deleteParty,
+        createPartyInvite,
+        deletePartyInvite,
+        removeUserFromParty,
+        joinParty,
+        leaveParty
     },
-    User: {
-        email: await getDefault("./resolvers/User/email"),
-        oauthLoginIds: await getDefault("./resolvers/User/oauthLoginIds"),
-        profilePictureUrl: await getDefault("./resolvers/User/profilePictureUrl"),
-        stats: await getDefault("./resolvers/User/stats"),
-        logbook: await getDefault("./resolvers/User/logbook"),
-        parties: await getDefault("./resolvers/User/parties")
-    },
+    User: { email, oauthLoginIds, profilePictureUrl, stats, logbook, parties },
     UserStats: {
-        distance: await getDefault("./resolvers/UserStats/distance"),
-        topSpeed: await getDefault("./resolvers/UserStats/topSpeed"),
-        verticalDistance: await getDefault("./resolvers/UserStats/verticalDistance")
+        distance: userStatsDistance,
+        topSpeed: userStatsTopSpeed,
+        verticalDistance: userStatsVerticalDistance
     },
     Log: {
-        id: await getDefault("./resolvers/Log/id"),
-        details: await getDefault("./resolvers/Log/details"),
-        distance: await getDefault("./resolvers/Log/distance"),
-        startDate: await getDefault("./resolvers/Log/startDate"),
-        endDate: await getDefault("./resolvers/Log/endDate"),
-        topSpeed: await getDefault("./resolvers/Log/topSpeed"),
-        verticalDistance: await getDefault("./resolvers/Log/verticalDistance")
+        id,
+        details,
+        distance: logDistance,
+        startDate: logStartDate,
+        endDate: logEndDate,
+        topSpeed: logTopSpeed,
+        verticalDistance: logVerticalDistance
     },
     LogDetail: {
-        type: await getDefault("./resolvers/LogDetail/type"),
-        averageSpeed: await getDefault("./resolvers/LogDetail/averageSpeed"),
-        distance: await getDefault("./resolvers/LogDetail/distance"),
-        startDate: await getDefault("./resolvers/LogDetail/startDate"),
-        endDate: await getDefault("./resolvers/LogDetail/endDate"),
-        minAltitude: await getDefault("./resolvers/LogDetail/minAltitude"),
-        maxAltitude: await getDefault("./resolvers/LogDetail/maxAltitude"),
-        topSpeed: await getDefault("./resolvers/LogDetail/topSpeed"),
-        topSpeedAltitude: await getDefault("./resolvers/LogDetail/topSpeedAltitude"),
-        verticalDistance: await getDefault("./resolvers/LogDetail/verticalDistance")
+        type: logDetailType,
+        averageSpeed,
+        distance: logDetailDistance,
+        startDate: logDetailStartDate,
+        endDate: logDetailEndDate,
+        minAltitude,
+        maxAltitude,
+        topSpeed: logDetailTopSpeed,
+        topSpeedAltitude,
+        verticalDistance: logDetailVerticalDistance
     },
     Party: {
-        partyManager: await getDefault("./resolvers/Party/partyManager"),
-        users: await getDefault("./resolvers/Party/users"),
-        leaderboard: await getDefault("./resolvers/Party/leaderboard")
+        partyManager: partyManager,
+        users: partyUsers,
+        leaderboard: partyLeaderboard
     }
 };
