@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
         "noEmit": false,
-        "target": "ESNext",
+        "module": "NodeNext",
+        "target": "ES6",
         "useDefineForClassFields": true,
         "lib": ["DOM", "ESNext"],
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "strict": true,
-        "moduleResolution": "Node16",
         "isolatedModules": true
     },
     "$schema": "https://json.schemastore.org/tsconfig"
