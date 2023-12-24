@@ -1,14 +1,14 @@
 import DataLoader from "dataloader";
 
-async function batchLoadUsers(userIds: readonly string[]) {
-    return userIds.map((key) => key);
-}
+import { getItem } from "./aws/dynamodb";
+import { USERS_TABLE } from "../infrastructure/lib/infrastructure";
 
-async function batchLoadLogs(logIds: readonly string[]) {
-    return logIds.map((key) => key);
-}
+export const usersDataLoader = new DataLoader(async (userIds: readonly string[]) =>
+    userIds.map(async (userId) => await getItem(USERS_TABLE, userId))
+);
 
-export default {
-    users: new DataLoader(batchLoadUsers),
-    logs: new DataLoader(batchLoadLogs)
-};
+export const logsDataLoader = new DataLoader(async (logIds: readonly string[]) =>
+    logIds.map(async (logId) => await getItem(USERS_TABLE, logId))
+);
+
+export default { users: usersDataLoader, logs: logsDataLoader };

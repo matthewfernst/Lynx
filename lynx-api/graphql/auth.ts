@@ -1,11 +1,12 @@
-import { GraphQLError } from "graphql";
 import { APIGatewayProxyEvent } from "aws-lambda";
+import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
-import { BAD_REQUEST, FORBIDDEN, UNAUTHENTICATED } from "./index";
-import { Party, User } from "./types";
 import { getItem } from "./aws/dynamodb";
-import { PARTIES_TABLE, USERS_TABLE } from "../infrastructure/lib/infrastructure";
+import { usersDataLoader } from "./dataloaders";
+import { BAD_REQUEST, FORBIDDEN, UNAUTHENTICATED } from "./index";
+import { PARTIES_TABLE } from "../infrastructure/lib/infrastructure";
+import { Party, User } from "./types";
 
 interface Parent {
     id: string;
@@ -48,7 +49,7 @@ export const checkHasUserId = (userId: string | undefined): string => {
 };
 
 export const checkIsLoggedIn = async (userId: string): Promise<User> => {
-    const userRecord = await getItem(USERS_TABLE, userId);
+    const userRecord = await usersDataLoader.load(userId);
     if (!userRecord) {
         throw new GraphQLError("User Does Not Exist", {
             extensions: { code: UNAUTHENTICATED, userId }
@@ -58,13 +59,13 @@ export const checkIsLoggedIn = async (userId: string): Promise<User> => {
 };
 
 export const checkIsLoggedInAndHasValidInvite = async (userId: string): Promise<User> => {
-    const userRecord = await checkIsLoggedIn(userId);
-    if (!userRecord.validatedInvite) {
+    const user = await checkIsLoggedIn(userId);
+    if (!user.validatedInvite) {
         throw new GraphQLError("No Validated Invite", {
             extensions: { code: UNAUTHENTICATED, userId: userId }
         });
     }
-    return userRecord;
+    return user;
 };
 
 export const checkIsMe = (parent: Parent, userId: string | undefined): string => {
@@ -77,7 +78,7 @@ export const checkIsMe = (parent: Parent, userId: string | undefined): string =>
 };
 
 export const checkIsValidUser = async (userId: string): Promise<void> => {
-    const user = await getItem(USERS_TABLE, userId);
+    const user = await usersDataLoader.load(userId);
     if (!user) {
         throw new GraphQLError(`User Does Not Exist`, {
             extensions: { code: BAD_REQUEST, userId }

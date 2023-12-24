@@ -13,7 +13,7 @@ const userLookupById = async (
     context: Context,
     info: any
 ): Promise<User | undefined> => {
-    return await getItem(USERS_TABLE, args.id);
+    return await context.dataloaders.users.load(args.id);
 };
 
 export default userLookupById;

@@ -43,7 +43,7 @@ const leaderboard = async (
     );
     return await Promise.all(
         leaderboardEntries.map(async ({ id }) => {
-            const user = (await getItem(USERS_TABLE, id)) as User;
+            const user = await context.dataloaders.users.load(id) as User;
             return await populateLogbookDataForUser(user);
         })
     );

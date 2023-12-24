@@ -9,7 +9,7 @@ const partyManager = async (
     context: Context,
     info: any
 ): Promise<User> => {
-    return (await getItem(USERS_TABLE, parent.partyManager)) as User;
+    return await context.dataloaders.users.load(parent.partyManager) as User;
 };
 
 export default partyManager;

@@ -13,6 +13,7 @@ import resolvers from "./resolvers/**/*";
 
 export interface Context {
     userId: string | undefined;
+    dataloaders: typeof dataloaders;
 }
 
 export const BAD_REQUEST = "BAD_REQUEST";

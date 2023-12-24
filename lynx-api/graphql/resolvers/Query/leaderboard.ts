@@ -32,7 +32,7 @@ const leaderboard = async (_: any, args: Args, context: Context, info: any): Pro
     );
     return await Promise.all(
         leaderboardEntries.map(async ({ id }) => {
-            const user = (await getItem(USERS_TABLE, id)) as User;
+            const user = (await context.dataloaders.users.load(id)) as User;
             return await populateLogbookDataForUser(user);
         })
     );

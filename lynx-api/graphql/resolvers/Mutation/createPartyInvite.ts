@@ -6,8 +6,8 @@ import {
 } from "../../auth";
 import { addItemsToArray } from "../../aws/dynamodb";
 import { Context } from "../../index";
-import { Party } from "../../types";
 import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
+import { Party } from "../../types";
 
 interface Args {
     partyId: string;

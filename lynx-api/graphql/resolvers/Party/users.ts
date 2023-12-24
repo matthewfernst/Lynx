@@ -5,7 +5,7 @@ import { Party, User } from "../../types";
 
 const users = async (parent: Party, args: any, context: Context, info: any): Promise<User[]> => {
     return Promise.all(
-        parent.users.map(async (user) => (await getItem(USERS_TABLE, user)) as User)
+        parent.users.map(async (userId) => await context.dataloaders.users.load(userId) as User)
     );
 };
 

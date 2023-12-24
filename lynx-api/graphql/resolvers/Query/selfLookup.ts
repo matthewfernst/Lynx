@@ -12,7 +12,7 @@ const selfLookup = async (
     info: any
 ): Promise<User | undefined> => {
     const userId = checkHasUserId(context.userId);
-    let userInformation = await getItem(USERS_TABLE, userId);
+    let userInformation = await context.dataloaders.users.load(userId);
     if (userInformation) {
         userInformation = await populateLogbookDataForUser(userInformation);
     }

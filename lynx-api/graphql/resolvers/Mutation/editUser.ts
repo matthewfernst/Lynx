@@ -17,7 +17,7 @@ const editUser = async (_: any, args: Args, context: Context, info: any): Promis
     for (const data of args.userData) {
         await updateItem(USERS_TABLE, userId, data.key, data.value);
     }
-    return (await getItem(USERS_TABLE, userId)) as User;
+    return await context.dataloaders.users.load(userId) as User;
 };
 
 export default editUser;
