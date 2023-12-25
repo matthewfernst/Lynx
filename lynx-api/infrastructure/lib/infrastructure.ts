@@ -1,6 +1,9 @@
 import { Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import { Cors, EndpointType, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
+import { Alarm, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
+import { SnsAction } from "aws-cdk-lib/aws-cloudwatch-actions";
+import { CfnApp as Application, CfnSMSChannel as SMSChannel } from "aws-cdk-lib/aws-pinpoint";
 import { AttributeType, BillingMode, ProjectionType, Table } from "aws-cdk-lib/aws-dynamodb";
 import {
     AnyPrincipal,
@@ -13,6 +16,8 @@ import {
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
+import { Topic } from "aws-cdk-lib/aws-sns";
+import { SmsSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 
 import { Construct } from "constructs";
 import { config } from "dotenv";
@@ -39,6 +44,8 @@ export class LynxAPIStack extends Stack {
         const slopesZippedBucket = this.createSlopesZippedBucket();
         const slopesUnzippedBucket = this.createSlopesUnzippedBucket();
 
+        this.createReducerLambda(slopesUnzippedBucket, leaderboardTable);
+        this.createUnzipperLambda(slopesZippedBucket, slopesUnzippedBucket);
         const graphqlLambda = this.createGraphqlAPILambda(
             profilePictureBucket,
             slopesZippedBucket,
@@ -69,8 +76,8 @@ export class LynxAPIStack extends Stack {
             .addResource("graphql")
             .addMethod("POST", new LambdaIntegration(graphqlLambda, { allowTestInvoke: false }));
 
-        this.createReducerLambda(slopesUnzippedBucket, leaderboardTable);
-        this.createUnzipperLambda(slopesZippedBucket, slopesUnzippedBucket);
+        const alarmTopic = this.createAlarmActions();
+        this.createAPIErrorRateAlarm(alarmTopic, graphqlLambda);
     }
 
     private createUsersTable(): Table {
@@ -249,10 +256,7 @@ export class LynxAPIStack extends Stack {
                 TableAccessPolicy: new PolicyDocument({
                     statements: [
                         new PolicyStatement({
-                            actions: [
-                                "dynamodb:Query",
-                                "dynamodb:GetItem"
-                            ],
+                            actions: ["dynamodb:Query", "dynamodb:GetItem"],
                             resources: [leaderboardTable.tableArn + "/index/*"]
                         }),
                         new PolicyStatement({
@@ -277,6 +281,24 @@ export class LynxAPIStack extends Stack {
                 })
             }
         });
+    }
+
+    private createAPIErrorRateAlarm(alarmTopic: Topic, apiLambda: Function): Alarm {
+        const alarm = new Alarm(this, "APISucessRate", {
+            metric: new MathExpression({
+                label: "API Success Rate",
+                expression: "1 - errors / invocations",
+                usingMetrics: {
+                    errors: apiLambda.metricErrors(),
+                    invocations: apiLambda.metricInvocations()
+                },
+                period: Duration.minutes(1)
+            }),
+            threshold: 0.99,
+            evaluationPeriods: 5
+        });
+        alarm.addAlarmAction(new SnsAction(alarmTopic));
+        return alarm;
     }
 
     private createReducerLambda(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Function {
@@ -374,5 +396,12 @@ export class LynxAPIStack extends Stack {
                 })
             }
         });
+    }
+
+    private createAlarmActions() {
+        const alarmTopic = new Topic(this, "alarmTopic", {
+            topicName: "lynx-alarms"
+        });
+        return alarmTopic;
     }
 }
