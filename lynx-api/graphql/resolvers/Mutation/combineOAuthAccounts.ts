@@ -4,8 +4,8 @@ import { deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
 import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
 import { deleteObjectsInBucket } from "../../aws/s3";
 import { OAuthType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
-import { BAD_REQUEST, Context } from "../../index";
-import { User } from "../../types";
+import { Context } from "../../index";
+import { BAD_REQUEST, User } from "../../types";
 import {
     USERS_TABLE,
     PROFILE_PICS_BUCKET,

@@ -5,7 +5,8 @@ import { DateTime } from "luxon";
 import { v4 as uuid } from "uuid";
 
 import { generateToken } from "../../auth";
-import { BAD_REQUEST, Context } from "../../index";
+import { Context } from "../../index";
+import { BAD_REQUEST } from "../../types";
 import { getItemByIndex, putItem } from "../../aws/dynamodb";
 import { USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
 

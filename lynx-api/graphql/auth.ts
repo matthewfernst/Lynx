@@ -3,7 +3,7 @@ import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
 import { partiesDataloader, usersDataLoader } from "./dataloaders";
-import { BAD_REQUEST, FORBIDDEN, UNAUTHENTICATED } from "./index";
+import { BAD_REQUEST, FORBIDDEN, UNAUTHENTICATED } from "./types";
 import { Party, User } from "./types";
 
 interface Parent {

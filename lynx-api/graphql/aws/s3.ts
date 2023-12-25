@@ -10,7 +10,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { NodeJsClient } from "@smithy/types";
 import { GraphQLError } from "graphql";
 
-import { DEPENDENCY_ERROR } from "../index";
+import { DEPENDENCY_ERROR } from "../types";
 
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
 export const s3Client = new S3Client({ region: process.env.AWS_REGION }) as NodeJsClient<S3Client>;

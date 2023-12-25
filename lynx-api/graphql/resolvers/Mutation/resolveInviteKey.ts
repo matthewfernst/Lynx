@@ -2,8 +2,8 @@ import { GraphQLError } from "graphql";
 
 import { checkHasUserId, checkIsLoggedIn } from "../../auth";
 import { deleteItem, getItem, updateItem } from "../../aws/dynamodb";
-import { BAD_REQUEST, Context } from "../../index";
-import { User } from "../../types";
+import { Context } from "../../index";
+import { BAD_REQUEST, User } from "../../types";
 import { INVITES_TABLE, USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 interface Args {

@@ -1,8 +1,8 @@
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import { GraphQLError } from "graphql";
 
-import { Context, DEPENDENCY_ERROR } from "../../index";
-import { UserStats } from "../../types";
+import { Context } from "../../index";
+import { DEPENDENCY_ERROR, UserStats } from "../../types";
 import { Timeframe, leaderboardTimeframeFromQueryArgument } from "../Query/leaderboard";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/lib/infrastructure";
 import { documentClient } from "../../aws/dynamodb";

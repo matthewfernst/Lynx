@@ -9,14 +9,20 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { GraphQLError } from "graphql";
 
-import { Invite, LeaderboardEntry, Party, User } from "../types";
+import {
+    DEPENDENCY_ERROR,
+    INTERNAL_SERVER_ERROR,
+    Invite,
+    LeaderboardEntry,
+    Party,
+    User
+} from "../types";
 import {
     USERS_TABLE,
     LEADERBOARD_TABLE,
     INVITES_TABLE,
     PARTIES_TABLE
 } from "../../infrastructure/lib/infrastructure";
-import { DEPENDENCY_ERROR, INTERNAL_SERVER_ERROR } from "../index";
 
 export type Table =
     | typeof USERS_TABLE

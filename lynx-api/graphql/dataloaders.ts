@@ -2,12 +2,12 @@ import DataLoader from "dataloader";
 import { parseStringPromise, processors } from "xml2js";
 
 import { getItem } from "./aws/dynamodb";
+import { getObjectNamesInBucket, getRecordFromBucket } from "./aws/s3";
 import {
     PARTIES_TABLE,
     SLOPES_UNZIPPED_BUCKET,
     USERS_TABLE
 } from "../infrastructure/lib/infrastructure";
-import { getObjectNamesInBucket, getRecordFromBucket } from "./aws/s3";
 import { Log } from "./types";
 
 export const usersDataLoader = new DataLoader(async (userIds: readonly string[]) =>

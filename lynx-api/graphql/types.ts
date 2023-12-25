@@ -1,5 +1,11 @@
 import { Timeframe } from "./resolvers/Query/leaderboard";
 
+export const BAD_REQUEST = "BAD_REQUEST";
+export const UNAUTHENTICATED = "UNAUTHENTICATED";
+export const FORBIDDEN = "FORBIDDEN";
+export const DEPENDENCY_ERROR = "DEPENDENCY_ERROR";
+export const INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
+
 export interface User {
     [key: string]: string | number | boolean | UserStats | Log[] | undefined;
     id: string;
