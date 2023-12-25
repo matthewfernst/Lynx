@@ -1,45 +1,15 @@
-import { parseStringPromise, processors } from "xml2js";
-
 import { checkIsMe } from "../../auth";
 import { Context } from "../../index";
 import { Log } from "../../types";
-import { getObjectNamesInBucket, getRecordFromBucket } from "../../aws/s3";
-import { SLOPES_UNZIPPED_BUCKET } from "../../../infrastructure/lib/infrastructure";
 
 interface Parent {
     id: string;
     logbook?: Log[];
 }
 
-const reverseRenameFileFunction = (originalFileName: string) => {
-    return `${originalFileName.split(".")[0]}.slopes`;
-};
-
 const logbook = async (parent: Parent, args: {}, context: Context, info: any): Promise<Log[]> => {
     const userId = checkIsMe(parent, context.userId);
-    const recordNames = await getObjectNamesInBucket(SLOPES_UNZIPPED_BUCKET, userId);
-    console.log(`Retriving records with names [${recordNames}].`);
-    return await Promise.all(
-        recordNames.map(async (recordName): Promise<Log> => {
-            const unzippedRecord = await getRecordFromBucket(SLOPES_UNZIPPED_BUCKET, recordName);
-            const activity = await xmlToActivity(unzippedRecord);
-            activity.originalFileName = reverseRenameFileFunction(recordName);
-            return activity;
-        })
-    );
-};
-
-export const xmlToActivity = async (xml: string): Promise<Log> => {
-    const { activity } = await parseStringPromise(xml, {
-        normalize: true,
-        mergeAttrs: true,
-        explicitArray: false,
-        tagNameProcessors: [processors.firstCharLowerCase],
-        attrNameProcessors: [processors.firstCharLowerCase],
-        valueProcessors: [processors.parseBooleans, processors.parseNumbers],
-        attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
-    });
-    return activity;
+    return await context.dataloaders.logs.load(userId);
 };
 
 export default logbook;

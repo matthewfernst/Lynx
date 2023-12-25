@@ -1,5 +1,5 @@
 import { Context } from "../../index";
-import { Party, User } from "../../types";
+import { Party } from "../../types";
 import { getItem } from "../../aws/dynamodb";
 import { PARTIES_TABLE } from "../../../infrastructure/lib/infrastructure";
 

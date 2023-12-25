@@ -1,5 +1,5 @@
 import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
-import { getItem, updateItem } from "../../aws/dynamodb";
+import { updateItem } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { User } from "../../types";
 import { USERS_TABLE } from "../../../infrastructure/lib/infrastructure";

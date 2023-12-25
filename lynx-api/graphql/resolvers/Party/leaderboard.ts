@@ -4,17 +4,12 @@ import { GraphQLError } from "graphql";
 import { Context } from "../../index";
 import { LeaderboardEntry, Party, User } from "../../types";
 import { documentClient, getItem } from "../../aws/dynamodb";
-import { populateLogbookDataForUser } from "../Query/selfLookup";
 import {
     LeaderboardSort,
     Timeframe,
     leaderboardTimeframeFromQueryArgument
 } from "../Query/leaderboard";
-import {
-    LEADERBOARD_TABLE,
-    PARTIES_TABLE,
-    USERS_TABLE
-} from "../../../infrastructure/lib/infrastructure";
+import { LEADERBOARD_TABLE, PARTIES_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 interface Args {
     sortBy: LeaderboardSort;
@@ -42,10 +37,7 @@ const leaderboard = async (
         parent.id
     );
     return await Promise.all(
-        leaderboardEntries.map(async ({ id }) => {
-            const user = await context.dataloaders.users.load(id) as User;
-            return await populateLogbookDataForUser(user);
-        })
+        leaderboardEntries.map(async ({ id }) => (await context.dataloaders.users.load(id)) as User)
     );
 };
 

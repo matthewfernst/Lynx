@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 
 import { documentClient } from "../graphql/aws/dynamodb";
 import { getRecordFromBucket } from "../graphql/aws/s3";
-import { xmlToActivity } from "../graphql/resolvers/User/logbook";
+import { xmlToActivity } from "../graphql/dataloaders";
 import { leaderboardSortTypesToQueryFields } from "../graphql/resolvers/Query/leaderboard";
 import { LEADERBOARD_TABLE } from "../infrastructure/lib/infrastructure";
 

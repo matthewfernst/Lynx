@@ -4,9 +4,8 @@ import { GraphQLError } from "graphql";
 
 import { Context, DEPENDENCY_ERROR } from "../../index";
 import { LeaderboardEntry, User } from "../../types";
-import { documentClient, getItem } from "../../aws/dynamodb";
-import { populateLogbookDataForUser } from "./selfLookup";
-import { LEADERBOARD_TABLE, USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
+import { documentClient } from "../../aws/dynamodb";
+import { LEADERBOARD_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 export type LeaderboardSort = "DISTANCE" | "RUN_COUNT" | "TOP_SPEED" | "VERTICAL_DISTANCE";
 export type Timeframe = "DAY" | "WEEK" | "MONTH" | "YEAR" | "ALL_TIME";
@@ -31,10 +30,7 @@ const leaderboard = async (_: any, args: Args, context: Context, info: any): Pro
         args.limit
     );
     return await Promise.all(
-        leaderboardEntries.map(async ({ id }) => {
-            const user = (await context.dataloaders.users.load(id)) as User;
-            return await populateLogbookDataForUser(user);
-        })
+        leaderboardEntries.map(async ({ id }) => (await context.dataloaders.users.load(id)) as User)
     );
 };
 
