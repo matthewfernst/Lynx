@@ -21,10 +21,8 @@ const stats = async (
     context: Context,
     info: any
 ): Promise<UserStats | undefined> => {
-    return await getUserStatsFromLeaderboard(
-        parent.id,
-        leaderboardTimeframeFromQueryArgument(args.timeframe)
-    );
+    const timeframe = leaderboardTimeframeFromQueryArgument(args.timeframe);
+    return await getUserStatsFromLeaderboard(parent.id, timeframe);
 };
 
 const getUserStatsFromLeaderboard = async (id: string, timeframe: string): Promise<UserStats> => {

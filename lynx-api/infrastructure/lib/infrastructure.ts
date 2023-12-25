@@ -255,7 +255,10 @@ export class LynxAPIStack extends Stack {
                     statements: [
                         new PolicyStatement({
                             actions: ["dynamodb:Query", "dynamodb:GetItem"],
-                            resources: [leaderboardTable.tableArn + "/index/*"]
+                            resources: [
+                                leaderboardTable.tableArn,
+                                leaderboardTable.tableArn + "/index/*"
+                            ]
                         }),
                         new PolicyStatement({
                             actions: [
