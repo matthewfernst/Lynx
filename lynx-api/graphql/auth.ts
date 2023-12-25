@@ -2,10 +2,8 @@ import { APIGatewayProxyEvent } from "aws-lambda";
 import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
-import { getItem } from "./aws/dynamodb";
-import { usersDataLoader } from "./dataloaders";
+import { partiesDataloader, usersDataLoader } from "./dataloaders";
 import { BAD_REQUEST, FORBIDDEN, UNAUTHENTICATED } from "./index";
-import { PARTIES_TABLE } from "../infrastructure/lib/infrastructure";
 import { Party, User } from "./types";
 
 interface Parent {
@@ -87,7 +85,7 @@ export const checkIsValidUser = async (userId: string): Promise<void> => {
 };
 
 export const checkIsValidParty = async (partyId: string): Promise<Party> => {
-    const party = await getItem(PARTIES_TABLE, partyId);
+    const party = await partiesDataloader.load(partyId);
     if (!party) {
         throw new GraphQLError(`Party Does Not Exist`, {
             extensions: { code: BAD_REQUEST, partyId }

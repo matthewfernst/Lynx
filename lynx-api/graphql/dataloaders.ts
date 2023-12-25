@@ -2,7 +2,11 @@ import DataLoader from "dataloader";
 import { parseStringPromise, processors } from "xml2js";
 
 import { getItem } from "./aws/dynamodb";
-import { SLOPES_UNZIPPED_BUCKET, USERS_TABLE } from "../infrastructure/lib/infrastructure";
+import {
+    PARTIES_TABLE,
+    SLOPES_UNZIPPED_BUCKET,
+    USERS_TABLE
+} from "../infrastructure/lib/infrastructure";
 import { getObjectNamesInBucket, getRecordFromBucket } from "./aws/s3";
 import { Log } from "./types";
 
@@ -43,4 +47,8 @@ export const xmlToActivity = async (xml: string): Promise<Log> => {
     return activity;
 };
 
-export default { users: usersDataLoader, logs: logsDataLoader };
+export const partiesDataloader = new DataLoader(async (partyIds: readonly string[]) =>
+    Promise.all(partyIds.map(async (partyId) => await getItem(PARTIES_TABLE, partyId)))
+);
+
+export default { users: usersDataLoader, logs: logsDataLoader, parties: partiesDataloader };

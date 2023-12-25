@@ -1,15 +1,16 @@
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
+import DataLoader from "dataloader";
 import { GraphQLError } from "graphql";
 
+import { documentClient } from "../../aws/dynamodb";
 import { Context } from "../../index";
+import { LEADERBOARD_TABLE } from "../../../infrastructure/lib/infrastructure";
 import { LeaderboardEntry, Party, User } from "../../types";
-import { documentClient, getItem } from "../../aws/dynamodb";
 import {
     LeaderboardSort,
     Timeframe,
     leaderboardTimeframeFromQueryArgument
 } from "../Query/leaderboard";
-import { LEADERBOARD_TABLE, PARTIES_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 interface Args {
     sortBy: LeaderboardSort;
@@ -30,11 +31,12 @@ const leaderboard = async (
     context: Context,
     info: any
 ): Promise<User[]> => {
+    const usersInParty = await getUserIdsInParty(context.dataloaders.parties, parent.id);
     const leaderboardEntries = await getTimeframeRankingByIndex(
         leaderboardSortTypesToQueryFields[args.sortBy],
         leaderboardTimeframeFromQueryArgument(args.timeframe),
         args.limit,
-        parent.id
+        usersInParty
     );
     return await Promise.all(
         leaderboardEntries.map(async ({ id }) => (await context.dataloaders.users.load(id)) as User)
@@ -45,9 +47,8 @@ const getTimeframeRankingByIndex = async (
     index: string,
     timeframe: string,
     limit: number,
-    partyId: string
+    usersInParty: string[]
 ): Promise<LeaderboardEntry[]> => {
-    const usersInParty = getUserIdsInParty(partyId);
     try {
         console.log(`Getting items with timeframe ${timeframe} sorted by ${index}`);
         const queryRequest = new QueryCommand({
@@ -67,8 +68,11 @@ const getTimeframeRankingByIndex = async (
     }
 };
 
-const getUserIdsInParty = async (partyId: string): Promise<string[]> => {
-    const party = (await getItem(PARTIES_TABLE, partyId)) as Party;
+const getUserIdsInParty = async (
+    partiesDataloader: DataLoader<string, Party | undefined, string>,
+    partyId: string
+): Promise<string[]> => {
+    const party = (await partiesDataloader.load(partyId)) as Party;
     return party.users;
 };
 
