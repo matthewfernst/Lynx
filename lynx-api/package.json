@@ -7,7 +7,7 @@
     "main": "index.js",
     "scripts": {
         "clean": "rm -rf cdk.out dist",
-        "build": "node esbuild.mjs",
+        "build": "tsc -noEmit && node esbuild.mjs",
         "lint": "eslint ./**/*.ts",
         "cdk": "cdk",
         "deploy": "cdk deploy --require-approval=never"

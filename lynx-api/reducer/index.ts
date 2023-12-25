@@ -29,7 +29,7 @@ export async function handler(event: S3Event) {
                 const resultsForTimeframe = await Promise.all(
                     Object.values(leaderboardSortTypesToQueryFields).map(async (sortType) => {
                         const activityKey = sortType === "verticalDistance" ? "vertical" : sortType;
-                        const value = activity[activityKey] as number;
+                        const value = activity[activityKey];
                         return await updateItem(userId, endTime, timeframe, sortType, value);
                     })
                 );

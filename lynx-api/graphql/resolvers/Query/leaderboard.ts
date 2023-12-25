@@ -1,6 +1,6 @@
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { DateTime } from "luxon";
 import { GraphQLError } from "graphql";
+import { DateTime } from "luxon";
 
 import { Context } from "../../index";
 import { DEPENDENCY_ERROR, LeaderboardEntry, User } from "../../types";
@@ -8,6 +8,7 @@ import { documentClient } from "../../aws/dynamodb";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 export type LeaderboardSort = "DISTANCE" | "RUN_COUNT" | "TOP_SPEED" | "VERTICAL_DISTANCE";
+export type LeaderboardQueryFields = "distance" | "runCount" | "topSpeed" | "verticalDistance";
 export type Timeframe = "DAY" | "WEEK" | "MONTH" | "YEAR" | "ALL_TIME";
 
 interface Args {
@@ -16,7 +17,7 @@ interface Args {
     limit: number;
 }
 
-export const leaderboardSortTypesToQueryFields: { [key in LeaderboardSort]: string } = {
+export const leaderboardSortTypesToQueryFields: { [key in LeaderboardSort]: LeaderboardQueryFields } = {
     DISTANCE: "distance",
     RUN_COUNT: "runCount",
     TOP_SPEED: "topSpeed",

@@ -7,7 +7,6 @@ export const DEPENDENCY_ERROR = "DEPENDENCY_ERROR";
 export const INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
 
 export interface User {
-    [key: string]: string | number | boolean | UserStats | Log[] | undefined;
     id: string;
     appleId?: string;
     googleId?: string;
@@ -29,7 +28,6 @@ export interface UserStats {
 }
 
 export interface Log {
-    [key: string]: string | number | LogDetail[];
     id: string;
     originalFileName: string;
     centerLat: number;
@@ -47,7 +45,6 @@ export interface Log {
 }
 
 export interface LogDetail {
-    [key: string]: string | number;
     type: LogDetailType;
     averageSpeed: number;
     distance: number;
