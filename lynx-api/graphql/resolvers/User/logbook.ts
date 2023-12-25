@@ -16,14 +16,7 @@ const reverseRenameFileFunction = (originalFileName: string) => {
 };
 
 const logbook = async (parent: Parent, args: {}, context: Context, info: any): Promise<Log[]> => {
-    checkIsMe(parent, context.userId);
-    if (!parent.logbook) {
-        return await getLogbookInformationFromS3(parent.id);
-    }
-    return parent.logbook;
-};
-
-export const getLogbookInformationFromS3 = async (userId: string): Promise<Log[]> => {
+    const userId = checkIsMe(parent, context.userId);
     const recordNames = await getObjectNamesInBucket(SLOPES_UNZIPPED_BUCKET, userId);
     console.log(`Retriving records with names [${recordNames}].`);
     return await Promise.all(

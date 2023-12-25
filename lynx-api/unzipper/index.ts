@@ -1,5 +1,6 @@
 import { DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
+import { S3Event } from "aws-lambda";
 import { Entry, Parse, ParseStream as IncompleteTypedParseStream } from "unzipper";
 
 import { s3Client } from "../graphql/aws/s3";
@@ -9,7 +10,7 @@ type ParseStream = IncompleteTypedParseStream & {
     [Symbol.asyncIterator]: () => AsyncIterableIterator<Entry>;
 };
 
-export async function handler(event: any, context: any) {
+export async function handler(event: S3Event) {
     for (const record of event.Records) {
         const bucket = decodeURIComponent(record.s3.bucket.name);
         const objectKey = decodeURIComponent(record.s3.object.key).replaceAll("+", " ");

@@ -8,7 +8,7 @@ import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import { authenticateHTTPAccessToken } from "./auth";
 import dataloaders from "./dataloaders";
 
-// @ts-ignore
+// @ts-expect-error - Uses ESBuild Plugin Unsupported By Typescript
 import resolvers from "./resolvers/**/*";
 
 export interface Context {
