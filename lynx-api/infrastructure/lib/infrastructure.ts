@@ -3,7 +3,6 @@ import { Cors, EndpointType, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-
 import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
 import { Alarm, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
 import { SnsAction } from "aws-cdk-lib/aws-cloudwatch-actions";
-import { CfnApp as Application, CfnSMSChannel as SMSChannel } from "aws-cdk-lib/aws-pinpoint";
 import { AttributeType, BillingMode, ProjectionType, Table } from "aws-cdk-lib/aws-dynamodb";
 import {
     AnyPrincipal,
@@ -17,7 +16,6 @@ import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { Topic } from "aws-cdk-lib/aws-sns";
-import { SmsSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 
 import { Construct } from "constructs";
 import { config } from "dotenv";
@@ -56,7 +54,7 @@ export class LynxAPIStack extends Stack {
             partiesTable
         );
 
-        const api = new RestApi(this, "graphqlAPI", {
+        const api = new RestApi(this, "lynxGraphqlRestApi", {
             restApiName: "GraphQL API",
             description: "The service endpoint for Lynx's GraphQL API",
             endpointTypes: [EndpointType.REGIONAL],
@@ -81,7 +79,7 @@ export class LynxAPIStack extends Stack {
     }
 
     private createUsersTable(): Table {
-        const usersTable = new Table(this, "usersTable", {
+        const usersTable = new Table(this, "lynxUsersTable", {
             tableName: USERS_TABLE,
             partitionKey: { name: "id", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
@@ -100,7 +98,7 @@ export class LynxAPIStack extends Stack {
     }
 
     private createLeaderboardTable(): Table {
-        const leaderboardTable = new Table(this, "leaderboardTable", {
+        const leaderboardTable = new Table(this, "lynxLeaderboardTable", {
             tableName: LEADERBOARD_TABLE,
             partitionKey: { name: "id", type: AttributeType.STRING },
             sortKey: { name: "timeframe", type: AttributeType.STRING },
@@ -122,7 +120,7 @@ export class LynxAPIStack extends Stack {
     }
 
     private createPartiesTable(): Table {
-        return new Table(this, "partiesTable", {
+        return new Table(this, "lynxPartiesTable", {
             tableName: PARTIES_TABLE,
             partitionKey: { name: "id", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
@@ -131,7 +129,7 @@ export class LynxAPIStack extends Stack {
     }
 
     private createInvitesTable(): Table {
-        return new Table(this, "invitesTable", {
+        return new Table(this, "lynxInvitesTable", {
             tableName: INVITES_TABLE,
             partitionKey: { name: "id", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
@@ -141,7 +139,7 @@ export class LynxAPIStack extends Stack {
     }
 
     private createProfilePictureBucket(): Bucket {
-        const profilePictureBucket = new Bucket(this, "profilePictureBucket", {
+        const profilePictureBucket = new Bucket(this, "lynxProfilePictureBucket", {
             bucketName: PROFILE_PICS_BUCKET,
             blockPublicAccess: {
                 blockPublicAcls: true,
@@ -162,14 +160,14 @@ export class LynxAPIStack extends Stack {
     }
 
     private createSlopesZippedBucket(): Bucket {
-        return new Bucket(this, "slopesZippedBucket", {
+        return new Bucket(this, "lynxSlopesZippedBucket", {
             bucketName: SLOPES_ZIPPED_BUCKET,
             removalPolicy: RemovalPolicy.DESTROY
         });
     }
 
     private createSlopesUnzippedBucket(): Bucket {
-        return new Bucket(this, "slopesUnzippedBucket", {
+        return new Bucket(this, "lynxSlopesUnzippedBucket", {
             bucketName: SLOPES_UNZIPPED_BUCKET,
             removalPolicy: RemovalPolicy.DESTROY
         });
@@ -184,7 +182,7 @@ export class LynxAPIStack extends Stack {
         invitesTable: Table,
         partiesTable: Table
     ): Function {
-        return new Function(this, "graphqlLambda", {
+        return new Function(this, "lynxGraphqlLambda", {
             functionName: "lynx-graphql",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
@@ -216,7 +214,7 @@ export class LynxAPIStack extends Stack {
         invitesTable: Table,
         partiesTable: Table
     ): Role {
-        return new Role(this, "GraphQLAPILambdaRole", {
+        return new Role(this, "lynxGraphQLApiLambdaRole", {
             roleName: "GraphQLAPILambdaRole",
             assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
             managedPolicies: [
@@ -284,7 +282,8 @@ export class LynxAPIStack extends Stack {
     }
 
     private createAPIErrorRateAlarm(alarmTopic: Topic, apiLambda: Function): Alarm {
-        const alarm = new Alarm(this, "APISucessRate", {
+        const alarm = new Alarm(this, "lynxApiSucessRate", {
+            alarmName: "Lynx API Success Rate",
             metric: new MathExpression({
                 label: "API Success Rate",
                 expression: "1 - errors / invocations",
@@ -302,7 +301,7 @@ export class LynxAPIStack extends Stack {
     }
 
     private createReducerLambda(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Function {
-        const reducerLambda = new Function(this, "reducerLambda", {
+        const reducerLambda = new Function(this, "lynxReducerLambda", {
             functionName: "lynx-reducer",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
@@ -319,7 +318,7 @@ export class LynxAPIStack extends Stack {
     }
 
     private createReducerLambdaRole(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Role {
-        return new Role(this, "ReducerLambdaRole", {
+        return new Role(this, "lynxReducerLambdaRole", {
             roleName: "ReducerLambdaRole",
             assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
             managedPolicies: [
@@ -349,7 +348,7 @@ export class LynxAPIStack extends Stack {
         slopesZippedBucket: Bucket,
         slopesUnzippedBucket: Bucket
     ): Function {
-        const unzipperLambda = new Function(this, "unzipperLambda", {
+        const unzipperLambda = new Function(this, "lynxUnzipperLambda", {
             functionName: "lynx-unzipper",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
@@ -369,7 +368,7 @@ export class LynxAPIStack extends Stack {
         slopesZippedBucket: Bucket,
         slopesUnzippedBucket: Bucket
     ): Role {
-        return new Role(this, "UnzipperLambdaRole", {
+        return new Role(this, "lynxUnzipperLambdaRole", {
             roleName: "UnzipperLambdaRole",
             assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
             managedPolicies: [
@@ -399,7 +398,7 @@ export class LynxAPIStack extends Stack {
     }
 
     private createAlarmActions() {
-        const alarmTopic = new Topic(this, "alarmTopic", {
+        const alarmTopic = new Topic(this, "lynxAlarmTopic", {
             topicName: "lynx-alarms"
         });
         return alarmTopic;
