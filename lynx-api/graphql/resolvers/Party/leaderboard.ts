@@ -1,6 +1,7 @@
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import DataLoader from "dataloader";
 import { GraphQLError } from "graphql";
+import { DateTime } from "luxon";
 
 import { documentClient } from "../../aws/dynamodb";
 import { Context } from "../../index";
@@ -34,7 +35,7 @@ const leaderboard = async (
     const usersInParty = await getUserIdsInParty(context.dataloaders.parties, parent.id);
     const leaderboardEntries = await getTimeframeRankingByIndex(
         leaderboardSortTypesToQueryFields[args.sortBy],
-        leaderboardTimeframeFromQueryArgument(args.timeframe),
+        leaderboardTimeframeFromQueryArgument(DateTime.now(), args.timeframe),
         args.limit,
         usersInParty
     );
