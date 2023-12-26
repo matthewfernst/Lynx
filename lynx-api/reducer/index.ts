@@ -87,12 +87,16 @@ const isMaximumSortType = (sortType: string) => {
 const getTimeToLive = (endTime: DateTime, timeframe: Exclude<Timeframe, "ALL_TIME">): number => {
     switch (timeframe) {
         case "DAY":
-            return endTime.plus({ days: 1 }).toSeconds();
+            return endTime.startOf("day").plus({ days: 1 }).toSeconds();
         case "WEEK":
-            return endTime.plus({ weeks: 1 }).toSeconds();
+            return endTime.startOf("week").plus({ weeks: 1 }).toSeconds();
         case "MONTH":
-            return endTime.plus({ months: 1 }).toSeconds();
+            return endTime.startOf("month").plus({ months: 1 }).toSeconds();
         case "SEASON":
-            return endTime.plus({ years: 2 }).toSeconds();
+            if (endTime.month >= 8) {
+                return endTime.startOf("year").plus({ years: 1, months: 8 }).toSeconds();
+            } else {
+                return endTime.startOf("year").plus({ months: 8 }).toSeconds();
+            }
     }
 };
