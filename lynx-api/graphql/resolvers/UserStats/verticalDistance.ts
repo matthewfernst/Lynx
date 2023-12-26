@@ -9,9 +9,9 @@ interface Args {
 
 const verticalDistance = (parent: any, args: Args, context: Context, info: any) => {
     if (args.system === "IMPERIAL") {
-        return convert(parent.vertical).from("m").to("ft");
+        return convert(parent.verticalDistance).from("m").to("ft");
     }
-    return parent.vertical;
+    return parent.verticalDistance;
 };
 
 export default verticalDistance;
