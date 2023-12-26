@@ -47,19 +47,18 @@ const updateItem = async (
     sortType: string,
     value: number
 ): Promise<UpdateItemOutput> => {
-    if (timeframe === "all") {
-        return await updateAllTimeframe(id, sortType, value);
-    }
     try {
-        const updateTimeframe = `${timeframe}-${getNumericValue(endTime, timeframe)}`;
+        const isAll = timeframe === "all";
+        const numericTimeframeComponent = isAll ? "" : `-${getNumericValue(endTime, timeframe)}`;
+        const updateTimeframe = `${timeframe}${numericTimeframeComponent}`;
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
             Key: { id, timeframe: updateTimeframe },
-            UpdateExpression: generateUpdateExpression(sortType),
+            UpdateExpression: `${generateUpdateExpression(sortType)} SET #ttl = :ttl`,
             ExpressionAttributeNames: { "#updateKey": sortType, "#ttl": "ttl" },
             ExpressionAttributeValues: {
                 ":value": value,
-                ":ttl": getTimeToLive(endTime, timeframe)
+                ...(!isAll && { ":ttl": getTimeToLive(endTime, timeframe) })
             },
             ...(isMaximumSortType(sortType) && {
                 ConditionExpression: "attribute_not_exists(#updateKey) OR #updateKey < :value"
@@ -73,32 +72,11 @@ const updateItem = async (
     }
 };
 
-const updateAllTimeframe = async (
-    id: string,
-    sortType: string,
-    value: number
-): Promise<UpdateItemOutput> => {
-    try {
-        const updateItemRequest = new UpdateCommand({
-            TableName: LEADERBOARD_TABLE,
-            Key: { id, timeframe: "all" },
-            UpdateExpression: "ADD #updateKey :value",
-            ExpressionAttributeNames: { "#updateKey": sortType },
-            ExpressionAttributeValues: { ":value": value },
-            ReturnValues: "UPDATED_NEW"
-        });
-        return await documentClient.send(updateItemRequest);
-    } catch (err) {
-        console.error(err);
-        throw new Error("DynamoDB Update Call Failed");
-    }
-};
-
 const generateUpdateExpression = (sortKey: string) => {
     if (isMaximumSortType(sortKey)) {
-        return "SET #updateKey = :value, #ttl = :ttl";
+        return "SET #updateKey = :value";
     } else {
-        return "ADD #updateKey :value SET #ttl = :ttl";
+        return "ADD #updateKey :value";
     }
 };
 
