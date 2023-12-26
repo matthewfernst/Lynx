@@ -1,5 +1,6 @@
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import { GraphQLError } from "graphql";
+import { DateTime } from "luxon";
 
 import { Context } from "../../index";
 import { DEPENDENCY_ERROR, UserStats } from "../../types";
@@ -21,7 +22,7 @@ const stats = async (
     context: Context,
     info: any
 ): Promise<UserStats | undefined> => {
-    const timeframe = leaderboardTimeframeFromQueryArgument(args.timeframe);
+    const timeframe = leaderboardTimeframeFromQueryArgument(DateTime.now(), args.timeframe);
     return await getUserStatsFromLeaderboard(parent.id, timeframe);
 };
 

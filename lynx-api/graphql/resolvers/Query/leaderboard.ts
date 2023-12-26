@@ -9,7 +9,7 @@ import { LEADERBOARD_TABLE } from "../../../infrastructure/lib/infrastructure";
 
 export type LeaderboardSort = "DISTANCE" | "RUN_COUNT" | "TOP_SPEED" | "VERTICAL_DISTANCE";
 export type LeaderboardQueryFields = "distance" | "runCount" | "topSpeed" | "verticalDistance";
-export type Timeframe = "DAY" | "WEEK" | "MONTH" | "YEAR" | "ALL_TIME";
+export type Timeframe = "DAY" | "WEEK" | "MONTH" | "SEASON" | "ALL_TIME";
 
 interface Args {
     sortBy: LeaderboardSort;
@@ -17,7 +17,9 @@ interface Args {
     limit: number;
 }
 
-export const leaderboardSortTypesToQueryFields: { [key in LeaderboardSort]: LeaderboardQueryFields } = {
+export const leaderboardSortTypesToQueryFields: {
+    [key in LeaderboardSort]: LeaderboardQueryFields;
+} = {
     DISTANCE: "distance",
     RUN_COUNT: "runCount",
     TOP_SPEED: "topSpeed",
@@ -27,7 +29,7 @@ export const leaderboardSortTypesToQueryFields: { [key in LeaderboardSort]: Lead
 const leaderboard = async (_: any, args: Args, context: Context, info: any): Promise<User[]> => {
     const leaderboardEntries = await getTimeframeRankingByIndex(
         leaderboardSortTypesToQueryFields[args.sortBy],
-        leaderboardTimeframeFromQueryArgument(args.timeframe),
+        leaderboardTimeframeFromQueryArgument(DateTime.now(), args.timeframe),
         args.limit
     );
     return await Promise.all(
@@ -35,19 +37,29 @@ const leaderboard = async (_: any, args: Args, context: Context, info: any): Pro
     );
 };
 
-export const leaderboardTimeframeFromQueryArgument = (timeframe: Timeframe): string => {
-    const now = DateTime.now();
+export const leaderboardTimeframeFromQueryArgument = (
+    date: DateTime,
+    timeframe: Timeframe
+): string => {
     switch (timeframe) {
         case "DAY":
-            return `day-${now.ordinal}`;
+            return `day-${date.ordinal}`;
         case "WEEK":
-            return `week-${now.weekNumber}`;
+            return `week-${date.weekNumber}`;
         case "MONTH":
-            return `month-${now.month}`;
-        case "YEAR":
-            return `year-${now.year}`;
+            return `month-${date.month}`;
+        case "SEASON":
+            return seasonNameFromDateArgument(date);
         case "ALL_TIME":
             return "all";
+    }
+};
+
+export const seasonNameFromDateArgument = (time: DateTime): string => {
+    if (time.month >= 8) {
+        return `${time.year}-${time.year + 1}`;
+    } else {
+        return `${time.year - 1}-${time.year}`;
     }
 };
 

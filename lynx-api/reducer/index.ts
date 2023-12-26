@@ -6,11 +6,14 @@ import { DateTime } from "luxon";
 import { documentClient } from "../graphql/aws/dynamodb";
 import { getRecordFromBucket } from "../graphql/aws/s3";
 import { xmlToActivity } from "../graphql/dataloaders";
-import { leaderboardSortTypesToQueryFields } from "../graphql/resolvers/Query/leaderboard";
+import {
+    Timeframe,
+    leaderboardSortTypesToQueryFields,
+    leaderboardTimeframeFromQueryArgument
+} from "../graphql/resolvers/Query/leaderboard";
 import { LEADERBOARD_TABLE } from "../infrastructure/lib/infrastructure";
 
-const timeframes = ["day", "week", "month", "year", "all"] as const;
-type Timeframe = (typeof timeframes)[number];
+const timeframes: Timeframe[] = ["DAY", "WEEK", "MONTH", "SEASON", "ALL_TIME"];
 
 export async function handler(event: S3Event) {
     for (const record of event.Records) {
@@ -48,17 +51,14 @@ const updateItem = async (
     value: number
 ): Promise<UpdateItemOutput> => {
     try {
-        const isAll = timeframe === "all";
-        const numericTimeframeComponent = isAll ? "" : `-${getNumericValue(endTime, timeframe)}`;
-        const updateTimeframe = `${timeframe}${numericTimeframeComponent}`;
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
-            Key: { id, timeframe: updateTimeframe },
+            Key: { id, timeframe: leaderboardTimeframeFromQueryArgument(endTime, timeframe) },
             UpdateExpression: `${generateUpdateExpression(sortType)} SET #ttl = :ttl`,
             ExpressionAttributeNames: { "#updateKey": sortType, "#ttl": "ttl" },
             ExpressionAttributeValues: {
                 ":value": value,
-                ...(!isAll && { ":ttl": getTimeToLive(endTime, timeframe) })
+                ...(timeframe !== "ALL_TIME" && { ":ttl": getTimeToLive(endTime, timeframe) })
             },
             ...(isMaximumSortType(sortType) && {
                 ConditionExpression: "attribute_not_exists(#updateKey) OR #updateKey < :value"
@@ -84,28 +84,15 @@ const isMaximumSortType = (sortType: string) => {
     return sortType.includes("top");
 };
 
-const getNumericValue = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">): number => {
+const getTimeToLive = (endTime: DateTime, timeframe: Exclude<Timeframe, "ALL_TIME">): number => {
     switch (timeframe) {
-        case "day":
-            return endTime.ordinal;
-        case "week":
-            return endTime.weekNumber;
-        case "month":
-            return endTime.month;
-        case "year":
-            return endTime.year;
-    }
-};
-
-const getTimeToLive = (endTime: DateTime, timeframe: Exclude<Timeframe, "all">): number => {
-    switch (timeframe) {
-        case "day":
+        case "DAY":
             return endTime.plus({ days: 1 }).toSeconds();
-        case "week":
+        case "WEEK":
             return endTime.plus({ weeks: 1 }).toSeconds();
-        case "month":
+        case "MONTH":
             return endTime.plus({ months: 1 }).toSeconds();
-        case "year":
-            return endTime.plus({ years: 1 }).toSeconds();
+        case "SEASON":
+            return endTime.plus({ years: 2 }).toSeconds();
     }
 };
