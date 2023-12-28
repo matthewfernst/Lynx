@@ -4,7 +4,7 @@ import { S3Event } from "aws-lambda";
 import { Entry, Parse, ParseStream as IncompleteTypedParseStream } from "unzipper";
 
 import { s3Client } from "../graphql/aws/s3";
-import { SLOPES_UNZIPPED_BUCKET } from "../infrastructure/lib/infrastructure";
+import { SLOPES_UNZIPPED_BUCKET } from "../infrastructure/lynxStack";
 
 type ParseStream = IncompleteTypedParseStream & {
     [Symbol.asyncIterator]: () => AsyncIterableIterator<Entry>;

@@ -1,7 +1,7 @@
 import { createSignedUploadUrl } from "../../aws/s3";
 import { Context } from "../../index";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
-import { SLOPES_ZIPPED_BUCKET } from "../../../infrastructure/lib/infrastructure";
+import { SLOPES_ZIPPED_BUCKET } from "../../../infrastructure/lynxStack";
 
 interface Args {
     requestedPaths: string[];

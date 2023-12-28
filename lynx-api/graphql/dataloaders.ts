@@ -7,7 +7,7 @@ import {
     PARTIES_TABLE,
     SLOPES_UNZIPPED_BUCKET,
     USERS_TABLE
-} from "../infrastructure/lib/infrastructure";
+} from "../infrastructure/lynxStack";
 import { Log } from "./types";
 
 const createDataloaders = () => ({

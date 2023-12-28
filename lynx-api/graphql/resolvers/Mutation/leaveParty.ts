@@ -3,7 +3,7 @@ import { GraphQLError } from "graphql";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite, checkIsValidParty } from "../../auth";
 import { deleteItemsFromArray } from "../../aws/dynamodb";
 import { Context } from "../../index";
-import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
+import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lynxStack";
 import { FORBIDDEN, User } from "../../types";
 
 interface Args {

@@ -10,7 +10,7 @@ import {
     USERS_TABLE,
     PROFILE_PICS_BUCKET,
     SLOPES_UNZIPPED_BUCKET
-} from "../../../infrastructure/lib/infrastructure";
+} from "../../../infrastructure/lynxStack";
 
 interface Args {
     options?: {

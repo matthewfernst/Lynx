@@ -1,6 +1,6 @@
 import { DefinedUserContext } from "../../index";
 import { checkIfObjectInBucket } from "../../aws/s3";
-import { PROFILE_PICS_BUCKET } from "../../../infrastructure/lib/infrastructure";
+import { PROFILE_PICS_BUCKET } from "../../../infrastructure/lynxStack";
 
 const profilePictureUrl = async (
     parent: any,

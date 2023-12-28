@@ -16,6 +16,7 @@ import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { Topic } from "aws-cdk-lib/aws-sns";
+import { EmailSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 
 import { Construct } from "constructs";
 import { config } from "dotenv";
@@ -29,9 +30,24 @@ export const PROFILE_PICS_BUCKET = "lynx-profile-pictures";
 export const SLOPES_ZIPPED_BUCKET = "lynx-slopes-zipped";
 export const SLOPES_UNZIPPED_BUCKET = "lynx-slopes-unzipped";
 
-export class LynxAPIStack extends Stack {
+interface ApplicationEnvironment {
+    ALARM_EMAILS: string;
+    APPLE_CLIENT_ID: string;
+    APPLE_CLIENT_SECRET: string;
+    AUTH_KEY: string;
+    ESCAPE_INVITE_HATCH: string;
+    GOOGLE_CLIENT_ID: string;
+    NODE_ENV: string;
+}
+
+export class LynxStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
+
+        const env = config().parsed as ApplicationEnvironment | undefined;
+        if (!env) {
+            throw new Error("Environment variables not found");
+        }
 
         const usersTable = this.createUsersTable();
         const leaderboardTable = this.createLeaderboardTable();
@@ -42,9 +58,10 @@ export class LynxAPIStack extends Stack {
         const slopesZippedBucket = this.createSlopesZippedBucket();
         const slopesUnzippedBucket = this.createSlopesUnzippedBucket();
 
-        this.createReducerLambda(slopesUnzippedBucket, leaderboardTable);
-        this.createUnzipperLambda(slopesZippedBucket, slopesUnzippedBucket);
-        const graphqlLambda = this.createGraphqlAPILambda(
+        const reducer = this.createReducerLambda(slopesUnzippedBucket, leaderboardTable);
+        const unzipper = this.createUnzipperLambda(slopesZippedBucket, slopesUnzippedBucket);
+        const graphql = this.createGraphqlAPILambda(
+            env,
             profilePictureBucket,
             slopesZippedBucket,
             slopesUnzippedBucket,
@@ -72,10 +89,10 @@ export class LynxAPIStack extends Stack {
 
         api.root
             .addResource("graphql")
-            .addMethod("POST", new LambdaIntegration(graphqlLambda, { allowTestInvoke: false }));
+            .addMethod("POST", new LambdaIntegration(graphql, { allowTestInvoke: false }));
 
-        const alarmTopic = this.createAlarmActions();
-        this.createAPIErrorRateAlarm(alarmTopic, graphqlLambda);
+        const alarmTopic = this.createAlarmActions(env);
+        this.createErrorRateAlarms(alarmTopic, [graphql, reducer, unzipper]);
     }
 
     private createUsersTable(): Table {
@@ -174,6 +191,7 @@ export class LynxAPIStack extends Stack {
     }
 
     private createGraphqlAPILambda(
+        env: ApplicationEnvironment,
         profilePictureBucket: Bucket,
         slopesZippedBucket: Bucket,
         slopesUnzippedBucket: Bucket,
@@ -198,10 +216,7 @@ export class LynxAPIStack extends Stack {
                 invitesTable,
                 partiesTable
             ),
-            environment: {
-                ...config().parsed,
-                NODE_OPTIONS: "--enable-source-maps"
-            }
+            environment: { ...env, NODE_OPTIONS: "--enable-source-maps" }
         });
     }
 
@@ -282,26 +297,6 @@ export class LynxAPIStack extends Stack {
                 })
             }
         });
-    }
-
-    private createAPIErrorRateAlarm(alarmTopic: Topic, apiLambda: Function): Alarm {
-        const alarm = new Alarm(this, "lynxApiSucessRate", {
-            alarmName: "Lynx API Success Rate",
-            metric: new MathExpression({
-                label: "API Success Rate",
-                expression: "1 - errors / invocations",
-                usingMetrics: {
-                    errors: apiLambda.metricErrors(),
-                    invocations: apiLambda.metricInvocations()
-                },
-                period: Duration.minutes(1)
-            }),
-            threshold: 0.99,
-            comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-            evaluationPeriods: 5
-        });
-        alarm.addAlarmAction(new SnsAction(alarmTopic));
-        return alarm;
     }
 
     private createReducerLambda(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Function {
@@ -401,10 +396,35 @@ export class LynxAPIStack extends Stack {
         });
     }
 
-    private createAlarmActions() {
-        const alarmTopic = new Topic(this, "lynxAlarmTopic", {
-            topicName: "lynx-alarms"
+    private createErrorRateAlarms(alarmTopic: Topic, lambdas: Function[]): Alarm[] {
+        return lambdas.map((lambda) => {
+            const alarm = new Alarm(this, `${lambda.functionName}-sucessRate`, {
+                alarmName: `${lambda.functionName} Success Rate`,
+                metric: new MathExpression({
+                    label: "Success Rate",
+                    expression: "1 - errors / invocations",
+                    usingMetrics: {
+                        errors: lambda.metricErrors(),
+                        invocations: lambda.metricInvocations()
+                    },
+                    period: Duration.minutes(1)
+                }),
+                threshold: 0.99,
+                comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+                evaluationPeriods: 5
+            });
+            alarm.addAlarmAction(new SnsAction(alarmTopic));
+            return alarm;
         });
+    }
+
+    private createAlarmActions(env: ApplicationEnvironment) {
+        const alarmTopic = new Topic(this, "lynxAlarmTopic", { topicName: "lynx-alarms" });
+        env.ALARM_EMAILS.split(",")
+            .map((email) => email.trim())
+            .map((email) => {
+                alarmTopic.addSubscription(new EmailSubscription(email, { json: true }));
+            });
         return alarmTopic;
     }
 }

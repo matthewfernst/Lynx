@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 import { DefinedUserContext } from "../../index";
 import { DEPENDENCY_ERROR, UserStats } from "../../types";
 import { Timeframe, leaderboardTimeframeFromQueryArgument } from "../Query/leaderboard";
-import { LEADERBOARD_TABLE } from "../../../infrastructure/lib/infrastructure";
+import { LEADERBOARD_TABLE } from "../../../infrastructure/lynxStack";
 import { documentClient } from "../../aws/dynamodb";
 
 interface Parent {

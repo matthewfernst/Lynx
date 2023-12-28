@@ -8,7 +8,7 @@ import { generateToken } from "../../auth";
 import { Context } from "../../index";
 import { BAD_REQUEST } from "../../types";
 import { getItemByIndex, putItem } from "../../aws/dynamodb";
-import { USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
+import { USERS_TABLE } from "../../../infrastructure/lynxStack";
 
 export type OAuthType = "APPLE" | "GOOGLE";
 

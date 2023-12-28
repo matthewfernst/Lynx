@@ -4,7 +4,7 @@ import { checkHasUserId, checkIsValidUser } from "../../auth";
 import { deleteItem, getItem, updateItem } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { BAD_REQUEST, User } from "../../types";
-import { INVITES_TABLE, USERS_TABLE } from "../../../infrastructure/lib/infrastructure";
+import { INVITES_TABLE, USERS_TABLE } from "../../../infrastructure/lynxStack";
 
 interface Args {
     inviteKey: string;

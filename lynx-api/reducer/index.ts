@@ -11,7 +11,7 @@ import {
     leaderboardSortTypesToQueryFields,
     leaderboardTimeframeFromQueryArgument
 } from "../graphql/resolvers/Query/leaderboard";
-import { LEADERBOARD_TABLE } from "../infrastructure/lib/infrastructure";
+import { LEADERBOARD_TABLE } from "../infrastructure/lynxStack";
 
 const timeframes: Timeframe[] = ["DAY", "WEEK", "MONTH", "SEASON", "ALL_TIME"];
 
