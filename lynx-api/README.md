@@ -27,3 +27,15 @@ npm install
 npm run build
 npm run deploy
 ```
+
+## Environment Variables
+
+The following environment variables can be overriden to configure the application for your environment.
+
+ALARM_EMAILS: A comma separated list of emails to send alarms notifications to.
+APPLE_CLIENT_ID: The client id for the Apple OAuth provider.
+APPLE_CLIENT_SECRET: The client secret for the Apple OAuth provider.
+AUTH_KEY: The key used to sign JWT tokens.
+ESCAPE_INVITE_HATCH: A backdoor to allow users to join the application without an invite code (for first user setup).
+GOOGLE_CLIENT_ID: The client id for the Google OAuth provider.
+NODE_ENV: The environment the application is running in.
