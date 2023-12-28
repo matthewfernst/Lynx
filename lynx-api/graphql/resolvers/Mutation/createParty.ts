@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 
-import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { addItemsToArray, putItem } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { Party } from "../../types";
@@ -11,17 +11,17 @@ interface Args {
 }
 
 const createParty = async (_: any, args: Args, context: Context, info: any): Promise<Party> => {
-    const userId = checkHasUserId(context.userId);
-    await checkIsLoggedInAndHasValidInvite(userId);
-    console.log(`Creating party token for user with id ${userId}`);
+    checkHasUserId(context);
+    await checkIsValidUserAndHasValidInvite(context);
+    console.log(`Creating party token for user with id ${context.userId}`);
     const partyId = uuid();
     const party = await putItem(PARTIES_TABLE, {
         id: partyId,
         name: args.name,
-        partyManager: userId,
-        users: [userId]
+        partyManager: context.userId,
+        users: [context.userId]
     });
-    await addItemsToArray(USERS_TABLE, userId, "parties", [partyId]);
+    await addItemsToArray(USERS_TABLE, context.userId, "parties", [partyId]);
     return party;
 };
 

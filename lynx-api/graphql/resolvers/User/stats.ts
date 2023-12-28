@@ -2,7 +2,7 @@ import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import { GraphQLError } from "graphql";
 import { DateTime } from "luxon";
 
-import { Context } from "../../index";
+import { DefinedUserContext } from "../../index";
 import { DEPENDENCY_ERROR, UserStats } from "../../types";
 import { Timeframe, leaderboardTimeframeFromQueryArgument } from "../Query/leaderboard";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/lib/infrastructure";
@@ -19,7 +19,7 @@ interface Args {
 const stats = async (
     parent: Parent,
     args: Args,
-    context: Context,
+    context: DefinedUserContext,
     info: any
 ): Promise<UserStats | undefined> => {
     const timeframe = leaderboardTimeframeFromQueryArgument(DateTime.now(), args.timeframe);

@@ -1,12 +1,7 @@
-import { Context } from "../../index";
-import { checkIsMe } from "../../auth";
 import { OAuthType } from "../Mutation/createUserOrSignIn";
-
-interface Parent {
-    id: string;
-    appleId?: string;
-    googleId?: string;
-}
+import { checkIsMe } from "../../auth";
+import { DefinedUserContext } from "../../index";
+import { User } from "../../types";
 
 interface OAuthTypeCorrelation {
     type: OAuthType;
@@ -14,12 +9,12 @@ interface OAuthTypeCorrelation {
 }
 
 const oauthLoginIds = (
-    parent: Parent,
+    parent: User,
     args: any,
-    context: Context,
+    context: DefinedUserContext,
     info: any
 ): OAuthTypeCorrelation[] => {
-    checkIsMe(parent, context.userId, "oauthLoginIds");
+    checkIsMe(parent, context, "oauthLoginIds");
     return [
         parent.appleId && { type: "APPLE", id: parent.appleId },
         parent.googleId && { type: "GOOGLE", id: parent.googleId }

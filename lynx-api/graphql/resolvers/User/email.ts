@@ -1,13 +1,9 @@
-import { Context } from "../../index";
 import { checkIsMe } from "../../auth";
+import { DefinedUserContext } from "../../index";
+import { User } from "../../types";
 
-interface Parent {
-    id: string;
-    email: string;
-}
-
-const email = (parent: Parent, args: any, context: Context, info: any) => {
-    checkIsMe(parent, context.userId, "email");
+const email = (parent: User, args: any, context: DefinedUserContext, info: any) => {
+    checkIsMe(parent, context, "email");
     return parent.email;
 };
 

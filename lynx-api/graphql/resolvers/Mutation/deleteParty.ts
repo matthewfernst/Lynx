@@ -1,4 +1,8 @@
-import { checkHasUserId, checkIsLoggedInAndHasValidInvite, checkIsPartyOwner } from "../../auth";
+import {
+    checkHasUserId,
+    checkIsValidUserAndHasValidInvite,
+    checkIsValidPartyAndIsPartyOwner
+} from "../../auth";
 import { deleteItem, deleteItemsFromArray } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { Party } from "../../types";
@@ -9,13 +13,13 @@ interface Args {
 }
 
 const deleteParty = async (_: any, args: Args, context: Context, info: any): Promise<Party> => {
-    const userId = checkHasUserId(context.userId);
-    await checkIsLoggedInAndHasValidInvite(userId);
-    await checkIsPartyOwner(userId, args.partyId);
+    checkHasUserId(context);
+    await checkIsValidUserAndHasValidInvite(context);
+    await checkIsValidPartyAndIsPartyOwner(context, args.partyId);
 
     console.log(`Deleting party with id ${args.partyId}`);
-    await deleteItemsFromArray(USERS_TABLE, userId, "parties", [args.partyId]);
-    return (await deleteItem(PARTIES_TABLE, args.partyId)) as Party;
+    await deleteItemsFromArray(USERS_TABLE, context.userId, "parties", [args.partyId]);
+    return await deleteItem(PARTIES_TABLE, args.partyId);
 };
 
 export default deleteParty;

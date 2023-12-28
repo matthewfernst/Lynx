@@ -5,7 +5,7 @@ import { GraphQLFileLoader } from "@graphql-tools/graphql-file-loader";
 import dotenv from "dotenv";
 
 import { authenticateHTTPAccessToken } from "./auth";
-import dataloaders from "./dataloaders";
+import createDataloaders from "./dataloaders";
 import { INTERNAL_SERVER_ERROR } from "./types";
 
 // @ts-expect-error - Uses ESBuild Plugin Unsupported By Typescript
@@ -13,7 +13,11 @@ import resolvers from "./resolvers/**/*";
 
 export interface Context {
     userId: string | undefined;
-    dataloaders: typeof dataloaders;
+    dataloaders: ReturnType<typeof createDataloaders>;
+}
+
+export interface DefinedUserContext extends Context {
+    userId: string;
 }
 
 dotenv.config();
@@ -37,7 +41,10 @@ export const handler = startServerAndCreateLambdaHandler(
     server,
     handlers.createAPIGatewayProxyEventRequestHandler(),
     {
-        context: async ({ event }) => ({ userId: authenticateHTTPAccessToken(event), dataloaders }),
+        context: async ({ event }) => ({
+            userId: authenticateHTTPAccessToken(event),
+            dataloaders: createDataloaders()
+        }),
         middleware: [
             async (event) => {
                 return async (result) => {

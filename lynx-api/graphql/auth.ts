@@ -2,25 +2,20 @@ import { APIGatewayProxyEvent } from "aws-lambda";
 import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
-import { partiesDataloader, usersDataLoader } from "./dataloaders";
-import { BAD_REQUEST, FORBIDDEN, UNAUTHENTICATED } from "./types";
-import { Party, User } from "./types";
+import { Context, DefinedUserContext } from "./index";
+import { BAD_REQUEST, FORBIDDEN, Party, UNAUTHENTICATED, User } from "./types";
 
-interface Parent {
-    id: string;
-}
-
-export const generateToken = (id: string): string => {
+export function generateToken(id: string): string {
     console.log(`Generating token for user with id ${id}`);
     return jwt.sign({ id }, process.env.AUTH_KEY || "AUTH", { expiresIn: "6h" });
-};
+}
 
-export const decryptToken = (token: string): User => {
+export function decryptToken(token: string): User {
     console.log(`Decrypting token for user with token ${token}`);
     return jwt.verify(token, process.env.AUTH_KEY || "AUTH") as User;
-};
+}
 
-export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string | undefined => {
+export function authenticateHTTPAccessToken(req: APIGatewayProxyEvent): string | undefined {
     const authHeader = req.headers?.Authorization;
     if (!authHeader) return undefined;
 
@@ -37,72 +32,66 @@ export const authenticateHTTPAccessToken = (req: APIGatewayProxyEvent): string |
             extensions: { code: UNAUTHENTICATED, token }
         });
     }
-};
+}
 
-export const checkHasUserId = (userId: string | undefined): string => {
-    if (!userId) {
+export function checkIsMe(
+    parent: User,
+    context: DefinedUserContext,
+    fieldName: string | undefined = undefined
+) {
+    if (parent.id?.toString() !== context.userId) {
+        throw new GraphQLError("Permissions Invalid For Requested Field", {
+            extensions: { code: FORBIDDEN, userId: context.userId, fieldName }
+        });
+    }
+}
+
+export function checkHasUserId(context: Context): asserts context is DefinedUserContext {
+    if (!context.userId) {
         throw new GraphQLError("Must Be Logged In", { extensions: { code: FORBIDDEN } });
     }
-    return userId;
-};
+}
 
-export const checkIsLoggedIn = async (userId: string): Promise<User> => {
-    const userRecord = await usersDataLoader.load(userId);
+export async function checkIsValidUser(context: DefinedUserContext): Promise<User> {
+    const userRecord = await context.dataloaders.users.load(context.userId);
     if (!userRecord) {
         throw new GraphQLError("User Does Not Exist", {
-            extensions: { code: UNAUTHENTICATED, userId }
+            extensions: { code: UNAUTHENTICATED, userId: context.userId }
         });
     }
     return userRecord;
-};
+}
 
-export const checkIsLoggedInAndHasValidInvite = async (userId: string): Promise<User> => {
-    const user = await checkIsLoggedIn(userId);
-    if (!user.validatedInvite) {
+export async function checkIsValidUserAndHasValidInvite(context: DefinedUserContext) {
+    const userRecord = await checkIsValidUser(context);
+    if (!userRecord.validatedInvite) {
         throw new GraphQLError("No Validated Invite", {
-            extensions: { code: UNAUTHENTICATED, userId: userId }
+            extensions: { code: UNAUTHENTICATED, userId: context.userId }
         });
     }
-    return user;
-};
+}
 
-export const checkIsMe = (
-    parent: Parent,
-    userId: string | undefined,
-    fieldName: string | undefined = undefined
-): string => {
-    if (!userId || parent.id?.toString() !== userId) {
-        throw new GraphQLError("Permissions Invalid For Requested Field", {
-            extensions: { code: FORBIDDEN, userId, fieldName }
-        });
-    }
-    return userId;
-};
-
-export const checkIsValidUser = async (userId: string): Promise<void> => {
-    const user = await usersDataLoader.load(userId);
-    if (!user) {
-        throw new GraphQLError("User Does Not Exist", {
-            extensions: { code: BAD_REQUEST, userId }
-        });
-    }
-};
-
-export const checkIsValidParty = async (partyId: string): Promise<Party> => {
-    const party = await partiesDataloader.load(partyId);
+export async function checkIsValidParty(
+    context: DefinedUserContext,
+    partyId: string
+): Promise<Party> {
+    const party = await context.dataloaders.parties.load(partyId);
     if (!party) {
         throw new GraphQLError("Party Does Not Exist", {
             extensions: { code: BAD_REQUEST, partyId }
         });
     }
     return party;
-};
+}
 
-export const checkIsPartyOwner = async (userId: string, partyId: string) => {
-    const party = await checkIsValidParty(partyId);
-    if (party.partyManager !== userId) {
+export async function checkIsValidPartyAndIsPartyOwner(
+    context: DefinedUserContext,
+    partyId: string
+) {
+    const party = await checkIsValidParty(context, partyId);
+    if (party.partyManager !== context.userId) {
         throw new GraphQLError("User Is Not Party Owner", {
-            extensions: { code: FORBIDDEN, userId, partyId }
+            extensions: { code: FORBIDDEN, userId: context.userId, partyId }
         });
     }
-};
+}

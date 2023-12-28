@@ -10,12 +10,18 @@ import {
 } from "../infrastructure/lib/infrastructure";
 import { Log } from "./types";
 
-export const usersDataLoader = new DataLoader(async (userIds: readonly string[]) =>
-    Promise.all(userIds.map(async (userId) => await getItem(USERS_TABLE, userId)))
-);
+const createDataloaders = () => ({
+    users: new DataLoader(userDataLoader),
+    logs: new DataLoader(logsDataLoader),
+    parties: new DataLoader(partiesDataLoader)
+});
 
-export const logsDataLoader = new DataLoader(async (userIds: readonly string[]) =>
-    Promise.all(
+const userDataLoader = async (userIds: readonly string[]) => {
+    return await Promise.all(userIds.map(async (userId) => await getItem(USERS_TABLE, userId)));
+};
+
+const logsDataLoader = async (userIds: readonly string[]) => {
+    return await Promise.all(
         userIds.map(async (userId) => {
             const recordNames = await getObjectNamesInBucket(SLOPES_UNZIPPED_BUCKET, userId);
             console.log(`Retriving records with names [${recordNames}].`);
@@ -31,8 +37,14 @@ export const logsDataLoader = new DataLoader(async (userIds: readonly string[]) 
                 })
             );
         })
-    )
-);
+    );
+};
+
+const partiesDataLoader = async (partyIds: readonly string[]) => {
+    return await Promise.all(
+        partyIds.map(async (partyId) => await getItem(PARTIES_TABLE, partyId))
+    );
+};
 
 export const xmlToActivity = async (xml: string): Promise<Log> => {
     const { activity } = await parseStringPromise(xml, {
@@ -47,8 +59,4 @@ export const xmlToActivity = async (xml: string): Promise<Log> => {
     return activity;
 };
 
-export const partiesDataloader = new DataLoader(async (partyIds: readonly string[]) =>
-    Promise.all(partyIds.map(async (partyId) => await getItem(PARTIES_TABLE, partyId)))
-);
-
-export default { users: usersDataLoader, logs: logsDataLoader, parties: partiesDataloader };
+export default createDataloaders;

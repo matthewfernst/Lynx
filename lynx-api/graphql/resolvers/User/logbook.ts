@@ -1,15 +1,15 @@
 import { checkIsMe } from "../../auth";
-import { Context } from "../../index";
-import { Log } from "../../types";
+import { DefinedUserContext } from "../../index";
+import { Log, User } from "../../types";
 
-interface Parent {
-    id: string;
-    logbook?: Log[];
-}
-
-const logbook = async (parent: Parent, args: {}, context: Context, info: any): Promise<Log[]> => {
-    const userId = checkIsMe(parent, context.userId, "logbook");
-    return await context.dataloaders.logs.load(userId);
+const logbook = async (
+    parent: User,
+    args: {},
+    context: DefinedUserContext,
+    info: any
+): Promise<Log[]> => {
+    checkIsMe(parent, context, "logbook");
+    return await context.dataloaders.logs.load(context.userId);
 };
 
 export default logbook;

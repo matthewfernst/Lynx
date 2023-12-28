@@ -1,7 +1,7 @@
 import { GraphQLError } from "graphql";
 
 import { deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
-import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { deleteObjectsInBucket } from "../../aws/s3";
 import { OAuthType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
 import { Context } from "../../index";
@@ -26,8 +26,8 @@ const combineOAuthAccounts = async (
     context: Context,
     info: any
 ): Promise<User> => {
-    const userId = checkHasUserId(context.userId);
-    checkIsLoggedInAndHasValidInvite(userId);
+    checkHasUserId(context);
+    checkIsValidUserAndHasValidInvite(context);
     const { type, id, token } = args.combineWith;
     const idKey = idKeyFromIdType(type);
     const otherUser = (await getItemByIndex(USERS_TABLE, idKey, id)) as User;
@@ -38,12 +38,12 @@ const combineOAuthAccounts = async (
             });
         }
         await verifyToken(type, id, token);
-        return (await updateItem(USERS_TABLE, userId, idKey, id)) as User;
+        return await updateItem(USERS_TABLE, context.userId, idKey, id);
     }
     await deleteItem(USERS_TABLE, otherUser.id);
     await deleteObjectsInBucket(PROFILE_PICS_BUCKET, otherUser.id);
     await deleteObjectsInBucket(SLOPES_UNZIPPED_BUCKET, otherUser.id);
-    return (await updateItem(USERS_TABLE, userId, idKey, id)) as User;
+    return await updateItem(USERS_TABLE, context.userId, idKey, id);
 };
 
 export default combineOAuthAccounts;

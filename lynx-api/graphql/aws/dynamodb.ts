@@ -30,12 +30,15 @@ export type Table =
     | typeof INVITES_TABLE
     | typeof PARTIES_TABLE;
 
-type ObjectType<T extends Table> =
-    T extends typeof USERS_TABLE ? User :
-    T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry :
-    T extends typeof INVITES_TABLE ? Invite :
-    T extends typeof PARTIES_TABLE ? Party :
-    unknown;
+type ObjectType<T extends Table> = T extends typeof USERS_TABLE
+    ? User
+    : T extends typeof LEADERBOARD_TABLE
+    ? LeaderboardEntry
+    : T extends typeof INVITES_TABLE
+    ? Invite
+    : T extends typeof PARTIES_TABLE
+    ? Party
+    : unknown;
 
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
 
@@ -111,7 +114,7 @@ export const updateItem = async <T extends Table>(
     id: string,
     key: string,
     value: any
-): Promise<ObjectType<T> | undefined> => {
+): Promise<ObjectType<T>> => {
     try {
         console.log(`Updating item in ${table} with id ${id}. New ${key} is ${value}`);
         const updateItemRequest = new UpdateCommand({
@@ -123,7 +126,13 @@ export const updateItem = async <T extends Table>(
             ReturnValues: "ALL_NEW"
         });
         const itemOutput = await documentClient.send(updateItemRequest);
-        return itemOutput.Attributes as ObjectType<T> | undefined;
+        const object = itemOutput.Attributes as ObjectType<T> | undefined;
+        if (!object) {
+            throw new GraphQLError("Called DynamoDB Without Validating Item Exists", {
+                extensions: { code: INTERNAL_SERVER_ERROR, table, id }
+            });
+        }
+        return object;
     } catch (err) {
         console.error(err);
         throw new GraphQLError("DynamoDB Update Call Failed", {
@@ -137,7 +146,7 @@ export const addItemsToArray = async <T extends Table>(
     id: string,
     key: string,
     values: string[]
-): Promise<ObjectType<T> | undefined> => {
+): Promise<ObjectType<T>> => {
     try {
         console.log(
             `Updating item in ${table} with id ${id}. ${key} now has the following as values: ${values}`
@@ -152,7 +161,13 @@ export const addItemsToArray = async <T extends Table>(
             ReturnValues: "ALL_NEW"
         });
         const itemOutput = await documentClient.send(updateItemRequest);
-        return itemOutput.Attributes as ObjectType<T> | undefined;
+        const object = itemOutput.Attributes as ObjectType<T> | undefined;
+        if (!object) {
+            throw new GraphQLError("Called DynamoDB Without Validating Item Exists", {
+                extensions: { code: INTERNAL_SERVER_ERROR, table, id }
+            });
+        }
+        return object;
     } catch (err) {
         console.error(err);
         throw new GraphQLError("DynamoDB Update Call Failed", {
@@ -166,7 +181,7 @@ export const deleteItemsFromArray = async <T extends Table>(
     id: string,
     key: string,
     values: string[]
-): Promise<ObjectType<T> | undefined> => {
+): Promise<ObjectType<T>> => {
     try {
         console.log(
             `Updating item in ${table} with id ${id}. ${key} no longer has the following as values: ${values}`
@@ -193,7 +208,13 @@ export const deleteItemsFromArray = async <T extends Table>(
             ReturnValues: "ALL_NEW"
         });
         const itemOutput = await documentClient.send(updateItemRequest);
-        return itemOutput.Attributes as ObjectType<T> | undefined;
+        const object = itemOutput.Attributes as ObjectType<T> | undefined;
+        if (!object) {
+            throw new GraphQLError("Called DynamoDB Without Validating Item Exists", {
+                extensions: { code: INTERNAL_SERVER_ERROR, table, id }
+            });
+        }
+        return object;
     } catch (err) {
         console.error(err);
         throw new GraphQLError("DynamoDB Update Call Failed", {
@@ -202,10 +223,7 @@ export const deleteItemsFromArray = async <T extends Table>(
     }
 };
 
-export const deleteItem = async <T extends Table>(
-    table: T,
-    id: string
-): Promise<ObjectType<T> | undefined> => {
+export const deleteItem = async <T extends Table>(table: T, id: string): Promise<ObjectType<T>> => {
     try {
         console.log(`Deleting item from ${table} with id ${id}`);
         const deleteItemRequest = new DeleteCommand({
@@ -214,7 +232,13 @@ export const deleteItem = async <T extends Table>(
             ReturnValues: "ALL_OLD"
         });
         const itemOutput = await documentClient.send(deleteItemRequest);
-        return itemOutput.Attributes as ObjectType<T> | undefined;
+        const object = itemOutput.Attributes as ObjectType<T> | undefined;
+        if (!object) {
+            throw new GraphQLError("Called DynamoDB Without Validating Item Exists", {
+                extensions: { code: INTERNAL_SERVER_ERROR, table, id }
+            });
+        }
+        return object;
     } catch (err) {
         console.error(err);
         throw new GraphQLError("DynamoDB Delete Call Failed", {

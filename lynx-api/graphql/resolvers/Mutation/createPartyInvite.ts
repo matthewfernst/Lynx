@@ -1,8 +1,7 @@
 import {
     checkHasUserId,
-    checkIsLoggedInAndHasValidInvite,
-    checkIsPartyOwner,
-    checkIsValidUser
+    checkIsValidUserAndHasValidInvite,
+    checkIsValidPartyAndIsPartyOwner
 } from "../../auth";
 import { addItemsToArray } from "../../aws/dynamodb";
 import { Context } from "../../index";
@@ -20,16 +19,13 @@ const createPartyInvite = async (
     context: Context,
     info: any
 ): Promise<Party> => {
-    const userId = checkHasUserId(context.userId);
-    await checkIsLoggedInAndHasValidInvite(userId);
-    await checkIsPartyOwner(userId, args.partyId);
-    await checkIsValidUser(args.userId);
+    checkHasUserId(context);
+    await checkIsValidUserAndHasValidInvite(context);
+    await checkIsValidPartyAndIsPartyOwner(context, args.partyId);
 
     console.log(`Creating party invite for user with id ${args.userId}`);
     await addItemsToArray(USERS_TABLE, args.userId, "partyInvites", [args.partyId]);
-    return (await addItemsToArray(PARTIES_TABLE, args.partyId, "invitedUsers", [
-        args.userId
-    ])) as Party;
+    return await addItemsToArray(PARTIES_TABLE, args.partyId, "invitedUsers", [args.userId]);
 };
 
 export default createPartyInvite;

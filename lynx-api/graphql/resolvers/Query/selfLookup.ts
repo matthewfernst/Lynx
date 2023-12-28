@@ -8,8 +8,8 @@ const selfLookup = async (
     context: Context,
     info: any
 ): Promise<User | undefined> => {
-    const userId = checkHasUserId(context.userId);
-    return await context.dataloaders.users.load(userId);
+    checkHasUserId(context);
+    return await context.dataloaders.users.load(context.userId);
 };
 
 export default selfLookup;

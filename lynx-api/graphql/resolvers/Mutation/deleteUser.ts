@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { deleteItem } from "../../aws/dynamodb";
 import { deleteObjectsInBucket } from "../../aws/s3";
 import { OAuthType } from "./createUserOrSignIn";
@@ -22,17 +22,17 @@ interface Args {
 }
 
 const deleteUser = async (_: any, args: Args, context: Context, info: any): Promise<User> => {
-    const userId = checkHasUserId(context.userId);
-    await checkIsLoggedInAndHasValidInvite(userId);
+    checkHasUserId(context);
+    await checkIsValidUserAndHasValidInvite(context);
     if (args.options?.tokensToInvalidate) {
         args.options.tokensToInvalidate.forEach(
             async (token) => await invalidateToken(token.type, token.token)
         );
     }
-    console.log(`Deleting user with id ${userId}`);
-    await deleteObjectsInBucket(PROFILE_PICS_BUCKET, userId);
-    await deleteObjectsInBucket(SLOPES_UNZIPPED_BUCKET, userId);
-    return (await deleteItem(USERS_TABLE, userId)) as User;
+    console.log(`Deleting user with id ${context.userId}`);
+    await deleteObjectsInBucket(PROFILE_PICS_BUCKET, context.userId);
+    await deleteObjectsInBucket(SLOPES_UNZIPPED_BUCKET, context.userId);
+    return await deleteItem(USERS_TABLE, context.userId);
 };
 
 const invalidateToken = async (tokenType: OAuthType, token: string) => {

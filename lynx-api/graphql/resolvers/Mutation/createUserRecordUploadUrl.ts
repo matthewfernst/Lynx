@@ -1,6 +1,6 @@
 import { createSignedUploadUrl } from "../../aws/s3";
 import { Context } from "../../index";
-import { checkHasUserId, checkIsLoggedInAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { SLOPES_ZIPPED_BUCKET } from "../../../infrastructure/lib/infrastructure";
 
 interface Args {
@@ -13,12 +13,12 @@ const createUserRecordUploadUrl = async (
     context: Context,
     info: any
 ): Promise<string[]> => {
-    const userId = checkHasUserId(context.userId);
-    await checkIsLoggedInAndHasValidInvite(userId);
-    console.log(`Creating UserRecord Upload URL For User ID ${userId}`);
+    checkHasUserId(context);
+    await checkIsValidUserAndHasValidInvite(context);
+    console.log(`Creating UserRecord Upload URL For User ID ${context.userId}`);
     return await Promise.all(
         args.requestedPaths.map((requestedPath) =>
-            createSignedUploadUrl(SLOPES_ZIPPED_BUCKET, `${userId}/${requestedPath}`)
+            createSignedUploadUrl(SLOPES_ZIPPED_BUCKET, `${context.userId}/${requestedPath}`)
         )
     );
 };

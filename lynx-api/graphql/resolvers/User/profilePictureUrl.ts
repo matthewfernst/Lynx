@@ -1,11 +1,11 @@
-import { Context } from "../../index";
+import { DefinedUserContext } from "../../index";
 import { checkIfObjectInBucket } from "../../aws/s3";
 import { PROFILE_PICS_BUCKET } from "../../../infrastructure/lib/infrastructure";
 
 const profilePictureUrl = async (
     parent: any,
     args: {},
-    context: Context,
+    context: DefinedUserContext,
     info: any
 ): Promise<string | null> => {
     if (await checkIfObjectInBucket(PROFILE_PICS_BUCKET, parent.id)) {

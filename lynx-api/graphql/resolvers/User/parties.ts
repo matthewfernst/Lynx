@@ -1,4 +1,4 @@
-import { Context } from "../../index";
+import { DefinedUserContext } from "../../index";
 import { Party } from "../../types";
 
 interface Parent {
@@ -8,7 +8,7 @@ interface Parent {
 const parties = async (
     parent: Parent,
     args: any,
-    context: Context,
+    context: DefinedUserContext,
     info: any
 ): Promise<Party[]> => {
     return (await context.dataloaders.parties.loadMany(parent.parties)) as Party[];
