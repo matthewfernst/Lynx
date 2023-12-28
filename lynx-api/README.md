@@ -1,36 +1,29 @@
-# Lynx API Lambda
+# Lynx API
 
-## Deployment To Cloud
+## About
 
-In order to deploy the example, you need to run the following command:
+This is the API for the Lynx application. It contains serveral AWS Lambda functions that are deployed using CDK. There are additional resources as well including DynamoDB tables for keeping track of users and their data, S3 buckets for keeping track of images and other files, and alarms and topics for monitoring and notifications.
 
-```
-$ serverless deploy
-```
+## Lambdas
 
-After running deploy, you should see output similar to:
+### GraphQL
 
-```bash
-Deploying lynx-api to stage dev (us-west-1)
+The primary entrypoint for the API is a GraphQL based lambda that handles all requests. It is built using Apollo Server and uses dataloaders to index data from DynamoDB and S3. It is hooked up to a custom domain inside API-Gateway. It supports all defined operations in the schema.graphql file.
 
-✔ Service deployed to stack lynx-api-dev (112s)
+### Reducer
 
-functions:
-  lynx-api: lynx-api-dev-lynx-api (56 kB)
-```
+The reducer lambda is used to populate the leaderboard table in real time as records are uploaded to S3 via the GraphQL API. It utilizes timeframe based logic to sort users and determine their rank. It is triggered by S3 events to the unzipped bucket.
 
-## Invocation
+### Unzipper
 
-After successful deployment, you can invoke the deployed function by using the following command:
+The unzipper lambda is used to unzip raw slopes files that are uploaded to S3 via the GraphQL API. It is triggered by S3 events to the zipped bucket.
 
-```bash
-serverless invoke --function lynx-api
-```
+## Quick Start
 
-## Local Development
-
-You can invoke your function locally by using the following command:
+Install modules, build, and deploy the application to AWS. It will find your AWS config file and deploy the stack to the account and region you prefer using your credentials.
 
 ```bash
-serverless invoke local --function lynx-api
+npm install
+npm run build
+npm run deploy
 ```
