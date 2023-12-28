@@ -66,10 +66,14 @@ export const checkIsLoggedInAndHasValidInvite = async (userId: string): Promise<
     return user;
 };
 
-export const checkIsMe = (parent: Parent, userId: string | undefined): string => {
+export const checkIsMe = (
+    parent: Parent,
+    userId: string | undefined,
+    fieldName: string | undefined = undefined
+): string => {
     if (!userId || parent.id?.toString() !== userId) {
         throw new GraphQLError("Permissions Invalid For Requested Field", {
-            extensions: { code: FORBIDDEN, userId }
+            extensions: { code: FORBIDDEN, userId, fieldName }
         });
     }
     return userId;
@@ -78,7 +82,7 @@ export const checkIsMe = (parent: Parent, userId: string | undefined): string =>
 export const checkIsValidUser = async (userId: string): Promise<void> => {
     const user = await usersDataLoader.load(userId);
     if (!user) {
-        throw new GraphQLError(`User Does Not Exist`, {
+        throw new GraphQLError("User Does Not Exist", {
             extensions: { code: BAD_REQUEST, userId }
         });
     }
@@ -87,7 +91,7 @@ export const checkIsValidUser = async (userId: string): Promise<void> => {
 export const checkIsValidParty = async (partyId: string): Promise<Party> => {
     const party = await partiesDataloader.load(partyId);
     if (!party) {
-        throw new GraphQLError(`Party Does Not Exist`, {
+        throw new GraphQLError("Party Does Not Exist", {
             extensions: { code: BAD_REQUEST, partyId }
         });
     }

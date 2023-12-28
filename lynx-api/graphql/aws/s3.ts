@@ -4,7 +4,8 @@ import {
     HeadObjectCommand,
     ListObjectsCommand,
     PutObjectCommand,
-    DeleteObjectCommand
+    DeleteObjectCommand,
+    _Object
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { NodeJsClient } from "@smithy/types";
@@ -47,7 +48,7 @@ export const getObjectNamesInBucket = async (
         if (!listObjectsResponse.Contents) {
             return [];
         }
-        const predicate = (content: any) => content.Key;
+        const predicate = (content: _Object) => content.Key as string;
         return listObjectsResponse.Contents.filter(predicate).map(predicate);
     } catch (err) {
         console.error(err);

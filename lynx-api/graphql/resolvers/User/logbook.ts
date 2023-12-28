@@ -8,7 +8,7 @@ interface Parent {
 }
 
 const logbook = async (parent: Parent, args: {}, context: Context, info: any): Promise<Log[]> => {
-    const userId = checkIsMe(parent, context.userId);
+    const userId = checkIsMe(parent, context.userId, "logbook");
     return await context.dataloaders.logs.load(userId);
 };
 

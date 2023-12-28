@@ -19,7 +19,7 @@ const oauthLoginIds = (
     context: Context,
     info: any
 ): OAuthTypeCorrelation[] => {
-    checkIsMe(parent, context.userId);
+    checkIsMe(parent, context.userId, "oauthLoginIds");
     return [
         parent.appleId && { type: "APPLE", id: parent.appleId },
         parent.googleId && { type: "GOOGLE", id: parent.googleId }
