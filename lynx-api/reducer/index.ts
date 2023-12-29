@@ -1,4 +1,4 @@
-import { UpdateItemOutput } from "@aws-sdk/client-dynamodb";
+import { ConditionalCheckFailedException, UpdateItemOutput } from "@aws-sdk/client-dynamodb";
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { S3Event } from "aws-lambda";
 import { DateTime } from "luxon";
@@ -49,7 +49,7 @@ const updateItem = async (
     timeframe: Timeframe,
     sortType: string,
     value: number
-): Promise<UpdateItemOutput> => {
+): Promise<UpdateItemOutput | undefined> => {
     try {
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
@@ -69,7 +69,11 @@ const updateItem = async (
             ReturnValues: "UPDATED_NEW"
         });
         return await documentClient.send(updateItemRequest);
-    } catch (err) {
+    } catch (err: unknown) {
+        if (err instanceof ConditionalCheckFailedException) {
+            console.log(`Skipped update for ${sortType} because ${sortType} is not a new maximum.`);
+            return;
+        }
         console.error(err);
         throw new Error("DynamoDB Update Call Failed");
     }
