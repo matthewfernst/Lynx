@@ -55,7 +55,10 @@ const updateItem = async (
             TableName: LEADERBOARD_TABLE,
             Key: { id, timeframe: leaderboardTimeframeFromQueryArgument(endTime, timeframe) },
             UpdateExpression: generateUpdateExpression(timeframe, sortType),
-            ExpressionAttributeNames: { "#updateKey": sortType, "#ttl": "ttl" },
+            ExpressionAttributeNames: {
+                "#updateKey": sortType,
+                ...(timeframe !== "ALL_TIME" && { ":ttl": "ttl" })
+            },
             ExpressionAttributeValues: {
                 ":value": value,
                 ...(timeframe !== "ALL_TIME" && { ":ttl": getTimeToLive(endTime, timeframe) })
