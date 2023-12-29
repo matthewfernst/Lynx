@@ -76,8 +76,12 @@ const generateUpdateExpression = (timeframe: Timeframe, sortType: string) => {
     const updateExpression = isMaximumSortType(sortType)
         ? "SET #updateKey = :value"
         : "ADD #updateKey :value";
-    const ttlAddition = timeframe !== "ALL_TIME" ? "SET #ttl :ttl" : "";
-    return `${updateExpression} ${ttlAddition}`;
+    if (timeframe !== "ALL_TIME") {
+        const setTTL = "#ttl = :ttl";
+        const ttlAddition = isMaximumSortType(sortType) ? `, ${setTTL}` : ` SET ${setTTL}`;
+        return `${updateExpression}${ttlAddition}`;
+    }
+    return updateExpression;
 };
 
 const isMaximumSortType = (sortType: string) => sortType.includes("top");
