@@ -14,13 +14,14 @@ const resolveInviteKey = async (_: any, args: Args, context: Context, info: any)
     checkHasUserId(context);
     await checkIsValidUser(context);
     const inviteInfo = await getItem(INVITES_TABLE, args.inviteKey);
-    if (!inviteInfo && args.inviteKey !== process.env.ESCAPE_INVITE_HATCH) {
+    const usingEscapeHatch = args.inviteKey === process.env.ESCAPE_INVITE_HATCH;
+    if (!inviteInfo && !usingEscapeHatch) {
         throw new GraphQLError("Invalid Invite Token Provided", {
             extensions: { code: BAD_REQUEST, inviteKey: args.inviteKey }
         });
     }
     const updateOutput = await updateItem(USERS_TABLE, context.userId, "validatedInvite", true);
-    await deleteItem(INVITES_TABLE, args.inviteKey);
+    if (!usingEscapeHatch) await deleteItem(INVITES_TABLE, args.inviteKey);
     return updateOutput;
 };
 
