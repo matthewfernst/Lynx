@@ -1,4 +1,5 @@
 import AppleSignIn from "apple-signin-auth";
+import axios from "axios";
 import { OAuth2Client } from "google-auth-library";
 import { GraphQLError } from "graphql";
 import { DateTime } from "luxon";
@@ -71,13 +72,12 @@ const verifyGoogleToken = async (id: string, token: string) => {
 
 const verifyFacebookToken = async (id: string, token: string) => {
     const debugTokenURL = "https://graph.facebook.com/debug_token";
-    const queryParams = {
+    const queryParams = new URLSearchParams({
         input_token: token,
         access_token: `${process.env.FACEBOOK_CLIENT_ID}|${process.env.FACEBOOK_CLIENT_SECRET}`
-    };
-    const response = await fetch(`${debugTokenURL}?${new URLSearchParams(queryParams).toString()}`);
-    const responseJson: any = await response.json();
-    return responseJson.is_valid && responseJson.user_id === id;
+    });
+    const response = await axios.get(`${debugTokenURL}?${queryParams.toString()}`);
+    return response.data.is_valid && response.data.user_id === id;
 };
 
 export const idKeyFromIdType = (idType: OAuthType) => {
