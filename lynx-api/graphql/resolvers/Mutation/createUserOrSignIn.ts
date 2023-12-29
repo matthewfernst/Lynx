@@ -10,7 +10,7 @@ import { BAD_REQUEST } from "../../types";
 import { getItemByIndex, putItem } from "../../aws/dynamodb";
 import { USERS_TABLE } from "../../../infrastructure/lynxStack";
 
-export type OAuthType = "APPLE" | "GOOGLE";
+export type OAuthType = "APPLE" | "GOOGLE" | "FACEBOOK";
 
 interface Args {
     oauthLoginId: {
@@ -48,6 +48,8 @@ export const verifyToken = async (type: OAuthType, id: string, token: string) =>
             return await verifyAppleToken(id, token);
         case "GOOGLE":
             return await verifyGoogleToken(id, token);
+        case "FACEBOOK":
+            return await verifyFacebookToken(id, token);
     }
 };
 
@@ -67,12 +69,20 @@ const verifyGoogleToken = async (id: string, token: string) => {
     return ticket.getUserId() === id;
 };
 
+const verifyFacebookToken = async (id: string, token: string) => {
+    const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id`);
+    const responseJson: any = await response.json();
+    return responseJson.id === id;
+};
+
 export const idKeyFromIdType = (idType: OAuthType) => {
     switch (idType) {
         case "APPLE":
             return "appleId";
         case "GOOGLE":
             return "googleId";
+        case "FACEBOOK":
+            return "facebookId";
     }
 };
 

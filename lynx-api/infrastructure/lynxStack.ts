@@ -102,7 +102,7 @@ export class LynxStack extends Stack {
             billingMode: BillingMode.PAY_PER_REQUEST,
             removalPolicy: RemovalPolicy.DESTROY
         });
-        const oauthSecondaryIndices = ["appleId", "googleId"];
+        const oauthSecondaryIndices = ["appleId", "googleId", "facebookId"];
         oauthSecondaryIndices.map((indexName) => {
             usersTable.addGlobalSecondaryIndex({
                 indexName,

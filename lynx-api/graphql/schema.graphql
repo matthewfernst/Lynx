@@ -95,6 +95,7 @@ type AuthorizationToken {
 enum OAuthType {
     APPLE
     GOOGLE
+    FACEBOOK
 }
 
 type OAuthTypeCorrelation {

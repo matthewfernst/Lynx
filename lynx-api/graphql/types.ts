@@ -10,6 +10,7 @@ export interface User {
     id: string;
     appleId?: string;
     googleId?: string;
+    facebookId?: string;
     validatedInvite: boolean;
     email: string;
     firstName?: string;
