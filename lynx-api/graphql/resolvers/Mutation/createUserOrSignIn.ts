@@ -70,9 +70,14 @@ const verifyGoogleToken = async (id: string, token: string) => {
 };
 
 const verifyFacebookToken = async (id: string, token: string) => {
-    const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id`);
+    const debugTokenURL = "https://graph.facebook.com/debug_token";
+    const queryParams = {
+        input_token: token,
+        access_token: `${process.env.FACEBOOK_CLIENT_ID}|${process.env.FACEBOOK_CLIENT_SECRET}`
+    };
+    const response = await fetch(`${debugTokenURL}?${new URLSearchParams(queryParams).toString()}`);
     const responseJson: any = await response.json();
-    return responseJson.id === id;
+    return responseJson.is_valid && responseJson.user_id === id;
 };
 
 export const idKeyFromIdType = (idType: OAuthType) => {
