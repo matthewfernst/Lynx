@@ -423,7 +423,7 @@ export class LynxStack extends Stack {
         env.ALARM_EMAILS.split(",")
             .map((email) => email.trim())
             .map((email) => {
-                alarmTopic.addSubscription(new EmailSubscription(email, { json: true }));
+                alarmTopic.addSubscription(new EmailSubscription(email));
             });
         return alarmTopic;
     }
