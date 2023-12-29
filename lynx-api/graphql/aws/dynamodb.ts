@@ -30,7 +30,7 @@ export type Table =
     | typeof INVITES_TABLE
     | typeof PARTIES_TABLE;
 
-type ObjectType<T extends Table> =
+type ObjectType<T extends Table> = 
     T extends typeof USERS_TABLE ? User :
     T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry :
     T extends typeof INVITES_TABLE ? Invite :
@@ -183,13 +183,13 @@ export const deleteItemsFromArray = async <T extends Table>(
         console.log(
             `Updating item in ${table} with id ${id}. ${key} no longer has the following as values: ${values}`
         );
-        const item = (await getItem(table, id)) as any;
+        const item = await getItem(table, id);
         if (!item) {
             throw new GraphQLError("Error finding item for this userId", {
                 extensions: { code: INTERNAL_SERVER_ERROR }
             });
         }
-        const indices = values.map((value: string) => item[key].indexOf(value));
+        const indices = values.map((value: string) => (item as any)[key].indexOf(value));
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
@@ -242,4 +242,52 @@ export const deleteItem = async <T extends Table>(table: T, id: string): Promise
             extensions: { code: DEPENDENCY_ERROR }
         });
     }
+};
+
+export const deleteAllItems = async <T extends Table>(
+    table: T,
+    id: string
+): Promise<ObjectType<T>[]> => {
+    try {
+        console.log(`Deleting all items from ${table} with id ${id}`);
+        const queryRequest = new QueryCommand({
+            TableName: table,
+            KeyConditionExpression: "#indexKey = :value",
+            ExpressionAttributeNames: { "#indexKey": "id" },
+            ExpressionAttributeValues: { ":value": id }
+        });
+        const allItemsWithId = await documentClient.send(queryRequest);
+        if (!allItemsWithId.Items) {
+            return [];
+        }
+        return Promise.all(
+            allItemsWithId.Items.map(async (item) => {
+                const sortKey = tableToSortKey[table];
+                if (!sortKey) {
+                    throw new GraphQLError("Called Wrong DynamoDB Delete", {
+                        extensions: { code: INTERNAL_SERVER_ERROR, table, id }
+                    });
+                }
+                const deleteItemRequest = new DeleteCommand({
+                    TableName: table,
+                    Key: { id: item.id, [sortKey]: item[sortKey] },
+                    ReturnValues: "ALL_OLD"
+                });
+                const itemOutput = await documentClient.send(deleteItemRequest);
+                return itemOutput.Attributes as ObjectType<T>;
+            })
+        );
+    } catch (err) {
+        console.error(err);
+        throw new GraphQLError("DynamoDB Delete Call Failed", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
+    }
+};
+
+const tableToSortKey: { [key in Table]: string | undefined } = {
+    [USERS_TABLE]: undefined,
+    [LEADERBOARD_TABLE]: "timeframe",
+    [INVITES_TABLE]: undefined,
+    [PARTIES_TABLE]: undefined
 };

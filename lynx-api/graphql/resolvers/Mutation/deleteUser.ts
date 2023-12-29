@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
-import { deleteItem } from "../../aws/dynamodb";
+import { deleteAllItems, deleteItem } from "../../aws/dynamodb";
 import { deleteObjectsInBucket } from "../../aws/s3";
 import { OAuthType } from "./createUserOrSignIn";
 import { Context } from "../../index";
@@ -9,7 +9,8 @@ import { User } from "../../types";
 import {
     USERS_TABLE,
     PROFILE_PICS_BUCKET,
-    SLOPES_UNZIPPED_BUCKET
+    SLOPES_UNZIPPED_BUCKET,
+    LEADERBOARD_TABLE
 } from "../../../infrastructure/lynxStack";
 
 interface Args {
@@ -32,6 +33,7 @@ const deleteUser = async (_: any, args: Args, context: Context, info: any): Prom
     console.log(`Deleting user with id ${context.userId}`);
     await deleteObjectsInBucket(PROFILE_PICS_BUCKET, context.userId);
     await deleteObjectsInBucket(SLOPES_UNZIPPED_BUCKET, context.userId);
+    await deleteAllItems(LEADERBOARD_TABLE, context.userId);
     return await deleteItem(USERS_TABLE, context.userId);
 };
 
