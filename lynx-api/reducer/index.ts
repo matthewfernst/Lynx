@@ -57,7 +57,7 @@ const updateItem = async (
             UpdateExpression: generateUpdateExpression(timeframe, sortType),
             ExpressionAttributeNames: {
                 "#updateKey": sortType,
-                ...(timeframe !== "ALL_TIME" && { ":ttl": "ttl" })
+                ...(timeframe !== "ALL_TIME" && { "#ttl": "ttl" })
             },
             ExpressionAttributeValues: {
                 ":value": value,
