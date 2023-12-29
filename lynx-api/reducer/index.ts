@@ -54,7 +54,7 @@ const updateItem = async (
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
             Key: { id, timeframe: leaderboardTimeframeFromQueryArgument(endTime, timeframe) },
-            UpdateExpression: `${generateUpdateExpression(sortType)} SET #ttl = :ttl`,
+            UpdateExpression: generateUpdateExpression(timeframe, sortType),
             ExpressionAttributeNames: { "#updateKey": sortType, "#ttl": "ttl" },
             ExpressionAttributeValues: {
                 ":value": value,
@@ -72,17 +72,15 @@ const updateItem = async (
     }
 };
 
-const generateUpdateExpression = (sortKey: string) => {
-    if (isMaximumSortType(sortKey)) {
-        return "SET #updateKey = :value";
-    } else {
-        return "ADD #updateKey :value";
-    }
+const generateUpdateExpression = (timeframe: Timeframe, sortType: string) => {
+    const updateExpression = isMaximumSortType(sortType)
+        ? "SET #updateKey = :value"
+        : "ADD #updateKey :value";
+    const ttlAddition = timeframe !== "ALL_TIME" ? "SET #ttl :ttl" : "";
+    return `${updateExpression} ${ttlAddition}`;
 };
 
-const isMaximumSortType = (sortType: string) => {
-    return sortType.includes("top");
-};
+const isMaximumSortType = (sortType: string) => sortType.includes("top");
 
 const getTimeToLive = (endTime: DateTime, timeframe: Exclude<Timeframe, "ALL_TIME">): number => {
     switch (timeframe) {
