@@ -398,7 +398,7 @@ export class LynxStack extends Stack {
 
     private createErrorRateAlarms(alarmTopic: Topic, lambdas: Function[]): Alarm[] {
         return lambdas.map((lambda) => {
-            const alarm = new Alarm(this, `${lambda.functionName}-sucessRate`, {
+            const alarm = new Alarm(this, `${lambda.node.id}-sucessRate`, {
                 alarmName: `${lambda.functionName} Success Rate`,
                 metric: new MathExpression({
                     label: "Success Rate",
