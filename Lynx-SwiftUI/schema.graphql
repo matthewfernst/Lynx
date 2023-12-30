@@ -1,0 +1,157 @@
+type User {
+    id: ID!
+    oauthLoginIds: [OAuthTypeCorrelation!]!
+    validatedInvite: Boolean!
+    email: String!
+    firstName: String!
+    lastName: String!
+    profilePictureUrl: String
+    stats(timeframe: Timeframe = SEASON): UserStats
+    logbook: [Log!]!
+    parties: [Party!]!
+    partyInvites: [Party!]!
+}
+
+type UserStats {
+    runCount: Int!
+    distance(system: MeasurementSystem = METRIC): Float!
+    topSpeed(system: MeasurementSystem = METRIC): Float!
+    verticalDistance(system: MeasurementSystem = METRIC): Float!
+}
+
+type Log {
+    id: ID!
+    originalFileName: String!
+    conditions: String
+    distance(system: MeasurementSystem = METRIC): Float!
+    duration: Float!
+    startDate: String!
+    endDate: String!
+    locationName: String!
+    runCount: Int!
+    topSpeed(system: MeasurementSystem = METRIC): Float!
+    verticalDistance(system: MeasurementSystem = METRIC): Float!
+    details: [LogDetail!]!
+}
+
+type LogDetail {
+    type: LogDetailType!
+    averageSpeed(system: MeasurementSystem = METRIC): Float!
+    distance(system: MeasurementSystem = METRIC): Float!
+    duration: Float!
+    startDate: String!
+    endDate: String!
+    maxAltitude(system: MeasurementSystem = METRIC): Float!
+    minAltitude(system: MeasurementSystem = METRIC): Float!
+    topSpeed(system: MeasurementSystem = METRIC): Float!
+    topSpeedAltitude(system: MeasurementSystem = METRIC): Float!
+    verticalDistance(system: MeasurementSystem = METRIC): Float!
+}
+
+enum LogDetailType {
+    RUN
+    LIFT
+}
+
+enum MeasurementSystem {
+    METRIC
+    IMPERIAL
+}
+
+type Party {
+    id: ID!
+    name: String!
+    partyManager: User!
+    users: [User!]!
+    invitedUsers: [User!]!
+    leaderboard(
+        sortBy: LeaderboardSort = VERTICAL_DISTANCE
+        timeframe: Timeframe = SEASON
+        limit: Int = 5
+    ): [User!]!
+}
+
+enum LeaderboardSort {
+    DISTANCE
+    RUN_COUNT
+    TOP_SPEED
+    VERTICAL_DISTANCE
+}
+
+enum Timeframe {
+    DAY
+    WEEK
+    MONTH
+    SEASON
+    ALL_TIME
+}
+
+type AuthorizationToken {
+    token: ID!
+    expiryDate: String!
+    validatedInvite: Boolean!
+}
+
+enum OAuthType {
+    APPLE
+    GOOGLE
+    FACEBOOK
+}
+
+type OAuthTypeCorrelation {
+    type: OAuthType!
+    id: ID!
+}
+
+input OAuthTypeCorrelationInput {
+    type: OAuthType!
+    id: ID!
+    token: ID!
+}
+
+input UserDataPair {
+    key: String!
+    value: String!
+}
+
+input DeleteUserOptions {
+    tokensToInvalidate: [InvalidateTokenOption!]
+}
+
+input InvalidateTokenOption {
+    token: ID!
+    type: OAuthType!
+}
+
+type Query {
+    selfLookup: User
+    userLookupById(id: ID!): User
+    partyLookupById(id: ID!): Party
+    leaderboard(
+        sortBy: LeaderboardSort = VERTICAL_DISTANCE
+        timeframe: Timeframe = SEASON
+        limit: Int = 5
+    ): [User!]!
+}
+
+type Mutation {
+    createUserOrSignIn(
+        oauthLoginId: OAuthTypeCorrelationInput!
+        email: String
+        userData: [UserDataPair!]
+    ): AuthorizationToken
+    combineOAuthAccounts(combineWith: OAuthTypeCorrelationInput!): User!
+    createUserProfilePictureUploadUrl: String!
+    createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
+    deleteUser(options: DeleteUserOptions): User!
+    editUser(userData: [UserDataPair!]!): User!
+    createInviteKey: String!
+    resolveInviteKey(inviteKey: ID!): User!
+    createParty(name: String!): Party!
+    deleteParty(partyId: ID!): Party!
+    createPartyInvite(partyId: ID!, userId: ID!): Party!
+    deletePartyInvite(partyId: ID!, userId: ID!): Party!
+    removeUserFromParty(partyId: ID!, userId: ID!): Party!
+    joinParty(partyId: ID!): User!
+    leaveParty(partyId: ID!): User!
+}

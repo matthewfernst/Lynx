@@ -1,0 +1,11 @@
+query GetSpecificLeaderboard($timeframe: Timeframe!, $sortBy: LeaderboardSort!, $measurementSystem: MeasurementSystem!) {
+    leaderboard(sortBy: $sortBy, timeframe: $timeframe) {
+        ...leaderboardFields
+        stats(timeframe: $timeframe) {
+            distance(system: $measurementSystem)
+            runCount
+            topSpeed(system: $measurementSystem)
+            verticalDistance(system: $measurementSystem)
+        }
+    }
+}
