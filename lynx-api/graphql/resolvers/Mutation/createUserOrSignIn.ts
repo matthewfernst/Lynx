@@ -32,6 +32,21 @@ interface AuthorizationToken {
     validatedInvite: boolean;
 }
 
+interface FacebookData {
+    data: {
+        app_id: string;
+        type: string;
+        application: string;
+        data_access_expires_at: number;
+        expires_at: number;
+        is_valid: boolean;
+        issued_at: number;
+        metadata: Map<string, string>;
+        scopes: string[];
+        user_id: string;
+    };
+}
+
 const createUserOrSignIn = async (
     _: any,
     args: Args,
@@ -44,29 +59,29 @@ const createUserOrSignIn = async (
 };
 
 export const verifyToken = async (type: OAuthType, id: string, token: string) => {
+    const valid = await isValidToken(type, id, token);
+    if (!valid) {
+        throw new GraphQLError("Invalid OAuth Token Provided", {
+            extensions: { code: BAD_REQUEST, id, token }
+        });
+    }
+};
+
+const isValidToken = async (type: OAuthType, id: string, token: string) => {
     try {
-        const valid = await isValidToken(type, id, token);
-        if (!valid) {
-            throw new GraphQLError("Invalid OAuth Token Provided", {
-                extensions: { code: BAD_REQUEST, id, token }
-            });
+        switch (type) {
+            case "APPLE":
+                return await isValidAppleToken(id, token);
+            case "GOOGLE":
+                return await isValidGoogleToken(id, token);
+            case "FACEBOOK":
+                return await isValidFacebookToken(id, token);
         }
     } catch (err: unknown) {
         console.log(err);
         throw new GraphQLError("Failure Validating OAuth Token", {
             extensions: { code: INTERNAL_SERVER_ERROR, id, token }
         });
-    }
-};
-
-const isValidToken = async (type: OAuthType, id: string, token: string) => {
-    switch (type) {
-        case "APPLE":
-            return await isValidAppleToken(id, token);
-        case "GOOGLE":
-            return await isValidGoogleToken(id, token);
-        case "FACEBOOK":
-            return await isValidFacebookToken(id, token);
     }
 };
 
@@ -93,7 +108,8 @@ const isValidFacebookToken = async (id: string, token: string): Promise<boolean>
         access_token: `${process.env.FACEBOOK_CLIENT_ID}|${process.env.FACEBOOK_CLIENT_SECRET}`
     });
     const response = await axios.get(`${debugTokenURL}?${queryParams.toString()}`);
-    return response.data.is_valid && response.data.user_id === id;
+    const responseData = response.data as FacebookData;
+    return responseData.data.is_valid && responseData.data.user_id === id;
 };
 
 export const idKeyFromIdType = (idType: OAuthType) => {
