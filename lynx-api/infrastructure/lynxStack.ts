@@ -36,6 +36,8 @@ interface ApplicationEnvironment {
     APPLE_CLIENT_SECRET: string;
     AUTH_KEY: string;
     ESCAPE_INVITE_HATCH: string;
+    FACEBOOK_CLIENT_ID: string;
+    FACEBOOK_CLIENT_SECRET: string;
     GOOGLE_CLIENT_ID: string;
     NODE_ENV: string;
 }

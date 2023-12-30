@@ -47,6 +47,8 @@ jobs:
           LYNX_APPLE_CLIENT_SECRET: ${{ secrets.APPLE_CLIENT_SECRET }}
           LYNX_AUTH_KEY: ${{ secrets.AUTH_KEY }}
           LYNX_ESCAPE_INVITE_HATCH: ${{ secrets.ESCAPE_INVITE_HATCH }}
+          LYNX_FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID }}
+          LYNX_FACEBOOK_CLIENT_SECRET: ${{ secrets.FACEBOOK_CLIENT_SECRET }}
           LYNX_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           LYNX_NODE_ENV: "production"
 
