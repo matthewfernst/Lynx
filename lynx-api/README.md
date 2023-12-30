@@ -32,12 +32,12 @@ npm run deploy
 
 The following environment variables can be overriden to configure the application for your environment.
 
-ALARM_EMAILS: A comma separated list of emails to send alarms notifications to.
-APPLE_CLIENT_ID: The client id for the Apple OAuth provider.
-APPLE_CLIENT_SECRET: The client secret for the Apple OAuth provider.
-AUTH_KEY: The key used to sign JWT tokens.
-ESCAPE_INVITE_HATCH: A backdoor to allow users to join the application without an invite code (for first user setup).
-FACEBOOK_CLIENT_ID: The client id for the Facebook OAuth provider.
-FACEBOOK_CLIENT_SECRET: The client secret for the Facebook OAuth provider.
-GOOGLE_CLIENT_ID: The client id for the Google OAuth provider.
-NODE_ENV: The environment the application is running in.
+ALARM_EMAILS: A comma separated list of emails to send alarms notifications to.  
+APPLE_CLIENT_ID: The client id for the Apple OAuth provider.  
+APPLE_CLIENT_SECRET: The client secret for the Apple OAuth provider.  
+AUTH_KEY: The key used to sign JWT tokens.  
+ESCAPE_INVITE_HATCH: A backdoor to allow users to join the application without an invite code (for first user setup).  
+FACEBOOK_CLIENT_ID: The client id for the Facebook OAuth provider.  
+FACEBOOK_CLIENT_SECRET: The client secret for the Facebook OAuth provider.  
+GOOGLE_CLIENT_ID: The client id for the Google OAuth provider.  
+NODE_ENV: The environment the application is running in.  
