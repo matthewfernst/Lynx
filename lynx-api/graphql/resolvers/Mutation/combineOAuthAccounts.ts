@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 
-import { deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
+import { deleteAllItems, deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { deleteObjectsInBucket } from "../../aws/s3";
 import { OAuthType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
@@ -9,7 +9,8 @@ import { BAD_REQUEST, User } from "../../types";
 import {
     USERS_TABLE,
     PROFILE_PICS_BUCKET,
-    SLOPES_UNZIPPED_BUCKET
+    SLOPES_UNZIPPED_BUCKET,
+    LEADERBOARD_TABLE
 } from "../../../infrastructure/lynxStack";
 
 interface Args {
@@ -43,6 +44,7 @@ const combineOAuthAccounts = async (
     await deleteItem(USERS_TABLE, otherUser.id);
     await deleteObjectsInBucket(PROFILE_PICS_BUCKET, otherUser.id);
     await deleteObjectsInBucket(SLOPES_UNZIPPED_BUCKET, otherUser.id);
+    await deleteAllItems(LEADERBOARD_TABLE, otherUser.id);
     return await updateItem(USERS_TABLE, context.userId, idKey, id);
 };
 
