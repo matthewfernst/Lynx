@@ -17,7 +17,6 @@ var
 .build/
 .env
 .vscode
-apollo-ios-cli
 xcuserdata/
 .DS_Store
 *.js
