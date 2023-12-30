@@ -24,7 +24,6 @@ struct LoginView: View {
     @State private var isSigningIn = false
     
     // Aniamtion States
-    @State private var moveInLogo = false
     @State private var moveInApple = false
     @State private var moveInGoogle = false
     @State private var moveInFacebook = false
@@ -59,20 +58,14 @@ struct LoginView: View {
             .interactiveDismissDisabled()
         })
         .onAppear {
-            withAnimation(.easeInOut(duration: 0.75).delay(0.5)) {
-                moveInLogo = true
-            } completion: {
-                withAnimation {
-                    moveInApple = true
-                } completion: {
-                    withAnimation {
-                        moveInGoogle = true   
-                    } completion: {
-                        withAnimation {
-                            moveInFacebook = true
-                        }
-                    }
-                }
+            withAnimation(.easeInOut(duration: 0.5).delay(0.4)) {
+                moveInApple = true
+            }
+            withAnimation(.easeInOut(duration: 0.5).delay(0.55)) {
+                moveInGoogle = true
+            }
+            withAnimation(.easeInOut(duration: 0.5).delay(0.7)) {
+                moveInFacebook = true
             }
         }
         .fullScreenCover(isPresented: $goToHome, content: HomeView.init) // TODO: Better transition!
@@ -216,7 +209,7 @@ struct LoginView: View {
     @ViewBuilder
     private var signLynxLogoAndSignInButtonStack: some View {
         GeometryReader { geometry in
-            VStack(alignment: .center) {
+            VStack(alignment: .center, spacing: 15) {
                 Spacer()
                 Image("LynxLogo")
                     .resizable()
@@ -224,19 +217,17 @@ struct LoginView: View {
                     .frame(width: Constants.Logo.width)
                     .position(
                         x: geometry.size.width / 10 - Constants.Logo.xOffset,
-                        y: geometry.size.height / 1.75 - Constants.Logo.yOffset
+                        y: geometry.size.height / 2.2 - Constants.Logo.yOffset
                     )
-                    .offset(x: moveInLogo ? 0 : -200)
-                
                 if isSigningIn {
                     signInProgressView
                 } else {
                     signInWithAppleButton
-                        .offset(y: moveInApple ? 0 : 200)
+                        .offset(y: moveInApple ? 10 : 250)
                     signInWithGoogleButton
-                        .offset(y: moveInGoogle ? 0 : 200)
+                        .offset(y: moveInGoogle ? 10 : 200)
                     signInWithFacebookButton
-                        .offset(y: moveInFacebook ? 0 : 200)
+                        .offset(y: moveInFacebook ? 10 : 150)
                 }
                 Spacer()
             }
@@ -249,7 +240,7 @@ struct LoginView: View {
     // MARK: - Constants
     private struct Constants {
         struct Logo {
-            static let width: CGFloat = 130
+            static let width: CGFloat = 150
             static let xOffset: CGFloat = -90
             static let yOffset: CGFloat = -40
         }
