@@ -1,0 +1,35 @@
+query GetAllLeaderboards($timeframe: Timeframe!, $limit: Int, $measurementSystem: MeasurementSystem!)  {
+    distanceLeaders: leaderboard(sortBy: DISTANCE, timeframe: $timeframe, limit: $limit) {
+        ...leaderboardFields
+        stats(timeframe: $timeframe) {
+            distance(system: $measurementSystem)
+        }
+    }
+    
+    runCountLeaders: leaderboard(sortBy: RUN_COUNT, timeframe: $timeframe, limit: $limit){
+        ...leaderboardFields
+        stats(timeframe: $timeframe) {
+            runCount
+        }
+    }
+    
+    topSpeedLeaders: leaderboard(sortBy: TOP_SPEED, timeframe: $timeframe, limit: $limit) {
+        ...leaderboardFields
+        stats(timeframe: $timeframe) {
+            topSpeed(system: $measurementSystem)
+        }
+    }
+    
+    verticalDistanceLeaders: leaderboard(sortBy: VERTICAL_DISTANCE, timeframe: $timeframe, limit: $limit) {
+        ...leaderboardFields
+        stats(timeframe: $timeframe) {
+            verticalDistance(system: $measurementSystem)
+        }
+    }
+}
+
+fragment leaderboardFields on User {
+  profilePictureUrl
+  firstName
+  lastName
+}
