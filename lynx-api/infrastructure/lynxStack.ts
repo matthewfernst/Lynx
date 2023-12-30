@@ -12,7 +12,7 @@ import {
     Role,
     ServicePrincipal
 } from "aws-cdk-lib/aws-iam";
-import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Code, Function as LambdaFunction, Runtime } from "aws-cdk-lib/aws-lambda";
 import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { Topic } from "aws-cdk-lib/aws-sns";
@@ -201,8 +201,8 @@ export class LynxStack extends Stack {
         leaderboardTable: Table,
         invitesTable: Table,
         partiesTable: Table
-    ): Function {
-        return new Function(this, "lynxGraphqlLambda", {
+    ): LambdaFunction {
+        return new LambdaFunction(this, "lynxGraphqlLambda", {
             functionName: "lynx-graphql",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
@@ -301,8 +301,11 @@ export class LynxStack extends Stack {
         });
     }
 
-    private createReducerLambda(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Function {
-        const reducerLambda = new Function(this, "lynxReducerLambda", {
+    private createReducerLambda(
+        slopesUnzippedBucket: Bucket,
+        leaderboardTable: Table
+    ): LambdaFunction {
+        const reducerLambda = new LambdaFunction(this, "lynxReducerLambda", {
             functionName: "lynx-reducer",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
@@ -348,8 +351,8 @@ export class LynxStack extends Stack {
     private createUnzipperLambda(
         slopesZippedBucket: Bucket,
         slopesUnzippedBucket: Bucket
-    ): Function {
-        const unzipperLambda = new Function(this, "lynxUnzipperLambda", {
+    ): LambdaFunction {
+        const unzipperLambda = new LambdaFunction(this, "lynxUnzipperLambda", {
             functionName: "lynx-unzipper",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
@@ -398,7 +401,7 @@ export class LynxStack extends Stack {
         });
     }
 
-    private createErrorRateAlarms(alarmTopic: Topic, lambdas: Function[]): Alarm[] {
+    private createErrorRateAlarms(alarmTopic: Topic, lambdas: LambdaFunction[]): Alarm[] {
         return lambdas.map((lambda) => {
             const alarm = new Alarm(this, `${lambda.node.id}-sucessRate`, {
                 alarmName: `${lambda.functionName} Success Rate`,

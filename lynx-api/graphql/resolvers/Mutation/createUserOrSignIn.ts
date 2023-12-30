@@ -43,7 +43,7 @@ const createUserOrSignIn = async (
     return await oauthLogin(idKeyFromIdType(type), id, args.email, args.userData);
 };
 
-const verifyToken = async (type: OAuthType, id: string, token: string) => {
+export const verifyToken = async (type: OAuthType, id: string, token: string) => {
     try {
         const valid = await isValidToken(type, id, token);
         if (!valid) {
