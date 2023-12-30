@@ -7,7 +7,7 @@ import { v4 as uuid } from "uuid";
 
 import { generateToken } from "../../auth";
 import { Context } from "../../index";
-import { BAD_REQUEST } from "../../types";
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../types";
 import { getItemByIndex, putItem } from "../../aws/dynamodb";
 import { USERS_TABLE } from "../../../infrastructure/lynxStack";
 
@@ -43,25 +43,41 @@ const createUserOrSignIn = async (
     return await oauthLogin(idKeyFromIdType(type), id, args.email, args.userData);
 };
 
-export const verifyToken = async (type: OAuthType, id: string, token: string) => {
-    switch (type) {
-        case "APPLE":
-            return await verifyAppleToken(id, token);
-        case "GOOGLE":
-            return await verifyGoogleToken(id, token);
-        case "FACEBOOK":
-            return await verifyFacebookToken(id, token);
+const verifyToken = async (type: OAuthType, id: string, token: string) => {
+    try {
+        const valid = await isValidToken(type, id, token);
+        if (!valid) {
+            throw new GraphQLError("Invalid OAuth Token Provided", {
+                extensions: { code: BAD_REQUEST, id, token }
+            });
+        }
+    } catch (err: unknown) {
+        console.log(err);
+        throw new GraphQLError("Failure Validating OAuth Token", {
+            extensions: { code: INTERNAL_SERVER_ERROR, id, token }
+        });
     }
 };
 
-const verifyAppleToken = async (id: string, token: string) => {
+const isValidToken = async (type: OAuthType, id: string, token: string) => {
+    switch (type) {
+        case "APPLE":
+            return await isValidAppleToken(id, token);
+        case "GOOGLE":
+            return await isValidGoogleToken(id, token);
+        case "FACEBOOK":
+            return await isValidFacebookToken(id, token);
+    }
+};
+
+const isValidAppleToken = async (id: string, token: string) => {
     const { sub } = await AppleSignIn.verifyIdToken(token, {
         audience: process.env.APPLE_CLIENT_ID
     });
     return sub === id;
 };
 
-const verifyGoogleToken = async (id: string, token: string) => {
+const isValidGoogleToken = async (id: string, token: string) => {
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
     const ticket = await client.verifyIdToken({
         idToken: token,
@@ -70,7 +86,7 @@ const verifyGoogleToken = async (id: string, token: string) => {
     return ticket.getUserId() === id;
 };
 
-const verifyFacebookToken = async (id: string, token: string) => {
+const isValidFacebookToken = async (id: string, token: string): Promise<boolean> => {
     const debugTokenURL = "https://graph.facebook.com/debug_token";
     const queryParams = new URLSearchParams({
         input_token: token,
