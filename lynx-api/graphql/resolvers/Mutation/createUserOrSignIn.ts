@@ -108,9 +108,10 @@ const isValidFacebookToken = async (id: string, token: string): Promise<boolean>
         input_token: token,
         access_token: `${process.env.FACEBOOK_CLIENT_ID}|${process.env.FACEBOOK_CLIENT_SECRET}`
     });
-    const response = await axios.get(`${debugTokenURL}?${queryParams.toString()}`);
-    const responseData = response.data as FacebookData;
-    return responseData.data.is_valid && responseData.data.user_id === id;
+    const verificationURL = `${debugTokenURL}?${queryParams.toString()}`;
+    console.log(`Using Verification URL ${verificationURL}`);
+    const { data: facebookData }: { data: FacebookData } = await axios.get(verificationURL);
+    return facebookData.data.is_valid && facebookData.data.user_id === id;
 };
 
 export const idKeyFromIdType = (idType: OAuthType) => {
