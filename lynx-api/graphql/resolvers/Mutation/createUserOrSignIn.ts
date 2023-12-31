@@ -145,21 +145,30 @@ const oauthLogin = async (
             console.error(`${errorMessage}. Provided email: ${email}, userData: ${userData}`);
             throw new GraphQLError(errorMessage, { extensions: { code: BAD_REQUEST, id, email } });
         }
-        const lynxAppId = uuid();
-        const validatedInvite = false;
-        await putItem(USERS_TABLE, {
-            id: lynxAppId,
-            [idFieldName]: id,
-            validatedInvite,
-            email,
-            ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
-        });
+        const userId = await createNewUser(idFieldName, id, email, userData);
         return {
-            token: generateToken(lynxAppId),
+            token: generateToken(userId),
             expiryDate: oneHourFromNow,
-            validatedInvite
+            validatedInvite: false
         };
     }
+};
+
+const createNewUser = async (
+    idFieldName: string,
+    id: string,
+    email: string,
+    userData: { key: string; value: string }[]
+) => {
+    const userId = uuid();
+    await putItem(USERS_TABLE, {
+        id: userId,
+        [idFieldName]: id,
+        validatedInvite: false,
+        email,
+        ...Object.assign({}, ...userData.map((item) => ({ [item.key]: item.value })))
+    });
+    return userId;
 };
 
 export default createUserOrSignIn;
