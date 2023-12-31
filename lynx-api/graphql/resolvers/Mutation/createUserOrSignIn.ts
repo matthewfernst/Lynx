@@ -20,7 +20,7 @@ interface Args {
         token: string;
     };
     email?: string;
-    userData: {
+    userData?: {
         key: string;
         value: string;
     }[];
@@ -142,7 +142,7 @@ const oauthLogin = async (
     } else {
         if (!email || !userData) {
             throw new GraphQLError("Must Provide Email And UserData On Account Creation", {
-                extensions: { code: BAD_REQUEST }
+                extensions: { code: BAD_REQUEST, id, email }
             });
         }
         const lynxAppId = uuid();
