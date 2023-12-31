@@ -24,6 +24,7 @@ struct LoginView: View {
     @State private var isSigningIn = false
     
     // Aniamtion States
+    @State private var moveInLogo = false
     @State private var moveInApple = false
     @State private var moveInGoogle = false
     @State private var moveInFacebook = false
@@ -58,13 +59,16 @@ struct LoginView: View {
             .interactiveDismissDisabled()
         })
         .onAppear {
-            withAnimation(.easeInOut(duration: 0.5).delay(0.4)) {
+            withAnimation(.easeInOut(duration: 1)) {
+                moveInLogo = true
+            }
+            withAnimation(.easeInOut(duration: 0.45).delay(0.3)) {
                 moveInApple = true
             }
-            withAnimation(.easeInOut(duration: 0.5).delay(0.55)) {
+            withAnimation(.easeInOut(duration: 0.45).delay(0.45)) {
                 moveInGoogle = true
             }
-            withAnimation(.easeInOut(duration: 0.5).delay(0.7)) {
+            withAnimation(.easeInOut(duration: 0.45).delay(0.6)) {
                 moveInFacebook = true
             }
         }
@@ -214,6 +218,7 @@ struct LoginView: View {
                 Image("LynxLogo")
                     .resizable()
                     .scaledToFit()
+                    .opacity(moveInLogo ? 1 : 0)
                     .frame(width: Constants.Logo.width)
                     .position(
                         x: geometry.size.width / 10 - Constants.Logo.xOffset,
