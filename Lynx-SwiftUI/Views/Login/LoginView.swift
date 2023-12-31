@@ -18,7 +18,6 @@ struct LoginView: View {
     private var googleSignInHandler = GoogleSignInHandler()
     private var facebookSignInHandler = FacebookSignInHandler()
     
-    @State private var goToHome = false
     @State private var showSignInError = false
     @State private var showInvitationSheet = false
     @State private var isSigningIn = false
@@ -50,7 +49,7 @@ struct LoginView: View {
                 loginHandler.loginUser(profileManager: profileManager) { result in
                     switch result {
                     case .success(_):
-                        goToHome = true
+                        profileManager.update(loginWith: true)
                     case .failure(_):
                         showSignInError = true
                     }
@@ -72,7 +71,6 @@ struct LoginView: View {
                 moveInFacebook = true
             }
         }
-        .fullScreenCover(isPresented: $goToHome, content: HomeView.init) // TODO: Better transition!
     }
     
     // MARK: - Views
@@ -107,7 +105,6 @@ struct LoginView: View {
                     profileManager: profileManager,
                     withProfileAttributes: attributes,
                     oauthToken: oauthToken,
-                    goToHome: $goToHome,
                     showInvitationSheet: $showInvitationSheet,
                     showSignInError: $showSignInError
                 )
@@ -130,7 +127,6 @@ struct LoginView: View {
                     profileManager: profileManager,
                     withProfileAttributes: attributes,
                     oauthToken: oauthToken,
-                    goToHome: $goToHome,
                     showInvitationSheet: $showInvitationSheet,
                     showSignInError: $showSignInError
                 )
@@ -148,7 +144,6 @@ struct LoginView: View {
                     profileManager: profileManager,
                     withProfileAttributes: attributes,
                     oauthToken: oauthToken,
-                    goToHome: $goToHome,
                     showInvitationSheet: $showInvitationSheet,
                     showSignInError: $showSignInError
                 )

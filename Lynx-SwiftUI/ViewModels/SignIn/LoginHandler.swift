@@ -18,14 +18,12 @@ class LoginHandler {
         profileManager: ProfileManager,
         withProfileAttributes attributes: ProfileAttributes,
         oauthToken: String,
-        goToHome: Binding<Bool>,
         showInvitationSheet: Binding<Bool>,
         showSignInError: Binding<Bool>
     ) {
         
 #if DEBUG
         profileManager.update(newProfileWith: Profile.debugProfile)
-        goToHome.wrappedValue = true
 #else
         ApolloLynxClient.loginOrCreateUser(
             id: attributes.id,
@@ -44,7 +42,6 @@ class LoginHandler {
                         switch result {
                         case .success(_):
                             profileManager.update(loginWith: true)
-                            goToHome.wrappedValue = true
                         case .failure(_):
                             showSignInError.wrappedValue = true
                         }
@@ -60,7 +57,10 @@ class LoginHandler {
 #endif
     }
     
-    func loginUser(profileManager: ProfileManager, completion: @escaping (Result<Bool, Error>) -> Void) {
+    func loginUser(
+        profileManager: ProfileManager,
+        completion: @escaping (Result<Bool, Error>) -> Void
+    ) {
         ApolloLynxClient.getProfileInformation { result in
             switch result {
             case .success(let profileAttributes):
@@ -80,8 +80,7 @@ class LoginHandler {
     private func signInUser(
         profileManager: ProfileManager,
         profileAttributes: ProfileAttributes,
-        completion: @escaping (Result<Bool,
-        Error>) -> Void
+        completion: @escaping (Result<Bool, Error>) -> Void
     ) {
         profileManager.update(
             newProfileWith: Profile(
@@ -109,6 +108,6 @@ class LoginHandler {
         }
         ApolloLynxClient.clearCache()
         BookmarkManager.shared.removeAllBookmarks()
-        ProfileManager.shared.update(loginWith: false) // Keychain clean up deletes profile ¯\_(ツ)_/¯
+        ProfileManager.shared.update(loginWith: false) // Keychain clean up deletes profile 🤷‍♂️
     }
 }
