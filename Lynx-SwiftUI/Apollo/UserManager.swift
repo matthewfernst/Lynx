@@ -55,7 +55,7 @@ class UserManager {
                 email: profile.email,
                 firstName: profile.firstName,
                 lastName: profile.lastName,
-                profilePictureUrl: profile.profilePictureURL
+                profilePictureURL: profile.profilePictureURL
             ) { result in
                 switch result {
                 case .success:

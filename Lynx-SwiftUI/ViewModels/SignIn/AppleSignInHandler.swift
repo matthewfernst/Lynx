@@ -13,17 +13,11 @@ import OSLog
 class AppleSignInHandler {
     
     func onCompletion(
-        _ result: Result<ASAuthorization,
-        Error>,
+        _ result: Result<ASAuthorization, Error>,
+        isSigningIn: Binding<Bool>,
         showErrorSigningIn: Binding<Bool>,
-        completion: @escaping (ProfileAttributes,
-        String) -> Void
+        completion: @escaping (ProfileAttributes, String) -> Void
     ) {
-#if DEBUG
-        completion(
-            ProfileAttributes( id: "123456", oauthType: OAuthType.apple.rawValue), "1234"
-        )
-#endif
         switch result {
         case .success(let authorization):
             switch authorization.credential {
@@ -35,6 +29,7 @@ class AppleSignInHandler {
                 }
                 
                 Logger.appleSignInHandler.info("Successfully authorized Apple ID credentials.")
+
                 completion(
                     .init(
                         id: appleIDCredential.user,
@@ -51,8 +46,13 @@ class AppleSignInHandler {
                 Logger.appleSignInHandler.error("Failed to authorize Apple ID Credential.")
             }
         case .failure(let error):
-            showErrorSigningIn.wrappedValue = true
-            Logger.appleSignInHandler.error("Failed to authorize request: \(error)")
+            if (error as NSError).code == 1001 { // Sign in cancelled
+                isSigningIn.wrappedValue = false
+            } else {
+                showErrorSigningIn.wrappedValue = true
+                Logger.appleSignInHandler.error("Failed to authorize request: \(error)")
+            }
+            
         }
     }
 }

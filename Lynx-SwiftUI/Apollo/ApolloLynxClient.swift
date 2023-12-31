@@ -135,7 +135,7 @@ class ApolloLynxClient {
                     profilePictureURL: pictureURL
                 )
                 
-                Logger.apollo.debug("ProfileAttributes being returned:\n \(profileAttributes.debugDescription)")
+                Logger.apollo.debug("ProfileAttributes being returned:\n\(profileAttributes.debugDescription)")
                 completion(.success(profileAttributes))
                 
             case .failure(let error):
@@ -171,7 +171,7 @@ class ApolloLynxClient {
         email: String?,
         firstName: String?,
         lastName: String?,
-        profilePictureUrl: URL?,
+        profilePictureURL: URL?,
         completion: @escaping (Result<Bool,
         Error>) -> Void
     ) {
@@ -183,17 +183,22 @@ class ApolloLynxClient {
         Logger.apollo.debug("                         email              -> \(email ?? "nil")")
         Logger.apollo.debug("                         firstName          -> \(firstName ?? "nil")")
         Logger.apollo.debug("                         lastName           -> \(lastName ?? "nil")")
-        Logger.apollo.debug("                         profilePictureUrl  -> \(profilePictureUrl?.absoluteString ?? "nil")")
+        Logger.apollo.debug("                         profilePictureUrl  -> \(profilePictureURL?.absoluteString ?? "nil")")
 
         
         var userData: [ApolloGeneratedGraphQL.UserDataPair] = []
         var userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.UserDataPair]>(nilLiteral: ())
         
-        if let firstName = firstName, let lastName = lastName, let profilePictureUrl = profilePictureUrl {
+        // Dumb code. Would rather use compactMap but Apollo forces you to explicitly say the userData's each element 🤷‍♂️
+        if let firstName = firstName, let lastName = lastName {
             userData.append(ApolloGeneratedGraphQL.UserDataPair(key: "firstName", value: firstName))
             userData.append(ApolloGeneratedGraphQL.UserDataPair(key: "lastName", value: lastName))
-            userData.append(ApolloGeneratedGraphQL.UserDataPair(key: "profilePictureUrl", value: profilePictureUrl.absoluteString))
-            userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.UserDataPair]>(arrayLiteral: userData[0], userData[1], userData[2])
+            if let profilePictureURL = profilePictureURL {
+                userData.append(ApolloGeneratedGraphQL.UserDataPair(key: "profilePictureUrl", value: profilePictureURL.absoluteString))
+                userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.UserDataPair]>(arrayLiteral: userData[0], userData[1], userData[2])
+            } else {
+                userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.UserDataPair]>(arrayLiteral: userData[0], userData[1])
+            }
         }
         
         let type = GraphQLEnum<ApolloGeneratedGraphQL.OAuthType>(rawValue: oauthType)
@@ -219,7 +224,7 @@ class ApolloLynxClient {
                 }
                 
                 let authorizationToken = data.token
-                Logger.apollo.debug("OUR TOKEN ->                 \(authorizationToken)")
+                Logger.apollo.debug("LYNX TOKEN ->                 \(authorizationToken)")
                 guard let expiryInMilliseconds = Double(data.expiryDate) else {
                     Logger.apollo.error("Could not convert expiryDate to Double.")
                     return

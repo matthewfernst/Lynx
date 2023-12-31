@@ -89,14 +89,16 @@ struct LoginView: View {
     
     private var signInWithAppleButton: some View {
         SignInWithAppleButton(.signIn) { request in
+            request.requestedScopes = [.fullName, .email]
+        }  onCompletion: { result in
             withAnimation {
                 isSigningIn = true
             }
-            request.requestedScopes = [.fullName, .email]
-            
-        }  onCompletion: { result in
-            print("APPLE SIGN IN")
-            appleSignInHandler.onCompletion(result, showErrorSigningIn: $showSignInError) { attributes, oauthToken in
+            appleSignInHandler.onCompletion(
+                result,
+                isSigningIn: $isSigningIn,
+                showErrorSigningIn: $showSignInError
+            ) { attributes, oauthToken in
                 loginHandler.commonSignIn(
                     profileManager: profileManager,
                     withProfileAttributes: attributes,

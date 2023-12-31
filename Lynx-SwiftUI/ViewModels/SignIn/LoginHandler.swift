@@ -34,7 +34,7 @@ class LoginHandler {
             email: attributes.email,
             firstName: attributes.firstName,
             lastName: attributes.lastName,
-            profilePictureUrl: attributes.profilePictureURL
+            profilePictureURL: attributes.profilePictureURL
         ) { result in
             switch result {
             case .success(let validatedInvite):

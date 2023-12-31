@@ -8,7 +8,7 @@
 import SwiftUI
 import OSLog
 
-@Observable final class FolderConnectionHandler: ObservableObject {
+@Observable final class FolderConnectionHandler {
     var errorAlert: Alert? = nil {
         didSet {
             showError = true
