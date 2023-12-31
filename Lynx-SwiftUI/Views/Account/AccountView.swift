@@ -57,8 +57,8 @@ struct AccountView: View {
     
     private var profileInformation: some View {
         NavigationLink(destination: EditProfileView(profileManager: profileManager)) {
-                if let profilePic = profileManager.profilePicture {
-                    profilePic
+                if let profilePicture = profileManager.profilePicture {
+                    profilePicture
                         .resizable()
                         .scaledToFill()
                         .clipShape(Circle())
@@ -67,8 +67,7 @@ struct AccountView: View {
                             height: Constants.ProfileInformation.imageWidthHeight
                         )
                 } else {
-                    ProgressView()
-                        .padding()
+                    ProgressView().padding()
                 }
                 VStack(alignment: .leading) {
                     Text(profileManager.profile!.name)

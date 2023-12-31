@@ -25,7 +25,6 @@ struct EditProfileView: View {
     
     @State private var showSavingChanges = false
     
-//    @State private var goToLogin = false
     @State private var showDeleteAccountConfirmation = false
     @State private var showFailedToDeleteAccount = false
     @State private var showMergeAccountsNotAvailable = false
@@ -109,7 +108,6 @@ struct EditProfileView: View {
             }
         }
         .disabled(showSavingChanges)
-//        .fullScreenCover(isPresented: $goToLogin, content: LoginView.init)
     }
     
     private var changeProfilePicture: some View {
@@ -121,15 +119,15 @@ struct EditProfileView: View {
                     .clipShape(Circle())
                     .frame(maxWidth: Constants.profilePictureWidth)
             } else {
-                AsyncImage(url: profileManager.profile?.profilePictureURL) { image in
-                    image
+                if let profilePicture = profileManager.profilePicture {
+                    profilePicture
                         .resizable()
                         .scaledToFit()
                         .clipShape(Circle())
-                } placeholder: {
-                    ProgressView()
+                        .frame(maxWidth: Constants.profilePictureWidth)
+                } else {
+                    ProgressView().padding()
                 }
-                .frame(maxWidth: Constants.profilePictureWidth)
             }
             PhotosPicker("Change Profile Picture", selection: $profilePictureItem)
                 .buttonStyle(.borderedProminent)
