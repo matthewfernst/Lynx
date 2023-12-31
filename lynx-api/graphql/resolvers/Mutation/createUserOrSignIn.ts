@@ -79,7 +79,7 @@ const isValidToken = async (type: OAuthType, id: string, token: string) => {
                 return await isValidFacebookToken(id, token);
         }
     } catch (err: unknown) {
-        console.log(err);
+        console.error(err);
         throw new GraphQLError("Failure Validating OAuth Token", {
             extensions: { code: INTERNAL_SERVER_ERROR, id, token }
         });
@@ -141,9 +141,9 @@ const oauthLogin = async (
         };
     } else {
         if (!email || !userData) {
-            throw new GraphQLError("Must Provide Email And UserData On Account Creation", {
-                extensions: { code: BAD_REQUEST, id, email }
-            });
+            const errorMessage = "Must Provide Email And UserData On Account Creation";
+            console.error(`${errorMessage}. Provided email: ${email}, userData: ${userData}`);
+            throw new GraphQLError(errorMessage, { extensions: { code: BAD_REQUEST, id, email } });
         }
         const lynxAppId = uuid();
         const validatedInvite = false;

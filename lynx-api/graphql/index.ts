@@ -31,7 +31,7 @@ const server = new ApolloServer<Context>({
             else console.error(err);
         }
         if (process.env.IS_OFFLINE) {
-            console.log(err);
+            console.error(err);
         }
         return err;
     }
