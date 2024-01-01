@@ -65,7 +65,7 @@ struct AutoUploadView: View {
                 Image(systemName: "checkmark.circle.fill")
                     .resizable()
                     .frame(width: 25, height: 25)
-                    .foregroundColor(.lynx)
+                    .foregroundColor(.blue)
                     .transition(.scale)
             } else {
                 ZStack {
@@ -80,7 +80,7 @@ struct AutoUploadView: View {
                             style: StrokeStyle(lineWidth: Constants.CircularProgress.lineWidth,
                             lineCap: .round,
                             lineJoin: .round))
-                        .foregroundColor(Color.lynx)
+                        .foregroundColor(.blue)
                         .rotationEffect(Constants.CircularProgress.rotationAngle)
                 }
                 .frame(

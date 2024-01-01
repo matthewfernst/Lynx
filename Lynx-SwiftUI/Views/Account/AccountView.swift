@@ -314,7 +314,6 @@ extension AccountView {
     /// Delegate for view controller as `MFMessageComposeViewControllerDelegate`
     private class MessageDelegate: NSObject, MFMessageComposeViewControllerDelegate {
         func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
-            // Customize here
             controller.dismiss(animated: true)
         }
 
@@ -322,31 +321,40 @@ extension AccountView {
 
     /// Present an message compose view controller modally in UIKit environment
     private func presentMessageCompose() {
-        // TODO: Hook up to Apollo, update 'errorAlertMessage'
-        let message = """
-                      \(profileManager.profile!.name) has shared an invitation key to Lynx. Open the app and enter the key below. This invitation key will expire in 24 hours.
-                      
-                      Invitation Key: 123456
-                      """
-        
-        copyMessageText = message
-        guard MFMessageComposeViewController.canSendText() else {
-            messagesAlertBody = "We were unable to open the Messages app. Please try again or copy the invitation key."
-            showMessagesNotAvailable = true
-            return
+        let failureMessage = "We were unable to open the Messages app. Please try again or copy the invitation key."
+        ApolloLynxClient.createInviteKey { result in
+            switch result {
+            case .success(let inviteKey):
+                let message = """
+                          \(profileManager.profile!.name) has shared an invitation key to Lynx. Open the app and enter the key below. This invitation key will expire in 24 hours.
+                          
+                          Invitation Key: \(inviteKey)
+                          """
+                
+                copyMessageText = message
+                guard MFMessageComposeViewController.canSendText() else {
+                    messagesAlertBody = failureMessage
+                    showMessagesNotAvailable = true
+                    return
+                }
+                
+                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+                let window = windowScene?.windows.first
+                let vc = window?.rootViewController
+                
+                let composeVC = MFMessageComposeViewController()
+                composeVC.messageComposeDelegate = messageComposeDelegate
+                
+                
+                composeVC.body = message
+                
+                vc?.present(composeVC, animated: true)
+                
+            case .failure(_):
+                messagesAlertBody = failureMessage
+                showMessagesNotAvailable = true
+            }
         }
-        
-        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        let window = windowScene?.windows.first
-        let vc = window?.rootViewController
-
-        let composeVC = MFMessageComposeViewController()
-        composeVC.messageComposeDelegate = messageComposeDelegate
-
-
-        composeVC.body = message
-        
-        vc?.present(composeVC, animated: true)
     }
 }
 
