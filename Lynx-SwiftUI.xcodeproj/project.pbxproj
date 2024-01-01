@@ -107,6 +107,9 @@
 		65B39A652B13E61100948C9D /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B39A642B13E61100948C9D /* ProfileManager.swift */; };
 		65B39A672B13FD0500948C9D /* LogbookStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B39A662B13FD0500948C9D /* LogbookStats.swift */; };
 		65D59FE42B2ECE16008E3A2B /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D59FE32B2ECE16008E3A2B /* KeychainManager.swift */; };
+		65D958962B425624000E3013 /* HowToUpload.gif in Resources */ = {isa = PBXBuildFile; fileRef = 65D958952B425624000E3013 /* HowToUpload.gif */; };
+		65D958992B425690000E3013 /* GifView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D958982B425690000E3013 /* GifView.swift */; };
+		65D9589C2B425734000E3013 /* FLAnimatedImage in Frameworks */ = {isa = PBXBuildFile; productRef = 65D9589B2B425734000E3013 /* FLAnimatedImage */; };
 		65F6CFD62B12EA2300E94E40 /* LoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F6CFD52B12EA2300E94E40 /* LoginHandler.swift */; };
 		65F6CFDA2B13020300E94E40 /* GoogleSignInHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F6CFD92B13020300E94E40 /* GoogleSignInHandler.swift */; };
 /* End PBXBuildFile section */
@@ -208,6 +211,8 @@
 		65B39A642B13E61100948C9D /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		65B39A662B13FD0500948C9D /* LogbookStats.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogbookStats.swift; sourceTree = "<group>"; };
 		65D59FE32B2ECE16008E3A2B /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		65D958952B425624000E3013 /* HowToUpload.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = HowToUpload.gif; sourceTree = "<group>"; };
+		65D958982B425690000E3013 /* GifView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifView.swift; sourceTree = "<group>"; };
 		65F6CFD52B12EA2300E94E40 /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
 		65F6CFD92B13020300E94E40 /* GoogleSignInHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInHandler.swift; sourceTree = "<group>"; };
 		65F6CFDB2B1305F300E94E40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -220,6 +225,7 @@
 			files = (
 				650041A72B3FDEC200122C77 /* FacebookLogin in Frameworks */,
 				650041A32B3FDEC200122C77 /* FacebookCore in Frameworks */,
+				65D9589C2B425734000E3013 /* FLAnimatedImage in Frameworks */,
 				65B35F2B2B11BEA1002E99E4 /* GoogleSignInSwift in Frameworks */,
 				650041A12B3FDEC200122C77 /* FacebookBasics in Frameworks */,
 				65B35F352B11BFE2002E99E4 /* Apollo in Frameworks */,
@@ -382,6 +388,7 @@
 		65B35E8E2B118C17002E99E4 /* Lynx-SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				65D958952B425624000E3013 /* HowToUpload.gif */,
 				6573BA1C2B28312000381085 /* Lynx-SwiftUI.entitlements */,
 				65F6CFDB2B1305F300E94E40 /* Info.plist */,
 				65B35EB82B11BE0B002E99E4 /* Apollo */,
@@ -423,6 +430,7 @@
 		65B35E9E2B1192F3002E99E4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				65D958972B425673000E3013 /* Misc */,
 				65B35EB32B11AEA8002E99E4 /* Login */,
 				65B35EA82B1193D2002E99E4 /* Logbook */,
 				65B35EA92B1193E6002E99E4 /* Leaderboard */,
@@ -559,6 +567,14 @@
 			path = SignIn;
 			sourceTree = "<group>";
 		};
+		65D958972B425673000E3013 /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				65D958982B425690000E3013 /* GifView.swift */,
+			);
+			path = Misc;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -582,6 +598,7 @@
 				650041A02B3FDEC200122C77 /* FacebookBasics */,
 				650041A22B3FDEC200122C77 /* FacebookCore */,
 				650041A62B3FDEC200122C77 /* FacebookLogin */,
+				65D9589B2B425734000E3013 /* FLAnimatedImage */,
 			);
 			productName = "Lynx-SwiftUI";
 			productReference = 65B35E8C2B118C17002E99E4 /* Lynx-SwiftUI.app */;
@@ -616,6 +633,7 @@
 				65B35F332B11BFE2002E99E4 /* XCRemoteSwiftPackageReference "apollo-ios" */,
 				652733E52B22D4F40081B2E5 /* XCRemoteSwiftPackageReference "TOCropViewController" */,
 				6500419D2B3FDEC200122C77 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+				65D9589A2B425734000E3013 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */,
 			);
 			productRefGroup = 65B35E8D2B118C17002E99E4 /* Products */;
 			projectDirPath = "";
@@ -648,6 +666,7 @@
 				65B35F052B11BE0C002E99E4 /* GetUploadedLogs.graphql in Resources */,
 				65B35F012B11BE0C002E99E4 /* GetProfileInformation.graphql in Resources */,
 				65B35EFE2B11BE0C002E99E4 /* LoginOrCreateUser.graphql in Resources */,
+				65D958962B425624000E3013 /* HowToUpload.gif in Resources */,
 				659FAEE52B3748770027E795 /* GetSpecificLeaderboard.graphql in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -660,6 +679,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				65B35EF22B11BE0B002E99E4 /* ApolloLynxClient.swift in Sources */,
+				65D958992B425690000E3013 /* GifView.swift in Sources */,
 				65B35EA52B1193C1002E99E4 /* LeaderboardView.swift in Sources */,
 				65B35EF62B11BE0B002E99E4 /* UserManagementInterceptor.swift in Sources */,
 				653404952B257E7700614C59 /* AllLeadersForCategoryView.swift in Sources */,
@@ -984,6 +1004,14 @@
 				version = 1.1.2;
 			};
 		};
+		65D9589A2B425734000E3013 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Flipboard/FLAnimatedImage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.17;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1016,6 +1044,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 65B35F332B11BFE2002E99E4 /* XCRemoteSwiftPackageReference "apollo-ios" */;
 			productName = Apollo;
+		};
+		65D9589B2B425734000E3013 /* FLAnimatedImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65D9589A2B425734000E3013 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */;
+			productName = FLAnimatedImage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

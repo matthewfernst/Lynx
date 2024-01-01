@@ -56,11 +56,12 @@ struct FolderConnectionView: View {
             Text(Constants.howToUploadInformation)
                 .multilineTextAlignment(.center)
                 .frame(maxHeight: .infinity)
-            Image("StepsToUpload")
-                .resizable()
-                .scaledToFill()
+            GifView(fileName: "HowToUpload")
+                .frame(
+                    width: Constants.Gif.width,
+                    height: Constants.Gif.height
+                )
                 .padding()
-                .frame(maxHeight: .infinity)
             Button("Continue") {
                 showDocumentPicker = true
             }
@@ -74,6 +75,10 @@ struct FolderConnectionView: View {
         static let howToUploadInformation = """
                                             To upload, please follow the instructions illustrated below. When you are ready, click the 'Continue' button and select the correct directory
                                             """
+        struct Gif {
+            static let width: CGFloat = 300
+            static let height: CGFloat = 550
+        }
     }
 }
 
