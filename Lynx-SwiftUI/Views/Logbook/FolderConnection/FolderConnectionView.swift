@@ -74,13 +74,14 @@ struct FolderConnectionView: View {
                     playerHandler.player.seek(to: .zero)
                 }
             
-            if playerHandler.videoDone {
-                Button("Continue") {
-                    showDocumentPicker = true
-                }
-                .buttonStyle(.borderedProminent)
-                .frame(maxHeight: .infinity)
+            
+            Button("Continue") {
+                showDocumentPicker = true
             }
+            .buttonStyle(.borderedProminent)
+            .frame(maxHeight: .infinity)
+            .opacity(playerHandler.videoDone ? 1 : 0)
+            
         }
         .padding()
     }
