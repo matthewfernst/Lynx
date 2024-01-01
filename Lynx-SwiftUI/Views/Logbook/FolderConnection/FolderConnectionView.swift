@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVKit
 import OSLog
 
 struct FolderConnectionView: View {
@@ -14,6 +15,9 @@ struct FolderConnectionView: View {
     
     @Environment(\.dismiss) private var dismiss
     @State private var showDocumentPicker = false
+    
+    @State private var playerHandler = VideoPlayerHandler()
+    @State private var showContinueButton = false
     
     var body: some View {
         NavigationStack {
@@ -56,17 +60,27 @@ struct FolderConnectionView: View {
             Text(Constants.howToUploadInformation)
                 .multilineTextAlignment(.center)
                 .frame(maxHeight: .infinity)
-            GifView(fileName: "HowToUpload")
-                .frame(
-                    width: Constants.Gif.width,
-                    height: Constants.Gif.height
-                )
-                .padding()
-            Button("Continue") {
-                showDocumentPicker = true
+                .padding(.bottom)
+            
+            VideoPlayer(player: playerHandler.player)
+                .aspectRatio(Constants.Video.aspectRatio, contentMode: .fit)
+                .frame(height: Constants.Video.height)
+                .cornerRadius(Constants.Video.cornerRadius)
+                .onAppear {
+                    playerHandler.player.play()
+                }
+                .onDisappear {
+                    playerHandler.player.pause()
+                    playerHandler.player.seek(to: .zero)
+                }
+            
+            if playerHandler.videoDone {
+                Button("Continue") {
+                    showDocumentPicker = true
+                }
+                .buttonStyle(.borderedProminent)
+                .frame(maxHeight: .infinity)
             }
-            .buttonStyle(.borderedProminent)
-            .frame(maxHeight: .infinity)
         }
         .padding()
     }
@@ -75,9 +89,10 @@ struct FolderConnectionView: View {
         static let howToUploadInformation = """
                                             To upload, please follow the instructions illustrated below. When you are ready, click the 'Continue' button and select the correct directory
                                             """
-        struct Gif {
-            static let width: CGFloat = 300
-            static let height: CGFloat = 550
+        struct Video {
+            static let aspectRatio: CGFloat = 9/16
+            static let height: CGFloat = UIScreen.main.bounds.height / 2
+            static let cornerRadius: CGFloat = 10
         }
     }
 }

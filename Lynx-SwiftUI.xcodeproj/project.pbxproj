@@ -107,9 +107,9 @@
 		65B39A652B13E61100948C9D /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B39A642B13E61100948C9D /* ProfileManager.swift */; };
 		65B39A672B13FD0500948C9D /* LogbookStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B39A662B13FD0500948C9D /* LogbookStats.swift */; };
 		65D59FE42B2ECE16008E3A2B /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D59FE32B2ECE16008E3A2B /* KeychainManager.swift */; };
-		65D958962B425624000E3013 /* HowToUpload.gif in Resources */ = {isa = PBXBuildFile; fileRef = 65D958952B425624000E3013 /* HowToUpload.gif */; };
-		65D958992B425690000E3013 /* GifView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D958982B425690000E3013 /* GifView.swift */; };
 		65D9589C2B425734000E3013 /* FLAnimatedImage in Frameworks */ = {isa = PBXBuildFile; productRef = 65D9589B2B425734000E3013 /* FLAnimatedImage */; };
+		65D9589E2B4347E1000E3013 /* HowToUpload.mov in Resources */ = {isa = PBXBuildFile; fileRef = 65D9589D2B4347E1000E3013 /* HowToUpload.mov */; };
+		65D958A02B434F69000E3013 /* VideoPlayerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D9589F2B434F69000E3013 /* VideoPlayerHandler.swift */; };
 		65F6CFD62B12EA2300E94E40 /* LoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F6CFD52B12EA2300E94E40 /* LoginHandler.swift */; };
 		65F6CFDA2B13020300E94E40 /* GoogleSignInHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F6CFD92B13020300E94E40 /* GoogleSignInHandler.swift */; };
 /* End PBXBuildFile section */
@@ -211,8 +211,8 @@
 		65B39A642B13E61100948C9D /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		65B39A662B13FD0500948C9D /* LogbookStats.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogbookStats.swift; sourceTree = "<group>"; };
 		65D59FE32B2ECE16008E3A2B /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
-		65D958952B425624000E3013 /* HowToUpload.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = HowToUpload.gif; sourceTree = "<group>"; };
-		65D958982B425690000E3013 /* GifView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifView.swift; sourceTree = "<group>"; };
+		65D9589D2B4347E1000E3013 /* HowToUpload.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = HowToUpload.mov; sourceTree = "<group>"; };
+		65D9589F2B434F69000E3013 /* VideoPlayerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerHandler.swift; sourceTree = "<group>"; };
 		65F6CFD52B12EA2300E94E40 /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
 		65F6CFD92B13020300E94E40 /* GoogleSignInHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInHandler.swift; sourceTree = "<group>"; };
 		65F6CFDB2B1305F300E94E40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -357,6 +357,7 @@
 			children = (
 				653404992B26838D00614C59 /* FolderConnectionHandler.swift */,
 				653404A12B26CD1900614C59 /* FolderConnectionHandler+ErrorAlerts.swift */,
+				65D9589F2B434F69000E3013 /* VideoPlayerHandler.swift */,
 			);
 			path = FolderConnection;
 			sourceTree = "<group>";
@@ -388,7 +389,7 @@
 		65B35E8E2B118C17002E99E4 /* Lynx-SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				65D958952B425624000E3013 /* HowToUpload.gif */,
+				65D9589D2B4347E1000E3013 /* HowToUpload.mov */,
 				6573BA1C2B28312000381085 /* Lynx-SwiftUI.entitlements */,
 				65F6CFDB2B1305F300E94E40 /* Info.plist */,
 				65B35EB82B11BE0B002E99E4 /* Apollo */,
@@ -430,7 +431,6 @@
 		65B35E9E2B1192F3002E99E4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				65D958972B425673000E3013 /* Misc */,
 				65B35EB32B11AEA8002E99E4 /* Login */,
 				65B35EA82B1193D2002E99E4 /* Logbook */,
 				65B35EA92B1193E6002E99E4 /* Leaderboard */,
@@ -567,14 +567,6 @@
 			path = SignIn;
 			sourceTree = "<group>";
 		};
-		65D958972B425673000E3013 /* Misc */ = {
-			isa = PBXGroup;
-			children = (
-				65D958982B425690000E3013 /* GifView.swift */,
-			);
-			path = Misc;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -666,7 +658,7 @@
 				65B35F052B11BE0C002E99E4 /* GetUploadedLogs.graphql in Resources */,
 				65B35F012B11BE0C002E99E4 /* GetProfileInformation.graphql in Resources */,
 				65B35EFE2B11BE0C002E99E4 /* LoginOrCreateUser.graphql in Resources */,
-				65D958962B425624000E3013 /* HowToUpload.gif in Resources */,
+				65D9589E2B4347E1000E3013 /* HowToUpload.mov in Resources */,
 				659FAEE52B3748770027E795 /* GetSpecificLeaderboard.graphql in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -679,7 +671,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				65B35EF22B11BE0B002E99E4 /* ApolloLynxClient.swift in Sources */,
-				65D958992B425690000E3013 /* GifView.swift in Sources */,
 				65B35EA52B1193C1002E99E4 /* LeaderboardView.swift in Sources */,
 				65B35EF62B11BE0B002E99E4 /* UserManagementInterceptor.swift in Sources */,
 				653404952B257E7700614C59 /* AllLeadersForCategoryView.swift in Sources */,
@@ -691,6 +682,7 @@
 				65B35F902B11C2A0002E99E4 /* BookmarkManager.swift in Sources */,
 				65B35E902B118C17002E99E4 /* Lynx_SwiftUIApp.swift in Sources */,
 				6500416E2B3FDA1B00122C77 /* LeaderboardFields.graphql.swift in Sources */,
+				65D958A02B434F69000E3013 /* VideoPlayerHandler.swift in Sources */,
 				65B35EF42B11BE0B002E99E4 /* ResponseLoggingInterceptor.swift in Sources */,
 				6534049A2B26838D00614C59 /* FolderConnectionHandler.swift in Sources */,
 				65B35EB22B11A1C5002E99E4 /* LoginView.swift in Sources */,
