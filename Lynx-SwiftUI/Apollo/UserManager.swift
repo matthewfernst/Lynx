@@ -7,6 +7,7 @@
 
 import SwiftUI
 import GoogleSignIn
+import FBSDKLoginKit
 import OSLog
 
 class UserManager {
@@ -67,13 +68,17 @@ class UserManager {
                 }
             }
         }
-
         
-        if profile.oauthType == OAuthType.google.rawValue {
+        
+        switch OAuthType(rawValue: profile.oauthType) {
+        case .apple:
+            // TODO: Needs the backend to support this :(
+            cleanUpFailedReAuth()
+        case .google:
             GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
-                // Check if `user` exists; otherwise, do something with `error`
+                // Currently fails with simulator? But shouldn't fail on device. Needs more investigation.
                 if error != nil {
-                    Logger.userManager.error("Restore of previous Google Sign in failed with: \(error)")
+                    Logger.userManager.error("Restore of previous Google Sign In failed with: \(error)")
                     self.cleanUpFailedReAuth()
                     return
                 }
@@ -81,10 +86,24 @@ class UserManager {
                     handleLoginOrCreateUser(oauthToken: oauthToken)
                 }
             }
-        } else if profile.oauthType == OAuthType.apple.rawValue {
-            // TODO: Setup
-            handleLoginOrCreateUser(oauthToken: "1234")
-        } else {
+            
+        case .facebook:
+            // Facebook gives a 60-day life token and automatically updates when sending requests
+            // to Facebook servers. If it does expire, then we have to re login.
+            
+            AccessToken.refreshCurrentAccessToken { _, _, error in
+                if error != nil {
+                    Logger.userManager.error("Restore of previous Facebook Sign In failed with: \(error)")
+                    self.cleanUpFailedReAuth()
+                    return
+                }
+                
+                if let oauthToken = AccessToken.current?.tokenString {
+                    handleLoginOrCreateUser(oauthToken: oauthToken)
+                }
+            }
+            
+        case .none:
             self.cleanUpFailedReAuth()
             fatalError("OAuth type is not supported. Got: \(profile.oauthType)")
         }
