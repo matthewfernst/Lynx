@@ -55,9 +55,9 @@ import OSLog
         saveProfile()
     }
     
-    func update(loginWith loggedIn: Bool) {
+    func update(signInWith signedIn: Bool) {
         if let profile {
-            profile.isSignedIn = loggedIn
+            profile.isSignedIn = signedIn
         }
     }
     

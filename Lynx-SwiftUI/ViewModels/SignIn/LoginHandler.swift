@@ -41,7 +41,7 @@ class LoginHandler {
                     self.loginUser(profileManager: profileManager) { result in
                         switch result {
                         case .success(_):
-                            profileManager.update(loginWith: true)
+                            profileManager.update(signInWith: true)
                         case .failure(_):
                             showSignInError.wrappedValue = true
                         }
@@ -108,6 +108,6 @@ class LoginHandler {
         }
         ApolloLynxClient.clearCache()
         BookmarkManager.shared.removeAllBookmarks()
-        ProfileManager.shared.update(loginWith: false) // Keychain clean up deletes profile 🤷‍♂️
+        ProfileManager.shared.update(signInWith: false) // Keychain clean up deletes profile 🤷‍♂️
     }
 }

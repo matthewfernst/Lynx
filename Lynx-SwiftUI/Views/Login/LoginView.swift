@@ -49,7 +49,7 @@ struct LoginView: View {
                 loginHandler.loginUser(profileManager: profileManager) { result in
                     switch result {
                     case .success(_):
-                        profileManager.update(loginWith: true)
+                        profileManager.update(signInWith: true)
                     case .failure(_):
                         showSignInError = true
                     }

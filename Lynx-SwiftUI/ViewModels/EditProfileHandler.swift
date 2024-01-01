@@ -114,7 +114,7 @@ class EditProfileHandler {
         
         // Start the polling loop
         func poll() {
-            Logger.editProfileHandler.error("Polling attempt #\(attempts)")
+            Logger.editProfileHandler.debug("Polling attempt #\(attempts)")
             // Check if the profile picture has changed
             getDataAsync(from: newProfilePictureURL) { currentData in
                 if newData == currentData {
@@ -160,14 +160,13 @@ class EditProfileHandler {
     
     func deleteAccount(
         profileManager: ProfileManager,
-        completion: @escaping ((Result<Void,
-                                Error>) -> Void)
+        completion: @escaping (Result<Void, Error>) -> Void
     ) {
-//        ApolloLynxClient.deleteAccount(
-//            token: profileManager.profile!.oauthToken,
-//            type: .init(rawValue: profileManager.profile!.oauthType)!,
-//            completion: completion
-//        )
+        ApolloLynxClient.deleteAccount(
+            token: UserManager.shared.token!.authorizationToken,
+            type: .init(rawValue: profileManager.profile!.oauthType)!,
+            completion: completion
+        )
     }
 }
 

@@ -441,7 +441,14 @@ class ApolloLynxClient {
             case BackendCouldntDelete
         }
         
-        let deleteUserOptions = ApolloGeneratedGraphQL.DeleteUserOptions(tokensToInvalidate: GraphQLNullable<[ApolloGeneratedGraphQL.InvalidateTokenOption]>(arrayLiteral: ApolloGeneratedGraphQL.InvalidateTokenOption(token: token, type: GraphQLEnum(type))))
+        let deleteUserOptions = ApolloGeneratedGraphQL.DeleteUserOptions(
+            tokensToInvalidate: GraphQLNullable<[ApolloGeneratedGraphQL.InvalidateTokenOption]>(
+                arrayLiteral: ApolloGeneratedGraphQL.InvalidateTokenOption(
+                    token: token,
+                    type: GraphQLEnum(type)
+                )
+            )
+        )
         
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.DeleteAccountMutation(options: deleteUserOptions)) { result in
             switch result {
