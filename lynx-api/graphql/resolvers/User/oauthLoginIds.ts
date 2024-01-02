@@ -1,4 +1,4 @@
-import { OAuthType } from "../Mutation/createUserOrSignIn";
+import { OAuthType } from "../Mutation/oauthSignIn";
 import { checkIsMe } from "../../auth";
 import { DefinedUserContext } from "../../index";
 import { User } from "../../types";

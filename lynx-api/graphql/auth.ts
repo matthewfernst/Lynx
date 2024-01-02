@@ -5,14 +5,26 @@ import jwt from "jsonwebtoken";
 import { Context, DefinedUserContext } from "./index";
 import { BAD_REQUEST, FORBIDDEN, Party, UNAUTHENTICATED, User } from "./types";
 
-export function generateToken(id: string): string {
-    console.log(`Generating token for user with id ${id}`);
-    return jwt.sign({ id }, process.env.AUTH_KEY || "AUTH", { expiresIn: "6h" });
+export interface AccessToken {
+    id: string;
 }
 
-export function decryptToken(token: string): User {
-    console.log(`Decrypting token for user with token ${token}`);
-    return jwt.verify(token, process.env.AUTH_KEY || "AUTH") as User;
+export enum GrantType {
+    AUTH,
+    REFRESH
+}
+
+export function generateToken(id: string, grant_type: GrantType): string {
+    console.log(`Generating access token for user with id ${id}`);
+    const key = process.env[`${grant_type}_KEY`] || grant_type.toString();
+    const expiresIn = grant_type === GrantType.AUTH ? "6h" : undefined;
+    return jwt.sign({ id }, key, { expiresIn });
+}
+
+export function decryptToken(token: string, grant_type: GrantType): AccessToken {
+    console.log(`Decrypting access token for user with token ${token}`);
+    const key = process.env[`${grant_type}_KEY`] || grant_type.toString();
+    return jwt.verify(token, key) as AccessToken;
 }
 
 export function authenticateHTTPAccessToken(req: APIGatewayProxyEvent): string | undefined {
@@ -20,14 +32,17 @@ export function authenticateHTTPAccessToken(req: APIGatewayProxyEvent): string |
     if (!authHeader) return undefined;
 
     const token = authHeader.split(" ")[1];
-    if (!token)
+    if (!token) {
+        console.error("Authentication Token Not Specified");
         throw new GraphQLError("Authentication Token Not Specified", {
             extensions: { code: UNAUTHENTICATED }
         });
+    }
 
     try {
-        return decryptToken(token).id;
+        return decryptToken(token, GrantType.AUTH).id;
     } catch (err) {
+        console.error(err);
         throw new GraphQLError("Invalid Authentication Token", {
             extensions: { code: UNAUTHENTICATED, token }
         });

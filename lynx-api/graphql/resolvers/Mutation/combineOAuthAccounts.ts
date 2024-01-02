@@ -3,7 +3,7 @@ import { GraphQLError } from "graphql";
 import { deleteAllItems, deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { deleteObjectsInBucket } from "../../aws/s3";
-import { OAuthType, idKeyFromIdType, verifyToken } from "./createUserOrSignIn";
+import { OAuthType, idKeyFromIdType, verifyToken } from "./oauthSignIn";
 import { Context } from "../../index";
 import { BAD_REQUEST, User } from "../../types";
 import {

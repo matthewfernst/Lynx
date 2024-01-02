@@ -3,7 +3,7 @@ import axios from "axios";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { deleteAllItems, deleteItem } from "../../aws/dynamodb";
 import { deleteObjectsInBucket } from "../../aws/s3";
-import { OAuthType } from "./createUserOrSignIn";
+import { OAuthType } from "./oauthSignIn";
 import { Context } from "../../index";
 import { User } from "../../types";
 import {
@@ -15,7 +15,7 @@ import {
 
 interface Args {
     options?: {
-        tokensToInvalidate?: {
+        tokensToInvalidate: {
             token: string;
             type: OAuthType;
         }[];
@@ -48,7 +48,7 @@ const invalidateAppleToken = async (token: string) => {
     const invalidateTokenData = {
         client_id: process.env.APPLE_CLIENT_ID,
         client_secret: process.env.APPLE_CLIENT_SECRET,
-        token: token
+        token
     };
     return await axios.post("https://appleid.apple.com/auth/revoke", invalidateTokenData);
 };
