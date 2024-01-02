@@ -5,11 +5,11 @@ import { MeasurementSystem } from "../../types";
 import { LogDetailParent } from "../Log/id";
 
 interface Args {
-    system: MeasurementSystem;
+    system: keyof typeof MeasurementSystem;
 }
 
 const topSpeed = (parent: LogDetailParent, args: Args, context: Context, info: any) => {
-    if (args.system === "METRIC") {
+    if (MeasurementSystem[args.system] === MeasurementSystem.METRIC) {
         return convert(parent.topSpeed).from("m/h").to("km/h");
     }
     return parent.topSpeed;

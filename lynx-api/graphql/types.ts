@@ -59,8 +59,15 @@ export interface LogDetail {
     verticalDistance: number;
 }
 
-export type MeasurementSystem = "METRIC" | "IMPERIAL";
-export type LogDetailType = "RUN" | "LIFT";
+export enum MeasurementSystem {
+    METRIC,
+    IMPERIAL
+}
+
+export enum LogDetailType {
+    RUN,
+    LIFT
+}
 
 export interface Invite {
     id: string;

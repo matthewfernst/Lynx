@@ -17,8 +17,11 @@ export enum GrantType {
 export function generateToken(id: string, grant_type: GrantType): string {
     console.log(`Generating access token for user with id ${id}`);
     const key = process.env[`${grant_type}_KEY`] || grant_type.toString();
-    const expiresIn = grant_type === GrantType.AUTH ? "6h" : undefined;
-    return jwt.sign({ id }, key, { expiresIn });
+    return jwt.sign({ id }, key, { ...(doesGrantTypeExpire(grant_type) && { expiresIn: "6h" }) });
+}
+
+function doesGrantTypeExpire(grant_type: GrantType): boolean {
+    return grant_type === GrantType.AUTH;
 }
 
 export function decryptToken(token: string, grant_type: GrantType): AccessToken {

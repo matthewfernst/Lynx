@@ -5,11 +5,11 @@ import { MeasurementSystem } from "../../types";
 import { LogParent } from "./id";
 
 interface Args {
-    system: MeasurementSystem;
+    system: keyof typeof MeasurementSystem;
 }
 
 const verticalDistance = (parent: LogParent, args: Args, context: Context, info: any) => {
-    if (args.system === "IMPERIAL") {
+    if (MeasurementSystem[args.system] === MeasurementSystem.IMPERIAL) {
         return convert(parent.vertical).from("m").to("ft");
     }
     return parent.vertical;
