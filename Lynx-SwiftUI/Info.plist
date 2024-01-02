@@ -21,16 +21,16 @@
 			</array>
 		</dict>
 	</array>
+	<key>FacebookAdvertiserIDCollectionEnabled</key>
+	<false/>
 	<key>FacebookAppID</key>
 	<string>922142445945141</string>
+	<key>FacebookAutoLogAppEventsEnabled</key>
+	<false/>
 	<key>FacebookClientToken</key>
 	<string>50b123cabe9a1419a09febcb4dc32cfa</string>
 	<key>FacebookDisplayName</key>
 	<string>Lynx</string>
-    <key>FacebookAutoLogAppEventsEnabled</key>
-    <false/>
-    <key>FacebookAdvertiserIDCollectionEnabled</key>
-    <false/>
 	<key>GIDClientID</key>
 	<string>291262587496-vtko8nohen7j13uhtu8hed6kor5qmf73.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>
