@@ -15,8 +15,8 @@ export enum GrantType {
 }
 
 export function generateToken(id: string, grant_type: GrantType): string {
-    console.log(`Generating access token for user with id ${id}`);
-    const key = process.env[`${grant_type}_KEY`] || grant_type.toString();
+    console.log(`Generating ${grant_type} token for user ${id}`);
+    const key = process.env[`${grant_type}_KEY`] || GrantType[grant_type];
     return jwt.sign({ id }, key, { ...(doesGrantTypeExpire(grant_type) && { expiresIn: "6h" }) });
 }
 
@@ -26,7 +26,7 @@ function doesGrantTypeExpire(grant_type: GrantType): boolean {
 
 export function decryptToken(token: string, grant_type: GrantType): AccessToken {
     console.log(`Decrypting access token for user with token ${token}`);
-    const key = process.env[`${grant_type}_KEY`] || grant_type.toString();
+    const key = process.env[`${grant_type}_KEY`] || GrantType[grant_type];
     return jwt.verify(token, key) as AccessToken;
 }
 
@@ -57,7 +57,7 @@ export function checkIsMe(
     context: DefinedUserContext,
     fieldName: string | undefined = undefined
 ) {
-    if (parent.id?.toString() !== context.userId) {
+    if (parent.id !== context.userId) {
         throw new GraphQLError("Permissions Invalid For Requested Field", {
             extensions: { code: FORBIDDEN, userId: context.userId, fieldName }
         });

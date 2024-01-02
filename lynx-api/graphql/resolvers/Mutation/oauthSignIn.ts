@@ -63,7 +63,7 @@ const oauthSignIn = async (
 };
 
 export const verifyToken = async (type: OAuthType, id: string, token: string) => {
-    console.log(`Verifying ${type} Token With User ${id}`);
+    console.log(`Verifying ${OAuthType[type]} Token With User ${id}`);
     const valid = await isValidToken(type, id, token);
     if (!valid) {
         throw new GraphQLError("Invalid OAuth Token Provided", {
