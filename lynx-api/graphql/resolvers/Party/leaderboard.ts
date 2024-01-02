@@ -10,21 +10,15 @@ import { LeaderboardEntry, Party, User } from "../../types";
 import {
     LeaderboardSort,
     Timeframe,
+    leaderboardSortTypesToQueryFields,
     leaderboardTimeframeFromQueryArgument
 } from "../Query/leaderboard";
 
 interface Args {
-    sortBy: LeaderboardSort;
-    timeframe: Timeframe;
+    sortBy: keyof typeof LeaderboardSort;
+    timeframe: keyof typeof Timeframe;
     limit: number;
 }
-
-export const leaderboardSortTypesToQueryFields: { [key in LeaderboardSort]: string } = {
-    DISTANCE: "distance",
-    RUN_COUNT: "runCount",
-    TOP_SPEED: "topSpeed",
-    VERTICAL_DISTANCE: "verticalDistance"
-};
 
 const leaderboard = async (
     parent: Party,
@@ -34,8 +28,8 @@ const leaderboard = async (
 ): Promise<User[]> => {
     const usersInParty = await getUserIdsInParty(context.dataloaders.parties, parent.id);
     const leaderboardEntries = await getTimeframeRankingByIndex(
-        leaderboardSortTypesToQueryFields[args.sortBy],
-        leaderboardTimeframeFromQueryArgument(DateTime.now(), args.timeframe),
+        leaderboardSortTypesToQueryFields[LeaderboardSort[args.sortBy]],
+        leaderboardTimeframeFromQueryArgument(DateTime.now(), Timeframe[args.timeframe]),
         args.limit,
         usersInParty
     );

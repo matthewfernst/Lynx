@@ -4,7 +4,7 @@ import { DefinedUserContext } from "../../index";
 import { User } from "../../types";
 
 interface OAuthTypeCorrelation {
-    type: OAuthType;
+    type: keyof typeof OAuthType;
     id: string;
 }
 
@@ -16,9 +16,9 @@ const oauthLoginIds = (
 ): OAuthTypeCorrelation[] => {
     checkIsMe(parent, context, "oauthLoginIds");
     return [
-        parent.appleId && { type: "APPLE", id: parent.appleId },
-        parent.googleId && { type: "GOOGLE", id: parent.googleId },
-        parent.facebookId && { type: "FACEBOOK", id: parent.facebookId }
+        parent.appleId && { type: OAuthType.APPLE.toString(), id: parent.appleId },
+        parent.googleId && { type: OAuthType.GOOGLE.toString(), id: parent.googleId },
+        parent.facebookId && { type: OAuthType.FACEBOOK.toString(), id: parent.facebookId }
     ].filter(Boolean) as OAuthTypeCorrelation[];
 };
 

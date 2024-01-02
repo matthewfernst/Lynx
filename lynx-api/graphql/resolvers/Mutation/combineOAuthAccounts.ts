@@ -15,7 +15,7 @@ import {
 
 interface Args {
     combineWith: {
-        type: OAuthType;
+        type: keyof typeof OAuthType;
         id: string;
         token?: string;
     };
@@ -30,7 +30,7 @@ const combineOAuthAccounts = async (
     checkHasUserId(context);
     checkIsValidUserAndHasValidInvite(context);
     const { type, id, token } = args.combineWith;
-    const idKey = idKeyFromIdType(type);
+    const idKey = idKeyFromIdType[OAuthType[type]];
     const otherUser = (await getItemByIndex(USERS_TABLE, idKey, id)) as User;
     if (!otherUser) {
         if (!token) {
@@ -38,7 +38,7 @@ const combineOAuthAccounts = async (
                 extensions: { code: BAD_REQUEST }
             });
         }
-        await verifyToken(type, id, token);
+        await verifyToken(OAuthType[type], id, token);
         return await updateItem(USERS_TABLE, context.userId, idKey, id);
     }
     await deleteItem(USERS_TABLE, otherUser.id);

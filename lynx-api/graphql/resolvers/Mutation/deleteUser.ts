@@ -3,8 +3,8 @@ import axios from "axios";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { deleteAllItems, deleteItem } from "../../aws/dynamodb";
 import { deleteObjectsInBucket } from "../../aws/s3";
-import { OAuthType } from "./oauthSignIn";
 import { Context } from "../../index";
+import { OAuthType } from "./oauthSignIn";
 import { User } from "../../types";
 import {
     USERS_TABLE,
@@ -17,7 +17,7 @@ interface Args {
     options?: {
         tokensToInvalidate: {
             token: string;
-            type: OAuthType;
+            type: keyof typeof OAuthType;
         }[];
     };
 }
@@ -27,7 +27,7 @@ const deleteUser = async (_: any, args: Args, context: Context, info: any): Prom
     await checkIsValidUserAndHasValidInvite(context);
     if (args.options?.tokensToInvalidate) {
         args.options.tokensToInvalidate.forEach(
-            async (token) => await invalidateToken(token.type, token.token)
+            async (token) => await invalidateToken(OAuthType[token.type], token.token)
         );
     }
     console.log(`Deleting user with id ${context.userId}`);
@@ -39,7 +39,7 @@ const deleteUser = async (_: any, args: Args, context: Context, info: any): Prom
 
 const invalidateToken = async (tokenType: OAuthType, token: string) => {
     switch (tokenType) {
-        case "APPLE":
+        case OAuthType.APPLE:
             return await invalidateAppleToken(token);
     }
 };

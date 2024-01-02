@@ -7,29 +7,39 @@ import { DEPENDENCY_ERROR, LeaderboardEntry, User } from "../../types";
 import { documentClient } from "../../aws/dynamodb";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/lynxStack";
 
-export type LeaderboardSort = "DISTANCE" | "RUN_COUNT" | "TOP_SPEED" | "VERTICAL_DISTANCE";
-export type LeaderboardQueryFields = "distance" | "runCount" | "topSpeed" | "verticalDistance";
-export type Timeframe = "DAY" | "WEEK" | "MONTH" | "SEASON" | "ALL_TIME";
+export enum LeaderboardSort {
+    DISTANCE,
+    RUN_COUNT,
+    TOP_SPEED,
+    VERTICAL_DISTANCE
+}
+export enum Timeframe {
+    DAY,
+    WEEK,
+    MONTH,
+    SEASON,
+    ALL_TIME
+}
 
 interface Args {
-    sortBy: LeaderboardSort;
-    timeframe: Timeframe;
+    sortBy: keyof typeof LeaderboardSort;
+    timeframe: keyof typeof Timeframe;
     limit: number;
 }
 
 export const leaderboardSortTypesToQueryFields: {
-    [key in LeaderboardSort]: LeaderboardQueryFields;
+    [key in LeaderboardSort]: "distance" | "runCount" | "topSpeed" | "verticalDistance";
 } = {
-    DISTANCE: "distance",
-    RUN_COUNT: "runCount",
-    TOP_SPEED: "topSpeed",
-    VERTICAL_DISTANCE: "verticalDistance"
+    [LeaderboardSort.DISTANCE]: "distance",
+    [LeaderboardSort.RUN_COUNT]: "runCount",
+    [LeaderboardSort.TOP_SPEED]: "topSpeed",
+    [LeaderboardSort.VERTICAL_DISTANCE]: "verticalDistance"
 };
 
 const leaderboard = async (_: any, args: Args, context: Context, info: any): Promise<User[]> => {
     const leaderboardEntries = await getTimeframeRankingByIndex(
-        leaderboardSortTypesToQueryFields[args.sortBy],
-        leaderboardTimeframeFromQueryArgument(DateTime.now(), args.timeframe),
+        leaderboardSortTypesToQueryFields[LeaderboardSort[args.sortBy]],
+        leaderboardTimeframeFromQueryArgument(DateTime.now(), Timeframe[args.timeframe]),
         args.limit
     );
     return await Promise.all(
@@ -42,15 +52,15 @@ export const leaderboardTimeframeFromQueryArgument = (
     timeframe: Timeframe
 ): string => {
     switch (timeframe) {
-        case "DAY":
+        case Timeframe.DAY:
             return `day-${date.ordinal}`;
-        case "WEEK":
+        case Timeframe.WEEK:
             return `week-${date.weekNumber}`;
-        case "MONTH":
+        case Timeframe.MONTH:
             return `month-${date.month}`;
-        case "SEASON":
+        case Timeframe.SEASON:
             return seasonNameFromDateArgument(date);
-        case "ALL_TIME":
+        case Timeframe.ALL_TIME:
             return "all";
     }
 };

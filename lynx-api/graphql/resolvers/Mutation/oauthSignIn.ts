@@ -11,11 +11,15 @@ import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../types";
 import { getItemByIndex, putItem } from "../../aws/dynamodb";
 import { USERS_TABLE } from "../../../infrastructure/lynxStack";
 
-export type OAuthType = "APPLE" | "GOOGLE" | "FACEBOOK";
+export enum OAuthType {
+    APPLE,
+    GOOGLE,
+    FACEBOOK
+}
 
 interface Args {
     oauthLoginId: {
-        type: OAuthType;
+        type: keyof typeof OAuthType;
         id: string;
         token: string;
     };
@@ -54,8 +58,8 @@ const oauthSignIn = async (
     info: any
 ): Promise<AuthorizationToken> => {
     const { type, id, token } = args.oauthLoginId;
-    await verifyToken(type, id, token);
-    return await oauthLogin(idKeyFromIdType(type), id, args.email, args.userData);
+    await verifyToken(OAuthType[type], id, token);
+    return await oauthLogin(idKeyFromIdType[OAuthType[type]], id, args.email, args.userData);
 };
 
 export const verifyToken = async (type: OAuthType, id: string, token: string) => {
@@ -71,11 +75,11 @@ export const verifyToken = async (type: OAuthType, id: string, token: string) =>
 const isValidToken = async (type: OAuthType, id: string, token: string) => {
     try {
         switch (type) {
-            case "APPLE":
+            case OAuthType.APPLE:
                 return await isValidAppleToken(id, token);
-            case "GOOGLE":
+            case OAuthType.GOOGLE:
                 return await isValidGoogleToken(id, token);
-            case "FACEBOOK":
+            case OAuthType.FACEBOOK:
                 return await isValidFacebookToken(id, token);
         }
     } catch (err) {
@@ -114,15 +118,10 @@ const isValidFacebookToken = async (id: string, token: string): Promise<boolean>
     return facebookData.data.is_valid && facebookData.data.user_id === id;
 };
 
-export const idKeyFromIdType = (idType: OAuthType) => {
-    switch (idType) {
-        case "APPLE":
-            return "appleId";
-        case "GOOGLE":
-            return "googleId";
-        case "FACEBOOK":
-            return "facebookId";
-    }
+export const idKeyFromIdType: { [key in OAuthType]: string } = {
+    [OAuthType.APPLE]: "appleId",
+    [OAuthType.GOOGLE]: "googleId",
+    [OAuthType.FACEBOOK]: "facebookId"
 };
 
 const oauthLogin = async (

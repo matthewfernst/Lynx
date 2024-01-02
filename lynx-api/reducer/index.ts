@@ -13,7 +13,13 @@ import {
 } from "../graphql/resolvers/Query/leaderboard";
 import { LEADERBOARD_TABLE } from "../infrastructure/lynxStack";
 
-const timeframes: Timeframe[] = ["DAY", "WEEK", "MONTH", "SEASON", "ALL_TIME"];
+const timeframes = [
+    Timeframe.DAY,
+    Timeframe.WEEK,
+    Timeframe.MONTH,
+    Timeframe.SEASON,
+    Timeframe.ALL_TIME
+];
 
 export async function handler(event: S3Event) {
     for (const record of event.Records) {
@@ -57,11 +63,13 @@ const updateItem = async (
             UpdateExpression: generateUpdateExpression(timeframe, sortType),
             ExpressionAttributeNames: {
                 "#updateKey": sortType,
-                ...(timeframe !== "ALL_TIME" && { "#ttl": "ttl" })
+                ...(timeframe !== Timeframe.ALL_TIME && { "#ttl": "ttl" })
             },
             ExpressionAttributeValues: {
                 ":value": value,
-                ...(timeframe !== "ALL_TIME" && { ":ttl": getTimeToLive(endTime, timeframe) })
+                ...(timeframe !== Timeframe.ALL_TIME && {
+                    ":ttl": getTimeToLive(endTime, timeframe)
+                })
             },
             ...(isMaximumSortType(sortType) && {
                 ConditionExpression: "attribute_not_exists(#updateKey) OR #updateKey < :value"
@@ -83,7 +91,7 @@ const generateUpdateExpression = (timeframe: Timeframe, sortType: string) => {
     const updateExpression = isMaximumSortType(sortType)
         ? "SET #updateKey = :value"
         : "ADD #updateKey :value";
-    if (timeframe !== "ALL_TIME") {
+    if (timeframe !== Timeframe.ALL_TIME) {
         const setTTL = "#ttl = :ttl";
         const ttlAddition = isMaximumSortType(sortType) ? `, ${setTTL}` : ` SET ${setTTL}`;
         return `${updateExpression}${ttlAddition}`;
@@ -93,15 +101,18 @@ const generateUpdateExpression = (timeframe: Timeframe, sortType: string) => {
 
 const isMaximumSortType = (sortType: string) => sortType.includes("top");
 
-const getTimeToLive = (endTime: DateTime, timeframe: Exclude<Timeframe, "ALL_TIME">): number => {
+const getTimeToLive = (
+    endTime: DateTime,
+    timeframe: Exclude<Timeframe, Timeframe.ALL_TIME>
+): number => {
     switch (timeframe) {
-        case "DAY":
+        case Timeframe.DAY:
             return endTime.startOf("day").plus({ days: 1 }).toSeconds();
-        case "WEEK":
+        case Timeframe.WEEK:
             return endTime.startOf("week").plus({ weeks: 1 }).toSeconds();
-        case "MONTH":
+        case Timeframe.MONTH:
             return endTime.startOf("month").plus({ months: 1 }).toSeconds();
-        case "SEASON":
+        case Timeframe.SEASON:
             if (endTime.month >= 8) {
                 return endTime.startOf("year").plus({ years: 1, months: 8 }).toSeconds();
             } else {
