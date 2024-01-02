@@ -13,7 +13,7 @@ interface Parent {
 }
 
 interface Args {
-    timeframe: Timeframe;
+    timeframe: keyof typeof Timeframe;
 }
 
 const stats = async (
@@ -22,7 +22,7 @@ const stats = async (
     context: DefinedUserContext,
     info: any
 ): Promise<UserStats | undefined> => {
-    const timeframe = leaderboardTimeframeFromQueryArgument(DateTime.now(), args.timeframe);
+    const timeframe = leaderboardTimeframeFromQueryArgument(DateTime.now(), Timeframe[args.timeframe]);
     return await getUserStatsFromLeaderboard(parent.id, timeframe);
 };
 
