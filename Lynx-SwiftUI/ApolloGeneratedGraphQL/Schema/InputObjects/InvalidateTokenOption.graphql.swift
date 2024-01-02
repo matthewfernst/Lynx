@@ -12,23 +12,23 @@ public extension ApolloGeneratedGraphQL {
     }
 
     public init(
-      token: ID,
-      type: GraphQLEnum<OAuthType>
+      type: GraphQLEnum<OAuthType>,
+      token: ID
     ) {
       __data = InputDict([
-        "token": token,
-        "type": type
+        "type": type,
+        "token": token
       ])
-    }
-
-    public var token: ID {
-      get { __data["token"] }
-      set { __data["token"] = newValue }
     }
 
     public var type: GraphQLEnum<OAuthType> {
       get { __data["type"] }
       set { __data["type"] = newValue }
+    }
+
+    public var token: ID {
+      get { __data["token"] }
+      set { __data["token"] = newValue }
     }
   }
 

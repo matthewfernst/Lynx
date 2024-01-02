@@ -4,21 +4,17 @@
 @_exported import ApolloAPI
 
 public extension ApolloGeneratedGraphQL {
-  class LoginOrCreateUserMutation: GraphQLMutation {
-    public static let operationName: String = "LoginOrCreateUser"
+  class OauthSignInMutation: GraphQLMutation {
+    public static let operationName: String = "oauthSignIn"
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        mutation LoginOrCreateUser($oauthLoginId: OAuthTypeCorrelationInput!, $email: String, $userData: [UserDataPair!]) {
-          createUserOrSignIn(
-            oauthLoginId: $oauthLoginId
-            email: $email
-            userData: $userData
-          ) {
+        mutation oauthSignIn($oauthLoginId: OAuthTypeCorrelationInput!, $email: String, $userData: [UserDataPair!]) {
+          oauthSignIn(oauthLoginId: $oauthLoginId, email: $email, userData: $userData) {
             __typename
-            token
+            accessToken
             expiryDate
-            validatedInvite
+            refreshToken
           }
         }
         """#
@@ -50,33 +46,33 @@ public extension ApolloGeneratedGraphQL {
 
       public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Mutation }
       public static var __selections: [ApolloAPI.Selection] { [
-        .field("createUserOrSignIn", CreateUserOrSignIn?.self, arguments: [
+        .field("oauthSignIn", OauthSignIn?.self, arguments: [
           "oauthLoginId": .variable("oauthLoginId"),
           "email": .variable("email"),
           "userData": .variable("userData")
         ]),
       ] }
 
-      public var createUserOrSignIn: CreateUserOrSignIn? { __data["createUserOrSignIn"] }
+      public var oauthSignIn: OauthSignIn? { __data["oauthSignIn"] }
 
-      /// CreateUserOrSignIn
+      /// OauthSignIn
       ///
       /// Parent Type: `AuthorizationToken`
-      public struct CreateUserOrSignIn: ApolloGeneratedGraphQL.SelectionSet {
+      public struct OauthSignIn: ApolloGeneratedGraphQL.SelectionSet {
         public let __data: DataDict
         public init(_dataDict: DataDict) { __data = _dataDict }
 
         public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.AuthorizationToken }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("token", ApolloGeneratedGraphQL.ID.self),
+          .field("accessToken", ApolloGeneratedGraphQL.ID.self),
           .field("expiryDate", String.self),
-          .field("validatedInvite", Bool.self),
+          .field("refreshToken", ApolloGeneratedGraphQL.ID.self),
         ] }
 
-        public var token: ApolloGeneratedGraphQL.ID { __data["token"] }
+        public var accessToken: ApolloGeneratedGraphQL.ID { __data["accessToken"] }
         public var expiryDate: String { __data["expiryDate"] }
-        public var validatedInvite: Bool { __data["validatedInvite"] }
+        public var refreshToken: ApolloGeneratedGraphQL.ID { __data["refreshToken"] }
       }
     }
   }

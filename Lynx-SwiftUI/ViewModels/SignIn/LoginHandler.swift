@@ -25,7 +25,7 @@ class LoginHandler {
 #if DEBUG
         profileManager.update(newProfileWith: Profile.debugProfile)
 #else
-        ApolloLynxClient.loginOrCreateUser(
+        ApolloLynxClient.oauthSignIn(
             id: attributes.id,
             oauthType: attributes.oauthType,
             oauthToken: oauthToken,
@@ -35,20 +35,29 @@ class LoginHandler {
             profilePictureURL: attributes.profilePictureURL
         ) { result in
             switch result {
-            case .success(let validatedInvite):
+            case .success(_):
                 Logger.loginHandler.info("Authorization Token successfully received.")
-                if validatedInvite {
-                    self.loginUser(profileManager: profileManager) { result in
-                        switch result {
-                        case .success(_):
-                            profileManager.update(signInWith: true)
-                        case .failure(_):
-                            showSignInError.wrappedValue = true
+                ApolloLynxClient.hasValidatedInviteKey { keyResult in
+                    switch keyResult {
+                    case .success(let validatedInvite):
+                        if validatedInvite {
+                            self.loginUser(profileManager: profileManager) { result in
+                                switch result {
+                                case .success(_):
+                                    profileManager.update(signInWith: true)
+                                case .failure(_):
+                                    showSignInError.wrappedValue = true
+                                }
+                            }
+                        } else { // Show Invitation Sheet
+                            showInvitationSheet.wrappedValue = true
                         }
+                    case .failure(_):
+                        // TODO: Say fail of querying?
+                        showSignInError.wrappedValue = true
                     }
-                } else { // Show Invitation Sheet
-                    showInvitationSheet.wrappedValue = true
                 }
+
             case .failure:
                 showSignInError.wrappedValue = true
             }
@@ -102,7 +111,7 @@ class LoginHandler {
     }
     
     static func signOut() {
-        UserManager.shared.token = nil
+        UserManager.shared.lynxToken = nil
         if ProfileManager.shared.profile?.oauthType == OAuthType.google.rawValue {
             GIDSignIn.sharedInstance.signOut()
         }

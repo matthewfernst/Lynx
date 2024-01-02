@@ -12,14 +12,14 @@ public extension ApolloGeneratedGraphQL {
     }
 
     public init(
-      tokensToInvalidate: GraphQLNullable<[InvalidateTokenOption]> = nil
+      tokensToInvalidate: [InvalidateTokenOption]
     ) {
       __data = InputDict([
         "tokensToInvalidate": tokensToInvalidate
       ])
     }
 
-    public var tokensToInvalidate: GraphQLNullable<[InvalidateTokenOption]> {
+    public var tokensToInvalidate: [InvalidateTokenOption] {
       get { __data["tokensToInvalidate"] }
       set { __data["tokensToInvalidate"] = newValue }
     }

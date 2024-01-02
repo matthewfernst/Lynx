@@ -87,9 +87,9 @@ enum Timeframe {
 }
 
 type AuthorizationToken {
-    token: ID!
+    accessToken: ID!
     expiryDate: String!
-    validatedInvite: Boolean!
+    refreshToken: ID!
 }
 
 enum OAuthType {
@@ -115,12 +115,12 @@ input UserDataPair {
 }
 
 input DeleteUserOptions {
-    tokensToInvalidate: [InvalidateTokenOption!]
+    tokensToInvalidate: [InvalidateTokenOption!]!
 }
 
 input InvalidateTokenOption {
-    token: ID!
     type: OAuthType!
+    token: ID!
 }
 
 type Query {
@@ -135,11 +135,12 @@ type Query {
 }
 
 type Mutation {
-    createUserOrSignIn(
+    oauthSignIn(
         oauthLoginId: OAuthTypeCorrelationInput!
         email: String
         userData: [UserDataPair!]
     ): AuthorizationToken
+    refreshLynxToken(refreshToken: ID!): AuthorizationToken
     combineOAuthAccounts(combineWith: OAuthTypeCorrelationInput!): User!
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!

@@ -1,0 +1,5 @@
+query HasValidatedInvite {
+  selfLookup {
+     validatedInvite
+  }
+}

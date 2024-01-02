@@ -29,7 +29,7 @@ class AppleSignInHandler {
                 }
                 
                 Logger.appleSignInHandler.info("Successfully authorized Apple ID credentials.")
-
+                print(appleJWT)
                 completion(
                     .init(
                         id: appleIDCredential.user,

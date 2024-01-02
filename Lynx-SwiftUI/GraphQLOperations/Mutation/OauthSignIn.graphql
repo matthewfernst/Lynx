@@ -1,0 +1,10 @@
+mutation oauthSignIn($oauthLoginId: OAuthTypeCorrelationInput!, $email: String, $userData: [UserDataPair!]) {
+  oauthSignIn(
+    oauthLoginId: $oauthLoginId
+    email: $email,
+    userData: $userData) {
+      accessToken
+      expiryDate
+      refreshToken
+    }
+}

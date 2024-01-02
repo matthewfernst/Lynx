@@ -1,0 +1,7 @@
+mutation RefreshAccessToken($refreshToken: ID!) {
+    refreshLynxToken(refreshToken: $refreshToken) {
+        accessToken
+        expiryDate
+        refreshToken
+    }
+}

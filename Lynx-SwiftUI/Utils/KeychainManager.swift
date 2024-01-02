@@ -16,7 +16,7 @@ class KeychainManager {
         case itemNotFound
     }
     
-    static func save(token: ExpirableAuthorizationToken) throws {
+    static func save(token: ExpirableLynxToken) throws {
         let tokenData = try JSONEncoder().encode(token)
         
         let query: [String: AnyObject] = [
@@ -37,7 +37,7 @@ class KeychainManager {
         Logger.keychainManager.info("Successfully saved ExpirableToken.")
     }
     
-    static func get() throws -> ExpirableAuthorizationToken? {
+    static func get() throws -> ExpirableLynxToken? {
         let query: [String: AnyObject] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecReturnData as String: kCFBooleanTrue,
@@ -65,7 +65,7 @@ class KeychainManager {
         }
         
         do {
-            let token = try JSONDecoder().decode(ExpirableAuthorizationToken.self, from: tokenData)
+            let token = try JSONDecoder().decode(ExpirableLynxToken.self, from: tokenData)
             return token
         } catch {
             Logger.keychainManager.error("Error in getting ExpirableToken: Data conversion error")

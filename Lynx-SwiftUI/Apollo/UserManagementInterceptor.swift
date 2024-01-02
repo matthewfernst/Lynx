@@ -38,15 +38,18 @@ class UserManagementInterceptor: ApolloInterceptor {
     ) {
         
         // Bypass token check for login mutation
-        if request.operation is ApolloGeneratedGraphQL.LoginOrCreateUserMutation {
-            UserManager.shared.token = nil
-            chain.proceedAsync(request: request,
-                               response: response,
-                               completion: completion)
+        if request.operation is ApolloGeneratedGraphQL.OauthSignInMutation || 
+            request.operation is ApolloGeneratedGraphQL.RefreshAccessTokenMutation {
+            UserManager.shared.lynxToken = nil
+            chain.proceedAsync(
+                request: request,
+                response: response,
+                completion: completion
+            )
             return
         }
         
-        guard let token = UserManager.shared.token else {
+        guard let lynxToken = UserManager.shared.lynxToken else {
             // In this instance, no user is logged in, so we want to call
             // the error handler, then return to prevent further work
             chain.handleErrorAsync(
@@ -59,7 +62,7 @@ class UserManagementInterceptor: ApolloInterceptor {
         }
         
         // If we've gotten here, there is a token!
-        if token.isExpired {
+        if lynxToken.isExpired {
             // Call an async method to renew the token
             UserManager.shared.renewToken { [weak self] tokenRenewResult in
                 guard let self = self else { return }
@@ -90,7 +93,7 @@ class UserManagementInterceptor: ApolloInterceptor {
         } else {
             // We don't need to wait for renewal, add token and move on
             self.addTokenAndProceed(
-                token.authorizationToken,
+                lynxToken.accessToken,
                 to: request,
                 chain: chain,
                 response: response,

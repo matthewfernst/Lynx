@@ -13,21 +13,21 @@ import OSLog
 class UserManager {
     static let shared = UserManager()
         
-    var token: ExpirableAuthorizationToken? {
+    var lynxToken: ExpirableLynxToken? {
         get {
             do {
-                return try KeychainManager.get() // will return nil if no token is available
+                return try KeychainManager.get() // will return nil if no lynxToken is available
             } catch {
-                Logger.userManager.error("KeychainManager failed to handle getting the ExpirableToken. Please check the logs.")
+                Logger.userManager.error("KeychainManager failed to handle getting the ExpirableLynxToken. Please check the logs.")
                 cleanUpFailedReAuth()
                 return nil
             }
         }
-        set { // if we do UserManager.shared.token = nil -> we want to delete the token
+        set { // if we do UserManager.shared.lynxToken = nil -> we want to delete the lynxToken
             do {
                 try (newValue == nil ? KeychainManager.delete() : KeychainManager.save(token: newValue!))
             } catch {
-                Logger.userManager.error("KeychainManager failed to handle setting the ExpirableToken. Please check the logs.")
+                Logger.userManager.error("KeychainManager failed to handle setting the ExpirableLynxToken. Please check the logs.")
                 cleanUpFailedReAuth()
             }
         }
@@ -43,77 +43,28 @@ class UserManager {
             case noProfileSaved
             case noOauthTokenSaved
         }
-        
-        guard let profile = ProfileManager.shared.profile else {
-            return completion(.failure(RenewTokenErrors.noProfileSaved))
-        }
-        
-        func handleLoginOrCreateUser(oauthToken: String) {
-            ApolloLynxClient.loginOrCreateUser(
-                id: profile.id,
-                oauthType: profile.oauthType,
-                oauthToken: oauthToken,
-                email: profile.email,
-                firstName: profile.firstName,
-                lastName: profile.lastName,
-                profilePictureURL: profile.profilePictureURL
-            ) { result in
+
+        if let refreshToken = lynxToken?.refreshToken {
+            ApolloLynxClient.refreshAccessToken(refreshToken: refreshToken) { result in
                 switch result {
-                case .success:
-                    Logger.userManager.info("Successfully re-authorized authorization token.")
-                    completion(.success((UserManager.shared.token!.authorizationToken)))
-                    
-                case .failure(let error):
-                    completion(.failure(error))
+                case .success(_):
+                    break
+                case .failure(_):
+                    self.cleanUpFailedReAuth()
                 }
             }
-        }
-        
-        
-        switch OAuthType(rawValue: profile.oauthType) {
-        case .apple:
-            // TODO: Needs the backend to support this :(
+        } else {
+            Logger.userManager.error("Could not refresh access token. No refresh token saved!")
             cleanUpFailedReAuth()
-        case .google:
-            GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
-                // Currently fails with simulator? But shouldn't fail on device. Needs more investigation.
-                if error != nil {
-                    Logger.userManager.error("Restore of previous Google Sign In failed with: \(error)")
-                    self.cleanUpFailedReAuth()
-                    return
-                }
-                if let oauthToken = user?.idToken?.tokenString {
-                    handleLoginOrCreateUser(oauthToken: oauthToken)
-                }
-            }
-            
-        case .facebook:
-            // Facebook gives a 60-day life token and automatically updates when sending requests
-            // to Facebook servers. If it does expire, then we have to re login.
-            
-            AccessToken.refreshCurrentAccessToken { _, _, error in
-                if error != nil {
-                    Logger.userManager.error("Restore of previous Facebook Sign In failed with: \(error)")
-                    self.cleanUpFailedReAuth()
-                    return
-                }
-                
-                if let oauthToken = AccessToken.current?.tokenString {
-                    handleLoginOrCreateUser(oauthToken: oauthToken)
-                }
-            }
-            
-        case .none:
-            self.cleanUpFailedReAuth()
-            fatalError("OAuth type is not supported. Got: \(profile.oauthType)")
         }
     }
 }
 
 
-struct ExpirableAuthorizationToken: Codable {
-    let authorizationToken: String
+struct ExpirableLynxToken: Codable {
+    let accessToken: String
     let expirationDate: Date
+    let refreshToken: String
     
     var isExpired: Bool {
         return Date().timeIntervalSince1970 >= expirationDate.timeIntervalSince1970

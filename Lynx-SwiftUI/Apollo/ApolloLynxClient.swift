@@ -164,7 +164,7 @@ class ApolloLynxClient {
         }
     }
     
-    static func loginOrCreateUser(
+    static func oauthSignIn(
         id: String,
         oauthType: String,
         oauthToken: String,
@@ -172,8 +172,7 @@ class ApolloLynxClient {
         firstName: String?,
         lastName: String?,
         profilePictureURL: URL?,
-        completion: @escaping (Result<Bool,
-        Error>) -> Void
+        completion: @escaping (Result<Void, Error>) -> Void
     ) {
         
 
@@ -211,43 +210,112 @@ class ApolloLynxClient {
             emailNullable = GraphQLNullable<String>(stringLiteral: email!)
         }
         
-        apolloClient.perform(mutation: ApolloGeneratedGraphQL.LoginOrCreateUserMutation(
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.OauthSignInMutation(
             oauthLoginId: oauthLoginId,
             email: emailNullable,
             userData: userDataNullable)) { result in
             switch result {
             case .success(let graphQLResult):
-                guard let data = graphQLResult.data?.createUserOrSignIn else {
+                guard let data = graphQLResult.data?.oauthSignIn else {
                     let error = UserError.noAuthorizationTokenReturned
                     completion(.failure(error))
                     return
                 }
                 
-                let authorizationToken = data.token
-                Logger.apollo.debug("LYNX TOKEN ->                 \(authorizationToken)")
+                let accessToken = data.accessToken
+                let refreshToken = data.refreshToken
                 guard let expiryInMilliseconds = Double(data.expiryDate) else {
                     Logger.apollo.error("Could not convert expiryDate to Double.")
                     return
                 }
                 
-                UserManager.shared.token = ExpirableAuthorizationToken(
-                    authorizationToken: authorizationToken,
-                    expirationDate: Date(timeIntervalSince1970: expiryInMilliseconds / 1000)
+                Logger.apollo.debug("LYNX ACCESS TOKEN ->                 \(accessToken)")
+                Logger.apollo.debug(" REFRESH TOKEN    ->                 \(refreshToken)")
+                Logger.apollo.debug(" EXPIRY DATE MS   ->                 \(expiryInMilliseconds)")
+                
+                UserManager.shared.lynxToken = ExpirableLynxToken(
+                    accessToken: accessToken,
+                    expirationDate: Date(timeIntervalSince1970: expiryInMilliseconds / 1000), 
+                    refreshToken: refreshToken
                 )
                 
-                completion(.success((data.validatedInvite)))
+                Logger.apollo.info("Successfully signed in user.")
+                completion(.success(()))
                 
             case .failure(let error):
-                Logger.apollo.error("LoginOrCreateUser mutation failed with Error: \(error)")
+                Logger.apollo.error("OauthSignIn mutation failed with Error: \(error)")
                 completion(.failure(error))
             }
         }
     }
     
-    static func createInviteKey(completion: @escaping ((Result<String, Error>) -> Void)) {
+    static func hasValidatedInviteKey(completion: @escaping (Result<Bool, Error>) -> Void) {
+        enum HasValidatedInviteKeyError: Error {
+            case failedToUnwrapData
+        }
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.HasValidatedInviteQuery()) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let hasValidatedInvite = graphQLResult.data?.selfLookup?.validatedInvite else {
+                    Logger.apollo.error("Failed to unwrap selflookup validatedInvite")
+                    completion(.failure(HasValidatedInviteKeyError.failedToUnwrapData))
+                    return
+                }
+                
+                Logger.apollo.info("Successfully got has validate invite key")
+                completion(.success(hasValidatedInvite))
+                
+            case .failure(let error):
+                Logger.apollo.error("Failed to query validated invite key: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    static func refreshAccessToken(refreshToken: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        apolloClient.perform(
+            mutation: ApolloGeneratedGraphQL.RefreshAccessTokenMutation(refreshToken: refreshToken)
+        ) { result in
+            
+            enum RefreshTokenError: Error {
+                case failedToUnwrapData
+                case convertExpiryDate
+            }
+            
+            switch result {
+            case .success(let graphQLResult):
+                guard let data = graphQLResult.data?.refreshLynxToken else {
+                    Logger.apollo.error("Failed to unwrap data when refreshing access token")
+                    completion(.failure(RefreshTokenError.failedToUnwrapData))
+                    return
+                }
+                guard 
+                    let expiryInMilliseconds = Double(data.expiryDate) else {
+                    Logger.apollo.error("Could not convert expiryDate to Double.")
+                    completion(.failure(RefreshTokenError.convertExpiryDate))
+                    return
+                }
+                
+                UserManager.shared.lynxToken = ExpirableLynxToken(
+                    accessToken: data.accessToken,
+                    expirationDate: Date(timeIntervalSince1970: expiryInMilliseconds / 1000),
+                    refreshToken: data.refreshToken
+                )
+                Logger.apollo.info("Successfully refreshed access token.")
+                completion(.success(()))
+                
+            case .failure(let error):
+                Logger.apollo.error("Failed to refresh access token: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    static func createInviteKey(completion: @escaping (Result<String, Error>) -> Void) {
         enum CreateInviteKeyError: Error {
             case failedToUnwrapData
         }
+        
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreateInviteKeyMutation()) { result in
             switch result {
             case .success(let graphQLResult):
@@ -435,17 +503,21 @@ class ApolloLynxClient {
         }
     }
     
-    static func deleteAccount(token: String, type: ApolloGeneratedGraphQL.OAuthType, completion: @escaping ((Result<Void, Error>) -> Void)) {
+    static func deleteAccount(
+        token: String,
+        type: ApolloGeneratedGraphQL.OAuthType,
+        completion: @escaping ((Result<Void, Error>) -> Void)
+    ) {
         enum DeleteAccountErrors: Error {
             case UnwrapOfReturnedUserFailed
             case BackendCouldntDelete
         }
         
         let deleteUserOptions = ApolloGeneratedGraphQL.DeleteUserOptions(
-            tokensToInvalidate: GraphQLNullable<[ApolloGeneratedGraphQL.InvalidateTokenOption]>(
+            tokensToInvalidate: [ApolloGeneratedGraphQL.InvalidateTokenOption](
                 arrayLiteral: ApolloGeneratedGraphQL.InvalidateTokenOption(
-                    token: token,
-                    type: GraphQLEnum(type)
+                    type: GraphQLEnum(type), 
+                    token: token
                 )
             )
         )

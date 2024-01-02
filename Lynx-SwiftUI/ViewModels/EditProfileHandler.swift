@@ -163,7 +163,7 @@ class EditProfileHandler {
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
         ApolloLynxClient.deleteAccount(
-            token: UserManager.shared.token!.authorizationToken,
+            token: UserManager.shared.lynxToken!.accessToken,
             type: .init(rawValue: profileManager.profile!.oauthType)!,
             completion: completion
         )
