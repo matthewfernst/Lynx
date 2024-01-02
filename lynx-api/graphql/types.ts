@@ -21,7 +21,6 @@ export interface User {
 }
 
 export interface UserStats {
-    [key: string]: number;
     runCount: number;
     distance: number;
     topSpeed: number;
@@ -46,7 +45,7 @@ export interface Log {
 }
 
 export interface LogDetail {
-    type: LogDetailType;
+    type: keyof typeof LogDetailType;
     averageSpeed: number;
     distance: number;
     duration: number;
@@ -76,7 +75,7 @@ export interface Invite {
 
 export interface LeaderboardEntry {
     id: string;
-    timeframe: Timeframe;
+    timeframe: keyof typeof Timeframe;
     distance: number;
     runCount: number;
     topSpeed: number;

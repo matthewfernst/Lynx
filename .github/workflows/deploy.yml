@@ -52,11 +52,14 @@ jobs:
           LYNX_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           LYNX_NODE_ENV: "production"
 
+      - name: Lint
+        run: npm run --prefix lynx-api lint
+
       - name: Build
         run: npm run --prefix lynx-api build
       
       - name: Bootstrap
-        run: npm run --prefix lynx-api cdk bootstrap
+        run: npm run --prefix lynx-api bootstrap
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
