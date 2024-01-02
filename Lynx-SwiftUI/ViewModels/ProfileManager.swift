@@ -114,6 +114,6 @@ import OSLog
     }
     
     struct Constants {
-        static let defaultProfilePictureURL = URL(string: "https://thumbs.dreamstime.com/b/european-teenager-beanie-profile-portrait-male-cartoon-character-blonde-man-avatar-social-network-vector-flat-271205345.jpg")!
+        static let defaultProfilePictureURL = URL(string: "https://raw.githubusercontent.com/matthewfernst/Lynx/main/imgs/DefaultProfilePicture.jpg")!
     }
 }
