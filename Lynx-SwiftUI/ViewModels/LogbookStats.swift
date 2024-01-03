@@ -121,7 +121,7 @@ import SwiftUI
         )
     }
     
-    // MARK: Lifetime Stats
+    // MARK: - Lifetime Stats
     var lifetimeAverages: [[Stat]] {
         return [
             [
@@ -146,7 +146,64 @@ import SwiftUI
         ]
     }
     
-    // Helper methods to calculate the averages and best values
+    // MARK: - Data for graphs
+    func rangeDataPerSession<T>(propertyExtractor: (ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook.Detail) -> T) -> [(date: Date, min: Double, max: Double)] {
+        var rangeData: [(Date, Double, Double)] = []
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+
+        for logbook in logbooks {
+            let propertyValues: [Double] = logbook.details.map { propertyExtractor($0) as! Double }
+
+            rangeData.append(
+                (
+                    date: dateFormatter.date(from: logbook.startDate)!,
+                    min: propertyValues.min() ?? 0.0,
+                    max: propertyValues.max() ?? 0.0
+                )
+            )
+        }
+        rangeData.sort(by: { $0.0 < $1.0})
+        return rangeData
+    }
+
+    func maxAndMinOfDateAndValues(fromRangeData data: [(date: Date, min: Double, max: Double)]) -> (earliest: Date, latest: Date, smallest: Double, largest: Double) {
+        var earliest: Date = .distantFuture
+        var latest: Date = .distantPast
+        
+        var smallest: Double = .infinity
+        var largest: Double = -.infinity
+        
+        for (date, yMin, yMax) in data {
+            earliest = min(earliest, date)
+            latest = max(latest, date)
+            
+            smallest = min(smallest, yMin)
+            largest = max(largest, yMax)
+        }
+        
+        return (earliest, latest, smallest, largest)
+    }
+    
+    func conditionsCount() -> ([(condition: String, count: Double)], String) {
+        let conditionsCount = logbooks
+            .compactMap { $0.conditions?.components(separatedBy: ",") }
+            .flatMap { $0 }
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).capitalized }
+            .reduce(into: [:]) { counts, condition in
+                counts[condition, default: 0] += 1
+            }
+
+        let resultsArray = conditionsCount.map { (condition, count) in
+            (condition: condition, count: Double(count))
+        }
+        
+        
+        return (resultsArray, resultsArray.max(by: { $0.count < $1.count })?.condition ?? "")
+    }
+    
+    // MARK: - Helper methods to calculate the averages and best values
     private func calculateAverageVerticalFeet() -> String {
         let averageVerticalFeet = logbooks.map { $0.verticalDistance }.reduce(0.0) {
             return $0 + $1/Double(logbooks.count)
