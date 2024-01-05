@@ -25,13 +25,13 @@ class KeychainManager {
         ]
         
         let status = SecItemAdd(query as CFDictionary, nil)
-        
-        guard status != errSecDuplicateItem else {
-            throw KeychainError.duplicateEntry
-        }
-        
+
         guard status == errSecSuccess else {
-            throw KeychainError.unknown(status)
+            if status == errSecDuplicateItem {
+                throw KeychainError.duplicateEntry
+            } else {
+                throw KeychainError.unknown(status)
+            }
         }
         
         Logger.keychainManager.info("Successfully saved ExpirableToken.")
@@ -66,6 +66,9 @@ class KeychainManager {
         
         do {
             let token = try JSONDecoder().decode(ExpirableLynxToken.self, from: tokenData)
+            Logger.keychainManager.debug("AccessToken: \(token.accessToken)")
+            Logger.keychainManager.debug("RefreshToken: \(token.refreshToken)")
+            Logger.keychainManager.debug("ExpiryTime: \(token.expirationDate)")
             return token
         } catch {
             Logger.keychainManager.error("Error in getting ExpirableToken: Data conversion error")
