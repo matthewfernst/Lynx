@@ -65,6 +65,7 @@
 		654B414E2B43C1EB009047E8 /* SchemaMetadata.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654B41292B43C1EB009047E8 /* SchemaMetadata.graphql.swift */; };
 		654B414F2B43C1EB009047E8 /* ApolloGeneratedGraphQL.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654B412A2B43C1EB009047E8 /* ApolloGeneratedGraphQL.graphql.swift */; };
 		6573BA1B2B282B8D00381085 /* AppleSignInHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6573BA1A2B282B8D00381085 /* AppleSignInHandler.swift */; };
+		659C016D2B48AAF900053412 /* InvitationKeyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659C016C2B48AAF900053412 /* InvitationKeyHandler.swift */; };
 		659FAEE52B3748770027E795 /* GetSpecificLeaderboard.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 659FAEE42B3748770027E795 /* GetSpecificLeaderboard.graphql */; };
 		65A518CF2B2D38BF00A06014 /* PreviewSampleProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A518CE2B2D38BF00A06014 /* PreviewSampleProfile.swift */; };
 		65B35E902B118C17002E99E4 /* Lynx_SwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B35E8F2B118C17002E99E4 /* Lynx_SwiftUIApp.swift */; };
@@ -175,6 +176,7 @@
 		6551BDC92B43BBEF00BB3113 /* HasValidatedInvite.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = HasValidatedInvite.graphql; sourceTree = "<group>"; };
 		6573BA1A2B282B8D00381085 /* AppleSignInHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInHandler.swift; sourceTree = "<group>"; };
 		6573BA1C2B28312000381085 /* Lynx-SwiftUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Lynx-SwiftUI.entitlements"; sourceTree = "<group>"; };
+		659C016C2B48AAF900053412 /* InvitationKeyHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationKeyHandler.swift; sourceTree = "<group>"; };
 		659FAEE42B3748770027E795 /* GetSpecificLeaderboard.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetSpecificLeaderboard.graphql; sourceTree = "<group>"; };
 		65A518CE2B2D38BF00A06014 /* PreviewSampleProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSampleProfile.swift; sourceTree = "<group>"; };
 		65B35E8C2B118C17002E99E4 /* Lynx-SwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lynx-SwiftUI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -573,6 +575,7 @@
 				65F6CFD92B13020300E94E40 /* GoogleSignInHandler.swift */,
 				6573BA1A2B282B8D00381085 /* AppleSignInHandler.swift */,
 				6500413E2B3F985E00122C77 /* FacebookSignInHandler.swift */,
+				659C016C2B48AAF900053412 /* InvitationKeyHandler.swift */,
 			);
 			path = SignIn;
 			sourceTree = "<group>";
@@ -705,6 +708,7 @@
 				65B39A672B13FD0500948C9D /* LogbookStats.swift in Sources */,
 				654B41422B43C1EB009047E8 /* Log.graphql.swift in Sources */,
 				654B413E2B43C1EB009047E8 /* LeaderboardSort.graphql.swift in Sources */,
+				659C016D2B48AAF900053412 /* InvitationKeyHandler.swift in Sources */,
 				654B41442B43C1EB009047E8 /* OAuthTypeCorrelation.graphql.swift in Sources */,
 				654B41352B43C1EB009047E8 /* GetUploadedLogsQuery.graphql.swift in Sources */,
 				65F6CFDA2B13020300E94E40 /* GoogleSignInHandler.swift in Sources */,

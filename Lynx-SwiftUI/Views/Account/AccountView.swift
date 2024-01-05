@@ -239,7 +239,7 @@ struct AccountView: View {
         struct Mail {
             static let developerContactEmail = "matthew.f.ernst@icloud.com"
             static let bugReportTemplate = """
-           Hello,
+           Hello Lynx Dev Team,
            
            I would like to report a bug in the app. Here are the details:
            
@@ -265,7 +265,7 @@ struct AccountView: View {
            Thank you for your attention to this matter.
            
            Regards,
-           [Your Name]
+           \(ProfileManager.shared.profile?.name ?? "[YOUR NAME]")
            """
         }
     }

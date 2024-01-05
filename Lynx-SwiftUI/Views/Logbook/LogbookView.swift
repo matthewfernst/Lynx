@@ -212,20 +212,7 @@ struct LogbookView: View {
     
     private func requestLogs() {
         if !showAutoUpload { // only allow upload if we aren't currently uploading
-            ApolloLynxClient.clearCache()
-            Task {
-                ApolloLynxClient.getLogs(
-                    measurementSystem: profileManager.measurementSystem
-                ) { result in
-                    switch result {
-                    case .success(let logs):
-                        Logger.logbook.debug("Updating new logbook stats")
-                        logbookStats.logbooks = logs
-                    case .failure(let error):
-                        Logger.logbook.error("Failed to get logs: \(error)")
-                    }
-                }
-            }
+            logbookStats.requestLogs()
         }
     }
     

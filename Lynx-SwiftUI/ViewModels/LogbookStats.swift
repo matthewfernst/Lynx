@@ -1,15 +1,35 @@
 //
-//  LogBookStats.swift
+//  LogbookStats.swift
 //  Lynx
 //
 //  Created by Matthew Ernst on 6/16/23.
 //
-import Foundation
+
 import SwiftUI
+import OSLog
 
 @Observable final class LogbookStats {
     private var profileManager = ProfileManager.shared
     var logbooks: Logbooks = []
+    
+    // MARK: - Getting Logs
+    func requestLogs(completion: (() -> Void)? = nil) {
+        ApolloLynxClient.clearCache()
+        Task {
+            ApolloLynxClient.getLogs(
+                measurementSystem: profileManager.measurementSystem
+            ) { result in
+                switch result {
+                case .success(let logs):
+                    Logger.logbookStats.debug("Updating new logbook stats")
+                    self.logbooks = logs
+                    completion?()
+                case .failure(let error):
+                    Logger.logbookStats.error("Failed to get logs: \(error)")
+                }
+            }
+        }
+    }
     
     // MARK: - Lifetime Stats
     func getDistanceFormatted(distance: Double) -> String {

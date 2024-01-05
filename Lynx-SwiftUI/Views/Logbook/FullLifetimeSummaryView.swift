@@ -53,9 +53,11 @@ struct FullLifetimeSummaryView: View {
         .navigationTitle("Lifetime")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            topSpeedRangeData = logbookStats.rangeDataPerSession { $0.topSpeed }
-            verticalDistanceRangeData = logbookStats.rangeDataPerSession { $0.verticalDistance }
-            altitudeRangeData = logbookStats.rangeDataPerSession { $0.maxAltitude }
+            logbookStats.requestLogs {
+                topSpeedRangeData = logbookStats.rangeDataPerSession { $0.topSpeed }
+                verticalDistanceRangeData = logbookStats.rangeDataPerSession { $0.verticalDistance }
+                altitudeRangeData = logbookStats.rangeDataPerSession { $0.maxAltitude }
+            }
         }
     }
     

@@ -13,7 +13,7 @@ struct InvitationKeyView: View {
     @Environment(\.dismiss) private var dismiss
     private let completion: (()-> Void)
     
-    @State private var key = ""
+    private var inviteKeyHandler = InvitationKeyHandler()
     @State private var showDontHaveInvitationAlert = false
     @State private var showInvalidKeyAlert = false
     
@@ -49,7 +49,7 @@ struct InvitationKeyView: View {
                 .padding(.bottom)
                 
                 ProgressView("Verifying...")
-                    .opacity(keyLengthEqualToInputLength ? 1 : 0)
+                    .opacity(inviteKeyHandler.keyLengthEqualToInputLength ? 1 : 0)
                 
                 Spacer()
             }
@@ -59,7 +59,7 @@ struct InvitationKeyView: View {
             }
             .alert("Invalid Key", isPresented: $showInvalidKeyAlert) {
                 Button {
-                    key = ""
+                    inviteKeyHandler.resetKey()
                 } label: {
                     Text("Dismiss")
                 }
@@ -79,46 +79,31 @@ struct InvitationKeyView: View {
     }
     
     private var backgroundField: some View {
-        let boundKey = Binding<String>(get: { self.key }, set: { newValue in
-            self.key = newValue
-            self.submitKey()
-        })
-        
-        return TextField("", text: boundKey, onCommit: submitKey)
-            .keyboardType(.numberPad)
-            .foregroundStyle(.clear)
-            .tint(.clear)
+        let boundKey = Binding<String>(get: { inviteKeyHandler.key }, set: { newValue in
+            // this set code is getting called twice for some reason 🤷‍♂️
+            if newValue == inviteKeyHandler.key { return }
             
-    }
-    
-    private func submitKey() {
-        guard !key.isEmpty else { return }
-        
-        if keyLengthEqualToInputLength {
-            ApolloLynxClient.submitInviteKey(with: key) { result in
-                switch result {
-                case .success(_):
-                    Logger.invitationKeySheet.info("Invitation successfully validated.")
+            inviteKeyHandler.key = newValue
+            inviteKeyHandler.submitKey { correct in
+                if correct {
                     dismiss()
                     completion()
-                case .failure(_):
-                    Logger.invitationKeySheet.error("Invitation failed to validate.")
+                } else {
                     showInvalidKeyAlert = true
                 }
             }
-        }
+        })
         
-        // If the user pastes in a code, we truncate the string to the first inputLength characters
-        if key.count > Constants.KeyInput.inputLength {
-            key = String(key.prefix(Constants.KeyInput.inputLength))
-            submitKey()
-        }
+        return TextField("", text: boundKey)
+            .keyboardType(.numberPad)
+            .foregroundStyle(.clear)
+            .tint(.clear)
     }
 
     private var keyInput: some View {
         HStack {
-            ForEach(0..<Constants.KeyInput.inputLength, id: \.self) { index in
-                if let digit = getDigit(forKeyIndex: index) {
+            ForEach(0..<InvitationKeyHandler.Constants.inputLength, id: \.self) { index in
+                if let digit = inviteKeyHandler.getDigit(forKeyIndex: index) {
                     Text(digit)
                         .font(.system(size: Constants.KeyInput.Font.size, weight: .semibold))
                         .frame(width: Constants.KeyInput.inputFrameWidth)
@@ -133,28 +118,12 @@ struct InvitationKeyView: View {
                         .padding(.vertical, Constants.KeyInput.verticalPadding)
                 }
                 
-                if index == (Constants.KeyInput.inputLength / 2) - 1 {
+                if index == (InvitationKeyHandler.Constants.inputLength / 2) - 1 {
                     Spacer()
                         .frame(width: Constants.KeyInput.separationWidth)
                 }
             }
         }
-    }
-    
-    // MARK: - Helpers
-    private var keyLengthEqualToInputLength: Bool {
-        withAnimation {
-            key.count == Constants.KeyInput.inputLength
-        }
-    }
-    
-    private func getDigit(forKeyIndex index: Int) -> String? {
-        if !key.isEmpty,
-           let currentIndex = key.index(key.startIndex, offsetBy: index, limitedBy: key.index(before: key.endIndex)) {
-            return String(key[currentIndex])
-        }
-        return nil
-        
     }
     
     
@@ -172,8 +141,6 @@ struct InvitationKeyView: View {
                                             """
         
         struct KeyInput {
-            static let inputLength: Int = 6
-            
             static let inputFrameWidth: CGFloat = 20
             static let inputFrameHeight: CGFloat = 5
             
