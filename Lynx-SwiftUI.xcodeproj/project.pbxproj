@@ -68,6 +68,8 @@
 		659C016D2B48AAF900053412 /* InvitationKeyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659C016C2B48AAF900053412 /* InvitationKeyHandler.swift */; };
 		659FAEE52B3748770027E795 /* GetSpecificLeaderboard.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 659FAEE42B3748770027E795 /* GetSpecificLeaderboard.graphql */; };
 		65A518CF2B2D38BF00A06014 /* PreviewSampleProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A518CE2B2D38BF00A06014 /* PreviewSampleProfile.swift */; };
+		65B314492B4904DA00229C20 /* CropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 65B314482B4904DA00229C20 /* CropViewController */; };
+		65B3144B2B4904DA00229C20 /* TOCropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 65B3144A2B4904DA00229C20 /* TOCropViewController */; };
 		65B35E902B118C17002E99E4 /* Lynx_SwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B35E8F2B118C17002E99E4 /* Lynx_SwiftUIApp.swift */; };
 		65B35E942B118C18002E99E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 65B35E932B118C18002E99E4 /* Assets.xcassets */; };
 		65B35E972B118C18002E99E4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 65B35E962B118C18002E99E4 /* Preview Assets.xcassets */; };
@@ -232,10 +234,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				650041A72B3FDEC200122C77 /* FacebookLogin in Frameworks */,
+				65B3144B2B4904DA00229C20 /* TOCropViewController in Frameworks */,
 				650041A32B3FDEC200122C77 /* FacebookCore in Frameworks */,
 				65D9589C2B425734000E3013 /* FLAnimatedImage in Frameworks */,
 				65B35F2B2B11BEA1002E99E4 /* GoogleSignInSwift in Frameworks */,
 				650041A12B3FDEC200122C77 /* FacebookBasics in Frameworks */,
+				65B314492B4904DA00229C20 /* CropViewController in Frameworks */,
 				65B35F352B11BFE2002E99E4 /* Apollo in Frameworks */,
 				65B35F292B11BEA1002E99E4 /* GoogleSignIn in Frameworks */,
 			);
@@ -604,6 +608,8 @@
 				650041A22B3FDEC200122C77 /* FacebookCore */,
 				650041A62B3FDEC200122C77 /* FacebookLogin */,
 				65D9589B2B425734000E3013 /* FLAnimatedImage */,
+				65B314482B4904DA00229C20 /* CropViewController */,
+				65B3144A2B4904DA00229C20 /* TOCropViewController */,
 			);
 			productName = "Lynx-SwiftUI";
 			productReference = 65B35E8C2B118C17002E99E4 /* Lynx-SwiftUI.app */;
@@ -1037,6 +1043,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6500419D2B3FDEC200122C77 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookLogin;
+		};
+		65B314482B4904DA00229C20 /* CropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 652733E52B22D4F40081B2E5 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = CropViewController;
+		};
+		65B3144A2B4904DA00229C20 /* TOCropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 652733E52B22D4F40081B2E5 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = TOCropViewController;
 		};
 		65B35F282B11BEA1002E99E4 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;

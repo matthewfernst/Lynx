@@ -8,6 +8,7 @@
 import SwiftUI
 import PhotosUI
 import OSLog
+import TOCropViewController
 
 struct EditProfileView: View {
     var profileManager: ProfileManager
@@ -28,6 +29,8 @@ struct EditProfileView: View {
     @State private var showDeleteAccountConfirmation = false
     @State private var showFailedToDeleteAccount = false
     @State private var showMergeAccountsNotAvailable = false
+    
+    private let tocropDelegate = TOCropDelegate()
     
     init(profileManager: ProfileManager) {
         self.profileManager = profileManager
@@ -53,9 +56,9 @@ struct EditProfileView: View {
                 }
                 Button("Delete Account", role: .destructive) {
                     showSavingChanges = true
-                    #if DEBUG
+#if DEBUG
                     LoginHandler.signOut()
-                    #else
+#else
                     editProfileHandler.deleteAccount(profileManager: profileManager) { result in
                         switch result {
                         case .success(_):
@@ -65,7 +68,7 @@ struct EditProfileView: View {
                         }
                         showSavingChanges = false
                     }
-                    #endif
+#endif
                 }
             } message: {
                 Text("Are you sure you want to proceed with deleting your account? This action cannot be undone.")
@@ -106,6 +109,10 @@ struct EditProfileView: View {
                 lastName = profile.lastName
                 email = profile.email
             }
+            
+            tocropDelegate.didCropImage = { croppedImage in
+                newProfilePicture = Image(uiImage: croppedImage)
+            }
         }
         .disabled(showSavingChanges)
     }
@@ -137,7 +144,9 @@ struct EditProfileView: View {
                         if let data = try? await profilePictureItem?.loadTransferable(type: Data.self) {
                             newProfilePictureData = data
                             if let uiImage = UIImage(data: data) {
-                                newProfilePicture = Image(uiImage: uiImage)
+                                DispatchQueue.main.async {
+                                    presentTOCropView(withImage: uiImage)
+                                }
                             }
                         }
                     }
@@ -194,6 +203,31 @@ struct EditProfileView: View {
     }
 }
 
+
+// MARK: - TOCropController
+extension EditProfileView {
+    private class TOCropDelegate: NSObject, TOCropViewControllerDelegate {
+        var didCropImage: ((UIImage) -> Void)?
+        
+        func cropViewController(_ cropViewController: TOCropViewController, didCropToCircularImage image: UIImage, with cropRect: CGRect, angle: Int) {
+            didCropImage?(image)
+            cropViewController.dismiss(animated: true)
+        }
+    }
+    
+    private func presentTOCropView(withImage image: UIImage) {
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        let window = windowScene?.windows.first
+        let vc = window?.rootViewController
+        
+        let cropVC = TOCropViewController(croppingStyle: .circular, image: image)
+        cropVC.delegate = tocropDelegate
+        cropVC.aspectRatioLockEnabled = true
+        cropVC.resetAspectRatioEnabled = false
+        vc?.present(cropVC, animated: true, completion: nil)
+    }
+    
+}
 
 #Preview {
     EditProfileView(profileManager: ProfileManager.shared)
