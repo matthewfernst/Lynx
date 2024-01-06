@@ -18,6 +18,9 @@ struct LoginView: View {
     private var googleSignInHandler = GoogleSignInHandler()
     private var facebookSignInHandler = FacebookSignInHandler()
     
+    @State private var waveOffset: CGFloat = 0
+    @State private var isWaving = false
+    
     @State private var showSignInError = false
     @State private var showInvitationSheet = false
     @State private var isSigningIn = false
@@ -28,10 +31,19 @@ struct LoginView: View {
     @State private var moveInGoogle = false
     @State private var moveInFacebook = false
     
+    private let funSignInPhrases = [
+        Array("Waxing the skis ⛷️"),
+        Array("Warming some cocoa 🍫"),
+        Array("Drying out Long Johns 👖"),
+        Array("Trying to find that other glove 🧤")
+    ]
+    @State private var funSignInPhrase: [String.Element] = []
+    
     var body: some View {
         ZStack {
             backgroundLynxImage
             signLynxLogoAndSignInButtonStack
+            
                 .alert("Failed to Sign In", isPresented: $showSignInError) {
                     Button("OK") {
                         withAnimation {
@@ -58,6 +70,7 @@ struct LoginView: View {
             .interactiveDismissDisabled()
         })
         .onAppear {
+            funSignInPhrase = funSignInPhrases.randomElement() ?? Array("Signing in...")
             withAnimation(.easeInOut(duration: 1)) {
                 moveInLogo = true
             }
@@ -157,7 +170,7 @@ struct LoginView: View {
                 isSigningIn = true
             }
             handler()
-
+            
         } label: {
             logoAndSignInText(company: company)
         }
@@ -193,18 +206,35 @@ struct LoginView: View {
             Text("Sign in with \(company)")
                 .foregroundStyle(.black)
                 .font(
-                    .system(size: Constants.SignInButton.fontSize,
-                            weight: .medium)
+                    .system(
+                        size: Constants.SignInButton.fontSize,
+                        weight: .medium
+                    )
                 )
         }
     }
     
-    
     private var signInProgressView: some View {
-        ProgressView("Signing in...")
-            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-            .foregroundStyle(.white)
-            .padding(.bottom)
+        VStack {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                .foregroundStyle(.white)
+                .padding(.bottom, 8)
+            HStack(spacing: 0) {
+                ForEach(0..<funSignInPhrase.count, id: \.self) { index in
+                    Text(String(funSignInPhrase[index]))
+                        .waveTextAnimation(amplitude: 10, frequency: 0.5, offset: isWaving ? 50 : 0)
+                        .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true).delay(Double(-index) / 20), value: isWaving)
+                }
+            }
+        }
+        .padding()
+        .onAppear {
+            isWaving = true
+        }
+        .onDisappear {
+            isWaving = false
+        }
     }
     
     @ViewBuilder
@@ -238,7 +268,6 @@ struct LoginView: View {
         }
     }
     
-    
     // MARK: - Constants
     private struct Constants {
         struct Logo {
@@ -256,6 +285,23 @@ struct LoginView: View {
         }
         
         static let logoWidth: CGFloat = 14
+    }
+}
+
+struct WaveTextModifier: ViewModifier {
+    let amplitude: CGFloat
+    let frequency: CGFloat
+    var offset: CGFloat
+    
+    func body(content: Content) -> some View {
+        content
+            .offset(y: amplitude * sin((.pi * frequency * offset) + .pi/2))
+    }
+}
+
+extension View {
+    func waveTextAnimation(amplitude: CGFloat, frequency: CGFloat, offset: CGFloat) -> some View {
+        self.modifier(WaveTextModifier(amplitude: amplitude, frequency: frequency, offset: offset))
     }
 }
 
