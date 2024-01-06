@@ -223,6 +223,7 @@ struct LoginView: View {
             HStack(spacing: 0) {
                 ForEach(0..<funSignInPhrase.count, id: \.self) { index in
                     Text(String(funSignInPhrase[index]))
+                        .foregroundStyle(.white)
                         .waveTextAnimation(amplitude: 10, frequency: 0.5, offset: isWaving ? 50 : 0)
                         .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true).delay(Double(-index) / 20), value: isWaving)
                 }
