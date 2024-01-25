@@ -1,3 +1,4 @@
+import { captureAWSv3Client } from "aws-xray-sdk";
 import {
     S3Client,
     GetObjectCommand,
@@ -14,7 +15,8 @@ import { GraphQLError } from "graphql";
 import { DEPENDENCY_ERROR } from "../types";
 
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
-export const s3Client = new S3Client({ region: process.env.AWS_REGION }) as NodeJsClient<S3Client>;
+export const awsClient = new S3Client({ region: process.env.AWS_REGION });
+export const s3Client = captureAWSv3Client(awsClient) as NodeJsClient<S3Client>;
 
 export const createSignedUploadUrl = async (bucketName: string, path: string): Promise<string> => {
     try {

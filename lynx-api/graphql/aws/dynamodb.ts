@@ -1,3 +1,4 @@
+import { captureAWSv3Client } from "aws-xray-sdk";
 import { DynamoDBClientConfig, DynamoDB } from "@aws-sdk/client-dynamodb";
 import {
     DynamoDBDocument,
@@ -44,7 +45,8 @@ const serviceConfigOptions: DynamoDBClientConfig = {
     ...(process.env.IS_OFFLINE && { endpoint: "http://localhost:8080" })
 };
 
-const dynamodbClient = new DynamoDB(serviceConfigOptions);
+const awsClient = new DynamoDB(serviceConfigOptions);
+const dynamodbClient = captureAWSv3Client(awsClient)
 export const documentClient = DynamoDBDocument.from(dynamodbClient);
 
 export const getItem = async <T extends Table>(
