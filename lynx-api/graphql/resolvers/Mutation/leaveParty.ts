@@ -2,9 +2,9 @@ import { GraphQLError } from "graphql";
 
 import { checkHasUserId, checkIsValidUserAndHasValidInvite, checkIsValidParty } from "../../auth";
 import { deleteItemsFromArray } from "../../aws/dynamodb";
-import { Context, LOG_LEVEL } from "../../index";
+import { Context } from "../../index";
 import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lynxStack";
-import { FORBIDDEN, User } from "../../types";
+import { LOG_LEVEL, FORBIDDEN, User } from "../../types";
 
 interface Args {
     partyId: string;

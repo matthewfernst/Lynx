@@ -4,9 +4,9 @@ import { GraphQLError } from "graphql";
 import { DateTime } from "luxon";
 
 import { documentClient } from "../../aws/dynamodb";
-import { Context, LOG_LEVEL } from "../../index";
+import { Context } from "../../index";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/lynxStack";
-import { LeaderboardEntry, Party, User } from "../../types";
+import { LOG_LEVEL, LeaderboardEntry, Party, User } from "../../types";
 import {
     LeaderboardSort,
     Timeframe,

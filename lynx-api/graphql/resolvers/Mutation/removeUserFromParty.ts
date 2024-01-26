@@ -4,8 +4,8 @@ import {
     checkIsValidPartyAndIsPartyOwner
 } from "../../auth";
 import { deleteItemsFromArray } from "../../aws/dynamodb";
-import { Context, LOG_LEVEL } from "../../index";
-import { Party } from "../../types";
+import { Context } from "../../index";
+import { LOG_LEVEL, Party } from "../../types";
 import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lynxStack";
 
 interface Args {

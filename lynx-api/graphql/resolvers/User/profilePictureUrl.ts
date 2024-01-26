@@ -1,4 +1,5 @@
-import { DefinedUserContext, LOG_LEVEL } from "../../index";
+import { DefinedUserContext } from "../../index";
+import { LOG_LEVEL } from "../../types";
 import { checkIfObjectInBucket } from "../../aws/s3";
 import { PROFILE_PICS_BUCKET } from "../../../infrastructure/lynxStack";
 

@@ -16,7 +16,7 @@ import {
     INVITES_TABLE,
     PARTIES_TABLE
 } from "../../infrastructure/lynxStack";
-import { LOG_LEVEL } from "../index";
+import { LOG_LEVEL } from "../types";
 import {
     DEPENDENCY_ERROR,
     INTERNAL_SERVER_ERROR,

@@ -3,9 +3,9 @@ import axios from "axios";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { deleteAllItems, deleteItem } from "../../aws/dynamodb";
 import { deleteObjectsInBucket } from "../../aws/s3";
-import { Context, LOG_LEVEL } from "../../index";
+import { Context } from "../../index";
 import { OAuthType } from "./oauthSignIn";
-import { User } from "../../types";
+import { User, LOG_LEVEL } from "../../types";
 import {
     USERS_TABLE,
     PROFILE_PICS_BUCKET,

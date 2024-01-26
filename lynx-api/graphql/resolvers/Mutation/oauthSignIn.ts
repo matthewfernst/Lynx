@@ -6,8 +6,8 @@ import { DateTime } from "luxon";
 import { v4 as uuid } from "uuid";
 
 import { GrantType, generateToken } from "../../auth";
-import { Context, LOG_LEVEL } from "../../index";
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../types";
+import { Context } from "../../index";
+import { LOG_LEVEL, BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../types";
 import { getItemByIndex, putItem } from "../../aws/dynamodb";
 import { USERS_TABLE } from "../../../infrastructure/lynxStack";
 

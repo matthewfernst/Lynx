@@ -2,8 +2,8 @@ import { APIGatewayProxyEvent } from "aws-lambda";
 import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
-import { Context, DefinedUserContext, LOG_LEVEL } from "./index";
-import { BAD_REQUEST, FORBIDDEN, Party, UNAUTHENTICATED, User } from "./types";
+import { Context, DefinedUserContext } from "./index";
+import {LOG_LEVEL, BAD_REQUEST, FORBIDDEN, Party, UNAUTHENTICATED, User } from "./types";
 
 export interface AccessToken {
     id: string;

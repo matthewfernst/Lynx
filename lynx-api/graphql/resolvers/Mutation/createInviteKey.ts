@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 
-import { Context, LOG_LEVEL } from "../../index";
+import { Context } from "../../index";
+import { LOG_LEVEL } from "../../types";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { putItem } from "../../aws/dynamodb";
 import { INVITES_TABLE } from "../../../infrastructure/lynxStack";

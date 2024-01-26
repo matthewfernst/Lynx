@@ -1,5 +1,6 @@
 import { createSignedUploadUrl } from "../../aws/s3";
-import { Context, LOG_LEVEL } from "../../index";
+import { Context } from "../../index";
+import { LOG_LEVEL } from "../../types";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { SLOPES_ZIPPED_BUCKET } from "../../../infrastructure/lynxStack";
 

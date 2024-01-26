@@ -2,8 +2,8 @@ import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { GraphQLError } from "graphql";
 import { DateTime } from "luxon";
 
-import { Context, LOG_LEVEL } from "../../index";
-import { DEPENDENCY_ERROR, LeaderboardEntry, User } from "../../types";
+import { Context } from "../../index";
+import { LOG_LEVEL, DEPENDENCY_ERROR, LeaderboardEntry, User } from "../../types";
 import { documentClient } from "../../aws/dynamodb";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/lynxStack";
 
