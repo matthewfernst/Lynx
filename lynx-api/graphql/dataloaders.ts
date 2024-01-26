@@ -1,39 +1,49 @@
 import DataLoader from "dataloader";
+import { GraphQLError } from "graphql";
 import { parseStringPromise, processors } from "xml2js";
 
-import { getItem } from "./aws/dynamodb";
+import { documentClient, getItem } from "./aws/dynamodb";
 import { getObjectNamesInBucket, getRecordFromBucket } from "./aws/s3";
 import {
+    LEADERBOARD_TABLE,
     PARTIES_TABLE,
     SLOPES_UNZIPPED_BUCKET,
     USERS_TABLE
 } from "../infrastructure/lynxStack";
-import { LOG_LEVEL } from "./index";
-import { Log } from "./types";
+import { DEPENDENCY_ERROR, Log, UserStats } from "./types";
+import { GetCommand } from "@aws-sdk/lib-dynamodb";
 
 const createDataloaders = () => ({
     users: new DataLoader(userDataLoader),
     logs: new DataLoader(logsDataLoader),
-    parties: new DataLoader(partiesDataLoader)
+    parties: new DataLoader(partiesDataLoader),
+    leaderboard: new DataLoader(leaderboardDataLoader, { cacheKeyFn: (key) => JSON.stringify(key) })
 });
 
 const userDataLoader = async (userIds: readonly string[]) => {
-    return await Promise.all(userIds.map(async (userId) => await getItem(USERS_TABLE, userId)));
+    return await Promise.all(
+        userIds.map(async (userId) => {
+            try {
+                return await getItem(USERS_TABLE, userId);
+            } catch (err) {
+                console.error(err);
+                throw new GraphQLError("DynamoDB Call Failed", {
+                    extensions: { code: DEPENDENCY_ERROR }
+                });
+            }
+        })
+    );
 };
 
 const logsDataLoader = async (userIds: readonly string[]) => {
     return await Promise.all(
         userIds.map(async (userId) => {
             const recordNames = await getObjectNamesInBucket(SLOPES_UNZIPPED_BUCKET, userId);
-            console[LOG_LEVEL](`Retriving records with names [${recordNames}].`);
             return await Promise.all(
-                recordNames.map(async (recordName): Promise<Log> => {
-                    const unzippedRecord = await getRecordFromBucket(
-                        SLOPES_UNZIPPED_BUCKET,
-                        recordName
-                    );
+                recordNames.map(async (name): Promise<Log> => {
+                    const unzippedRecord = await getRecordFromBucket(SLOPES_UNZIPPED_BUCKET, name);
                     const activity = await xmlToActivity(unzippedRecord);
-                    activity.originalFileName = `${recordName.split(".")[0]}.slopes`;
+                    activity.originalFileName = `${name.split(".")[0]}.slopes`;
                     return activity;
                 })
             );
@@ -43,21 +53,59 @@ const logsDataLoader = async (userIds: readonly string[]) => {
 
 const partiesDataLoader = async (partyIds: readonly string[]) => {
     return await Promise.all(
-        partyIds.map(async (partyId) => await getItem(PARTIES_TABLE, partyId))
+        partyIds.map(async (partyId) => {
+            try {
+                return await getItem(PARTIES_TABLE, partyId);
+            } catch (err) {
+                console.error(err);
+                throw new GraphQLError("DynamoDB Call Failed", {
+                    extensions: { code: DEPENDENCY_ERROR }
+                });
+            }
+        })
+    );
+};
+
+const leaderboardDataLoader = async (
+    leaderboardTableKeys: readonly { id: string; timeframe: string }[]
+) => {
+    return await Promise.all(
+        leaderboardTableKeys.map(async ({ id, timeframe }) => {
+            try {
+                const queryRequest = new GetCommand({
+                    TableName: LEADERBOARD_TABLE,
+                    Key: { id, timeframe }
+                });
+                const itemOutput = await documentClient.send(queryRequest);
+                return itemOutput.Item as UserStats;
+            } catch (err) {
+                console.error(err);
+                throw new GraphQLError("DynamoDB Call Failed", {
+                    extensions: { code: DEPENDENCY_ERROR }
+                });
+            }
+        })
     );
 };
 
 export const xmlToActivity = async (xml: string): Promise<Log> => {
-    const { activity } = await parseStringPromise(xml, {
-        normalize: true,
-        mergeAttrs: true,
-        explicitArray: false,
-        tagNameProcessors: [processors.firstCharLowerCase],
-        attrNameProcessors: [processors.firstCharLowerCase],
-        valueProcessors: [processors.parseBooleans, processors.parseNumbers],
-        attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
-    });
-    return activity;
+    try {
+        const parsedXML = await parseStringPromise(xml, {
+            normalize: true,
+            mergeAttrs: true,
+            explicitArray: false,
+            tagNameProcessors: [processors.firstCharLowerCase],
+            attrNameProcessors: [processors.firstCharLowerCase],
+            valueProcessors: [processors.parseBooleans, processors.parseNumbers],
+            attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
+        });
+        return parsedXML.activity;
+    } catch (err) {
+        console.error(err);
+        throw new GraphQLError("Error Parsing XML", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
+    }
 };
 
 export default createDataloaders;

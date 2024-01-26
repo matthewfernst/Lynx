@@ -1,12 +1,8 @@
-import { GetCommand } from "@aws-sdk/lib-dynamodb";
-import { GraphQLError } from "graphql";
 import { DateTime } from "luxon";
 
-import { DefinedUserContext, LOG_LEVEL } from "../../index";
-import { DEPENDENCY_ERROR, UserStats } from "../../types";
+import { DefinedUserContext } from "../../index";
+import { UserStats } from "../../types";
 import { Timeframe, leaderboardTimeframeFromQueryArgument } from "../Query/leaderboard";
-import { LEADERBOARD_TABLE } from "../../../infrastructure/lynxStack";
-import { documentClient } from "../../aws/dynamodb";
 
 interface Parent {
     id: string;
@@ -22,25 +18,11 @@ const stats = async (
     context: DefinedUserContext,
     info: any
 ): Promise<UserStats | undefined> => {
-    const timeframe = leaderboardTimeframeFromQueryArgument(DateTime.now(), Timeframe[args.timeframe]);
-    return await getUserStatsFromLeaderboard(parent.id, timeframe);
-};
-
-const getUserStatsFromLeaderboard = async (id: string, timeframe: string): Promise<UserStats> => {
-    try {
-        console[LOG_LEVEL](`Getting stats for user ${id} with timeframe ${timeframe}`);
-        const queryRequest = new GetCommand({
-            TableName: LEADERBOARD_TABLE,
-            Key: { id, timeframe }
-        });
-        const itemOutput = await documentClient.send(queryRequest);
-        return itemOutput.Item as UserStats;
-    } catch (err) {
-        console.error(err);
-        throw new GraphQLError("DynamoDB Query Call Failed", {
-            extensions: { code: DEPENDENCY_ERROR }
-        });
-    }
+    const timeframe = leaderboardTimeframeFromQueryArgument(
+        DateTime.now(),
+        Timeframe[args.timeframe]
+    );
+    return await context.dataloaders.leaderboard.load({ id: parent.id, timeframe });
 };
 
 export default stats;
