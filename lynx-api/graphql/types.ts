@@ -1,6 +1,7 @@
 import { Timeframe } from "./resolvers/Query/leaderboard";
 
 export const LOG_LEVEL = "info";
+
 export const BAD_REQUEST = "BAD_REQUEST";
 export const UNAUTHENTICATED = "UNAUTHENTICATED";
 export const FORBIDDEN = "FORBIDDEN";
