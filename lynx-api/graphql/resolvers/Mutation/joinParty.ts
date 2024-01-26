@@ -2,7 +2,7 @@ import { GraphQLError } from "graphql";
 
 import { checkHasUserId, checkIsValidUserAndHasValidInvite, checkIsValidParty } from "../../auth";
 import { addItemsToArray, deleteItemsFromArray } from "../../aws/dynamodb";
-import { Context } from "../../index";
+import { Context, logLevel } from "../../index";
 import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lynxStack";
 import { FORBIDDEN, User } from "../../types";
 
@@ -20,7 +20,7 @@ const joinParty = async (_: any, args: Args, context: Context, info: any): Promi
         });
     }
 
-    console.log(`Joining party with id ${args.partyId}`);
+    console[logLevel](`Joining party with id ${args.partyId}`);
     await deleteItemsFromArray(PARTIES_TABLE, args.partyId, "invitedUsers", [context.userId]);
     await deleteItemsFromArray(USERS_TABLE, context.userId, "partyInvites", [args.partyId]);
     await addItemsToArray(PARTIES_TABLE, args.partyId, "users", [context.userId]);

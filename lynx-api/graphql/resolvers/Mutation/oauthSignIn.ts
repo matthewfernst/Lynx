@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 import { v4 as uuid } from "uuid";
 
 import { GrantType, generateToken } from "../../auth";
-import { Context } from "../../index";
+import { Context, logLevel } from "../../index";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../types";
 import { getItemByIndex, putItem } from "../../aws/dynamodb";
 import { USERS_TABLE } from "../../../infrastructure/lynxStack";
@@ -63,7 +63,7 @@ const oauthSignIn = async (
 };
 
 export const verifyToken = async (type: OAuthType, id: string, token: string) => {
-    console.log(`Verifying ${OAuthType[type]} Token With User ${id}`);
+    console[logLevel](`Verifying ${OAuthType[type]} Token With User ${id}`);
     const valid = await isValidToken(type, id, token);
     if (!valid) {
         throw new GraphQLError("Invalid OAuth Token Provided", {
@@ -113,7 +113,7 @@ const isValidFacebookToken = async (id: string, token: string): Promise<boolean>
         access_token: `${process.env.FACEBOOK_CLIENT_ID}|${process.env.FACEBOOK_CLIENT_SECRET}`
     });
     const verificationURL = `${debugTokenURL}?${queryParams.toString()}`;
-    console.log(`Using Verification URL ${verificationURL}`);
+    console[logLevel](`Using Verification URL ${verificationURL}`);
     const { data: facebookData }: { data: FacebookData } = await axios.get(verificationURL);
     return facebookData.data.is_valid && facebookData.data.user_id === id;
 };

@@ -4,7 +4,7 @@ import {
     checkIsValidPartyAndIsPartyOwner
 } from "../../auth";
 import { deleteItemsFromArray } from "../../aws/dynamodb";
-import { Context } from "../../index";
+import { Context, logLevel } from "../../index";
 import { Party } from "../../types";
 import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lynxStack";
 
@@ -23,7 +23,7 @@ const deletePartyInvite = async (
     await checkIsValidUserAndHasValidInvite(context);
     await checkIsValidPartyAndIsPartyOwner(context, args.partyId);
 
-    console.log(`Deleting party invite for user with id ${args.userId}`);
+    console[logLevel](`Deleting party invite for user with id ${args.userId}`);
     await deleteItemsFromArray(USERS_TABLE, args.userId, "partyInvites", [args.partyId]);
     return (await deleteItemsFromArray(PARTIES_TABLE, args.partyId, "invitedUsers", [
         args.userId

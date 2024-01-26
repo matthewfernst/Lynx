@@ -2,7 +2,7 @@ import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import { GraphQLError } from "graphql";
 import { DateTime } from "luxon";
 
-import { DefinedUserContext } from "../../index";
+import { DefinedUserContext, logLevel } from "../../index";
 import { DEPENDENCY_ERROR, UserStats } from "../../types";
 import { Timeframe, leaderboardTimeframeFromQueryArgument } from "../Query/leaderboard";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/lynxStack";
@@ -28,7 +28,7 @@ const stats = async (
 
 const getUserStatsFromLeaderboard = async (id: string, timeframe: string): Promise<UserStats> => {
     try {
-        console.log(`Getting user stats with timeframe ${timeframe}`);
+        console[logLevel](`Getting stats for user ${id} with timeframe ${timeframe}`);
         const queryRequest = new GetCommand({
             TableName: LEADERBOARD_TABLE,
             Key: { id, timeframe }

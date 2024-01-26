@@ -3,7 +3,7 @@ import axios from "axios";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { deleteAllItems, deleteItem } from "../../aws/dynamodb";
 import { deleteObjectsInBucket } from "../../aws/s3";
-import { Context } from "../../index";
+import { Context, logLevel } from "../../index";
 import { OAuthType } from "./oauthSignIn";
 import { User } from "../../types";
 import {
@@ -30,7 +30,7 @@ const deleteUser = async (_: any, args: Args, context: Context, info: any): Prom
             async (token) => await invalidateToken(OAuthType[token.type], token.token)
         );
     }
-    console.log(`Deleting user with id ${context.userId}`);
+    console[logLevel](`Deleting user with id ${context.userId}`);
     await deleteObjectsInBucket(PROFILE_PICS_BUCKET, context.userId);
     await deleteObjectsInBucket(SLOPES_UNZIPPED_BUCKET, context.userId);
     await deleteAllItems(LEADERBOARD_TABLE, context.userId);

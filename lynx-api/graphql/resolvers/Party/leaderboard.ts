@@ -4,7 +4,7 @@ import { GraphQLError } from "graphql";
 import { DateTime } from "luxon";
 
 import { documentClient } from "../../aws/dynamodb";
-import { Context } from "../../index";
+import { Context, logLevel } from "../../index";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/lynxStack";
 import { LeaderboardEntry, Party, User } from "../../types";
 import {
@@ -45,7 +45,7 @@ const getTimeframeRankingByIndex = async (
     usersInParty: string[]
 ): Promise<LeaderboardEntry[]> => {
     try {
-        console.log(`Getting items with timeframe ${timeframe} sorted by ${index}`);
+        console[logLevel](`Getting items with timeframe ${timeframe} sorted by ${index}`);
         const queryRequest = new QueryCommand({
             TableName: LEADERBOARD_TABLE,
             IndexName: index,

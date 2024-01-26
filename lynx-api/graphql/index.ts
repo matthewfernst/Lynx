@@ -20,6 +20,8 @@ export interface DefinedUserContext extends Context {
     userId: string;
 }
 
+export const logLevel = process.env.NODE_ENV === "production" ? "info" : "debug";
+
 dotenv.config();
 
 const server = new ApolloServer<Context>({

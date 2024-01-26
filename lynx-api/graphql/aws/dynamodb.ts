@@ -11,6 +11,13 @@ import {
 import { GraphQLError } from "graphql";
 
 import {
+    USERS_TABLE,
+    LEADERBOARD_TABLE,
+    INVITES_TABLE,
+    PARTIES_TABLE
+} from "../../infrastructure/lynxStack";
+import { logLevel } from "../index";
+import {
     DEPENDENCY_ERROR,
     INTERNAL_SERVER_ERROR,
     Invite,
@@ -18,12 +25,6 @@ import {
     Party,
     User
 } from "../types";
-import {
-    USERS_TABLE,
-    LEADERBOARD_TABLE,
-    INVITES_TABLE,
-    PARTIES_TABLE
-} from "../../infrastructure/lynxStack";
 
 export type Table =
     | typeof USERS_TABLE
@@ -54,7 +55,7 @@ export const getItem = async <T extends Table>(
     id: string
 ): Promise<ObjectType<T> | undefined> => {
     try {
-        console.log(`Getting item from ${table} with id ${id}`);
+        console[logLevel](`Getting item from ${table} with id ${id}`);
         const getItemRequest = new GetCommand({ TableName: table, Key: { id } });
         const itemOutput = await documentClient.send(getItemRequest);
         return itemOutput.Item as ObjectType<T> | undefined;
@@ -72,7 +73,7 @@ export const getItemByIndex = async <T extends Table>(
     value: string
 ): Promise<ObjectType<T> | undefined> => {
     try {
-        console.log(`Getting item from ${table} with ${key} ${value}`);
+        console[logLevel](`Getting item from ${table} with ${key} ${value}`);
         const queryRequest = new QueryCommand({
             TableName: table,
             IndexName: key,
@@ -92,7 +93,7 @@ export const getItemByIndex = async <T extends Table>(
 
 export const putItem = async <T extends Table>(table: T, item: Object): Promise<ObjectType<T>> => {
     try {
-        console.log(`Putting item into ${table}`);
+        console[logLevel](`Putting item into ${table}`);
         const putItemRequest = new PutCommand({
             TableName: table,
             Item: item,
@@ -115,7 +116,7 @@ export const updateItem = async <T extends Table>(
     value: any
 ): Promise<ObjectType<T>> => {
     try {
-        console.log(`Updating item in ${table} with id ${id}. New ${key} is ${value}`);
+        console[logLevel](`Updating item in ${table} with id ${id}. New ${key} is ${value}`);
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
@@ -147,7 +148,7 @@ export const addItemsToArray = async <T extends Table>(
     values: string[]
 ): Promise<ObjectType<T>> => {
     try {
-        console.log(
+        console[logLevel](
             `Updating item in ${table} with id ${id}. ${key} now has the following as values: ${values}`
         );
         const updateItemRequest = new UpdateCommand({
@@ -182,7 +183,7 @@ export const deleteItemsFromArray = async <T extends Table>(
     values: string[]
 ): Promise<ObjectType<T>> => {
     try {
-        console.log(
+        console[logLevel](
             `Updating item in ${table} with id ${id}. ${key} no longer has the following as values: ${values}`
         );
         const item = await getItem(table, id);
@@ -224,7 +225,7 @@ export const deleteItemsFromArray = async <T extends Table>(
 
 export const deleteItem = async <T extends Table>(table: T, id: string): Promise<ObjectType<T>> => {
     try {
-        console.log(`Deleting item from ${table} with id ${id}`);
+        console[logLevel](`Deleting item from ${table} with id ${id}`);
         const deleteItemRequest = new DeleteCommand({
             TableName: table,
             Key: { id },
@@ -251,7 +252,7 @@ export const deleteAllItems = async <T extends Table>(
     id: string
 ): Promise<ObjectType<T>[]> => {
     try {
-        console.log(`Deleting all items from ${table} with id ${id}`);
+        console[logLevel](`Deleting all items from ${table} with id ${id}`);
         const queryRequest = new QueryCommand({
             TableName: table,
             KeyConditionExpression: "#indexKey = :value",

@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent } from "aws-lambda";
 import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
-import { Context, DefinedUserContext } from "./index";
+import { Context, DefinedUserContext, logLevel } from "./index";
 import { BAD_REQUEST, FORBIDDEN, Party, UNAUTHENTICATED, User } from "./types";
 
 export interface AccessToken {
@@ -15,7 +15,7 @@ export enum GrantType {
 }
 
 export function generateToken(id: string, grant_type: GrantType): string {
-    console.log(`Generating ${grant_type} token for user ${id}`);
+    console[logLevel](`Generating ${grant_type} token for user ${id}`);
     const key = process.env[`${grant_type}_KEY`] || GrantType[grant_type];
     return jwt.sign({ id }, key, { ...(doesGrantTypeExpire(grant_type) && { expiresIn: "6h" }) });
 }
@@ -25,7 +25,7 @@ function doesGrantTypeExpire(grant_type: GrantType): boolean {
 }
 
 export function decryptToken(token: string, grant_type: GrantType): AccessToken {
-    console.log(`Decrypting access token for user with token ${token}`);
+    console[logLevel](`Decrypting access token for user with token ${token}`);
     const key = process.env[`${grant_type}_KEY`] || GrantType[grant_type];
     return jwt.verify(token, key) as AccessToken;
 }

@@ -2,7 +2,7 @@ import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { GraphQLError } from "graphql";
 import { DateTime } from "luxon";
 
-import { Context } from "../../index";
+import { Context, logLevel } from "../../index";
 import { DEPENDENCY_ERROR, LeaderboardEntry, User } from "../../types";
 import { documentClient } from "../../aws/dynamodb";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/lynxStack";
@@ -79,7 +79,7 @@ const getTimeframeRankingByIndex = async (
     limit: number
 ): Promise<LeaderboardEntry[]> => {
     try {
-        console.log(`Getting items with timeframe ${timeframe} sorted by ${index}`);
+        console[logLevel](`Getting items with timeframe ${timeframe} sorted by ${index}`);
         const queryRequest = new QueryCommand({
             TableName: LEADERBOARD_TABLE,
             IndexName: index,
