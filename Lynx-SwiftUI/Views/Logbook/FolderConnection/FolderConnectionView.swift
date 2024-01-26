@@ -31,10 +31,14 @@ struct FolderConnectionView: View {
                     switch result {
                     case .success(let url):
                         folderConnectionHandler.picker(didPickDocumentsAt: url)
-                        dismiss()
+                        if !folderConnectionHandler.showError {
+                            dismiss()
+                        }
                         // Let a small amount of time pass for this view to dismiss
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            showUploadProgressView = true
+                            if !folderConnectionHandler.showError {
+                                showUploadProgressView = true
+                            }
                         }
                     case .failure(let error):
                         Logger.folderConnectionView.error(
