@@ -12,7 +12,7 @@ import {
     Role,
     ServicePrincipal
 } from "aws-cdk-lib/aws-iam";
-import { Code, Function as LambdaFunction, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Code, Function as LambdaFunction, Runtime, Tracing } from "aws-cdk-lib/aws-lambda";
 import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { Topic } from "aws-cdk-lib/aws-sns";
@@ -218,6 +218,7 @@ export class LynxStack extends Stack {
                 invitesTable,
                 partiesTable
             ),
+            tracing: Tracing.PASS_THROUGH,
             environment: { ...env, NODE_OPTIONS: "--enable-source-maps" }
         });
     }
@@ -313,6 +314,7 @@ export class LynxStack extends Stack {
             timeout: Duration.seconds(60),
             code: Code.fromAsset("dist/reducer"),
             role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable),
+            tracing: Tracing.PASS_THROUGH,
             environment: { NODE_OPTIONS: "--enable-source-maps" }
         });
         reducerLambda.addEventSource(
@@ -360,6 +362,7 @@ export class LynxStack extends Stack {
             timeout: Duration.seconds(60),
             code: Code.fromAsset("dist/unzipper"),
             role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket),
+            tracing: Tracing.PASS_THROUGH,
             environment: { NODE_OPTIONS: "--enable-source-maps" }
         });
         unzipperLambda.addEventSource(
