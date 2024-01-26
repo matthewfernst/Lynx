@@ -22,7 +22,6 @@ export interface DefinedUserContext extends Context {
 
 dotenv.config();
 
-export const LOG_LEVEL = "info";
 const server = new ApolloServer<Context>({
     typeDefs: loadSchemaSync(__dirname + "/schema.graphql", { loaders: [new GraphQLFileLoader()] }),
     resolvers,
