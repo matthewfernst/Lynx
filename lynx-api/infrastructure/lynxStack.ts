@@ -236,7 +236,8 @@ export class LynxStack extends Stack {
             roleName: "GraphQLAPILambdaRole",
             assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
             managedPolicies: [
-                ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
+                ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
+                ManagedPolicy.fromAwsManagedPolicyName("AWSXrayWriteOnlyAccess")
             ],
             inlinePolicies: {
                 BucketAccessPolicy: new PolicyDocument({
@@ -328,7 +329,8 @@ export class LynxStack extends Stack {
             roleName: "ReducerLambdaRole",
             assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
             managedPolicies: [
-                ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
+                ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
+                ManagedPolicy.fromAwsManagedPolicyName("AWSXrayWriteOnlyAccess")
             ],
             inlinePolicies: {
                 BucketAccessPolicy: new PolicyDocument({
@@ -379,7 +381,8 @@ export class LynxStack extends Stack {
             roleName: "UnzipperLambdaRole",
             assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
             managedPolicies: [
-                ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
+                ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
+                ManagedPolicy.fromAwsManagedPolicyName("AWSXrayWriteOnlyAccess")
             ],
             inlinePolicies: {
                 BucketAccessPolicy: new PolicyDocument({
