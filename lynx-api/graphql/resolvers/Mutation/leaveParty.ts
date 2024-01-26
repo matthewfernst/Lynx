@@ -2,7 +2,7 @@ import { GraphQLError } from "graphql";
 
 import { checkHasUserId, checkIsValidUserAndHasValidInvite, checkIsValidParty } from "../../auth";
 import { deleteItemsFromArray } from "../../aws/dynamodb";
-import { Context, logLevel } from "../../index";
+import { Context, LOG_LEVEL } from "../../index";
 import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lynxStack";
 import { FORBIDDEN, User } from "../../types";
 
@@ -20,7 +20,7 @@ const leaveParty = async (_: any, args: Args, context: Context, info: any): Prom
         });
     }
 
-    console[logLevel](`Leaving party token for with id ${context.userId}`);
+    console[LOG_LEVEL](`Leaving party token for with id ${context.userId}`);
     await deleteItemsFromArray(PARTIES_TABLE, args.partyId, "users", [context.userId]);
     return (await deleteItemsFromArray(USERS_TABLE, context.userId, "parties", [
         args.partyId

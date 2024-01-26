@@ -1,5 +1,5 @@
 import { createSignedUploadUrl } from "../../aws/s3";
-import { Context, logLevel } from "../../index";
+import { Context, LOG_LEVEL } from "../../index";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { SLOPES_ZIPPED_BUCKET } from "../../../infrastructure/lynxStack";
 
@@ -15,7 +15,7 @@ const createUserRecordUploadUrl = async (
 ): Promise<string[]> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);
-    console[logLevel](`Creating UserRecord Upload URL For User ID ${context.userId}`);
+    console[LOG_LEVEL](`Creating UserRecord Upload URL For User ID ${context.userId}`);
     return await Promise.all(
         args.requestedPaths.map((requestedPath) =>
             createSignedUploadUrl(SLOPES_ZIPPED_BUCKET, `${context.userId}/${requestedPath}`)

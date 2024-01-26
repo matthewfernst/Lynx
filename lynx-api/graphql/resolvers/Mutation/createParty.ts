@@ -2,7 +2,7 @@ import { v4 as uuid } from "uuid";
 
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { addItemsToArray, putItem } from "../../aws/dynamodb";
-import { Context, logLevel } from "../../index";
+import { Context, LOG_LEVEL } from "../../index";
 import { Party } from "../../types";
 import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lynxStack";
 
@@ -13,7 +13,7 @@ interface Args {
 const createParty = async (_: any, args: Args, context: Context, info: any): Promise<Party> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);
-    console[logLevel](`Creating party token for user with id ${context.userId}`);
+    console[LOG_LEVEL](`Creating party token for user with id ${context.userId}`);
     const partyId = uuid();
     const party = await putItem(PARTIES_TABLE, {
         id: partyId,

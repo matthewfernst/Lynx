@@ -16,7 +16,7 @@ import {
     INVITES_TABLE,
     PARTIES_TABLE
 } from "../../infrastructure/lynxStack";
-import { logLevel } from "../index";
+import { LOG_LEVEL } from "../index";
 import {
     DEPENDENCY_ERROR,
     INTERNAL_SERVER_ERROR,
@@ -55,7 +55,7 @@ export const getItem = async <T extends Table>(
     id: string
 ): Promise<ObjectType<T> | undefined> => {
     try {
-        console[logLevel](`Getting item from ${table} with id ${id}`);
+        console[LOG_LEVEL](`Getting item from ${table} with id ${id}`);
         const getItemRequest = new GetCommand({ TableName: table, Key: { id } });
         const itemOutput = await documentClient.send(getItemRequest);
         return itemOutput.Item as ObjectType<T> | undefined;
@@ -73,7 +73,7 @@ export const getItemByIndex = async <T extends Table>(
     value: string
 ): Promise<ObjectType<T> | undefined> => {
     try {
-        console[logLevel](`Getting item from ${table} with ${key} ${value}`);
+        console[LOG_LEVEL](`Getting item from ${table} with ${key} ${value}`);
         const queryRequest = new QueryCommand({
             TableName: table,
             IndexName: key,
@@ -93,7 +93,7 @@ export const getItemByIndex = async <T extends Table>(
 
 export const putItem = async <T extends Table>(table: T, item: Object): Promise<ObjectType<T>> => {
     try {
-        console[logLevel](`Putting item into ${table}`);
+        console[LOG_LEVEL](`Putting item into ${table}`);
         const putItemRequest = new PutCommand({
             TableName: table,
             Item: item,
@@ -116,7 +116,7 @@ export const updateItem = async <T extends Table>(
     value: any
 ): Promise<ObjectType<T>> => {
     try {
-        console[logLevel](`Updating item in ${table} with id ${id}. New ${key} is ${value}`);
+        console[LOG_LEVEL](`Updating item in ${table} with id ${id}. New ${key} is ${value}`);
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
@@ -148,7 +148,7 @@ export const addItemsToArray = async <T extends Table>(
     values: string[]
 ): Promise<ObjectType<T>> => {
     try {
-        console[logLevel](
+        console[LOG_LEVEL](
             `Updating item in ${table} with id ${id}. ${key} now has the following as values: ${values}`
         );
         const updateItemRequest = new UpdateCommand({
@@ -183,7 +183,7 @@ export const deleteItemsFromArray = async <T extends Table>(
     values: string[]
 ): Promise<ObjectType<T>> => {
     try {
-        console[logLevel](
+        console[LOG_LEVEL](
             `Updating item in ${table} with id ${id}. ${key} no longer has the following as values: ${values}`
         );
         const item = await getItem(table, id);
@@ -225,7 +225,7 @@ export const deleteItemsFromArray = async <T extends Table>(
 
 export const deleteItem = async <T extends Table>(table: T, id: string): Promise<ObjectType<T>> => {
     try {
-        console[logLevel](`Deleting item from ${table} with id ${id}`);
+        console[LOG_LEVEL](`Deleting item from ${table} with id ${id}`);
         const deleteItemRequest = new DeleteCommand({
             TableName: table,
             Key: { id },
@@ -252,7 +252,7 @@ export const deleteAllItems = async <T extends Table>(
     id: string
 ): Promise<ObjectType<T>[]> => {
     try {
-        console[logLevel](`Deleting all items from ${table} with id ${id}`);
+        console[LOG_LEVEL](`Deleting all items from ${table} with id ${id}`);
         const queryRequest = new QueryCommand({
             TableName: table,
             KeyConditionExpression: "#indexKey = :value",

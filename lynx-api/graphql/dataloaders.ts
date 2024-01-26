@@ -8,7 +8,7 @@ import {
     SLOPES_UNZIPPED_BUCKET,
     USERS_TABLE
 } from "../infrastructure/lynxStack";
-import { logLevel } from "./index";
+import { LOG_LEVEL } from "./index";
 import { Log } from "./types";
 
 const createDataloaders = () => ({
@@ -25,7 +25,7 @@ const logsDataLoader = async (userIds: readonly string[]) => {
     return await Promise.all(
         userIds.map(async (userId) => {
             const recordNames = await getObjectNamesInBucket(SLOPES_UNZIPPED_BUCKET, userId);
-            console[logLevel](`Retriving records with names [${recordNames}].`);
+            console[LOG_LEVEL](`Retriving records with names [${recordNames}].`);
             return await Promise.all(
                 recordNames.map(async (recordName): Promise<Log> => {
                     const unzippedRecord = await getRecordFromBucket(

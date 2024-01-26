@@ -1,4 +1,4 @@
-import { DefinedUserContext, logLevel } from "../../index";
+import { DefinedUserContext, LOG_LEVEL } from "../../index";
 import { checkIfObjectInBucket } from "../../aws/s3";
 import { PROFILE_PICS_BUCKET } from "../../../infrastructure/lynxStack";
 
@@ -9,7 +9,7 @@ const profilePictureUrl = async (
     info: any
 ): Promise<string | null> => {
     if (await checkIfObjectInBucket(PROFILE_PICS_BUCKET, parent.id)) {
-        console[logLevel](`Found S3 profile picture for user ${parent.id}`);
+        console[LOG_LEVEL](`Found S3 profile picture for user ${parent.id}`);
         return `https://${PROFILE_PICS_BUCKET}.s3.us-west-1.amazonaws.com/${parent.id}`;
     } else if (parent.profilePictureUrl) {
         return parent.profilePictureUrl;
