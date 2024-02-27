@@ -94,7 +94,8 @@ export class LynxStack extends Stack {
             .addMethod("POST", new LambdaIntegration(graphql, { allowTestInvoke: false }));
 
         const alarmTopic = this.createAlarmActions(env);
-        this.createErrorRateAlarms(alarmTopic, [graphql, reducer, unzipper]);
+        this.createLambdaErrorRateAlarms(alarmTopic, [graphql, reducer, unzipper]);
+        this.createAPIErrorRateAlarms(alarmTopic, api);
     }
 
     private createUsersTable(): Table {
@@ -407,7 +408,7 @@ export class LynxStack extends Stack {
         });
     }
 
-    private createErrorRateAlarms(alarmTopic: Topic, lambdas: LambdaFunction[]): Alarm[] {
+    private createLambdaErrorRateAlarms(alarmTopic: Topic, lambdas: LambdaFunction[]): Alarm[] {
         return lambdas.map((lambda) => {
             const alarm = new Alarm(this, `${lambda.node.id}-sucessRate`, {
                 alarmName: `${lambda.functionName} Success Rate`,
@@ -417,6 +418,29 @@ export class LynxStack extends Stack {
                     usingMetrics: {
                         errors: lambda.metricErrors(),
                         invocations: lambda.metricInvocations()
+                    },
+                    period: Duration.minutes(1)
+                }),
+                threshold: 0.99,
+                comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+                evaluationPeriods: 5
+            });
+            alarm.addAlarmAction(new SnsAction(alarmTopic));
+            return alarm;
+        });
+    }
+
+    private createAPIErrorRateAlarms(alarmTopic: Topic, api: RestApi): Alarm[] {
+        const errorRateMetrics = [api.metricClientError(), api.metricServerError()];
+        return errorRateMetrics.map((metric) => {
+            const alarm = new Alarm(this, `${api.node.id}-${metric.metricName}`, {
+                alarmName: `${metric.metricName}`,
+                metric: new MathExpression({
+                    label: "Success Rate",
+                    expression: "1 - errors / invocations",
+                    usingMetrics: {
+                        errors: metric,
+                        invocations: api.metricCount()
                     },
                     period: Duration.minutes(1)
                 }),
