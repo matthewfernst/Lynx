@@ -434,7 +434,7 @@ export class LynxStack extends Stack {
         const errorRateMetrics = [api.metricClientError(), api.metricServerError()];
         return errorRateMetrics.map((metric) => {
             const alarm = new Alarm(this, `${api.node.id}-${metric.metricName}`, {
-                alarmName: `${metric.metricName}`,
+                alarmName: `lynx-${metric.metricName}`,
                 metric: new MathExpression({
                     label: "Success Rate",
                     expression: "1 - errors / invocations",
