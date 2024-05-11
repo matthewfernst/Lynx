@@ -234,7 +234,7 @@ export class LynxStack extends Stack {
         partiesTable: Table
     ): Role {
         return new Role(this, "lynxGraphQLApiLambdaRole", {
-            roleName: "GraphQLAPILambdaRole",
+            roleName: "LynxGraphQLAPILambdaRole",
             assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
             managedPolicies: [
                 ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
