@@ -74,7 +74,7 @@ export class LynxStack extends Stack {
         );
 
         const api = new RestApi(this, "lynxGraphqlRestApi", {
-            restApiName: "GraphQL API",
+            restApiName: "Lynx GraphQL API",
             description: "The service endpoint for Lynx's GraphQL API",
             endpointTypes: [EndpointType.REGIONAL],
             domainName: {
