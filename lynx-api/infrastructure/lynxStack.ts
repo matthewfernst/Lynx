@@ -1,7 +1,7 @@
 import { Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import { Cors, EndpointType, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
-import { Alarm, ComparisonOperator, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
+import { Alarm, ComparisonOperator, MathExpression, TreatMissingData } from "aws-cdk-lib/aws-cloudwatch";
 import { SnsAction } from "aws-cdk-lib/aws-cloudwatch-actions";
 import { AttributeType, BillingMode, ProjectionType, Table } from "aws-cdk-lib/aws-dynamodb";
 import {
@@ -423,7 +423,8 @@ export class LynxStack extends Stack {
                 }),
                 threshold: 0.99,
                 comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-                evaluationPeriods: 5
+                evaluationPeriods: 5,
+                treatMissingData: TreatMissingData.NOT_BREACHING
             });
             alarm.addAlarmAction(new SnsAction(alarmTopic));
             return alarm;
@@ -446,7 +447,8 @@ export class LynxStack extends Stack {
                 }),
                 threshold: 0.99,
                 comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-                evaluationPeriods: 5
+                evaluationPeriods: 5,
+                treatMissingData: TreatMissingData.NOT_BREACHING
             });
             alarm.addAlarmAction(new SnsAction(alarmTopic));
             return alarm;
