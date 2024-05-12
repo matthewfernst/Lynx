@@ -76,17 +76,18 @@ export class LynxStack extends Stack {
         const api = new RestApi(this, "lynxGraphqlRestApi", {
             restApiName: "Lynx GraphQL API",
             description: "The service endpoint for Lynx's GraphQL API",
-            endpointTypes: [EndpointType.REGIONAL],
             domainName: {
                 domainName: "production.lynx-api.com",
+                endpointType: EndpointType.EDGE,
                 certificate: new Certificate(this, "lynxCertificate", {
                     domainName: "*.lynx-api.com",
                     validation: CertificateValidation.fromDns()
                 })
             },
             disableExecuteApiEndpoint: true,
-            deployOptions: { tracingEnabled: true },
-            defaultCorsPreflightOptions: { allowOrigins: Cors.ALL_ORIGINS }
+            deployOptions: { stageName: "production", tracingEnabled: true },
+            defaultCorsPreflightOptions: { allowOrigins: Cors.ALL_ORIGINS },
+            endpointExportName: "LynxGraphqlApiEndpoint"
         });
 
         api.root
@@ -327,7 +328,7 @@ export class LynxStack extends Stack {
 
     private createReducerLambdaRole(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Role {
         return new Role(this, "lynxReducerLambdaRole", {
-            roleName: "ReducerLambdaRole",
+            roleName: "LynxReducerLambdaRole",
             assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
             managedPolicies: [
                 ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
@@ -379,7 +380,7 @@ export class LynxStack extends Stack {
         slopesUnzippedBucket: Bucket
     ): Role {
         return new Role(this, "lynxUnzipperLambdaRole", {
-            roleName: "UnzipperLambdaRole",
+            roleName: "LynxUnzipperLambdaRole",
             assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
             managedPolicies: [
                 ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
