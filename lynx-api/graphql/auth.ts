@@ -3,7 +3,7 @@ import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
 import { Context, DefinedUserContext } from "./index";
-import {LOG_LEVEL, BAD_REQUEST, FORBIDDEN, Party, UNAUTHENTICATED, User } from "./types";
+import { LOG_LEVEL, BAD_REQUEST, FORBIDDEN, Party, UNAUTHENTICATED, User } from "./types";
 
 export interface AccessToken {
     id: string;
@@ -14,19 +14,15 @@ export enum GrantType {
     REFRESH
 }
 
-export function generateToken(id: string, grant_type: GrantType): string {
-    console[LOG_LEVEL](`Generating ${GrantType[grant_type]} token for user ${id}`);
-    const key = process.env[`${grant_type}_KEY`] || GrantType[grant_type];
-    return jwt.sign({ id }, key, { ...(doesGrantTypeExpire(grant_type) && { expiresIn: "6h" }) });
+export function generateToken(id: string, grantType: GrantType): string {
+    console[LOG_LEVEL](`Generating ${GrantType[grantType]} token for user ${id}`);
+    const key = process.env[`${grantType}_KEY`] || GrantType[grantType];
+    return jwt.sign({ id }, key, { expiresIn: "6h" });
 }
 
-function doesGrantTypeExpire(grant_type: GrantType): boolean {
-    return grant_type === GrantType.AUTH;
-}
-
-export function decryptToken(token: string, grant_type: GrantType): AccessToken {
+export function decryptToken(token: string, grantType: GrantType): AccessToken {
     console[LOG_LEVEL](`Decrypting access token for user with token ${token}`);
-    const key = process.env[`${grant_type}_KEY`] || GrantType[grant_type];
+    const key = process.env[`${grantType}_KEY`] || GrantType[grantType];
     return jwt.verify(token, key) as AccessToken;
 }
 
