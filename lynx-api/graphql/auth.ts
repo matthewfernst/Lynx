@@ -15,7 +15,7 @@ export enum GrantType {
 }
 
 export function generateToken(id: string, grant_type: GrantType): string {
-    console[LOG_LEVEL](`Generating ${grant_type} token for user ${id}`);
+    console[LOG_LEVEL](`Generating ${GrantType[grant_type]} token for user ${id}`);
     const key = process.env[`${grant_type}_KEY`] || GrantType[grant_type];
     return jwt.sign({ id }, key, { ...(doesGrantTypeExpire(grant_type) && { expiresIn: "6h" }) });
 }
