@@ -1,22 +1,17 @@
 import { DefinedUserContext } from "../../index";
-import { LOG_LEVEL } from "../../types";
-import { checkIfObjectInBucket } from "../../aws/s3";
-import { PROFILE_PICS_BUCKET } from "../../../infrastructure/lynxStack";
+
+interface Parent {
+    id: string;
+    profilePictureUrl: string;
+}
 
 const profilePictureUrl = async (
-    parent: any,
+    parent: Parent,
     args: {},
     context: DefinedUserContext,
     info: any
 ): Promise<string | null> => {
-    if (await checkIfObjectInBucket(PROFILE_PICS_BUCKET, parent.id)) {
-        console[LOG_LEVEL](`Found S3 profile picture for user ${parent.id}`);
-        return `https://${PROFILE_PICS_BUCKET}.s3.us-west-1.amazonaws.com/${parent.id}`;
-    } else if (parent.profilePictureUrl) {
-        return parent.profilePictureUrl;
-    } else {
-        return null;
-    }
+    return context.dataloaders.profilePictures.load(parent);
 };
 
 export default profilePictureUrl;

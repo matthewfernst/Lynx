@@ -1,22 +1,24 @@
+import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import DataLoader from "dataloader";
 import { GraphQLError } from "graphql";
 import { parseStringPromise, processors } from "xml2js";
 
 import { documentClient, getItem } from "./aws/dynamodb";
-import { getObjectNamesInBucket, getRecordFromBucket } from "./aws/s3";
+import { checkIfObjectInBucket, getObjectNamesInBucket, getRecordFromBucket } from "./aws/s3";
 import {
     LEADERBOARD_TABLE,
     PARTIES_TABLE,
+    PROFILE_PICS_BUCKET,
     SLOPES_UNZIPPED_BUCKET,
     USERS_TABLE
 } from "../infrastructure/lynxStack";
-import { DEPENDENCY_ERROR, Log, UserStats } from "./types";
-import { GetCommand } from "@aws-sdk/lib-dynamodb";
+import { DEPENDENCY_ERROR, LOG_LEVEL, Log, UserStats } from "./types";
 
 const createDataloaders = () => ({
     users: new DataLoader(userDataLoader),
     logs: new DataLoader(logsDataLoader),
     parties: new DataLoader(partiesDataLoader),
+    profilePictures: new DataLoader(profilePictureDataloader, { cacheKeyFn: (key) => key.id }),
     leaderboard: new DataLoader(leaderboardDataLoader, { cacheKeyFn: (key) => JSON.stringify(key) })
 });
 
@@ -61,6 +63,23 @@ const partiesDataLoader = async (partyIds: readonly string[]) => {
                 throw new GraphQLError("DynamoDB Call Failed", {
                     extensions: { code: DEPENDENCY_ERROR }
                 });
+            }
+        })
+    );
+};
+
+const profilePictureDataloader = async (
+    users: readonly { id: string; profilePictureUrl: string }[]
+): Promise<(string | null)[]> => {
+    return await Promise.all(
+        users.map(async (user) => {
+            if (await checkIfObjectInBucket(PROFILE_PICS_BUCKET, user.id)) {
+                console[LOG_LEVEL](`Found S3 profile picture for user ${user.id}`);
+                return `https://${PROFILE_PICS_BUCKET}.s3.us-west-1.amazonaws.com/${user.id}`;
+            } else if (user.profilePictureUrl) {
+                return user.profilePictureUrl;
+            } else {
+                return null;
             }
         })
     );
