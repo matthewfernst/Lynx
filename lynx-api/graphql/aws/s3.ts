@@ -17,7 +17,7 @@ import { DEPENDENCY_ERROR } from "../types";
 
 setLogger(console);
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
-const awsClient = new S3Client({ region: process.env.AWS_REGION });
+const awsClient = new S3Client({ region: process.env.AWS_REGION, logger: console });
 export const s3Client = captureAWSv3Client(awsClient) as NodeJsClient<S3Client>;
 
 export const createSignedUploadUrl = async (bucketName: string, path: string): Promise<string> => {
