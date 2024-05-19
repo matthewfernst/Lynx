@@ -31,7 +31,6 @@
 		659C016D2B48AAF900053412 /* InvitationKeyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659C016C2B48AAF900053412 /* InvitationKeyHandler.swift */; };
 		659FAEE52B3748770027E795 /* GetSpecificLeaderboard.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 659FAEE42B3748770027E795 /* GetSpecificLeaderboard.graphql */; };
 		65A518CF2B2D38BF00A06014 /* PreviewSampleProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A518CE2B2D38BF00A06014 /* PreviewSampleProfile.swift */; };
-		65AB7D8D2BF980790027E1C5 /* HowToUpload.mov in Resources */ = {isa = PBXBuildFile; fileRef = 65AB7D8C2BF980790027E1C5 /* HowToUpload.mov */; };
 		65AB7DBC2BF983D00027E1C5 /* LeaderboardFields.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AB7D8E2BF983D00027E1C5 /* LeaderboardFields.graphql.swift */; };
 		65AB7DBD2BF983D00027E1C5 /* CombineOAuthAccountsMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AB7D902BF983D00027E1C5 /* CombineOAuthAccountsMutation.graphql.swift */; };
 		65AB7DBE2BF983D00027E1C5 /* CreateInviteKeyMutation.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AB7D912BF983D00027E1C5 /* CreateInviteKeyMutation.graphql.swift */; };
@@ -112,6 +111,7 @@
 		65B35F902B11C2A0002E99E4 /* BookmarkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B35F8F2B11C2A0002E99E4 /* BookmarkManager.swift */; };
 		65B39A652B13E61100948C9D /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B39A642B13E61100948C9D /* ProfileManager.swift */; };
 		65B39A672B13FD0500948C9D /* LogbookStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B39A662B13FD0500948C9D /* LogbookStats.swift */; };
+		65B8955D2BF98D3A0073B012 /* HowToUpload.mov in Resources */ = {isa = PBXBuildFile; fileRef = 65B8955C2BF98D3A0073B012 /* HowToUpload.mov */; };
 		65D59FE42B2ECE16008E3A2B /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D59FE32B2ECE16008E3A2B /* KeychainManager.swift */; };
 		65D9589C2B425734000E3013 /* FLAnimatedImage in Frameworks */ = {isa = PBXBuildFile; productRef = 65D9589B2B425734000E3013 /* FLAnimatedImage */; };
 		65D958A02B434F69000E3013 /* VideoPlayerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D9589F2B434F69000E3013 /* VideoPlayerHandler.swift */; };
@@ -144,7 +144,6 @@
 		659C016C2B48AAF900053412 /* InvitationKeyHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationKeyHandler.swift; sourceTree = "<group>"; };
 		659FAEE42B3748770027E795 /* GetSpecificLeaderboard.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetSpecificLeaderboard.graphql; sourceTree = "<group>"; };
 		65A518CE2B2D38BF00A06014 /* PreviewSampleProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSampleProfile.swift; sourceTree = "<group>"; };
-		65AB7D8C2BF980790027E1C5 /* HowToUpload.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; name = HowToUpload.mov; path = ../../../../Downloads/HowToUpload.mov; sourceTree = "<group>"; };
 		65AB7D8E2BF983D00027E1C5 /* LeaderboardFields.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeaderboardFields.graphql.swift; sourceTree = "<group>"; };
 		65AB7D902BF983D00027E1C5 /* CombineOAuthAccountsMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CombineOAuthAccountsMutation.graphql.swift; sourceTree = "<group>"; };
 		65AB7D912BF983D00027E1C5 /* CreateInviteKeyMutation.graphql.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateInviteKeyMutation.graphql.swift; sourceTree = "<group>"; };
@@ -221,6 +220,7 @@
 		65B35F8F2B11C2A0002E99E4 /* BookmarkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookmarkManager.swift; sourceTree = "<group>"; };
 		65B39A642B13E61100948C9D /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		65B39A662B13FD0500948C9D /* LogbookStats.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogbookStats.swift; sourceTree = "<group>"; };
+		65B8955C2BF98D3A0073B012 /* HowToUpload.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = HowToUpload.mov; sourceTree = "<group>"; };
 		65D59FE32B2ECE16008E3A2B /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		65D9589F2B434F69000E3013 /* VideoPlayerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerHandler.swift; sourceTree = "<group>"; };
 		65F6CFD52B12EA2300E94E40 /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
@@ -403,9 +403,9 @@
 		65B35E8E2B118C17002E99E4 /* Lynx-SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				65AB7D8C2BF980790027E1C5 /* HowToUpload.mov */,
 				6573BA1C2B28312000381085 /* Lynx-SwiftUI.entitlements */,
 				65F6CFDB2B1305F300E94E40 /* Info.plist */,
+				65B8955C2BF98D3A0073B012 /* HowToUpload.mov */,
 				65B35EB82B11BE0B002E99E4 /* Apollo */,
 				65AB7DBB2BF983D00027E1C5 /* ApolloGeneratedGraphQL */,
 				65B35EC02B11BE0B002E99E4 /* GraphQLOperations */,
@@ -668,7 +668,7 @@
 				65B35EFF2B11BE0C002E99E4 /* EditUser.graphql in Resources */,
 				65B35F002B11BE0C002E99E4 /* SubmitInviteKey.graphql in Resources */,
 				65B35EFC2B11BE0C002E99E4 /* CreateRunRecordUploadUrl.graphql in Resources */,
-				65AB7D8D2BF980790027E1C5 /* HowToUpload.mov in Resources */,
+				65B8955D2BF98D3A0073B012 /* HowToUpload.mov in Resources */,
 				65B35EFA2B11BE0C002E99E4 /* CreateUserProfilePictureUploadUrl.graphql in Resources */,
 				65B35F032B11BE0C002E99E4 /* GetOAuthLogins.graphql in Resources */,
 				65B35F072B11BE0C002E99E4 /* apollo-codegen-config.json in Resources */,

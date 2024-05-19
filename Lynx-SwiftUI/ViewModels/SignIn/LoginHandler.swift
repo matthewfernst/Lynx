@@ -37,10 +37,10 @@ class LoginHandler {
             switch result {
             case .success(_):
                 Logger.loginHandler.info("Authorization Token successfully received.")
-                ApolloLynxClient.hasValidatedInviteKey { keyResult in
-                    switch keyResult {
-                    case .success(let validatedInvite):
-                        if validatedInvite {
+                ApolloLynxClient.getProfileInformation { result in
+                    switch result {
+                    case .success(let profileAttributes):
+                        if profileAttributes.validatedInvite {
                             self.loginUser(profileManager: profileManager) { result in
                                 switch result {
                                 case .success(_):
@@ -49,11 +49,10 @@ class LoginHandler {
                                     showSignInError.wrappedValue = true
                                 }
                             }
-                        } else { // Show Invitation Sheet
+                        } else {
                             showInvitationSheet.wrappedValue = true
                         }
                     case .failure(_):
-                        // TODO: Say fail of querying?
                         showSignInError.wrappedValue = true
                     }
                 }

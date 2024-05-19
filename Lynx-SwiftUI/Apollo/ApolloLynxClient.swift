@@ -250,29 +250,6 @@ class ApolloLynxClient {
         }
     }
     
-    static func hasValidatedInviteKey(completion: @escaping (Result<Bool, Error>) -> Void) {
-        enum HasValidatedInviteKeyError: Error {
-            case failedToUnwrapData
-        }
-        apolloClient.fetch(query: ApolloGeneratedGraphQL.HasValidatedInviteQuery()) { result in
-            switch result {
-            case .success(let graphQLResult):
-                guard let hasValidatedInvite = graphQLResult.data?.selfLookup?.validatedInvite else {
-                    Logger.apollo.error("Failed to unwrap selflookup validatedInvite")
-                    completion(.failure(HasValidatedInviteKeyError.failedToUnwrapData))
-                    return
-                }
-                
-                Logger.apollo.info("Successfully got has validate invite key")
-                completion(.success(hasValidatedInvite))
-                
-            case .failure(let error):
-                Logger.apollo.error("Failed to query validated invite key: \(error)")
-                completion(.failure(error))
-            }
-        }
-    }
-    
     static func refreshAccessToken(refreshToken: String, completion: @escaping (Result<Void, Error>) -> Void) {
         apolloClient.perform(
             mutation: ApolloGeneratedGraphQL.RefreshAccessTokenMutation(refreshToken: refreshToken)

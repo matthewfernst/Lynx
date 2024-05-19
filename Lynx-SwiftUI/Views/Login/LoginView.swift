@@ -57,7 +57,7 @@ struct LoginView: View {
                 }
         }
         .sheet(isPresented: $showInvitationSheet, content: {
-            InvitationKeyView(isSigningIn: $isSigningIn) { // TODO: Some way to do this better??
+            InvitationKeyView(isSigningIn: $isSigningIn) {
                 loginHandler.loginUser(profileManager: profileManager) { result in
                     switch result {
                     case .success(_):
