@@ -6,7 +6,9 @@ import {
     ListObjectsCommand,
     PutObjectCommand,
     DeleteObjectCommand,
-    _Object
+    _Object,
+    NotFound,
+    S3ServiceException
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { NodeJsClient } from "@smithy/types";
@@ -33,12 +35,16 @@ export const createSignedUploadUrl = async (bucketName: string, path: string): P
 export const checkIfObjectInBucket = async (bucketName: string, path: string) => {
     try {
         const headObjectRequest = new HeadObjectCommand({ Bucket: bucketName, Key: path });
-        console.log("Starting HeadObjectRequest")
-        await s3Client.send(headObjectRequest, { requestTimeout: 2000 });
-        console.log("Finishing HeadObjectRequest");
+        await s3Client.send(headObjectRequest);
         return true;
-    } catch (error) {
-        return false;
+    } catch (err: any) {
+        if (err.name === "NotFound") {
+            return false;
+        }
+        console.error(err);
+        throw new GraphQLError("Error checking if object in bucket", {
+            extensions: { code: DEPENDENCY_ERROR }
+        });
     }
 };
 
