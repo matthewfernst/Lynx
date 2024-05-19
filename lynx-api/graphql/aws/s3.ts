@@ -14,7 +14,6 @@ import { NodeJsClient } from "@smithy/types";
 import { GraphQLError } from "graphql";
 
 import { DEPENDENCY_ERROR } from "../types";
-import { NodeHttpHandler } from "@smithy/node-http-handler";
 
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
 const awsClient = new S3Client({ region: process.env.AWS_REGION });
@@ -33,13 +32,9 @@ export const createSignedUploadUrl = async (bucketName: string, path: string): P
 };
 
 export const checkIfObjectInBucket = async (bucketName: string, path: string) => {
-    const customS3Client = new S3Client({
-        region: process.env.AWS_REGION,
-        requestHandler: new NodeHttpHandler({ requestTimeout: 400 })
-    });
     try {
         const headObjectRequest = new HeadObjectCommand({ Bucket: bucketName, Key: path });
-        await customS3Client.send(headObjectRequest);
+        await awsClient.send(headObjectRequest);
         return true;
     } catch (err: any) {
         if (err.name === "NotFound") {
