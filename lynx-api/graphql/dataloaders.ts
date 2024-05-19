@@ -4,7 +4,7 @@ import { GraphQLError } from "graphql";
 
 import { documentClient, getItem } from "./aws/dynamodb";
 import { LEADERBOARD_TABLE, PARTIES_TABLE, USERS_TABLE } from "../infrastructure/lynxStack";
-import { DEPENDENCY_ERROR, Log, UserStats } from "./types";
+import { DEPENDENCY_ERROR, UserStats } from "./types";
 import { profilePictureDataloader } from "./resolvers/User/profilePictureUrl";
 import { logsDataLoader } from "./resolvers/User/logbook";
 
