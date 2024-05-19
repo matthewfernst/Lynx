@@ -11,7 +11,7 @@ const partyLookupById = async (
     context: Context,
     info: any
 ): Promise<Party | undefined> => {
-    return await context.dataloaders.parties.load(args.id);
+    return context.dataloaders.parties.load(args.id);
 };
 
 export default partyLookupById;

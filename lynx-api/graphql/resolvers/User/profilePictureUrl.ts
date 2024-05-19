@@ -14,9 +14,7 @@ const profilePictureUrl = async (
     context: DefinedUserContext,
     info: any
 ): Promise<string | null> => {
-    const picture = context.dataloaders.profilePictures.load(parent);
-    console.log(`Finished retrieving picture for user ${parent.id}: ${picture}`);
-    return picture;
+    return context.dataloaders.profilePictures.load(parent);
 };
 
 export const profilePictureDataloader = async (

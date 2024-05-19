@@ -9,7 +9,7 @@ const selfLookup = async (
     info: any
 ): Promise<User | undefined> => {
     checkHasUserId(context);
-    return await context.dataloaders.users.load(context.userId);
+    return context.dataloaders.users.load(context.userId);
 };
 
 export default selfLookup;

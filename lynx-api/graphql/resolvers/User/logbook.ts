@@ -14,7 +14,7 @@ const logbook = async (
     info: any
 ): Promise<Log[]> => {
     checkIsMe(parent, context, "logbook");
-    return await context.dataloaders.logs.load(context.userId);
+    return context.dataloaders.logs.load(context.userId);
 };
 
 export const logsDataLoader = async (userIds: readonly string[]) => {

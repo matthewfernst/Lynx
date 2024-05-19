@@ -43,6 +43,7 @@
         "@aws-sdk/s3-request-presigner": "^3.501.0",
         "@graphql-tools/graphql-file-loader": "^8.0.0",
         "@graphql-tools/load": "^8.0.1",
+        "@smithy/node-http-handler": "^3.0.0",
         "apple-signin-auth": "^1.7.5",
         "aws-cdk-lib": "2.124.0",
         "aws-xray-sdk": "^3.5.3",

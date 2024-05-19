@@ -11,7 +11,7 @@ const userLookupById = async (
     context: Context,
     info: any
 ): Promise<User | undefined> => {
-    return await context.dataloaders.users.load(args.id);
+    return context.dataloaders.users.load(args.id);
 };
 
 export default userLookupById;
