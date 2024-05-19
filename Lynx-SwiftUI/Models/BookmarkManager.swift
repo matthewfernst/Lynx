@@ -17,11 +17,25 @@ class BookmarkManager {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
     
+    
+    func listContentsOfDirectory(at url: URL) {
+        let fileManager = FileManager.default
+        do {
+            let contents = try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+            for itemURL in contents {
+                print(itemURL.lastPathComponent)
+            }
+        } catch {
+            print("Error: \(error)")
+        }
+    }
+    
     func saveBookmark(for url: URL) {
         do {
             // Start accessing a security-scoped resource.
             guard url.startAccessingSecurityScopedResource() else {
                 // Handle the failure here.
+                Logger.bookmarkManager.info("Unable to start access.")
                 return
             }
             

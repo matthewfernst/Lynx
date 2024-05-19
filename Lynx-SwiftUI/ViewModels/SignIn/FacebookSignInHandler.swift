@@ -48,7 +48,8 @@ class FacebookSignInHandler {
                     completion(
                         ProfileAttributes(
                             id: profileInfo["id"] as! String,
-                            oauthType: OAuthType.facebook.rawValue,
+                            oauthType: OAuthType.facebook.rawValue, 
+                            validatedInvite: true, // TODO: - FIX ME
                             email: profileInfo["email"] as? String,
                             firstName: profileInfo["first_name"] as? String,
                             lastName: profileInfo["last_name"] as? String,

@@ -34,6 +34,7 @@ class AppleSignInHandler {
                     .init(
                         id: appleIDCredential.user,
                         oauthType: OAuthType.apple.rawValue,
+                        validatedInvite: true, // TODO: - FIX ME
                         email: appleIDCredential.email,
                         firstName: appleIDCredential.fullName?.givenName,
                         lastName: appleIDCredential.fullName?.familyName

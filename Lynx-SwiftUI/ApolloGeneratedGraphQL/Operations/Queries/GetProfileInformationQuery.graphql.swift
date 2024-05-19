@@ -18,6 +18,7 @@ public extension ApolloGeneratedGraphQL {
               type
               id
             }
+            validatedInvite
             email
             firstName
             lastName
@@ -52,6 +53,7 @@ public extension ApolloGeneratedGraphQL {
           .field("__typename", String.self),
           .field("id", ApolloGeneratedGraphQL.ID.self),
           .field("oauthLoginIds", [OauthLoginId].self),
+          .field("validatedInvite", Bool.self),
           .field("email", String.self),
           .field("firstName", String.self),
           .field("lastName", String.self),
@@ -60,6 +62,7 @@ public extension ApolloGeneratedGraphQL {
 
         public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
         public var oauthLoginIds: [OauthLoginId] { __data["oauthLoginIds"] }
+        public var validatedInvite: Bool { __data["validatedInvite"] }
         public var email: String { __data["email"] }
         public var firstName: String { __data["firstName"] }
         public var lastName: String { __data["lastName"] }

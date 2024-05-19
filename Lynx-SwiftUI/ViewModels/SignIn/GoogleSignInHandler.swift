@@ -50,6 +50,7 @@ class GoogleSignInHandler {
                     ProfileAttributes(
                         id: googleId,
                         oauthType: OAuthType.google.rawValue,
+                        validatedInvite: true, // TODO: - FIX ME
                         email: email,
                         firstName: firstName,
                         lastName: lastName,

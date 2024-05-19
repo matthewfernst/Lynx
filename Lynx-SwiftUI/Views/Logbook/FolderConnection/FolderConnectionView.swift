@@ -15,6 +15,7 @@ struct FolderConnectionView: View {
     
     @Environment(\.dismiss) private var dismiss
     @State private var showDocumentPicker = false
+    @State var dismissForUpload: Bool = false
     
     @State private var playerHandler = VideoPlayerHandler()
     @State private var showContinueButton = false
@@ -30,16 +31,10 @@ struct FolderConnectionView: View {
                 ) { result in
                     switch result {
                     case .success(let url):
-                        folderConnectionHandler.picker(didPickDocumentsAt: url)
-                        if !folderConnectionHandler.showError {
-                            dismiss()
-                        }
-                        // Let a small amount of time pass for this view to dismiss
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            if !folderConnectionHandler.showError {
-                                showUploadProgressView = true
-                            }
-                        }
+                        folderConnectionHandler.picker(
+                            didPickDocumentsAt: url,
+                            dismissForUpload: $dismissForUpload
+                        )
                     case .failure(let error):
                         Logger.folderConnectionView.error(
                             "Failed in selecting folder with error: \(error)"
@@ -48,6 +43,15 @@ struct FolderConnectionView: View {
                 }
                 .alert(isPresented: $folderConnectionHandler.showError) {
                     folderConnectionHandler.errorAlert!
+                }
+                .onChange(of: dismissForUpload) { _, newValue in
+                    if newValue {
+                        dismiss()
+                        // Let a small amount of time pass for this view to dismiss
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            showUploadProgressView = true
+                        }
+                    }
                 }
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {

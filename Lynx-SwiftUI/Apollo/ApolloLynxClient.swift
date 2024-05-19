@@ -129,6 +129,7 @@ class ApolloLynxClient {
                 let profileAttributes = ProfileAttributes(
                     id: id,
                     oauthType: oauthType.rawValue,
+                    validatedInvite: selfLookup.validatedInvite,
                     email: selfLookup.email,
                     firstName: selfLookup.firstName,
                     lastName: selfLookup.lastName,
@@ -696,6 +697,7 @@ class ApolloLynxClient {
 struct ProfileAttributes: CustomDebugStringConvertible {
     var id: String
     var oauthType: String
+    var validatedInvite: Bool
     var email: String? = nil
     var firstName: String? = nil
     var lastName: String? = nil
@@ -704,6 +706,7 @@ struct ProfileAttributes: CustomDebugStringConvertible {
     init(
         id: String,
         oauthType: String,
+        validatedInvite: Bool,
         email: String? = nil,
         firstName: String? = nil,
         lastName: String? = nil,
@@ -711,6 +714,7 @@ struct ProfileAttributes: CustomDebugStringConvertible {
     ) {
         self.id = id
         self.oauthType = oauthType
+        self.validatedInvite = validatedInvite
         self.email = email
         self.firstName = firstName
         self.lastName = lastName
@@ -721,6 +725,7 @@ struct ProfileAttributes: CustomDebugStringConvertible {
        """
        id: \(self.id)
        oauthType: \(self.oauthType)
+       validatedInvite: \(self.validatedInvite)
        firstName: \(self.firstName ?? "Johnny")
        lastName: \(self.lastName ?? "Appleseed")
        email: \(self.email ?? "johnny.appleseed@email.com")

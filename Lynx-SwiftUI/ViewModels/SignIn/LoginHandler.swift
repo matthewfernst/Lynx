@@ -16,15 +16,15 @@ enum ProfileError: Error {
 class LoginHandler {
     func commonSignIn(
         profileManager: ProfileManager,
-        withProfileAttributes attributes: ProfileAttributes,
+        withOAuthAttributes attributes: ProfileAttributes,
         oauthToken: String,
         showInvitationSheet: Binding<Bool>,
         showSignInError: Binding<Bool>
     ) {
         
-#if DEBUG
-        profileManager.update(newProfileWith: Profile.debugProfile)
-#else
+//#if DEBUG
+//        profileManager.update(newProfileWith: Profile.debugProfile)
+//#else
         ApolloLynxClient.oauthSignIn(
             id: attributes.id,
             oauthType: attributes.oauthType,
@@ -62,8 +62,7 @@ class LoginHandler {
                 showSignInError.wrappedValue = true
             }
         }
-        
-#endif
+//#endif
     }
     
     func loginUser(

@@ -116,8 +116,8 @@ struct LoginView: View {
             ) { attributes, oauthToken in
                 loginHandler.commonSignIn(
                     profileManager: profileManager,
-                    withProfileAttributes: attributes,
-                    oauthToken: oauthToken,
+                    withOAuthAttributes: attributes,
+                    oauthToken: oauthToken, 
                     showInvitationSheet: $showInvitationSheet,
                     showSignInError: $showSignInError
                 )
@@ -138,7 +138,7 @@ struct LoginView: View {
             ) { attributes, oauthToken in
                 loginHandler.commonSignIn(
                     profileManager: profileManager,
-                    withProfileAttributes: attributes,
+                    withOAuthAttributes: attributes,
                     oauthToken: oauthToken,
                     showInvitationSheet: $showInvitationSheet,
                     showSignInError: $showSignInError
@@ -155,7 +155,7 @@ struct LoginView: View {
             ) { attributes, oauthToken in
                 loginHandler.commonSignIn(
                     profileManager: profileManager,
-                    withProfileAttributes: attributes,
+                    withOAuthAttributes: attributes,
                     oauthToken: oauthToken,
                     showInvitationSheet: $showInvitationSheet,
                     showSignInError: $showSignInError
