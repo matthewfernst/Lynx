@@ -1,25 +1,23 @@
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import DataLoader from "dataloader";
 import { GraphQLError } from "graphql";
-import { parseStringPromise, processors } from "xml2js";
 
 import { documentClient, getItem } from "./aws/dynamodb";
-import { checkIfObjectInBucket, getObjectNamesInBucket, getRecordFromBucket } from "./aws/s3";
-import {
-    LEADERBOARD_TABLE,
-    PARTIES_TABLE,
-    PROFILE_PICS_BUCKET,
-    SLOPES_UNZIPPED_BUCKET,
-    USERS_TABLE
-} from "../infrastructure/lynxStack";
-import { DEPENDENCY_ERROR, LOG_LEVEL, Log, UserStats } from "./types";
+import { LEADERBOARD_TABLE, PARTIES_TABLE, USERS_TABLE } from "../infrastructure/lynxStack";
+import { DEPENDENCY_ERROR, Log, UserStats } from "./types";
+import { profilePictureDataloader } from "./resolvers/User/profilePictureUrl";
+import { logsDataLoader } from "./resolvers/User/logbook";
 
 const createDataloaders = () => ({
     users: new DataLoader(userDataLoader),
-    logs: new DataLoader(logsDataLoader),
     parties: new DataLoader(partiesDataLoader),
-    profilePictures: new DataLoader(profilePictureDataloader, { cacheKeyFn: (key) => key.id }),
-    leaderboard: new DataLoader(leaderboardDataLoader, { cacheKeyFn: (key) => JSON.stringify(key) })
+    leaderboard: new DataLoader(leaderboardDataLoader, {
+        cacheKeyFn: (key) => JSON.stringify(key)
+    }),
+    logs: new DataLoader(logsDataLoader),
+    profilePictures: new DataLoader(profilePictureDataloader, {
+        cacheKeyFn: (key) => JSON.stringify(key)
+    })
 });
 
 const userDataLoader = async (userIds: readonly string[]) => {
@@ -37,22 +35,6 @@ const userDataLoader = async (userIds: readonly string[]) => {
     );
 };
 
-const logsDataLoader = async (userIds: readonly string[]) => {
-    return await Promise.all(
-        userIds.map(async (userId) => {
-            const recordNames = await getObjectNamesInBucket(SLOPES_UNZIPPED_BUCKET, userId);
-            return await Promise.all(
-                recordNames.map(async (name): Promise<Log> => {
-                    const unzippedRecord = await getRecordFromBucket(SLOPES_UNZIPPED_BUCKET, name);
-                    const activity = await xmlToActivity(unzippedRecord);
-                    activity.originalFileName = `${name.split(".")[0]}.slopes`;
-                    return activity;
-                })
-            );
-        })
-    );
-};
-
 const partiesDataLoader = async (partyIds: readonly string[]) => {
     return await Promise.all(
         partyIds.map(async (partyId) => {
@@ -63,23 +45,6 @@ const partiesDataLoader = async (partyIds: readonly string[]) => {
                 throw new GraphQLError("DynamoDB Call Failed", {
                     extensions: { code: DEPENDENCY_ERROR }
                 });
-            }
-        })
-    );
-};
-
-const profilePictureDataloader = async (
-    users: readonly { id: string; profilePictureUrl: string }[]
-): Promise<(string | null)[]> => {
-    return await Promise.all(
-        users.map(async (user) => {
-            if (await checkIfObjectInBucket(PROFILE_PICS_BUCKET, user.id)) {
-                console[LOG_LEVEL](`Found S3 profile picture for user ${user.id}`);
-                return `https://${PROFILE_PICS_BUCKET}.s3.us-west-1.amazonaws.com/${user.id}`;
-            } else if (user.profilePictureUrl) {
-                return user.profilePictureUrl;
-            } else {
-                return null;
             }
         })
     );
@@ -106,26 +71,6 @@ const leaderboardDataLoader = async (
             }
         })
     );
-};
-
-export const xmlToActivity = async (xml: string): Promise<Log> => {
-    try {
-        const parsedXML = await parseStringPromise(xml, {
-            normalize: true,
-            mergeAttrs: true,
-            explicitArray: false,
-            tagNameProcessors: [processors.firstCharLowerCase],
-            attrNameProcessors: [processors.firstCharLowerCase],
-            valueProcessors: [processors.parseBooleans, processors.parseNumbers],
-            attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
-        });
-        return parsedXML.activity;
-    } catch (err) {
-        console.error(err);
-        throw new GraphQLError("Error Parsing XML", {
-            extensions: { code: DEPENDENCY_ERROR }
-        });
-    }
 };
 
 export default createDataloaders;

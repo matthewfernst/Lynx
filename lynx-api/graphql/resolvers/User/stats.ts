@@ -22,7 +22,9 @@ const stats = async (
         DateTime.now(),
         Timeframe[args.timeframe]
     );
-    return await context.dataloaders.leaderboard.load({ id: parent.id, timeframe });
+    const stats = await context.dataloaders.leaderboard.load({ id: parent.id, timeframe });
+    console.log(`Finished retrieving stats for user ${parent.id}: ${stats}`);
+    return stats;
 };
 
 export default stats;

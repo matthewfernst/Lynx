@@ -43,7 +43,11 @@ const leaderboard = async (_: any, args: Args, context: Context, info: any): Pro
         args.limit
     );
     return await Promise.all(
-        leaderboardEntries.map(async ({ id }) => (await context.dataloaders.users.load(id)) as User)
+        leaderboardEntries.map(async ({ id }) => {
+            const user = (await context.dataloaders.users.load(id)) as User;
+            console.log(`Finished retrieving user ${id}`);
+            return user;
+        })
     );
 };
 

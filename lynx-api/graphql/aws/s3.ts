@@ -35,9 +35,7 @@ export const createSignedUploadUrl = async (bucketName: string, path: string): P
 export const checkIfObjectInBucket = async (bucketName: string, path: string) => {
     try {
         const headObjectRequest = new HeadObjectCommand({ Bucket: bucketName, Key: path });
-        console.log("Starting HeadObjectRequest");
         await s3Client.send(headObjectRequest);
-        console.log("Finishing HeadObjectRequest");
         return true;
     } catch (err: any) {
         if (err.name === "NotFound") {

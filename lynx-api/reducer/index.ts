@@ -5,7 +5,6 @@ import { DateTime } from "luxon";
 
 import { documentClient } from "../graphql/aws/dynamodb";
 import { getRecordFromBucket } from "../graphql/aws/s3";
-import { xmlToActivity } from "../graphql/dataloaders";
 import {
     Timeframe,
     leaderboardSortTypesToQueryFields,
@@ -13,6 +12,7 @@ import {
 } from "../graphql/resolvers/Query/leaderboard";
 import { LEADERBOARD_TABLE } from "../infrastructure/lynxStack";
 import { LOG_LEVEL } from "../graphql/types";
+import { xmlToActivity } from "../graphql/resolvers/User/logbook";
 
 const timeframes = [
     Timeframe.DAY,
@@ -43,7 +43,9 @@ export async function handler(event: S3Event) {
                         return await updateItem(userId, endTime, timeframe, sortType, value);
                     })
                 );
-                console[LOG_LEVEL](`Successfully updated leaderboard for timeframe "${Timeframe[timeframe]}".`);
+                console[LOG_LEVEL](
+                    `Successfully updated leaderboard for timeframe "${Timeframe[timeframe]}".`
+                );
                 return resultsForTimeframe;
             })
         );
@@ -80,7 +82,9 @@ const updateItem = async (
         return await documentClient.send(updateItemRequest);
     } catch (err: unknown) {
         if (err instanceof ConditionalCheckFailedException) {
-            console[LOG_LEVEL](`Skipped update for ${sortType} because ${sortType} is not a new maximum.`);
+            console[LOG_LEVEL](
+                `Skipped update for ${sortType} because ${sortType} is not a new maximum.`
+            );
             return;
         }
         console.error(err);
