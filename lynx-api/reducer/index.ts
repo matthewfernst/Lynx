@@ -43,7 +43,7 @@ export async function handler(event: S3Event) {
                         return await updateItem(userId, endTime, timeframe, sortType, value);
                     })
                 );
-                console[LOG_LEVEL](`Successfully updated leaderboard for timeframe "${timeframe}".`);
+                console[LOG_LEVEL](`Successfully updated leaderboard for timeframe "${Timeframe[timeframe]}".`);
                 return resultsForTimeframe;
             })
         );

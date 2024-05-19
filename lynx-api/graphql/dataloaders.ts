@@ -77,6 +77,7 @@ const leaderboardDataLoader = async (
                     Key: { id, timeframe }
                 });
                 const itemOutput = await documentClient.send(queryRequest);
+                console.log(`Retrieved leaderboard item for id ${id} and timeframe ${timeframe}`);
                 return itemOutput.Item as UserStats;
             } catch (err) {
                 console.error(err);
