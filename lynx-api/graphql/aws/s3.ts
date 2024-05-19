@@ -10,18 +10,13 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { NodeJsClient } from "@smithy/types";
-import { NodeHttpHandler } from "@smithy/node-http-handler";
 
 import { GraphQLError } from "graphql";
 
 import { DEPENDENCY_ERROR } from "../types";
 
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
-const awsClient = new S3Client({
-    region: process.env.AWS_REGION,
-    requestHandler: new NodeHttpHandler({ requestTimeout: 400 }),
-    logger: console
-});
+const awsClient = new S3Client({ region: process.env.AWS_REGION });
 export const s3Client = captureAWSv3Client(awsClient) as NodeJsClient<S3Client>;
 
 export const createSignedUploadUrl = async (bucketName: string, path: string): Promise<string> => {
