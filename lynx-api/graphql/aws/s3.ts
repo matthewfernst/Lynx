@@ -9,15 +9,13 @@ import {
     _Object
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { NodeJsClient } from "@smithy/types";
-
 import { GraphQLError } from "graphql";
 
 import { DEPENDENCY_ERROR } from "../types";
 
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
 const awsClient = new S3Client({ region: process.env.AWS_REGION });
-export const s3Client = captureAWSv3Client(awsClient) as NodeJsClient<S3Client>;
+export const s3Client = captureAWSv3Client(awsClient);
 
 const headObjectS3Client = new S3Client({ region: process.env.AWS_REGION });
 

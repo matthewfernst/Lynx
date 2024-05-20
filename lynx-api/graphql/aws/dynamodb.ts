@@ -40,13 +40,7 @@ type ObjectType<T extends Table> =
     unknown;
 
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
-
-const serviceConfigOptions: DynamoDBClientConfig = {
-    region: process.env.AWS_REGION,
-    ...(process.env.IS_OFFLINE && { endpoint: "http://localhost:8080" })
-};
-
-const awsClient = new DynamoDB(serviceConfigOptions);
+const awsClient = new DynamoDB({ region: process.env.AWS_REGION });
 const dynamodbClient = captureAWSv3Client(awsClient)
 export const documentClient = DynamoDBDocument.from(dynamodbClient);
 
