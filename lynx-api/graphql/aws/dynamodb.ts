@@ -1,5 +1,5 @@
 import { captureAWSv3Client } from "aws-xray-sdk-core";
-import { DynamoDBClientConfig, DynamoDB } from "@aws-sdk/client-dynamodb";
+import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import {
     DynamoDBDocument,
     DeleteCommand,
