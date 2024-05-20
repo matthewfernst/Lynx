@@ -14,6 +14,7 @@ import {
 } from "aws-cdk-lib/aws-iam";
 import { Code, Function as LambdaFunction, Runtime, Tracing } from "aws-cdk-lib/aws-lambda";
 import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { Topic } from "aws-cdk-lib/aws-sns";
 import { EmailSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
@@ -221,6 +222,7 @@ export class LynxStack extends Stack {
                 partiesTable
             ),
             tracing: Tracing.ACTIVE,
+            logRetention: RetentionDays.ONE_MONTH,
             environment: { ...env, NODE_OPTIONS: "--enable-source-maps" }
         });
     }
@@ -318,6 +320,7 @@ export class LynxStack extends Stack {
             code: Code.fromAsset("dist/reducer"),
             role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable),
             tracing: Tracing.ACTIVE,
+            logRetention: RetentionDays.ONE_MONTH,
             environment: { NODE_OPTIONS: "--enable-source-maps" }
         });
         reducerLambda.addEventSource(
@@ -367,6 +370,7 @@ export class LynxStack extends Stack {
             code: Code.fromAsset("dist/unzipper"),
             role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket),
             tracing: Tracing.ACTIVE,
+            logRetention: RetentionDays.ONE_MONTH,
             environment: { NODE_OPTIONS: "--enable-source-maps" }
         });
         unzipperLambda.addEventSource(
