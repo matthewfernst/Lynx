@@ -46,7 +46,7 @@
         "@smithy/node-http-handler": "^3.0.0",
         "apple-signin-auth": "^1.7.6",
         "aws-cdk-lib": "2.142.1",
-        "aws-xray-sdk": "^3.6.0",
+        "aws-xray-sdk-core": "^3.6.0",
         "axios": "^1.7.0",
         "constructs": "^10.3.0",
         "convert-units": "^2.3.4",

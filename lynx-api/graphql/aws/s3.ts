@@ -1,4 +1,4 @@
-import { captureAWSv3Client } from "aws-xray-sdk";
+import { captureAWSv3Client } from "aws-xray-sdk-core";
 import {
     S3Client,
     GetObjectCommand,
@@ -19,6 +19,8 @@ if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined")
 const awsClient = new S3Client({ region: process.env.AWS_REGION });
 export const s3Client = captureAWSv3Client(awsClient) as NodeJsClient<S3Client>;
 
+const headObjectS3Client = new S3Client({ region: process.env.AWS_REGION });
+
 export const createSignedUploadUrl = async (bucketName: string, path: string): Promise<string> => {
     try {
         const command = new PutObjectCommand({ Bucket: bucketName, Key: path });
@@ -32,10 +34,9 @@ export const createSignedUploadUrl = async (bucketName: string, path: string): P
 };
 
 export const checkIfObjectInBucket = async (bucketName: string, path: string) => {
-    const awsClient = new S3Client({ region: process.env.AWS_REGION });
     try {
         const headObjectRequest = new HeadObjectCommand({ Bucket: bucketName, Key: path });
-        await awsClient.send(headObjectRequest);
+        await headObjectS3Client.send(headObjectRequest);
         return true;
     } catch (err: any) {
         if (err.name === "NotFound") {

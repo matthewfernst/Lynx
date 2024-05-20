@@ -220,7 +220,7 @@ export class LynxStack extends Stack {
                 invitesTable,
                 partiesTable
             ),
-            tracing: Tracing.PASS_THROUGH,
+            tracing: Tracing.ACTIVE,
             environment: { ...env, NODE_OPTIONS: "--enable-source-maps" }
         });
     }
@@ -317,7 +317,7 @@ export class LynxStack extends Stack {
             timeout: Duration.seconds(60),
             code: Code.fromAsset("dist/reducer"),
             role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable),
-            tracing: Tracing.PASS_THROUGH,
+            tracing: Tracing.ACTIVE,
             environment: { NODE_OPTIONS: "--enable-source-maps" }
         });
         reducerLambda.addEventSource(
@@ -366,7 +366,7 @@ export class LynxStack extends Stack {
             timeout: Duration.seconds(60),
             code: Code.fromAsset("dist/unzipper"),
             role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket),
-            tracing: Tracing.PASS_THROUGH,
+            tracing: Tracing.ACTIVE,
             environment: { NODE_OPTIONS: "--enable-source-maps" }
         });
         unzipperLambda.addEventSource(
