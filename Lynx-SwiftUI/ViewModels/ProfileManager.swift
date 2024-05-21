@@ -89,12 +89,15 @@ import OSLog
     }
     
     func saveProfile() {
-        do {            
-            try modelContext?.save()
-            Logger.profileManager.debug("Successfully saved profile.")
-        } catch {
-            // Handle the error appropriately (e.g., print or log it)
-            Logger.profileManager.error("Error saving changes: \(error)")
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            do {
+                try self?.modelContext?.save()
+                Logger.profileManager.debug("Successfully saved profile.")
+            } catch {
+                // Handle the error appropriately (e.g., print or log it)
+                Logger.profileManager.error("Error saving changes: \(error)")
+            }
+            
         }
     }
     

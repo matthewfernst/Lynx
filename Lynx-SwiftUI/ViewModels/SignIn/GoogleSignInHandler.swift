@@ -9,7 +9,8 @@ import Foundation
 import SwiftUI
 import GoogleSignIn
 
-class GoogleSignInHandler {
+final class GoogleSignInHandler {
+    
     func signIn(
         isSigningIn: Binding<Bool>,
         showErrorSigningIn: Binding<Bool>,

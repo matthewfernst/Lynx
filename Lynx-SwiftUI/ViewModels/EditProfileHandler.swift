@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 import OSLog
 
-class EditProfileHandler {
+final class EditProfileHandler {
     
     func saveEdits(
         profileManager: ProfileManager,

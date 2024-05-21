@@ -11,7 +11,7 @@ import FacebookLogin
 import OSLog
 import FBSDKCoreKit_Basics
 
-class FacebookSignInHandler {
+final class FacebookSignInHandler {
     private var fbLoginManager = LoginManager()
     
     func signIn(

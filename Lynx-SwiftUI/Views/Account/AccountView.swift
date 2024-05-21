@@ -276,7 +276,7 @@ struct AccountView: View {
 extension AccountView {
     
     /// Delegate for view controller as `MFMailComposeViewControllerDelegate`
-    private class MailDelegate: NSObject, MFMailComposeViewControllerDelegate {
+    private final class MailDelegate: NSObject, MFMailComposeViewControllerDelegate {
         
         func mailComposeController(_ controller: MFMailComposeViewController,
                                    didFinishWith result: MFMailComposeResult,
@@ -312,7 +312,7 @@ extension AccountView {
 // MARK: - Messages
 extension AccountView {
     /// Delegate for view controller as `MFMessageComposeViewControllerDelegate`
-    private class MessageDelegate: NSObject, MFMessageComposeViewControllerDelegate {
+    private final class MessageDelegate: NSObject, MFMessageComposeViewControllerDelegate {
         func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
             controller.dismiss(animated: true)
         }

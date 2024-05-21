@@ -58,7 +58,7 @@ struct LoginView: View {
         }
         .sheet(isPresented: $showInvitationSheet, content: {
             InvitationKeyView(isSigningIn: $isSigningIn) {
-                loginHandler.loginUser(profileManager: profileManager) { result in
+                loginHandler.loginUser { result in
                     switch result {
                     case .success(_):
                         profileManager.update(signInWith: true)
@@ -115,7 +115,6 @@ struct LoginView: View {
                 showErrorSigningIn: $showSignInError
             ) { attributes, oauthToken in
                 loginHandler.commonSignIn(
-                    profileManager: profileManager,
                     withOAuthAttributes: attributes,
                     oauthToken: oauthToken, 
                     showInvitationSheet: $showInvitationSheet,
@@ -137,7 +136,6 @@ struct LoginView: View {
                 showErrorSigningIn: $showSignInError
             ) { attributes, oauthToken in
                 loginHandler.commonSignIn(
-                    profileManager: profileManager,
                     withOAuthAttributes: attributes,
                     oauthToken: oauthToken,
                     showInvitationSheet: $showInvitationSheet,
@@ -154,7 +152,6 @@ struct LoginView: View {
                 showErrorSigningIn: $showSignInError
             ) { attributes, oauthToken in
                 loginHandler.commonSignIn(
-                    profileManager: profileManager,
                     withOAuthAttributes: attributes,
                     oauthToken: oauthToken,
                     showInvitationSheet: $showInvitationSheet,

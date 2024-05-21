@@ -8,7 +8,7 @@
 import Apollo
 import OSLog
 
-class ResponseLoggingInterceptor: ApolloInterceptor {
+final class ResponseLoggingInterceptor: ApolloInterceptor {
     
     enum ResponseLoggingError: Error {
         case notYetReceived

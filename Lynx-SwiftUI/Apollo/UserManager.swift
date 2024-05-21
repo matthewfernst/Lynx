@@ -10,7 +10,7 @@ import GoogleSignIn
 import FBSDKLoginKit
 import OSLog
 
-class UserManager {
+final class UserManager {
     static let shared = UserManager()
         
     var lynxToken: ExpirableLynxToken? {

@@ -70,7 +70,7 @@ enum LeaderStat {
 }
 
 
-class ApolloLynxClient {
+final class ApolloLynxClient {
     private static let graphQLEndpoint = "https://production.lynx-api.com/graphql"
     
     private static let apolloClient: ApolloClient = {
@@ -231,8 +231,8 @@ class ApolloLynxClient {
                 }
                 
                 Logger.apollo.debug("LYNX ACCESS TOKEN ->                 \(accessToken)")
-                Logger.apollo.debug(" REFRESH TOKEN    ->                 \(refreshToken)")
-                Logger.apollo.debug(" EXPIRY DATE MS   ->                 \(expiryInMilliseconds)")
+                Logger.apollo.debug("REFRESH TOKEN     ->                 \(refreshToken)")
+                Logger.apollo.debug("EXPIRY DATE MS    ->                 \(expiryInMilliseconds)")
                 
                 UserManager.shared.lynxToken = ExpirableLynxToken(
                     accessToken: accessToken,

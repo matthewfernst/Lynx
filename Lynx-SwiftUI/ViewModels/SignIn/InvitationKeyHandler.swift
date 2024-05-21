@@ -8,7 +8,7 @@
 import SwiftUI
 import OSLog
 
-@Observable class InvitationKeyHandler {
+@Observable final class InvitationKeyHandler {
     var key = ""
     
     func submitKey(completion: @escaping (Bool) -> Void) {

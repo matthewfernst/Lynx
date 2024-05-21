@@ -206,7 +206,7 @@ struct EditProfileView: View {
 
 // MARK: - TOCropController
 extension EditProfileView {
-    private class TOCropDelegate: NSObject, TOCropViewControllerDelegate {
+    private final class TOCropDelegate: NSObject, TOCropViewControllerDelegate {
         var didCropImage: ((UIImage) -> Void)?
         
         func cropViewController(_ cropViewController: TOCropViewController, didCropToCircularImage image: UIImage, with cropRect: CGRect, angle: Int) {

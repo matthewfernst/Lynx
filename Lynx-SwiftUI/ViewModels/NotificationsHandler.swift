@@ -8,8 +8,7 @@
 import Foundation
 import UserNotifications
 
-class NotificationsHandler {
-
+final class NotificationsHandler {
     
     static func scheduleNotificationsForRemindingToUpload() {
         let center = UNUserNotificationCenter.current()

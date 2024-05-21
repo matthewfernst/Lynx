@@ -8,7 +8,7 @@
 import Foundation
 import OSLog
 
-class KeychainManager {
+final class KeychainManager {
     enum KeychainError: Error {
         case duplicateEntry
         case unknown(OSStatus)

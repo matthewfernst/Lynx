@@ -8,7 +8,7 @@
 import Foundation
 import OSLog
 
-class BookmarkManager {
+final class BookmarkManager {
     static let shared = BookmarkManager()
     
     private(set) var bookmark: (id: String, url: URL)?

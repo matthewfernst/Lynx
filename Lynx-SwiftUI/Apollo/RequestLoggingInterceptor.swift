@@ -8,7 +8,7 @@
 import Apollo
 import OSLog
 
-class RequestLoggingInterceptor: ApolloInterceptor {
+final class RequestLoggingInterceptor: ApolloInterceptor {
     
     func interceptAsync<Operation: GraphQLOperation>(
         chain: RequestChain,

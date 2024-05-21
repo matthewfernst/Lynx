@@ -59,4 +59,8 @@ extension String {
         }
         return initials
     }
+    
+    var sanitize: String {
+        self.replacingOccurrences(of: "_", with: " ")
+    }
 }

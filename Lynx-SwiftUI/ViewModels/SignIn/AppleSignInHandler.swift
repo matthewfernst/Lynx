@@ -10,7 +10,7 @@ import AuthenticationServices
 import SwiftUI
 import OSLog
 
-class AppleSignInHandler {
+final class AppleSignInHandler {
     
     func onCompletion(
         _ result: Result<ASAuthorization, Error>,

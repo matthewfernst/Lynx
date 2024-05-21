@@ -10,7 +10,7 @@ import Foundation
 import Apollo
 import ApolloAPI
 
-class UserManagementInterceptor: ApolloInterceptor {
+final class UserManagementInterceptor: ApolloInterceptor {
     
     enum UserError: Error {
         case noUserLoggedIn

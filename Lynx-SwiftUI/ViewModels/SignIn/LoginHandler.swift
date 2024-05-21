@@ -13,18 +13,24 @@ enum ProfileError: Error {
     case profileCreationFailed
 }
 
-class LoginHandler {
+/// Class for handling the Login of OAuth Clients.
+final class LoginHandler {
+    
+    /// Common sign in for all OAuth clients.
+    /// - Parameters:
+    ///   - attributes: OAuth attributes of the user.
+    ///   - oauthToken: OAuth token for verification.
+    ///   - showInvitationSheet: Binding for showing the Invitation Sheet View.
+    ///   - showSignInError: Binding for showing signing in error.
     func commonSignIn(
-        profileManager: ProfileManager,
         withOAuthAttributes attributes: ProfileAttributes,
         oauthToken: String,
         showInvitationSheet: Binding<Bool>,
         showSignInError: Binding<Bool>
     ) {
-        
-//#if DEBUG
-//        profileManager.update(newProfileWith: Profile.debugProfile)
-//#else
+#if DEBUG
+        ProfileManager.shared.update(newProfileWith: Profile.debugProfile)
+#else
         ApolloLynxClient.oauthSignIn(
             id: attributes.id,
             oauthType: attributes.oauthType,
@@ -41,10 +47,10 @@ class LoginHandler {
                     switch result {
                     case .success(let profileAttributes):
                         if profileAttributes.validatedInvite {
-                            self.loginUser(profileManager: profileManager) { result in
+                            self.loginUser() { result in
                                 switch result {
                                 case .success(_):
-                                    profileManager.update(signInWith: true)
+                                    ProfileManager.shared.update(signInWith: true)
                                 case .failure(_):
                                     showSignInError.wrappedValue = true
                                 }
@@ -61,18 +67,16 @@ class LoginHandler {
                 showSignInError.wrappedValue = true
             }
         }
-//#endif
+#endif
     }
     
-    func loginUser(
-        profileManager: ProfileManager,
-        completion: @escaping (Result<Bool, Error>) -> Void
-    ) {
+    /// Public login call into the App. This is used when logging in through the Invitaiton Sheet or through the normal OAuth flow.
+    /// - Parameter completion: A completion handler of the success or failure of creating a profile.
+    func loginUser(completion: @escaping (Result<Bool, Error>) -> Void) {
         ApolloLynxClient.getProfileInformation { result in
             switch result {
             case .success(let profileAttributes):
                 self.signInUser(
-                    profileManager: profileManager,
                     profileAttributes: profileAttributes,
                     completion: completion
                 )
@@ -84,12 +88,15 @@ class LoginHandler {
     }
     
     
+    /// Private handling of signing in the user. Use profile attributes to update the profile for the user.
+    /// - Parameters:
+    ///   - profileAttributes: Attributes from the profile information lookup.
+    ///   - completion: Success or failure of creating the profile.
     private func signInUser(
-        profileManager: ProfileManager,
         profileAttributes: ProfileAttributes,
         completion: @escaping (Result<Bool, Error>) -> Void
     ) {
-        profileManager.update(
+        ProfileManager.shared.update(
             newProfileWith: Profile(
                 id: profileAttributes.id,
                 oauthType: profileAttributes.oauthType,
@@ -100,14 +107,14 @@ class LoginHandler {
             )
         )
         
-        
-        if let _ = profileManager.profile {
+        if let _ = ProfileManager.shared.profile {
             completion(.success((true)))
         } else {
             completion(.failure(ProfileError.profileCreationFailed))
         }
     }
     
+    /// Static sign out of the user.
     static func signOut() {
         UserManager.shared.lynxToken = nil
         if ProfileManager.shared.profile?.oauthType == OAuthType.google.rawValue {

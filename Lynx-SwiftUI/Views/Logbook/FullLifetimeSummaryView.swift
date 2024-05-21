@@ -125,8 +125,8 @@ struct FullLifetimeSummaryView: View {
                     Text("Top Condition")
                         .font(.callout)
                         .foregroundStyle(.secondary)
-                    Text(topCondition)
-                        .font(.title2.bold())
+                    Text(topCondition.sanitize)
+                        .font((topCondition.count > 10 ? Font.system(size: 18) : .title2).bold())
                         .foregroundStyle(.primary)
                 }
                 .position(x: frame.midX, y: frame.midY)
