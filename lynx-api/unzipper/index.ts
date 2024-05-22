@@ -6,6 +6,7 @@ import { Entry, Parse, ParseStream as IncompleteTypedParseStream } from "unzippe
 import { s3Client } from "../graphql/aws/s3";
 import { SLOPES_UNZIPPED_BUCKET } from "../infrastructure/lynxStack";
 import { LOG_LEVEL } from "../graphql/types";
+import { NodeJsRuntimeStreamingBlobPayloadOutputTypes } from "@smithy/types";
 
 type ParseStream = IncompleteTypedParseStream & {
     [Symbol.asyncIterator]: () => AsyncIterableIterator<Entry>;
@@ -18,7 +19,7 @@ export async function handler(event: S3Event) {
 
         const getObjectRequest = new GetObjectCommand({ Bucket: bucket, Key: objectKey });
         const getObjectResponse = await s3Client.send(getObjectRequest);
-        const objectBody = getObjectResponse.Body;
+        const objectBody = getObjectResponse.Body as NodeJsRuntimeStreamingBlobPayloadOutputTypes;
         if (!objectBody) {
             throw new Error(`No body found for object ${objectKey} in bucket ${bucket}`);
         }
@@ -40,7 +41,9 @@ const uploadAndDelete = async (bucket: string, objectKey: string, entry: Entry) 
         client: s3Client,
         params: { Bucket: SLOPES_UNZIPPED_BUCKET, Key: targetFile, Body: entry }
     }).done();
-    console[LOG_LEVEL](`File ${targetFile} uploaded to bucket ${SLOPES_UNZIPPED_BUCKET} successfully.`);
+    console[LOG_LEVEL](
+        `File ${targetFile} uploaded to bucket ${SLOPES_UNZIPPED_BUCKET} successfully.`
+    );
 
     const deleteObjectRequest = new DeleteObjectCommand({ Bucket: bucket, Key: objectKey });
     await s3Client.send(deleteObjectRequest);
