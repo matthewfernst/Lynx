@@ -10,9 +10,9 @@ import {
     leaderboardSortTypesToQueryFields,
     leaderboardTimeframeFromQueryArgument
 } from "../graphql/resolvers/Query/leaderboard";
+import { xmlToActivity } from "../graphql/resolvers/User/logbook";
 import { LEADERBOARD_TABLE } from "../infrastructure/lynxStack";
 import { LOG_LEVEL } from "../graphql/types";
-import { xmlToActivity } from "../graphql/resolvers/User/logbook";
 
 const timeframes = [
     Timeframe.DAY,
@@ -32,14 +32,14 @@ export async function handler(event: S3Event) {
         const activity = await xmlToActivity(unzippedRecord);
 
         const userId = objectKey.split("/")[0];
-        const endTime = DateTime.fromFormat(activity.end, "yyyy-MM-dd HH:mm:ss ZZZ");
+        const endTime = DateTime.fromFormat(activity.attributes.end, "yyyy-MM-dd HH:mm:ss ZZZ");
 
         await Promise.all(
             timeframes.map(async (timeframe) => {
                 const resultsForTimeframe = await Promise.all(
                     Object.values(leaderboardSortTypesToQueryFields).map(async (sortType) => {
                         const activityKey = sortType === "verticalDistance" ? "vertical" : sortType;
-                        const value = activity[activityKey];
+                        const value = activity.attributes[activityKey];
                         return await updateItem(userId, endTime, timeframe, sortType, value);
                     })
                 );

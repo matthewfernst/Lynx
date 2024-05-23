@@ -1,8 +1,8 @@
 import { Context } from "../../index";
-import { LogParent } from "./id";
+import { ParsedLog, ParsedLogDetails } from "../User/logbook";
 
-const details = (parent: LogParent, args: any, context: Context, info: any) => {
-    return parent.actions.action;
+const details = (parent: ParsedLog, args: any, context: Context, info: any): ParsedLogDetails[] => {
+    return parent.actions.flatMap((action) => action.action);
 };
 
 export default details;

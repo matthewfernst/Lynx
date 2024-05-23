@@ -1,8 +1,8 @@
 import { Context } from "../../index";
-import { LogDetailParent } from "../Log/id";
+import { ParsedLogDetails } from "../User/logbook";
 
-const endDate = (parent: LogDetailParent, args: any, context: Context, info: any) => {
-    return parent.end;
+const endDate = (parent: ParsedLogDetails, args: any, context: Context, info: any) => {
+    return parent.attributes.end;
 };
 
 export default endDate;

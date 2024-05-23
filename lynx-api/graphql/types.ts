@@ -34,7 +34,7 @@ export interface Log {
     originalFileName: string;
     centerLat: number;
     centerLong: number;
-    conditions: string;
+    conditions: string[];
     distance: number;
     duration: number;
     start: string;

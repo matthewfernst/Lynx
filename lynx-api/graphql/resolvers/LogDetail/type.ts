@@ -1,8 +1,8 @@
 import { Context } from "../../index";
-import { LogDetailParent } from "../Log/id";
+import { ParsedLogDetails } from "../User/logbook";
 
-const type = (parent: LogDetailParent, args: any, context: Context, info: any) => {
-    return parent.type.toUpperCase();
+const type = (parent: ParsedLogDetails, args: any, context: Context, info: any) => {
+    return parent.attributes.type.toUpperCase();
 };
 
 export default type;

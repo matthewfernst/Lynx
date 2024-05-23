@@ -5,14 +5,73 @@ import { SLOPES_UNZIPPED_BUCKET } from "../../../infrastructure/lynxStack";
 import { checkIsMe } from "../../auth";
 import { getObjectNamesInBucket, getRecordFromBucket } from "../../aws/s3";
 import { DefinedUserContext } from "../../index";
-import { DEPENDENCY_ERROR, Log, User } from "../../types";
+import { DEPENDENCY_ERROR, User } from "../../types";
+
+export interface ParsedLog {
+    attributes: {
+        altitudeOffset: number;
+        centerLat: number;
+        centerLong: number;
+        conditions: string;
+        distance: number;
+        duration: number;
+        end: string;
+        equipment: number;
+        identifier: string;
+        isFavorite: number;
+        locationId: string;
+        locationName: string;
+        overrides: string;
+        peakAltitude: number;
+        processedByBuild: number;
+        recordEnd: string;
+        recordStart: string;
+        rodeWith: string;
+        runCount: number;
+        source: number;
+        sport: number;
+        start: string;
+        timeZoneOffset: number;
+        topSpeed: number;
+        vertical: number;
+    };
+    actions: {
+        action: ParsedLogDetails[];
+    }[];
+    originalFileName: string;
+}
+
+export interface ParsedLogDetails {
+    attributes: {
+        avgSpeed: number;
+        distance: number;
+        duration: number;
+        end: string;
+        maxAlt: number;
+        maxLat: number;
+        maxLong: number;
+        minAlt: number;
+        minLat: string;
+        minLong: string;
+        minSpeed: number;
+        numberOfType: number;
+        start: string;
+        topSpeed: number;
+        topSpeedAlt: number;
+        topSpeedLat: number;
+        topSpeedLong: number;
+        trackIDs: string;
+        type: string;
+        vertical: number;
+    };
+}
 
 const logbook = async (
     parent: User,
     args: {},
     context: DefinedUserContext,
     info: any
-): Promise<Log[]> => {
+): Promise<ParsedLog[]> => {
     checkIsMe(parent, context, "logbook");
     return context.dataloaders.logs.load(context.userId);
 };
@@ -22,7 +81,7 @@ export const logsDataLoader = async (userIds: readonly string[]) => {
         userIds.map(async (userId) => {
             const recordNames = await getObjectNamesInBucket(SLOPES_UNZIPPED_BUCKET, userId);
             return await Promise.all(
-                recordNames.map(async (name): Promise<Log> => {
+                recordNames.map(async (name): Promise<ParsedLog> => {
                     const unzippedRecord = await getRecordFromBucket(SLOPES_UNZIPPED_BUCKET, name);
                     const activity = await xmlToActivity(unzippedRecord);
                     activity.originalFileName = `${name.split(".")[0]}.slopes`;
@@ -33,18 +92,17 @@ export const logsDataLoader = async (userIds: readonly string[]) => {
     );
 };
 
-export const xmlToActivity = async (xml: string): Promise<Log> => {
+export const xmlToActivity = async (xml: string): Promise<ParsedLog> => {
     try {
         const parsedXML = await parseStringPromise(xml, {
             normalize: true,
-            mergeAttrs: true,
-            explicitArray: false,
+            attrkey: "attributes",
             tagNameProcessors: [processors.firstCharLowerCase],
             attrNameProcessors: [processors.firstCharLowerCase],
             valueProcessors: [processors.parseBooleans, processors.parseNumbers],
             attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
         });
-        return parsedXML.activity;
+        return parsedXML;
     } catch (err) {
         console.error(err);
         throw new GraphQLError("Error Parsing XML", {

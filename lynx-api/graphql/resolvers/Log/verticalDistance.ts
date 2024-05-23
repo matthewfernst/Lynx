@@ -2,17 +2,17 @@ import convert from "convert-units";
 
 import { Context } from "../../index";
 import { MeasurementSystem } from "../../types";
-import { LogParent } from "./id";
+import { ParsedLog } from "../User/logbook";
 
 interface Args {
     system: keyof typeof MeasurementSystem;
 }
 
-const verticalDistance = (parent: LogParent, args: Args, context: Context, info: any) => {
+const verticalDistance = (parent: ParsedLog, args: Args, context: Context, info: any) => {
     if (MeasurementSystem[args.system] === MeasurementSystem.IMPERIAL) {
-        return convert(parent.vertical).from("m").to("ft");
+        return convert(parent.attributes.vertical).from("m").to("ft");
     }
-    return parent.vertical;
+    return parent.attributes.vertical;
 };
 
 export default verticalDistance;

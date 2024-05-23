@@ -2,17 +2,17 @@ import convert from "convert-units";
 
 import { Context } from "../../index";
 import { MeasurementSystem } from "../../types";
-import { LogDetailParent } from "../Log/id";
+import { ParsedLogDetails } from "../User/logbook";
 
 interface Args {
     system: keyof typeof MeasurementSystem;
 }
 
-const topSpeedAltitude = (parent: LogDetailParent, args: Args, context: Context, info: any) => {
+const topSpeedAltitude = (parent: ParsedLogDetails, args: Args, context: Context, info: any) => {
     if (MeasurementSystem[args.system] === MeasurementSystem.IMPERIAL) {
-        return convert(parent.topSpeedAlt).from("m").to("ft");
+        return convert(parent.attributes.topSpeedAlt).from("m").to("ft");
     }
-    return parent.topSpeedAlt;
+    return parent.attributes.topSpeedAlt;
 };
 
 export default topSpeedAltitude;
