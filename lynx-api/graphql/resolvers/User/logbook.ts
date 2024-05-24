@@ -85,6 +85,7 @@ export const logsDataLoader = async (userIds: readonly string[]) => {
                     const unzippedRecord = await getRecordFromBucket(SLOPES_UNZIPPED_BUCKET, name);
                     const activity = await xmlToActivity(unzippedRecord);
                     activity.originalFileName = `${name.split(".")[0]}.slopes`;
+                    console.log(JSON.stringify(activity, null, 2));
                     return activity;
                 })
             );
