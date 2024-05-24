@@ -81,11 +81,10 @@ export const logsDataLoader = async (userIds: readonly string[]) => {
         userIds.map(async (userId) => {
             const recordNames = await getObjectNamesInBucket(SLOPES_UNZIPPED_BUCKET, userId);
             return await Promise.all(
-                recordNames.map(async (name): Promise<ParsedLog> => {
-                    const unzippedRecord = await getRecordFromBucket(SLOPES_UNZIPPED_BUCKET, name);
+                recordNames.map(async (path): Promise<ParsedLog> => {
+                    const unzippedRecord = await getRecordFromBucket(SLOPES_UNZIPPED_BUCKET, path);
                     const activity = await xmlToActivity(unzippedRecord);
-                    activity.originalFileName = `${name.split(".")[0]}.slopes`;
-                    console.log(JSON.stringify(activity, null, 2));
+                    activity.originalFileName = getOriginalFileName(path);
                     return activity;
                 })
             );
@@ -103,13 +102,23 @@ export const xmlToActivity = async (xml: string): Promise<ParsedLog> => {
             valueProcessors: [processors.parseBooleans, processors.parseNumbers],
             attrValueProcessors: [processors.parseBooleans, processors.parseNumbers]
         });
-        return parsedXML;
+        return parsedXML.activity;
     } catch (err) {
         console.error(err);
         throw new GraphQLError("Error Parsing XML", {
             extensions: { code: DEPENDENCY_ERROR }
         });
     }
+};
+
+const getOriginalFileName = (objectPath: string): string => {
+    const objectName = objectPath.split("/").pop();
+    if (!objectName) {
+        throw new GraphQLError("Object Name Not Found", {
+            extensions: { code: DEPENDENCY_ERROR, objectPath }
+        });
+    }
+    return `${objectName.split(".")[0]}.slopes`;
 };
 
 export default logbook;
