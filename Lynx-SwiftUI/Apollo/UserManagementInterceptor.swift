@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OSLog
 
 import Apollo
 import ApolloAPI
@@ -63,6 +64,7 @@ final class UserManagementInterceptor: ApolloInterceptor {
         
         // If we've gotten here, there is a token!
         if lynxToken.isExpired {
+            Logger.userManager.info("Access Token is expired")
             // Call an async method to renew the token
             UserManager.shared.renewToken { [weak self] tokenRenewResult in
                 guard let self = self else { return }

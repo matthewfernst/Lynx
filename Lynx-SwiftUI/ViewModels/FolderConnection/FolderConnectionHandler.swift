@@ -89,7 +89,7 @@ import OSLog
         }
         
         for case let fileURL as URL in directoryEnumerator {
-            Logger.folderConnectionHandler.debug("fileURL: \(fileURL)")
+            Logger.folderConnectionHandler.debug("Appending fileURL: \(fileURL)")
             fileList.append(fileURL)
         }
         

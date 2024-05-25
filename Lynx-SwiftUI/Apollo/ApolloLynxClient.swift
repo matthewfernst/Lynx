@@ -236,7 +236,8 @@ final class ApolloLynxClient {
                 
                 UserManager.shared.lynxToken = ExpirableLynxToken(
                     accessToken: accessToken,
-                    expirationDate: Date(timeIntervalSince1970: expiryInMilliseconds / 1000), 
+//                    expirationDate: Date(timeIntervalSince1970: expiryInMilliseconds / 1000),
+                    expirationDate: Calendar.current.date(byAdding: .second, value: 5, to: Date())!,
                     refreshToken: refreshToken
                 )
                 
@@ -273,6 +274,11 @@ final class ApolloLynxClient {
                     completion(.failure(RefreshTokenError.convertExpiryDate))
                     return
                 }
+                
+                Logger.apollo.debug("Refreshing Token")
+                Logger.apollo.debug("ACCESS TOKEN         -> \(data.accessToken)")
+                Logger.apollo.debug("REFRESH TOKEN        -> \(data.refreshToken)")
+                Logger.apollo.debug("EXPIRY DATE          -> \(data.expiryDate)")
                 
                 UserManager.shared.lynxToken = ExpirableLynxToken(
                     accessToken: data.accessToken,

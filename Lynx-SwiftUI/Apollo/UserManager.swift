@@ -50,6 +50,7 @@ final class UserManager {
                 case .success(_):
                     break
                 case .failure(_):
+                    Logger.userManager.info("Failed to refresh token.")
                     self.cleanUpFailedReAuth()
                 }
             }
