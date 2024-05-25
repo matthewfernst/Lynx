@@ -22,7 +22,7 @@ type UserStats {
 type Log {
     id: ID!
     originalFileName: String!
-    conditions: String
+    conditions: [String!]!
     distance(system: MeasurementSystem = METRIC): Float!
     duration: Float!
     startDate: String!

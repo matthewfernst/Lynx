@@ -439,6 +439,7 @@ final class ApolloLynxClient {
                 }
                 
                 let uploadedSlopeFiles = Set(logbook.map { $0.originalFileName.split(separator: "/").last.map(String.init) ?? "" })
+                print(uploadedSlopeFiles)
                 Logger.apollo.info("Successfully retrieved logs.")
                 return completion(.success(uploadedSlopeFiles))
                 

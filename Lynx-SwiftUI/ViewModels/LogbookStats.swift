@@ -107,9 +107,9 @@ import OSLog
             return ""
         }
         
-        var capitalizedConditions = conditions
-            .components(separatedBy: ",")
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "_", with: " ").capitalized }
+        var capitalizedConditions = conditions.map {
+            $0.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "_", with: " ").capitalized
+        }
         
         if capitalizedConditions.count > 1 {
             capitalizedConditions.removeAll(where: { $0 == "Packed" })
@@ -208,7 +208,7 @@ import OSLog
     
     func conditionsCount() -> ([(condition: String, count: Double)], String) {
         let conditionsCount = logbooks
-            .compactMap { $0.conditions?.components(separatedBy: ",") }
+            .compactMap { $0.conditions }
             .flatMap { $0 }
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).capitalized }
             .reduce(into: [:]) { counts, condition in
