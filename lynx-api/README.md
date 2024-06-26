@@ -32,7 +32,7 @@ npm run deploy
 
 The following environment variables can be overriden to configure the application for your environment.
 
-ALARM_PHONE_NUMBERS: A comma separated list of phone numbers to send alarm notifications to, prefixed with +1.  
+ALARM_PHONE_NUMBERS: A comma separated list of phone numbers to send alarm notifications to.  
 APPLE_CLIENT_ID: The client id for the Apple OAuth provider.  
 APPLE_CLIENT_SECRET: The client secret for the Apple OAuth provider.  
 AUTH_KEY: The key used to sign JWT tokens.  
