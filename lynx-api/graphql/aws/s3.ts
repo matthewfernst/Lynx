@@ -84,12 +84,19 @@ export const getRecordFromBucket = async (bucketName: string, key: string): Prom
 };
 
 export const deleteObjectsInBucket = async (bucketName: string, prefix: string) => {
+    const objectNames = await getObjectNamesInBucket(bucketName, prefix);
+    for (const objectName of objectNames) {
+        await deleteObjectInBucket(bucketName, objectName);
+    }
+};
+
+export const deleteObjectInBucket = async (bucketName: string, key: string) => {
     try {
-        const deleteObjectRequest = new DeleteObjectCommand({ Bucket: bucketName, Key: prefix });
+        const deleteObjectRequest = new DeleteObjectCommand({ Bucket: bucketName, Key: key });
         await s3Client.send(deleteObjectRequest);
     } catch (err) {
         console.error(err);
-        throw new GraphQLError(`Error deleting records from bucket`, {
+        throw new GraphQLError(`Error deleting object from bucket`, {
             extensions: { code: DEPENDENCY_ERROR }
         });
     }

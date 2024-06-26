@@ -22,7 +22,7 @@ import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { Topic } from "aws-cdk-lib/aws-sns";
-import { EmailSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
+import { SmsSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 
 import { Construct } from "constructs";
 import { config } from "dotenv";
@@ -37,7 +37,7 @@ export const SLOPES_ZIPPED_BUCKET = "lynx-slopes-zipped";
 export const SLOPES_UNZIPPED_BUCKET = "lynx-slopes-unzipped";
 
 interface ApplicationEnvironment {
-    ALARM_EMAILS: string;
+    ALARM_PHONE_NUMBERS: string;
     APPLE_CLIENT_ID: string;
     APPLE_CLIENT_SECRET: string;
     AUTH_KEY: string;
@@ -467,11 +467,9 @@ export class LynxStack extends Stack {
 
     private createAlarmActions(env: ApplicationEnvironment) {
         const alarmTopic = new Topic(this, "lynxAlarmTopic", { topicName: "lynx-alarms" });
-        env.ALARM_EMAILS.split(",")
-            .map((email) => email.trim())
-            .map((email) => {
-                alarmTopic.addSubscription(new EmailSubscription(email));
-            });
+        env.ALARM_PHONE_NUMBERS.split(",").map((phoneNumber) => {
+            alarmTopic.addSubscription(new SmsSubscription(phoneNumber));
+        });
         return alarmTopic;
     }
 }
