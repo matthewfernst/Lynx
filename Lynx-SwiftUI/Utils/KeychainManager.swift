@@ -45,16 +45,14 @@ final class KeychainManager {
         ]
         
         var result: AnyObject?
-        let status = SecItemCopyMatching(
-            query as CFDictionary, &result
-        )
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
         
         guard status == errSecSuccess else {
             if status == errSecItemNotFound {
-                Logger.keychainManager.error("Error in getting ExpirableToken: Item Not Found")
+                Logger.keychainManager.error("Error in getting ExpirableToken: Item not found")
                 throw KeychainError.itemNotFound
             } else {
-                Logger.keychainManager.error("Error in getting ExpirableToken OSStatus: \(status)")
+                Logger.keychainManager.error("Error in getting ExpirableToken: OSStatus - \(status)")
                 throw KeychainError.unknown(status)
             }
         }
@@ -66,6 +64,7 @@ final class KeychainManager {
         
         do {
             let token = try JSONDecoder().decode(ExpirableLynxToken.self, from: tokenData)
+            Logger.keychainManager.info("Successfully got saved token.")
             Logger.keychainManager.debug("AccessToken: \(token.accessToken)")
             Logger.keychainManager.debug("RefreshToken: \(token.refreshToken)")
             Logger.keychainManager.debug("ExpiryTime: \(token.expirationDate)")
