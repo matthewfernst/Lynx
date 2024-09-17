@@ -86,7 +86,8 @@ export class LynxStack extends Stack {
                 domainName: "production.lynx-api.com",
                 endpointType: EndpointType.EDGE,
                 certificate: new Certificate(this, "lynxCertificate", {
-                    domainName: "*.lynx-api.com",
+                    domainName: "lynx-api.com",
+                    subjectAlternativeNames: ["*.lynx-api.com"],
                     validation: CertificateValidation.fromDns()
                 })
             },
