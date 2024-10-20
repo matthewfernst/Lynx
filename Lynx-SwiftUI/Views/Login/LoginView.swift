@@ -25,7 +25,7 @@ struct LoginView: View {
     @State private var showInvitationSheet = false
     @State private var isSigningIn = false
     
-    // Aniamtion States
+    // Animation States
     @State private var moveInLogo = false
     @State private var moveInApple = false
     @State private var moveInGoogle = false
