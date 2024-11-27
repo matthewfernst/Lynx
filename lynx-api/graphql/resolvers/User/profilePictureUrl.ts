@@ -1,4 +1,4 @@
-import { PROFILE_PICS_BUCKET } from "../../../infrastructure/lynxStack";
+import { PROFILE_PICS_BUCKET } from "../../../infrastructure/stacks/lynxApiStack";
 import { checkIfObjectInBucket } from "../../aws/s3";
 import { DefinedUserContext } from "../../index";
 import { LOG_LEVEL } from "../../types";

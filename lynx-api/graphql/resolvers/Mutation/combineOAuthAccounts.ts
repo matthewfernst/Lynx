@@ -11,7 +11,7 @@ import {
     PROFILE_PICS_BUCKET,
     SLOPES_UNZIPPED_BUCKET,
     LEADERBOARD_TABLE
-} from "../../../infrastructure/lynxStack";
+} from "../../../infrastructure/stacks/lynxApiStack";
 
 interface Args {
     combineWith: {

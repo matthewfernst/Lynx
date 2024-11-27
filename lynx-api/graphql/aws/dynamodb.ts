@@ -15,7 +15,7 @@ import {
     LEADERBOARD_TABLE,
     INVITES_TABLE,
     PARTIES_TABLE
-} from "../../infrastructure/lynxStack";
+} from "../../infrastructure/stacks/lynxApiStack";
 import { LOG_LEVEL } from "../types";
 import {
     DEPENDENCY_ERROR,

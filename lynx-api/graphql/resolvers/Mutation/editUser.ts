@@ -2,7 +2,7 @@ import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { updateItem } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { User } from "../../types";
-import { USERS_TABLE } from "../../../infrastructure/lynxStack";
+import { USERS_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
 
 interface Args {
     userData: {

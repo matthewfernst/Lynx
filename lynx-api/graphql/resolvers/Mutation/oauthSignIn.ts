@@ -9,7 +9,7 @@ import { GrantType, generateToken } from "../../auth";
 import { Context } from "../../index";
 import { LOG_LEVEL, BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../types";
 import { getItemByIndex, putItem } from "../../aws/dynamodb";
-import { USERS_TABLE } from "../../../infrastructure/lynxStack";
+import { USERS_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
 
 export enum OAuthType {
     APPLE,

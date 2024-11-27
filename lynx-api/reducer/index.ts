@@ -11,7 +11,7 @@ import {
     leaderboardTimeframeFromQueryArgument
 } from "../graphql/resolvers/Query/leaderboard";
 import { xmlToActivity } from "../graphql/resolvers/User/logbook";
-import { LEADERBOARD_TABLE } from "../infrastructure/lynxStack";
+import { LEADERBOARD_TABLE } from "../infrastructure/stacks/lynxApiStack";
 import { LOG_LEVEL } from "../graphql/types";
 
 const timeframes = [

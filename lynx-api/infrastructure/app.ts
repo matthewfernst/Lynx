@@ -1,7 +1,7 @@
 import "source-map-support/register";
 
 import { App, Environment } from "aws-cdk-lib";
-import { LynxStack } from "./lynxStack";
+import { LynxStack } from "./stacks/lynxApiStack";
 
 const app = new App();
 const env: Environment = {

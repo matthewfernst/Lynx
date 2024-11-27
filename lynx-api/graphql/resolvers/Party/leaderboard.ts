@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 
 import { documentClient } from "../../aws/dynamodb";
 import { Context } from "../../index";
-import { LEADERBOARD_TABLE } from "../../../infrastructure/lynxStack";
+import { LEADERBOARD_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
 import { LOG_LEVEL, LeaderboardEntry, Party, User } from "../../types";
 import {
     LeaderboardSort,

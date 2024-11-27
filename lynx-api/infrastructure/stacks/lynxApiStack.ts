@@ -22,7 +22,6 @@ import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { Topic } from "aws-cdk-lib/aws-sns";
-import { SmsSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 
 import { Construct } from "constructs";
 import { config } from "dotenv";
@@ -47,7 +46,7 @@ interface ApplicationEnvironment {
     NODE_ENV: string;
 }
 
-export class LynxStack extends Stack {
+export class LynxAPIStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
@@ -100,7 +99,7 @@ export class LynxStack extends Stack {
             .addResource("graphql")
             .addMethod("POST", new LambdaIntegration(graphql, { allowTestInvoke: false }));
 
-        const alarmTopic = this.createAlarmActions(env);
+        const alarmTopic = this.createAlarmActions();
         this.createLambdaErrorRateAlarms(alarmTopic, [graphql, reducer, unzipper]);
         this.createAPIErrorRateAlarms(alarmTopic, api);
     }
@@ -465,7 +464,7 @@ export class LynxStack extends Stack {
         });
     }
 
-    private createAlarmActions(env: ApplicationEnvironment) {
+    private createAlarmActions() {
         return new Topic(this, "lynxAlarmTopic", { topicName: "lynx-alarms" });
     }
 }

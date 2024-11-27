@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 import { Context } from "../../index";
 import { LOG_LEVEL, DEPENDENCY_ERROR, LeaderboardEntry, User } from "../../types";
 import { documentClient } from "../../aws/dynamodb";
-import { LEADERBOARD_TABLE } from "../../../infrastructure/lynxStack";
+import { LEADERBOARD_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
 
 export enum LeaderboardSort {
     DISTANCE,

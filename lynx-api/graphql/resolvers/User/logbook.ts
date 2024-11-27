@@ -1,7 +1,7 @@
 import { GraphQLError } from "graphql";
 import { parseStringPromise, processors } from "xml2js";
 
-import { SLOPES_UNZIPPED_BUCKET } from "../../../infrastructure/lynxStack";
+import { SLOPES_UNZIPPED_BUCKET } from "../../../infrastructure/stacks/lynxApiStack";
 import { checkIsMe } from "../../auth";
 import { getObjectNamesInBucket, getRecordFromBucket } from "../../aws/s3";
 import { DefinedUserContext } from "../../index";

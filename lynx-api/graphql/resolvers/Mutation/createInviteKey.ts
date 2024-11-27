@@ -4,7 +4,7 @@ import { Context } from "../../index";
 import { LOG_LEVEL } from "../../types";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { putItem } from "../../aws/dynamodb";
-import { INVITES_TABLE } from "../../../infrastructure/lynxStack";
+import { INVITES_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
 
 const createInviteKey = async (_: any, args: any, context: Context, info: any): Promise<string> => {
     checkHasUserId(context);

@@ -6,7 +6,7 @@ import {
 import { deleteItemsFromArray } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { Party, LOG_LEVEL } from "../../types";
-import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lynxStack";
+import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
 
 interface Args {
     partyId: string;

@@ -5,7 +5,7 @@ import {
 } from "../../auth";
 import { addItemsToArray } from "../../aws/dynamodb";
 import { Context } from "../../index";
-import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/lynxStack";
+import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
 import { Party, LOG_LEVEL } from "../../types";
 
 interface Args {

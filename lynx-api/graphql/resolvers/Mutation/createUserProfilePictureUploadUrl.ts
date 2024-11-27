@@ -2,7 +2,7 @@ import { createSignedUploadUrl } from "../../aws/s3";
 import { Context } from "../../index";
 import { LOG_LEVEL } from "../../types";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
-import { PROFILE_PICS_BUCKET } from "../../../infrastructure/lynxStack";
+import { PROFILE_PICS_BUCKET } from "../../../infrastructure/stacks/lynxApiStack";
 
 interface Args {}
 

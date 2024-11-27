@@ -4,7 +4,7 @@ import { S3Event } from "aws-lambda";
 import { Entry, Parse, ParseStream as IncompleteTypedParseStream } from "unzipper";
 
 import { s3Client } from "../graphql/aws/s3";
-import { SLOPES_UNZIPPED_BUCKET } from "../infrastructure/lynxStack";
+import { SLOPES_UNZIPPED_BUCKET } from "../infrastructure/stacks/lynxApiStack";
 import { LOG_LEVEL } from "../graphql/types";
 import { NodeJsRuntimeStreamingBlobPayloadOutputTypes } from "@smithy/types";
 
