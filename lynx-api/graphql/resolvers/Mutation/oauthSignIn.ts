@@ -54,8 +54,8 @@ interface FacebookData {
 const oauthSignIn = async (
     _: any,
     args: Args,
-    context: Context,
-    info: any
+    _context: Context,
+    _info: any
 ): Promise<AuthorizationToken> => {
     const { type, id, token } = args.oauthLoginId;
     await verifyToken(OAuthType[type], id, token);
