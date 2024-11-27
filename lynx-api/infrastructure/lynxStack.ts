@@ -37,7 +37,6 @@ export const SLOPES_ZIPPED_BUCKET = "lynx-slopes-zipped";
 export const SLOPES_UNZIPPED_BUCKET = "lynx-slopes-unzipped";
 
 interface ApplicationEnvironment {
-    ALARM_PHONE_NUMBERS: string;
     APPLE_CLIENT_ID: string;
     APPLE_CLIENT_SECRET: string;
     AUTH_KEY: string;
@@ -467,10 +466,6 @@ export class LynxStack extends Stack {
     }
 
     private createAlarmActions(env: ApplicationEnvironment) {
-        const alarmTopic = new Topic(this, "lynxAlarmTopic", { topicName: "lynx-alarms" });
-        env.ALARM_PHONE_NUMBERS.split(",").map((phoneNumber) => {
-            alarmTopic.addSubscription(new SmsSubscription(phoneNumber));
-        });
-        return alarmTopic;
+        return new Topic(this, "lynxAlarmTopic", { topicName: "lynx-alarms" });
     }
 }
