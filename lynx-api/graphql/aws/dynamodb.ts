@@ -32,16 +32,19 @@ export type Table =
     | typeof INVITES_TABLE
     | typeof PARTIES_TABLE;
 
-type ObjectType<T extends Table> = 
-    T extends typeof USERS_TABLE ? User :
-    T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry :
-    T extends typeof INVITES_TABLE ? Invite :
-    T extends typeof PARTIES_TABLE ? Party :
-    unknown;
+type ObjectType<T extends Table> = T extends typeof USERS_TABLE
+    ? User
+    : T extends typeof LEADERBOARD_TABLE
+    ? LeaderboardEntry
+    : T extends typeof INVITES_TABLE
+    ? Invite
+    : T extends typeof PARTIES_TABLE
+    ? Party
+    : unknown;
 
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
 const awsClient = new DynamoDB({ region: process.env.AWS_REGION });
-const dynamodbClient = captureAWSv3Client(awsClient)
+const dynamodbClient = captureAWSv3Client(awsClient);
 export const documentClient = DynamoDBDocument.from(dynamodbClient);
 
 export const getItem = async <T extends Table>(
@@ -85,7 +88,10 @@ export const getItemByIndex = async <T extends Table>(
     }
 };
 
-export const putItem = async <T extends Table>(table: T, item: Object): Promise<ObjectType<T>> => {
+export const putItem = async <T extends Table>(
+    table: T,
+    item: Partial<ObjectType<T>>
+): Promise<ObjectType<T>> => {
     try {
         console[LOG_LEVEL](`Putting item into ${table}`);
         const putItemRequest = new PutCommand({

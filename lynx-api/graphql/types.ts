@@ -20,6 +20,8 @@ export interface User {
     profilePictureUrl?: string;
     stats?: UserStats;
     logbook: Log[];
+    parties: string[];
+    partyInvites: string[];
 }
 
 export interface UserStats {

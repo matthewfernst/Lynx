@@ -1,4 +1,4 @@
-import { GraphQLError } from "graphql";
+import { GraphQLError, GraphQLResolveInfo } from "graphql";
 
 import { checkHasUserId, checkIsValidUserAndHasValidInvite, checkIsValidParty } from "../../auth";
 import { addItemsToArray, deleteItemsFromArray } from "../../aws/dynamodb";
@@ -10,7 +10,12 @@ interface Args {
     partyId: string;
 }
 
-const joinParty = async (_: any, args: Args, context: Context, info: any): Promise<User> => {
+const joinParty = async (
+    _: unknown,
+    args: Args,
+    context: Context,
+    _info: GraphQLResolveInfo
+): Promise<User> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);
     const party = await checkIsValidParty(context, args.partyId);

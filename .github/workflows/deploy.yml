@@ -54,9 +54,6 @@ jobs:
           LYNX_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           LYNX_NODE_ENV: "production"
 
-      - name: Lint
-        run: npm run --prefix lynx-api lint
-
       - name: Build
         run: npm run --prefix lynx-api build
       

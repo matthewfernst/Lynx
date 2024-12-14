@@ -1,4 +1,4 @@
-import { GraphQLError } from "graphql";
+import { GraphQLError, GraphQLResolveInfo } from "graphql";
 
 import { checkHasUserId, checkIsValidUser } from "../../auth";
 import { deleteItem, getItem, updateItem } from "../../aws/dynamodb";
@@ -10,7 +10,12 @@ interface Args {
     inviteKey: string;
 }
 
-const resolveInviteKey = async (_: any, args: Args, context: Context, info: any): Promise<User> => {
+const resolveInviteKey = async (
+    _: unknown,
+    args: Args,
+    context: Context,
+    _info: GraphQLResolveInfo
+): Promise<User> => {
     checkHasUserId(context);
     await checkIsValidUser(context);
     const inviteInfo = await getItem(INVITES_TABLE, args.inviteKey);

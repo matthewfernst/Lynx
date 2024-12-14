@@ -1,3 +1,4 @@
+import { GraphQLResolveInfo } from "graphql";
 import { DateTime } from "luxon";
 
 import { Context } from "../../index";
@@ -6,7 +7,12 @@ import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { putItem } from "../../aws/dynamodb";
 import { INVITES_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
 
-const createInviteKey = async (_: any, args: any, context: Context, info: any): Promise<string> => {
+const createInviteKey = async (
+    _: unknown,
+    _args: Record<string, never>,
+    context: Context,
+    _info: GraphQLResolveInfo
+): Promise<string> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);
     console[LOG_LEVEL](`Generating invite token for user with id ${context.userId}`);

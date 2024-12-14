@@ -1,15 +1,13 @@
-import { DefinedUserContext } from "../../index";
-import { Party } from "../../types";
+import { GraphQLResolveInfo } from "graphql";
 
-interface Parent {
-    parties: string[];
-}
+import { DefinedUserContext } from "../../index";
+import { Party, User } from "../../types";
 
 const parties = async (
-    parent: Parent,
-    args: any,
+    parent: User,
+    _args: Record<string, never>,
     context: DefinedUserContext,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<Party[]> => {
     return (await context.dataloaders.parties.loadMany(parent.parties)) as Party[];
 };

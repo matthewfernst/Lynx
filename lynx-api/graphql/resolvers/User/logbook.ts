@@ -1,4 +1,5 @@
-import { GraphQLError } from "graphql";
+import { GraphQLError, GraphQLResolveInfo } from "graphql";
+import { DateTime } from "luxon";
 import { parseStringPromise, processors } from "xml2js";
 
 import { SLOPES_UNZIPPED_BUCKET } from "../../../infrastructure/stacks/lynxApiStack";
@@ -6,6 +7,12 @@ import { checkIsMe } from "../../auth";
 import { getObjectNamesInBucket, getRecordFromBucket } from "../../aws/s3";
 import { DefinedUserContext } from "../../index";
 import { DEPENDENCY_ERROR, User } from "../../types";
+import { Timeframe } from "../Query/leaderboard";
+import { getSeasonEnd, getSeasonStart } from "../../../reducer";
+
+export interface Args {
+    timeframe: keyof typeof Timeframe;
+}
 
 export interface ParsedLog {
     attributes: {
@@ -68,12 +75,31 @@ export interface ParsedLogDetails {
 
 const logbook = async (
     parent: User,
-    args: {},
+    args: Args,
     context: DefinedUserContext,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<ParsedLog[]> => {
     checkIsMe(parent, context, "logbook");
-    return context.dataloaders.logs.load(context.userId);
+    const logs = await context.dataloaders.logs.load(context.userId);
+    return logs.filter((log) => {
+        const date = DateTime.fromFormat(log.attributes.start, "yyyy-MM-dd HH:mm:ss ZZZ");
+        const currentTime = DateTime.now();
+        const diff = currentTime.diff(date, ["months", "weeks", "days"]);
+        switch (args.timeframe) {
+            case "ALL_TIME":
+                return true;
+            case "SEASON":
+                const seasonStart = getSeasonStart(currentTime);
+                const seasonEnd = getSeasonEnd(currentTime);
+                return seasonStart < date && date < seasonEnd;
+            case "MONTH":
+                return diff.months <= 1;
+            case "WEEK":
+                return diff.weeks <= 1;
+            case "DAY":
+                return diff.days <= 1;
+        }
+    });
 };
 
 export const logsDataLoader = async (userIds: readonly string[]) => {

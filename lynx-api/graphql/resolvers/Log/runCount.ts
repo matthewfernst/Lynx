@@ -1,7 +1,14 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import { Context } from "../../index";
 import { ParsedLog } from "../User/logbook";
 
-const runCount = (parent: ParsedLog, args: any, context: Context, info: any): number => {
+const runCount = (
+    parent: ParsedLog,
+    _args: Record<string, never>,
+    _context: Context,
+    _info: GraphQLResolveInfo
+): number => {
     return parent.attributes.runCount;
 };
 

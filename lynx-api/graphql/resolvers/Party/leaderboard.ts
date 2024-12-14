@@ -1,6 +1,6 @@
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import DataLoader from "dataloader";
-import { GraphQLError } from "graphql";
+import { GraphQLError, GraphQLResolveInfo } from "graphql";
 import { DateTime } from "luxon";
 
 import { documentClient } from "../../aws/dynamodb";
@@ -24,7 +24,7 @@ const leaderboard = async (
     parent: Party,
     args: Args,
     context: Context,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<User[]> => {
     const usersInParty = await getUserIdsInParty(context.dataloaders.parties, parent.id);
     const leaderboardEntries = await getTimeframeRankingByIndex(

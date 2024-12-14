@@ -1,3 +1,4 @@
+import { GraphQLResolveInfo } from "graphql";
 import { v4 as uuid } from "uuid";
 
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
@@ -10,7 +11,12 @@ interface Args {
     name: string;
 }
 
-const createParty = async (_: any, args: Args, context: Context, info: any): Promise<Party> => {
+const createParty = async (
+    _: unknown,
+    args: Args,
+    context: Context,
+    _info: GraphQLResolveInfo
+): Promise<Party> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);
     console[LOG_LEVEL](`Creating party token for user with id ${context.userId}`);

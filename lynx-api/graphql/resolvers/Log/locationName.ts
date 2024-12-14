@@ -1,7 +1,14 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import { Context } from "../../index";
 import { ParsedLog } from "../User/logbook";
 
-const locationName = (parent: ParsedLog, args: any, context: Context, info: any): string => {
+const locationName = (
+    parent: ParsedLog,
+    _args: Record<string, never>,
+    _context: Context,
+    _info: GraphQLResolveInfo
+): string => {
     return parent.attributes.locationName;
 };
 

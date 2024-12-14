@@ -1,4 +1,4 @@
-import { GraphQLError } from "graphql";
+import { GraphQLError, GraphQLResolveInfo } from "graphql";
 
 import { checkHasUserId, checkIsValidUserAndHasValidInvite, checkIsValidParty } from "../../auth";
 import { deleteItemsFromArray } from "../../aws/dynamodb";
@@ -10,7 +10,12 @@ interface Args {
     partyId: string;
 }
 
-const leaveParty = async (_: any, args: Args, context: Context, info: any): Promise<User> => {
+const leaveParty = async (
+    _: unknown,
+    args: Args,
+    context: Context,
+    _info: GraphQLResolveInfo
+): Promise<User> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);
     const party = await checkIsValidParty(context, args.partyId);
@@ -22,9 +27,7 @@ const leaveParty = async (_: any, args: Args, context: Context, info: any): Prom
 
     console[LOG_LEVEL](`Leaving party token for with id ${context.userId}`);
     await deleteItemsFromArray(PARTIES_TABLE, args.partyId, "users", [context.userId]);
-    return (await deleteItemsFromArray(USERS_TABLE, context.userId, "parties", [
-        args.partyId
-    ])) as User;
+    return deleteItemsFromArray(USERS_TABLE, context.userId, "parties", [args.partyId]);
 };
 
 export default leaveParty;

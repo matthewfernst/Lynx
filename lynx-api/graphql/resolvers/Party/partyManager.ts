@@ -1,11 +1,13 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import { Context } from "../../index";
 import { Party, User } from "../../types";
 
 const partyManager = async (
     parent: Party,
-    args: any,
+    _args: Record<string, never>,
     context: Context,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<User> => {
     return (await context.dataloaders.users.load(parent.partyManager)) as User;
 };

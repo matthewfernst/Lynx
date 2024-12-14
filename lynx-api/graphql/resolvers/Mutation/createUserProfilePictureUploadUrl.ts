@@ -1,16 +1,16 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import { createSignedUploadUrl } from "../../aws/s3";
 import { Context } from "../../index";
 import { LOG_LEVEL } from "../../types";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { PROFILE_PICS_BUCKET } from "../../../infrastructure/stacks/lynxApiStack";
 
-interface Args {}
-
 const createUserProfilePictureUploadUrl = async (
-    _: any,
-    args: Args,
+    _: unknown,
+    _args: Record<string, never>,
     context: Context,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<string> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);

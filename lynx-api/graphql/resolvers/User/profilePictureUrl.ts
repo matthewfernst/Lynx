@@ -1,24 +1,21 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import { PROFILE_PICS_BUCKET } from "../../../infrastructure/stacks/lynxApiStack";
 import { checkIfObjectInBucket } from "../../aws/s3";
 import { DefinedUserContext } from "../../index";
-import { LOG_LEVEL } from "../../types";
-
-interface Parent {
-    id: string;
-    profilePictureUrl: string;
-}
+import { LOG_LEVEL, User } from "../../types";
 
 const profilePictureUrl = async (
-    parent: Parent,
-    args: {},
+    parent: User,
+    _args: Record<string, never>,
     context: DefinedUserContext,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<string | null> => {
     return context.dataloaders.profilePictures.load(parent);
 };
 
 export const profilePictureDataloader = async (
-    users: readonly Parent[]
+    users: readonly User[]
 ): Promise<(string | null)[]> => {
     return await Promise.all(
         users.map(async (user) => {

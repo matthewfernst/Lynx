@@ -1,3 +1,5 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import {
     checkHasUserId,
     checkIsValidUserAndHasValidInvite,
@@ -14,10 +16,10 @@ interface Args {
 }
 
 const removeUserFromParty = async (
-    _: any,
+    _: unknown,
     args: Args,
     context: Context,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<Party> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);
@@ -25,9 +27,7 @@ const removeUserFromParty = async (
 
     console[LOG_LEVEL](`Deleting party membership for user with id ${args.userId}`);
     await deleteItemsFromArray(USERS_TABLE, args.userId, "parties", [args.partyId]);
-    return (await deleteItemsFromArray(PARTIES_TABLE, args.partyId, "users", [
-        args.userId
-    ])) as Party;
+    return deleteItemsFromArray(PARTIES_TABLE, args.partyId, "users", [args.userId]);
 };
 
 export default removeUserFromParty;

@@ -1,3 +1,5 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import { Context } from "../../index";
 import { User } from "../../types";
 
@@ -6,10 +8,10 @@ interface Args {
 }
 
 const userLookupById = async (
-    _: any,
+    _: unknown,
     args: Args,
     context: Context,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<User | undefined> => {
     return context.dataloaders.users.load(args.id);
 };

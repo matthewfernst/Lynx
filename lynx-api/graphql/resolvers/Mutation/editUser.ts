@@ -1,3 +1,5 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
 import { updateItem } from "../../aws/dynamodb";
 import { Context } from "../../index";
@@ -11,7 +13,12 @@ interface Args {
     }[];
 }
 
-const editUser = async (_: any, args: Args, context: Context, info: any): Promise<User> => {
+const editUser = async (
+    _: unknown,
+    args: Args,
+    context: Context,
+    _info: GraphQLResolveInfo
+): Promise<User> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);
     for (const data of args.userData) {

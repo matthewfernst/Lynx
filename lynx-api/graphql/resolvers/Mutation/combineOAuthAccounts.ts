@@ -1,4 +1,4 @@
-import { GraphQLError } from "graphql";
+import { GraphQLError, GraphQLResolveInfo } from "graphql";
 
 import { deleteAllItems, deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
 import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
@@ -22,13 +22,13 @@ interface Args {
 }
 
 const combineOAuthAccounts = async (
-    _: any,
+    _: unknown,
     args: Args,
     context: Context,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<User> => {
     checkHasUserId(context);
-    checkIsValidUserAndHasValidInvite(context);
+    await checkIsValidUserAndHasValidInvite(context);
     const { type, id, token } = args.combineWith;
     const idKey = idKeyFromIdType[OAuthType[type]];
     const otherUser = (await getItemByIndex(USERS_TABLE, idKey, id)) as User;

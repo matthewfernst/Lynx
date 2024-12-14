@@ -1,5 +1,5 @@
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { GraphQLError } from "graphql";
+import { GraphQLError, GraphQLResolveInfo } from "graphql";
 import { DateTime } from "luxon";
 
 import { Context } from "../../index";
@@ -36,7 +36,12 @@ export const leaderboardSortTypesToQueryFields: {
     [LeaderboardSort.VERTICAL_DISTANCE]: "verticalDistance"
 };
 
-const leaderboard = async (_: any, args: Args, context: Context, info: any): Promise<User[]> => {
+const leaderboard = async (
+    _: unknown,
+    args: Args,
+    context: Context,
+    _info: GraphQLResolveInfo
+): Promise<User[]> => {
     const leaderboardEntries = await getTimeframeRankingByIndex(
         leaderboardSortTypesToQueryFields[LeaderboardSort[args.sortBy]],
         leaderboardTimeframeFromQueryArgument(DateTime.now(), Timeframe[args.timeframe]),

@@ -1,8 +1,15 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import { checkIsMe } from "../../auth";
 import { DefinedUserContext } from "../../index";
 import { User } from "../../types";
 
-const email = (parent: User, args: any, context: DefinedUserContext, info: any) => {
+const email = (
+    parent: User,
+    _args: Record<string, never>,
+    context: DefinedUserContext,
+    _info: GraphQLResolveInfo
+) => {
     checkIsMe(parent, context, "email");
     return parent.email;
 };

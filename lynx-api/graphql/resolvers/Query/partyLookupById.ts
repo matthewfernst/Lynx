@@ -1,15 +1,16 @@
+import { GraphQLResolveInfo } from "graphql";
 import { Context } from "../../index";
 import { Party } from "../../types";
 
-interface Args {
+export type Args = {
     id: string;
-}
+};
 
 const partyLookupById = async (
-    _: any,
+    _: unknown,
     args: Args,
     context: Context,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<Party | undefined> => {
     return context.dataloaders.parties.load(args.id);
 };

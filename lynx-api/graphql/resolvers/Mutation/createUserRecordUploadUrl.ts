@@ -1,3 +1,5 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import { createSignedUploadUrl } from "../../aws/s3";
 import { Context } from "../../index";
 import { LOG_LEVEL } from "../../types";
@@ -9,10 +11,10 @@ interface Args {
 }
 
 const createUserRecordUploadUrl = async (
-    _: any,
+    _: unknown,
     args: Args,
     context: Context,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<string[]> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);

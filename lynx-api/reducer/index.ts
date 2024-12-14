@@ -118,10 +118,22 @@ const getTimeToLive = (
         case Timeframe.MONTH:
             return endTime.startOf("month").plus({ months: 1 }).toSeconds();
         case Timeframe.SEASON:
-            if (endTime.month >= 8) {
-                return endTime.startOf("year").plus({ years: 1, months: 8 }).toSeconds();
-            } else {
-                return endTime.startOf("year").plus({ months: 8 }).toSeconds();
-            }
+            return getSeasonEnd(endTime).toSeconds();
+    }
+};
+
+export const getSeasonStart = (time: DateTime): DateTime => {
+    if (time.month >= 8) {
+        return time.startOf("year").plus({ months: 8 });
+    } else {
+        return time.startOf("year").minus({ months: 5 });
+    }
+};
+
+export const getSeasonEnd = (time: DateTime): DateTime => {
+    if (time.month >= 8) {
+        return time.startOf("year").plus({ years: 1, months: 8 });
+    } else {
+        return time.startOf("year").plus({ months: 8 });
     }
 };

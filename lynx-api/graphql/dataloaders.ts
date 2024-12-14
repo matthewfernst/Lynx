@@ -3,8 +3,12 @@ import DataLoader from "dataloader";
 import { GraphQLError } from "graphql";
 
 import { documentClient, getItem } from "./aws/dynamodb";
-import { LEADERBOARD_TABLE, PARTIES_TABLE, USERS_TABLE } from "../infrastructure/stacks/lynxApiStack";
-import { DEPENDENCY_ERROR, UserStats } from "./types";
+import {
+    LEADERBOARD_TABLE,
+    PARTIES_TABLE,
+    USERS_TABLE
+} from "../infrastructure/stacks/lynxApiStack";
+import { DEPENDENCY_ERROR, Party, User, UserStats } from "./types";
 import { profilePictureDataloader } from "./resolvers/User/profilePictureUrl";
 import { logsDataLoader } from "./resolvers/User/logbook";
 
@@ -20,34 +24,12 @@ const createDataloaders = () => ({
     })
 });
 
-const userDataLoader = async (userIds: readonly string[]) => {
-    return await Promise.all(
-        userIds.map(async (userId) => {
-            try {
-                return await getItem(USERS_TABLE, userId);
-            } catch (err) {
-                console.error(err);
-                throw new GraphQLError("DynamoDB Call Failed", {
-                    extensions: { code: DEPENDENCY_ERROR }
-                });
-            }
-        })
-    );
+const userDataLoader = async (userIds: readonly string[]): Promise<(User | undefined)[]> => {
+    return Promise.all(userIds.map((userId) => getItem(USERS_TABLE, userId)));
 };
 
-const partiesDataLoader = async (partyIds: readonly string[]) => {
-    return await Promise.all(
-        partyIds.map(async (partyId) => {
-            try {
-                return await getItem(PARTIES_TABLE, partyId);
-            } catch (err) {
-                console.error(err);
-                throw new GraphQLError("DynamoDB Call Failed", {
-                    extensions: { code: DEPENDENCY_ERROR }
-                });
-            }
-        })
-    );
+const partiesDataLoader = async (partyIds: readonly string[]): Promise<(Party | undefined)[]> => {
+    return Promise.all(partyIds.map((partyId) => getItem(PARTIES_TABLE, partyId)));
 };
 
 const leaderboardDataLoader = async (

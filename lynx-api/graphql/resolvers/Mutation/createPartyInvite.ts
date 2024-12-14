@@ -1,3 +1,5 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import {
     checkHasUserId,
     checkIsValidUserAndHasValidInvite,
@@ -14,10 +16,10 @@ interface Args {
 }
 
 const createPartyInvite = async (
-    _: any,
+    _: unknown,
     args: Args,
     context: Context,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<Party> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);

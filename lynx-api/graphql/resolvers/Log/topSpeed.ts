@@ -1,4 +1,5 @@
 import convert from "convert-units";
+import { GraphQLResolveInfo } from "graphql";
 
 import { Context } from "../../index";
 import { MeasurementSystem } from "../../types";
@@ -8,7 +9,7 @@ interface Args {
     system: keyof typeof MeasurementSystem;
 }
 
-const topSpeed = (parent: ParsedLog, args: Args, context: Context, info: any) => {
+const topSpeed = (parent: ParsedLog, args: Args, _context: Context, _info: GraphQLResolveInfo) => {
     if (MeasurementSystem[args.system] === MeasurementSystem.IMPERIAL) {
         return convert(parent.attributes.topSpeed).from("m/s").to("m/h");
     }

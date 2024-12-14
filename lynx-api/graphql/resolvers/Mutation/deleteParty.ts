@@ -1,3 +1,5 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import {
     checkHasUserId,
     checkIsValidUserAndHasValidInvite,
@@ -12,7 +14,12 @@ interface Args {
     partyId: string;
 }
 
-const deleteParty = async (_: any, args: Args, context: Context, info: any): Promise<Party> => {
+const deleteParty = async (
+    _: unknown,
+    args: Args,
+    context: Context,
+    _info: GraphQLResolveInfo
+): Promise<Party> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);
     await checkIsValidPartyAndIsPartyOwner(context, args.partyId);

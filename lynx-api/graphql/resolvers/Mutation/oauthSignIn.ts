@@ -1,7 +1,7 @@
 import AppleSignIn from "apple-signin-auth";
 import axios from "axios";
 import { OAuth2Client } from "google-auth-library";
-import { GraphQLError } from "graphql";
+import { GraphQLError, GraphQLResolveInfo } from "graphql";
 import { DateTime } from "luxon";
 import { v4 as uuid } from "uuid";
 
@@ -52,10 +52,10 @@ interface FacebookData {
 }
 
 const oauthSignIn = async (
-    _: any,
+    _: unknown,
     args: Args,
     _context: Context,
-    _info: any
+    _info: GraphQLResolveInfo
 ): Promise<AuthorizationToken> => {
     const { type, id, token } = args.oauthLoginId;
     await verifyToken(OAuthType[type], id, token);

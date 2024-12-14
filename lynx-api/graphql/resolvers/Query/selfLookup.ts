@@ -1,12 +1,14 @@
+import { GraphQLResolveInfo } from "graphql";
+
 import { Context } from "../../index";
 import { User } from "../../types";
 import { checkHasUserId } from "../../auth";
 
 const selfLookup = async (
-    _: any,
-    args: {},
+    _: unknown,
+    _args: Record<string, never>,
     context: Context,
-    info: any
+    _info: GraphQLResolveInfo
 ): Promise<User | undefined> => {
     checkHasUserId(context);
     return context.dataloaders.users.load(context.userId);
