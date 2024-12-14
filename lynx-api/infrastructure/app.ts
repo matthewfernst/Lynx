@@ -1,5 +1,3 @@
-import "source-map-support/register";
-
 import { App, Environment } from "aws-cdk-lib";
 import { LynxAPIStack } from "./stacks/lynxApiStack";
 

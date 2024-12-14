@@ -1,12 +1,16 @@
 {
     "compilerOptions": {
-        "module": "ESNext",
+        "module": "Preserve",
         "moduleResolution": "Bundler",
-        "isolatedModules": true
+        "isolatedModules": true,
+        "resolveJsonModule": true
     },
     "ts-node": {
+        "transpileOnly": true,
         "compilerOptions": {
-            "module": "NodeNext"
+            "module": "NodeNext",
+            "moduleResolution": "NodeNext",
+            "sourceMap": true
         }
     },
     "extends": "@tsconfig/node18/tsconfig.json",
