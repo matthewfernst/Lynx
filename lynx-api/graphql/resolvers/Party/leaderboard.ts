@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 import { documentClient } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
-import { LOG_LEVEL, LeaderboardEntry, Party, User } from "../../types";
+import { LeaderboardEntry, Party, DatabaseUser } from "../../types";
 import {
     LeaderboardSort,
     Timeframe,
@@ -25,7 +25,7 @@ const leaderboard = async (
     args: Args,
     context: Context,
     _info: GraphQLResolveInfo
-): Promise<User[]> => {
+): Promise<DatabaseUser[]> => {
     const usersInParty = await getUserIdsInParty(context.dataloaders.parties, parent.id);
     const leaderboardEntries = await getTimeframeRankingByIndex(
         leaderboardSortTypesToQueryFields[LeaderboardSort[args.sortBy]],
@@ -34,7 +34,9 @@ const leaderboard = async (
         usersInParty
     );
     return await Promise.all(
-        leaderboardEntries.map(async ({ id }) => (await context.dataloaders.users.load(id)) as User)
+        leaderboardEntries.map(
+            async ({ id }) => (await context.dataloaders.users.load(id)) as DatabaseUser
+        )
     );
 };
 
@@ -45,7 +47,7 @@ const getTimeframeRankingByIndex = async (
     usersInParty: string[]
 ): Promise<LeaderboardEntry[]> => {
     try {
-        console[LOG_LEVEL](`Getting items with timeframe ${timeframe} sorted by ${index}`);
+        console.info(`Getting items with timeframe ${timeframe} sorted by ${index}`);
         const queryRequest = new QueryCommand({
             TableName: LEADERBOARD_TABLE,
             IndexName: index,

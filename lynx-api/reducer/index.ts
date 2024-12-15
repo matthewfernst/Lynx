@@ -12,7 +12,6 @@ import {
 } from "../graphql/resolvers/Query/leaderboard";
 import { xmlToActivity } from "../graphql/resolvers/User/logbook";
 import { LEADERBOARD_TABLE } from "../infrastructure/stacks/lynxApiStack";
-import { LOG_LEVEL } from "../graphql/types";
 
 const timeframes = [
     Timeframe.DAY,
@@ -27,7 +26,7 @@ export async function handler(event: S3Event) {
         const bucket = decodeURIComponent(record.s3.bucket.name);
         const objectKey = decodeURIComponent(record.s3.object.key).replaceAll("+", " ");
 
-        console[LOG_LEVEL](`Retrieving unzipped record from ${bucket} with key ${objectKey}`);
+        console.info(`Retrieving unzipped record from ${bucket} with key ${objectKey}`);
         const unzippedRecord = await getRecordFromBucket(bucket, objectKey);
         const activity = await xmlToActivity(unzippedRecord);
 
@@ -43,7 +42,7 @@ export async function handler(event: S3Event) {
                         return await updateItem(userId, endTime, timeframe, sortType, value);
                     })
                 );
-                console[LOG_LEVEL](
+                console.info(
                     `Successfully updated leaderboard for timeframe "${Timeframe[timeframe]}".`
                 );
                 return resultsForTimeframe;
@@ -82,7 +81,7 @@ const updateItem = async (
         return await documentClient.send(updateItemRequest);
     } catch (err: unknown) {
         if (err instanceof ConditionalCheckFailedException) {
-            console[LOG_LEVEL](
+            console.info(
                 `Skipped update for ${sortType} because ${sortType} is not a new maximum.`
             );
             return;

@@ -1,14 +1,10 @@
 import { Timeframe } from "./resolvers/Query/leaderboard";
 
-export const LOG_LEVEL = "info";
-
-export const BAD_REQUEST = "BAD_REQUEST";
 export const UNAUTHENTICATED = "UNAUTHENTICATED";
 export const FORBIDDEN = "FORBIDDEN";
 export const DEPENDENCY_ERROR = "DEPENDENCY_ERROR";
-export const INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
 
-export interface User {
+export interface DatabaseUser {
     id: string;
     appleId?: string;
     googleId?: string;
@@ -18,8 +14,6 @@ export interface User {
     firstName?: string;
     lastName?: string;
     profilePictureUrl?: string;
-    stats?: UserStats;
-    logbook: Log[];
     parties: string[];
     partyInvites: string[];
 }
@@ -31,45 +25,68 @@ export interface UserStats {
     verticalDistance: number;
 }
 
-export interface Log {
-    id: string;
+export interface ParsedLog {
+    attributes: {
+        altitudeOffset: number;
+        centerLat: number;
+        centerLong: number;
+        conditions: string;
+        distance: number;
+        duration: number;
+        end: string;
+        equipment: number;
+        identifier: string;
+        isFavorite: number;
+        locationId: string;
+        locationName: string;
+        overrides: string;
+        peakAltitude: number;
+        processedByBuild: number;
+        recordEnd: string;
+        recordStart: string;
+        rodeWith: string;
+        runCount: number;
+        source: number;
+        sport: number;
+        start: string;
+        timeZoneOffset: number;
+        topSpeed: number;
+        vertical: number;
+    };
+    actions: {
+        action: ParsedLogDetails[];
+    }[];
     originalFileName: string;
-    centerLat: number;
-    centerLong: number;
-    conditions: string[];
-    distance: number;
-    duration: number;
-    start: string;
-    end: string;
-    locationName: string;
-    runCount: number;
-    topSpeed: number;
-    vertical: number;
-    details: LogDetail[];
 }
 
-export interface LogDetail {
-    type: keyof typeof LogDetailType;
-    averageSpeed: number;
-    distance: number;
-    duration: number;
-    startDate: string;
-    endDate: string;
-    maxAltitude: number;
-    minAltitude: number;
-    topSpeed: number;
-    topSpeedAltitude: number;
-    verticalDistance: number;
+export interface ParsedLogDetails {
+    attributes: {
+        avgSpeed: number;
+        distance: number;
+        duration: number;
+        end: string;
+        maxAlt: number;
+        maxLat: number;
+        maxLong: number;
+        minAlt: number;
+        minLat: string;
+        minLong: string;
+        minSpeed: number;
+        numberOfType: number;
+        start: string;
+        topSpeed: number;
+        topSpeedAlt: number;
+        topSpeedLat: number;
+        topSpeedLong: number;
+        trackIDs: string;
+        type: string;
+        vertical: number;
+    };
 }
 
 export enum MeasurementSystem {
     METRIC,
     IMPERIAL
-}
-
-export enum LogDetailType {
-    RUN,
-    LIFT
 }
 
 export interface Invite {

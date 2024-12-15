@@ -2,8 +2,7 @@ import convert from "convert-units";
 import { GraphQLResolveInfo } from "graphql";
 
 import { Context } from "../../index";
-import { MeasurementSystem } from "../../types";
-import { ParsedLogDetails } from "../User/logbook";
+import { MeasurementSystem, ParsedLogDetails } from "../../types";
 
 interface Args {
     system: keyof typeof MeasurementSystem;

@@ -3,7 +3,7 @@ import { GraphQLError, GraphQLResolveInfo } from "graphql";
 import { DateTime } from "luxon";
 
 import { Context } from "../../index";
-import { LOG_LEVEL, DEPENDENCY_ERROR, LeaderboardEntry, User } from "../../types";
+import { DEPENDENCY_ERROR, LeaderboardEntry, DatabaseUser } from "../../types";
 import { documentClient } from "../../aws/dynamodb";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
 
@@ -41,14 +41,16 @@ const leaderboard = async (
     args: Args,
     context: Context,
     _info: GraphQLResolveInfo
-): Promise<User[]> => {
+): Promise<DatabaseUser[]> => {
     const leaderboardEntries = await getTimeframeRankingByIndex(
         leaderboardSortTypesToQueryFields[LeaderboardSort[args.sortBy]],
         leaderboardTimeframeFromQueryArgument(DateTime.now(), Timeframe[args.timeframe]),
         args.limit
     );
     return Promise.all(
-        leaderboardEntries.map(async ({ id }) => (await context.dataloaders.users.load(id)) as User)
+        leaderboardEntries.map(
+            async ({ id }) => (await context.dataloaders.users.load(id)) as DatabaseUser
+        )
     );
 };
 
@@ -84,7 +86,7 @@ const getTimeframeRankingByIndex = async (
     limit: number
 ): Promise<LeaderboardEntry[]> => {
     try {
-        console[LOG_LEVEL](`Getting items with timeframe ${timeframe} sorted by ${index}`);
+        console.info(`Getting items with timeframe ${timeframe} sorted by ${index}`);
         const queryRequest = new QueryCommand({
             TableName: LEADERBOARD_TABLE,
             IndexName: index,

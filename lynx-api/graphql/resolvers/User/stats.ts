@@ -2,7 +2,7 @@ import { GraphQLResolveInfo } from "graphql";
 import { DateTime } from "luxon";
 
 import { DefinedUserContext } from "../../index";
-import { User, UserStats } from "../../types";
+import { DatabaseUser, UserStats } from "../../types";
 import { Timeframe, leaderboardTimeframeFromQueryArgument } from "../Query/leaderboard";
 
 interface Args {
@@ -10,7 +10,7 @@ interface Args {
 }
 
 const stats = async (
-    parent: User,
+    parent: DatabaseUser,
     args: Args,
     context: DefinedUserContext,
     _info: GraphQLResolveInfo

@@ -4,7 +4,7 @@ import { checkHasUserId, checkIsValidUserAndHasValidInvite, checkIsValidParty } 
 import { deleteItemsFromArray } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { PARTIES_TABLE, USERS_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
-import { LOG_LEVEL, FORBIDDEN, User } from "../../types";
+import { FORBIDDEN, DatabaseUser } from "../../types";
 
 interface Args {
     partyId: string;
@@ -15,7 +15,7 @@ const leaveParty = async (
     args: Args,
     context: Context,
     _info: GraphQLResolveInfo
-): Promise<User> => {
+): Promise<DatabaseUser> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);
     const party = await checkIsValidParty(context, args.partyId);
@@ -25,7 +25,7 @@ const leaveParty = async (
         });
     }
 
-    console[LOG_LEVEL](`Leaving party token for with id ${context.userId}`);
+    console.info(`Leaving party token for with id ${context.userId}`);
     await deleteItemsFromArray(PARTIES_TABLE, args.partyId, "users", [context.userId]);
     return deleteItemsFromArray(USERS_TABLE, context.userId, "parties", [args.partyId]);
 };

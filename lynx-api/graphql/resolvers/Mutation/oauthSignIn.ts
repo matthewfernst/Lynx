@@ -1,3 +1,4 @@
+import { ApolloServerErrorCode } from "@apollo/server/errors";
 import AppleSignIn from "apple-signin-auth";
 import axios from "axios";
 import { OAuth2Client } from "google-auth-library";
@@ -5,11 +6,11 @@ import { GraphQLError, GraphQLResolveInfo } from "graphql";
 import { DateTime } from "luxon";
 import { v4 as uuid } from "uuid";
 
+import { USERS_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
+
 import { GrantType, generateToken } from "../../auth";
 import { Context } from "../../index";
-import { LOG_LEVEL, BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../types";
 import { getItemByIndex, putItem } from "../../aws/dynamodb";
-import { USERS_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
 
 export enum OAuthType {
     APPLE,
@@ -63,11 +64,11 @@ const oauthSignIn = async (
 };
 
 export const verifyToken = async (type: OAuthType, id: string, token: string) => {
-    console[LOG_LEVEL](`Verifying ${OAuthType[type]} Token With User ${id}`);
+    console.info(`Verifying ${OAuthType[type]} Token With User ${id}`);
     const valid = await isValidToken(type, id, token);
     if (!valid) {
         throw new GraphQLError("Invalid OAuth Token Provided", {
-            extensions: { code: BAD_REQUEST, id, token }
+            extensions: { code: ApolloServerErrorCode.BAD_REQUEST, id, token }
         });
     }
 };
@@ -85,7 +86,7 @@ const isValidToken = async (type: OAuthType, id: string, token: string) => {
     } catch (err) {
         console.error(err);
         throw new GraphQLError("Failure Validating OAuth Token", {
-            extensions: { code: INTERNAL_SERVER_ERROR, id, token }
+            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR, id, token }
         });
     }
 };
@@ -113,7 +114,7 @@ const isValidFacebookToken = async (id: string, token: string): Promise<boolean>
         access_token: `${process.env.FACEBOOK_CLIENT_ID}|${process.env.FACEBOOK_CLIENT_SECRET}`
     });
     const verificationURL = `${debugTokenURL}?${queryParams.toString()}`;
-    console[LOG_LEVEL](`Using Verification URL ${verificationURL}`);
+    console.info(`Using Verification URL ${verificationURL}`);
     const { data: facebookData }: { data: FacebookData } = await axios.get(verificationURL);
     return facebookData.data.is_valid && facebookData.data.user_id === id;
 };
@@ -137,7 +138,9 @@ const oauthLogin = async (
         if (!email || !userData) {
             const errorMessage = "Must Provide Email And UserData On Account Creation";
             console.error(`${errorMessage}. Provided email: ${email}, userData: ${userData}`);
-            throw new GraphQLError(errorMessage, { extensions: { code: BAD_REQUEST, id, email } });
+            throw new GraphQLError(errorMessage, {
+                extensions: { code: ApolloServerErrorCode.BAD_REQUEST, id, email }
+            });
         }
         userId = await createNewUser(idFieldName, id, email, userData);
     } else {

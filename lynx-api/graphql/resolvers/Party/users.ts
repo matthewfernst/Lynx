@@ -1,16 +1,16 @@
 import { GraphQLResolveInfo } from "graphql";
 
 import { Context } from "../../index";
-import { Party, User } from "../../types";
+import { Party, DatabaseUser } from "../../types";
 
 const users = async (
     parent: Party,
     _args: Record<string, never>,
     context: Context,
     _info: GraphQLResolveInfo
-): Promise<User[]> => {
+): Promise<DatabaseUser[]> => {
     return Promise.all(
-        parent.users.map(async (userId) => (await context.dataloaders.users.load(userId)) as User)
+        parent.users.map(async (userId) => (await context.dataloaders.users.load(userId)) as DatabaseUser)
     );
 };
 

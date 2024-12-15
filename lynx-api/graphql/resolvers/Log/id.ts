@@ -1,7 +1,7 @@
 import { GraphQLResolveInfo } from "graphql";
 
 import { Context } from "../../index";
-import { ParsedLog } from "../User/logbook";
+import { ParsedLog } from "../../types";
 
 const id = (
     parent: ParsedLog,

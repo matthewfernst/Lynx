@@ -1,17 +1,19 @@
+import { ApolloServerErrorCode } from "@apollo/server/errors";
 import { GraphQLError, GraphQLResolveInfo } from "graphql";
 
-import { deleteAllItems, deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
-import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
-import { deleteObjectsInBucket } from "../../aws/s3";
-import { OAuthType, idKeyFromIdType, verifyToken } from "./oauthSignIn";
-import { Context } from "../../index";
-import { BAD_REQUEST, User } from "../../types";
 import {
     USERS_TABLE,
     PROFILE_PICS_BUCKET,
     SLOPES_UNZIPPED_BUCKET,
     LEADERBOARD_TABLE
 } from "../../../infrastructure/stacks/lynxApiStack";
+
+import { deleteAllItems, deleteItem, getItemByIndex, updateItem } from "../../aws/dynamodb";
+import { deleteObjectsInBucket } from "../../aws/s3";
+import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
+import { Context } from "../../index";
+import { DatabaseUser } from "../../types";
+import { OAuthType, idKeyFromIdType, verifyToken } from "./oauthSignIn";
 
 interface Args {
     combineWith: {
@@ -26,16 +28,16 @@ const combineOAuthAccounts = async (
     args: Args,
     context: Context,
     _info: GraphQLResolveInfo
-): Promise<User> => {
+): Promise<DatabaseUser> => {
     checkHasUserId(context);
     await checkIsValidUserAndHasValidInvite(context);
     const { type, id, token } = args.combineWith;
     const idKey = idKeyFromIdType[OAuthType[type]];
-    const otherUser = (await getItemByIndex(USERS_TABLE, idKey, id)) as User;
+    const otherUser = (await getItemByIndex(USERS_TABLE, idKey, id)) as DatabaseUser;
     if (!otherUser) {
         if (!token) {
             throw new GraphQLError("User Does Not Exist and No Token Provided", {
-                extensions: { code: BAD_REQUEST }
+                extensions: { code: ApolloServerErrorCode.BAD_REQUEST }
             });
         }
         await verifyToken(OAuthType[type], id, token);

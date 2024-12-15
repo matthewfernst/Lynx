@@ -1,4 +1,4 @@
-import { captureAWSv3Client } from "aws-xray-sdk-core";
+import { ApolloServerErrorCode } from "@apollo/server/errors";
 import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import {
     DynamoDBDocument,
@@ -8,6 +8,7 @@ import {
     PutCommand,
     QueryCommand
 } from "@aws-sdk/lib-dynamodb";
+import { captureAWSv3Client } from "aws-xray-sdk-core";
 import { GraphQLError } from "graphql";
 
 import {
@@ -16,15 +17,7 @@ import {
     INVITES_TABLE,
     PARTIES_TABLE
 } from "../../infrastructure/stacks/lynxApiStack";
-import { LOG_LEVEL } from "../types";
-import {
-    DEPENDENCY_ERROR,
-    INTERNAL_SERVER_ERROR,
-    Invite,
-    LeaderboardEntry,
-    Party,
-    User
-} from "../types";
+import { DEPENDENCY_ERROR, Invite, LeaderboardEntry, Party, DatabaseUser } from "../types";
 
 export type Table =
     | typeof USERS_TABLE
@@ -32,15 +25,13 @@ export type Table =
     | typeof INVITES_TABLE
     | typeof PARTIES_TABLE;
 
-type ObjectType<T extends Table> = T extends typeof USERS_TABLE
-    ? User
-    : T extends typeof LEADERBOARD_TABLE
-    ? LeaderboardEntry
-    : T extends typeof INVITES_TABLE
-    ? Invite
-    : T extends typeof PARTIES_TABLE
-    ? Party
-    : unknown;
+// prettier-ignore
+type TableObject<T extends Table> =
+    T extends typeof USERS_TABLE ? DatabaseUser :
+    T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry :
+    T extends typeof INVITES_TABLE ? Invite :
+    T extends typeof PARTIES_TABLE ? Party :
+    unknown;
 
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
 const awsClient = new DynamoDB({ region: process.env.AWS_REGION });
@@ -50,12 +41,12 @@ export const documentClient = DynamoDBDocument.from(dynamodbClient);
 export const getItem = async <T extends Table>(
     table: T,
     id: string
-): Promise<ObjectType<T> | undefined> => {
+): Promise<TableObject<T> | undefined> => {
     try {
-        console[LOG_LEVEL](`Getting item from ${table} with id ${id}`);
+        console.info(`Getting item from ${table} with id ${id}`);
         const getItemRequest = new GetCommand({ TableName: table, Key: { id } });
         const itemOutput = await documentClient.send(getItemRequest);
-        return itemOutput.Item as ObjectType<T> | undefined;
+        return itemOutput.Item as TableObject<T> | undefined;
     } catch (err) {
         console.error(err);
         throw new GraphQLError("DynamoDB Get Call Failed", {
@@ -68,9 +59,9 @@ export const getItemByIndex = async <T extends Table>(
     table: T,
     key: string,
     value: string
-): Promise<ObjectType<T> | undefined> => {
+): Promise<TableObject<T> | undefined> => {
     try {
-        console[LOG_LEVEL](`Getting item from ${table} with ${key} ${value}`);
+        console.info(`Getting item from ${table} with ${key} ${value}`);
         const queryRequest = new QueryCommand({
             TableName: table,
             IndexName: key,
@@ -79,7 +70,7 @@ export const getItemByIndex = async <T extends Table>(
             ExpressionAttributeValues: { ":value": value }
         });
         const itemOutput = await documentClient.send(queryRequest);
-        return itemOutput.Items?.[0] as ObjectType<T> | undefined;
+        return itemOutput.Items?.[0] as TableObject<T> | undefined;
     } catch (err) {
         console.error(err);
         throw new GraphQLError("DynamoDB Query Call Failed", {
@@ -90,17 +81,17 @@ export const getItemByIndex = async <T extends Table>(
 
 export const putItem = async <T extends Table>(
     table: T,
-    item: Partial<ObjectType<T>>
-): Promise<ObjectType<T>> => {
+    item: Partial<TableObject<T>>
+): Promise<TableObject<T>> => {
     try {
-        console[LOG_LEVEL](`Putting item into ${table}`);
+        console.info(`Putting item into ${table}`);
         const putItemRequest = new PutCommand({
             TableName: table,
             Item: item,
             ReturnValues: "ALL_OLD"
         });
         const itemOutput = await documentClient.send(putItemRequest);
-        return itemOutput.Attributes as ObjectType<T>;
+        return itemOutput.Attributes as TableObject<T>;
     } catch (err) {
         console.error(err);
         throw new GraphQLError("DynamoDB Put Call Failed", {
@@ -114,9 +105,9 @@ export const updateItem = async <T extends Table>(
     id: string,
     key: string,
     value: any
-): Promise<ObjectType<T>> => {
+): Promise<TableObject<T>> => {
     try {
-        console[LOG_LEVEL](`Updating item in ${table} with id ${id}. New ${key} is ${value}`);
+        console.info(`Updating item in ${table} with id ${id}. New ${key} is ${value}`);
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
@@ -126,10 +117,10 @@ export const updateItem = async <T extends Table>(
             ReturnValues: "ALL_NEW"
         });
         const itemOutput = await documentClient.send(updateItemRequest);
-        const object = itemOutput.Attributes as ObjectType<T> | undefined;
+        const object = itemOutput.Attributes as TableObject<T> | undefined;
         if (!object) {
             throw new GraphQLError("Called DynamoDB Without Validating Item Exists", {
-                extensions: { code: INTERNAL_SERVER_ERROR, table, id }
+                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR, table, id }
             });
         }
         return object;
@@ -146,9 +137,9 @@ export const addItemsToArray = async <T extends Table>(
     id: string,
     key: string,
     values: string[]
-): Promise<ObjectType<T>> => {
+): Promise<TableObject<T>> => {
     try {
-        console[LOG_LEVEL](
+        console.info(
             `Updating item in ${table} with id ${id}. ${key} now has the following as values: ${values}`
         );
         const updateItemRequest = new UpdateCommand({
@@ -161,10 +152,10 @@ export const addItemsToArray = async <T extends Table>(
             ReturnValues: "ALL_NEW"
         });
         const itemOutput = await documentClient.send(updateItemRequest);
-        const object = itemOutput.Attributes as ObjectType<T> | undefined;
+        const object = itemOutput.Attributes as TableObject<T> | undefined;
         if (!object) {
             throw new GraphQLError("Called DynamoDB Without Validating Item Exists", {
-                extensions: { code: INTERNAL_SERVER_ERROR, table, id }
+                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR, table, id }
             });
         }
         return object;
@@ -181,15 +172,15 @@ export const deleteItemsFromArray = async <T extends Table>(
     id: string,
     key: string,
     values: string[]
-): Promise<ObjectType<T>> => {
+): Promise<TableObject<T>> => {
     try {
-        console[LOG_LEVEL](
+        console.info(
             `Updating item in ${table} with id ${id}. ${key} no longer has the following as values: ${values}`
         );
         const item = await getItem(table, id);
         if (!item) {
             throw new GraphQLError("Error finding item for this userId", {
-                extensions: { code: INTERNAL_SERVER_ERROR }
+                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR }
             });
         }
         const indices = values.map((value: string) => (item as any)[key].indexOf(value));
@@ -208,10 +199,10 @@ export const deleteItemsFromArray = async <T extends Table>(
             ReturnValues: "ALL_NEW"
         });
         const itemOutput = await documentClient.send(updateItemRequest);
-        const object = itemOutput.Attributes as ObjectType<T> | undefined;
+        const object = itemOutput.Attributes as TableObject<T> | undefined;
         if (!object) {
             throw new GraphQLError("Called DynamoDB Without Validating Item Exists", {
-                extensions: { code: INTERNAL_SERVER_ERROR, table, id }
+                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR, table, id }
             });
         }
         return object;
@@ -223,19 +214,22 @@ export const deleteItemsFromArray = async <T extends Table>(
     }
 };
 
-export const deleteItem = async <T extends Table>(table: T, id: string): Promise<ObjectType<T>> => {
+export const deleteItem = async <T extends Table>(
+    table: T,
+    id: string
+): Promise<TableObject<T>> => {
     try {
-        console[LOG_LEVEL](`Deleting item from ${table} with id ${id}`);
+        console.info(`Deleting item from ${table} with id ${id}`);
         const deleteItemRequest = new DeleteCommand({
             TableName: table,
             Key: { id },
             ReturnValues: "ALL_OLD"
         });
         const itemOutput = await documentClient.send(deleteItemRequest);
-        const object = itemOutput.Attributes as ObjectType<T> | undefined;
+        const object = itemOutput.Attributes as TableObject<T> | undefined;
         if (!object) {
             throw new GraphQLError("Called DynamoDB Without Validating Item Exists", {
-                extensions: { code: INTERNAL_SERVER_ERROR, table, id }
+                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR, table, id }
             });
         }
         return object;
@@ -250,9 +244,9 @@ export const deleteItem = async <T extends Table>(table: T, id: string): Promise
 export const deleteAllItems = async <T extends Table>(
     table: T,
     id: string
-): Promise<ObjectType<T>[]> => {
+): Promise<TableObject<T>[]> => {
     try {
-        console[LOG_LEVEL](`Deleting all items from ${table} with id ${id}`);
+        console.info(`Deleting all items from ${table} with id ${id}`);
         const queryRequest = new QueryCommand({
             TableName: table,
             KeyConditionExpression: "#indexKey = :value",
@@ -268,7 +262,7 @@ export const deleteAllItems = async <T extends Table>(
                 const sortKey = tableToSortKey[table];
                 if (!sortKey) {
                     throw new GraphQLError("Called Wrong DynamoDB Delete", {
-                        extensions: { code: INTERNAL_SERVER_ERROR, table, id }
+                        extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR, table, id }
                     });
                 }
                 const deleteItemRequest = new DeleteCommand({
@@ -277,7 +271,7 @@ export const deleteAllItems = async <T extends Table>(
                     ReturnValues: "ALL_OLD"
                 });
                 const itemOutput = await documentClient.send(deleteItemRequest);
-                return itemOutput.Attributes as ObjectType<T>;
+                return itemOutput.Attributes as TableObject<T>;
             })
         );
     } catch (err) {

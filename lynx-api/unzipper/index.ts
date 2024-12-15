@@ -5,7 +5,6 @@ import { Entry, Parse, ParseStream as IncompleteTypedParseStream } from "unzippe
 
 import { s3Client } from "../graphql/aws/s3";
 import { SLOPES_UNZIPPED_BUCKET } from "../infrastructure/stacks/lynxApiStack";
-import { LOG_LEVEL } from "../graphql/types";
 import { NodeJsRuntimeStreamingBlobPayloadOutputTypes } from "@smithy/types";
 
 type ParseStream = IncompleteTypedParseStream & {
@@ -41,13 +40,13 @@ const uploadAndDelete = async (bucket: string, objectKey: string, entry: Entry) 
         client: s3Client,
         params: { Bucket: SLOPES_UNZIPPED_BUCKET, Key: targetFile, Body: entry }
     }).done();
-    console[LOG_LEVEL](
+    console.info(
         `File ${targetFile} uploaded to bucket ${SLOPES_UNZIPPED_BUCKET} successfully.`
     );
 
     const deleteObjectRequest = new DeleteObjectCommand({ Bucket: bucket, Key: objectKey });
     await s3Client.send(deleteObjectRequest);
-    console[LOG_LEVEL]("Zipped file deleted successfully.");
+    console.info("Zipped file deleted successfully.");
 };
 
 const renameFileFunction = (originalFileName: string) => {

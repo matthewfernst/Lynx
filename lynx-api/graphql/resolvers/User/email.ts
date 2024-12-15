@@ -2,10 +2,10 @@ import { GraphQLResolveInfo } from "graphql";
 
 import { checkIsMe } from "../../auth";
 import { DefinedUserContext } from "../../index";
-import { User } from "../../types";
+import { DatabaseUser } from "../../types";
 
 const email = (
-    parent: User,
+    parent: DatabaseUser,
     _args: Record<string, never>,
     context: DefinedUserContext,
     _info: GraphQLResolveInfo

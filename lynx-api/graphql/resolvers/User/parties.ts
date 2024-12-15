@@ -1,10 +1,10 @@
 import { GraphQLResolveInfo } from "graphql";
 
 import { DefinedUserContext } from "../../index";
-import { Party, User } from "../../types";
+import { Party, DatabaseUser } from "../../types";
 
 const parties = async (
-    parent: User,
+    parent: DatabaseUser,
     _args: Record<string, never>,
     context: DefinedUserContext,
     _info: GraphQLResolveInfo

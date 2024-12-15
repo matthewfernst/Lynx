@@ -1,9 +1,10 @@
+import { ApolloServerErrorCode } from "@apollo/server/errors";
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
 import { Context, DefinedUserContext } from "./index";
-import { LOG_LEVEL, BAD_REQUEST, FORBIDDEN, Party, UNAUTHENTICATED, User } from "./types";
+import { FORBIDDEN, Party, UNAUTHENTICATED, DatabaseUser } from "./types";
 
 export interface AccessToken {
     id: string;
@@ -15,13 +16,13 @@ export enum GrantType {
 }
 
 export function generateToken(id: string, grantType: GrantType): string {
-    console[LOG_LEVEL](`Generating ${GrantType[grantType]} token for user ${id}`);
+    console.info(`Generating ${GrantType[grantType]} token for user ${id}`);
     const key = process.env[`${grantType}_KEY`] || GrantType[grantType];
     return jwt.sign({ id }, key, { expiresIn: "6h" });
 }
 
 export function decryptToken(token: string, grantType: GrantType): AccessToken {
-    console[LOG_LEVEL](`Decrypting access token for user with token ${token}`);
+    console.info(`Decrypting access token for user with token ${token}`);
     const key = process.env[`${grantType}_KEY`] || GrantType[grantType];
     return jwt.verify(token, key) as AccessToken;
 }
@@ -49,7 +50,7 @@ export function authenticateHTTPAccessToken(req: APIGatewayProxyEvent): string |
 }
 
 export function checkIsMe(
-    parent: User,
+    parent: DatabaseUser,
     context: DefinedUserContext,
     fieldName: string | undefined = undefined
 ) {
@@ -66,7 +67,7 @@ export function checkHasUserId(context: Context): asserts context is DefinedUser
     }
 }
 
-export async function checkIsValidUser(context: DefinedUserContext): Promise<User> {
+export async function checkIsValidUser(context: DefinedUserContext): Promise<DatabaseUser> {
     const userRecord = await context.dataloaders.users.load(context.userId);
     if (!userRecord) {
         throw new GraphQLError("User Does Not Exist", {
@@ -92,7 +93,7 @@ export async function checkIsValidParty(
     const party = await context.dataloaders.parties.load(partyId);
     if (!party) {
         throw new GraphQLError("Party Does Not Exist", {
-            extensions: { code: BAD_REQUEST, partyId }
+            extensions: { code: ApolloServerErrorCode.BAD_REQUEST, partyId }
         });
     }
     return party;

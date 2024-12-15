@@ -3,7 +3,7 @@ import { GraphQLResolveInfo } from "graphql";
 import { OAuthType } from "../Mutation/oauthSignIn";
 import { checkIsMe } from "../../auth";
 import { DefinedUserContext } from "../../index";
-import { User } from "../../types";
+import { DatabaseUser } from "../../types";
 
 interface OAuthTypeCorrelation {
     type: keyof typeof OAuthType;
@@ -11,7 +11,7 @@ interface OAuthTypeCorrelation {
 }
 
 const oauthLoginIds = (
-    parent: User,
+    parent: DatabaseUser,
     _args: Record<string, never>,
     context: DefinedUserContext,
     _info: GraphQLResolveInfo
