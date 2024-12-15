@@ -3,6 +3,8 @@ import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { S3Event } from "aws-lambda";
 import { DateTime } from "luxon";
 
+import { LEADERBOARD_TABLE } from "../infrastructure/stacks/lynxApiStack";
+
 import { documentClient } from "../graphql/aws/dynamodb";
 import { getRecordFromBucket } from "../graphql/aws/s3";
 import {
@@ -10,8 +12,7 @@ import {
     leaderboardSortTypesToQueryFields,
     leaderboardTimeframeFromQueryArgument
 } from "../graphql/resolvers/Query/leaderboard";
-import { xmlToActivity } from "../graphql/resolvers/User/logbook";
-import { LEADERBOARD_TABLE } from "../infrastructure/stacks/lynxApiStack";
+import { getSeasonEnd, xmlToActivity } from "../graphql/resolvers/User/logbook";
 
 const timeframes = [
     Timeframe.DAY,
@@ -118,21 +119,5 @@ const getTimeToLive = (
             return endTime.startOf("month").plus({ months: 1 }).toSeconds();
         case Timeframe.SEASON:
             return getSeasonEnd(endTime).toSeconds();
-    }
-};
-
-export const getSeasonStart = (time: DateTime): DateTime => {
-    if (time.month >= 8) {
-        return time.startOf("year").plus({ months: 8 });
-    } else {
-        return time.startOf("year").minus({ months: 5 });
-    }
-};
-
-export const getSeasonEnd = (time: DateTime): DateTime => {
-    if (time.month >= 8) {
-        return time.startOf("year").plus({ years: 1, months: 8 });
-    } else {
-        return time.startOf("year").plus({ months: 8 });
     }
 };
