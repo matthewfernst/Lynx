@@ -11,7 +11,9 @@
         "format": "prettier --write \"graphql/**/*.ts\" \"infrastructure/**/*.ts\"",
         "lint": "eslint \"graphql/**/*.ts\" \"infrastructure/**/**/*.ts\"",
         "types": "tsc --noEmit",
-        "build": "npm run types && NODE_ENV=production node esbuild.mjs",
+        "generate-resolvers": "ts-node scripts/code-gen/generateResolvers.ts",
+        "generate": "concurrently -c \"auto\" \"npm:generate-*\"",
+        "build": "npm run generate && npm run types && NODE_ENV=production node esbuild.mjs",
         "start-code-watch": "node esbuild.mjs",
         "start-server": "sleep 3 && nodemon --inspect --inspect-publish-uid=http --exitcrash dist/graphql/index.js",
         "start": "concurrently -c \"auto\" -k \"npm:start-*\"",
@@ -35,9 +37,11 @@
         "@types/xml2js": "^0.4.14",
         "@typescript-eslint/eslint-plugin": "^8.18.0",
         "aws-cdk": "2.173.1",
+        "concurrently": "^9.1.0",
         "esbuild": "0.24.0",
         "eslint": "^9.17.0",
         "eslint-config-prettier": "^9.1.0",
+        "nodemon": "^3.1.9",
         "ts-node": "^10.9.2",
         "typescript": "^5.7.2",
         "typescript-eslint": "^8.2.0"
@@ -63,6 +67,7 @@
         "dataloader": "^2.2.3",
         "dotenv": "^16.4.7",
         "esbuild-plugin-glob-import": "^0.2.0",
+        "glob": "^11.0.0",
         "google-auth-library": "^9.15.0",
         "graphql": "^16.9.0",
         "jsonwebtoken": "^9.0.2",
@@ -71,5 +76,17 @@
         "unzipper": "^0.12.3",
         "uuid": "^11.0.3",
         "xml2js": "^0.6.2"
+    },
+    "nodemonConfig": {
+        "execMap": {
+            "js": "node --enable-source-maps"
+        },
+        "watch": [
+            "dist/graphql"
+        ],
+        "events": {
+            "start": "cls || clear"
+        },
+        "ext": "js,graphql"
     }
 }

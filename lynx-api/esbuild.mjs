@@ -1,27 +1,27 @@
 import esbuild from "esbuild";
-import globImport from "esbuild-plugin-glob-import";
-
 import { copyFile } from "fs/promises";
 
-const buildLambdaFunction = async (packageName) => {
-    await esbuild.build({
-        bundle: true,
-        entryPoints: [`${packageName}/index.ts`],
-        outdir: `dist/${packageName}`,
-        platform: "node",
-        target: "node18",
-        minify: true,
-        sourcemap: true,
-        plugins: [globImport()]
-    });
-};
+const isProduction = process.env.NODE_ENV === "production";
 
-await buildLambdaFunction("reducer");
-await buildLambdaFunction("unzipper");
+async function buildLambdaFunction(entrypoint, directory, watch = false) {
+    const target = { bundle: true, platform: "node", sourcemap: true, target: "node18" };
+    const productionOptions = { minify: true, treeShaking: true };
+    const options = {
+        entryPoints: [entrypoint],
+        outdir: directory,
+        ...target,
+        ...(isProduction && productionOptions)
+    };
+    const build = watch ? esbuild.context : esbuild.build;
+    return await build(options);
+}
 
-const graphqlDirectoryName = "graphql";
-await buildLambdaFunction(graphqlDirectoryName);
-await copyFile(
-    `${graphqlDirectoryName}/schema.graphql`,
-    `dist/${graphqlDirectoryName}/schema.graphql`
-);
+const graphqlContext = await buildLambdaFunction("graphql/index.ts", "dist/graphql", !isProduction);
+if (!isProduction) {
+    await graphqlContext.watch();
+}
+
+await buildLambdaFunction("reducer/index.ts", "dist/reducer");
+await buildLambdaFunction("unzipper/index.ts", "dist/unzipper");
+
+await copyFile(`../Lynx-SwiftUI/schema.graphql`, `dist/graphql/schema.graphql`);

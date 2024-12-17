@@ -7,7 +7,7 @@ type User {
     lastName: String!
     profilePictureUrl: String
     stats(timeframe: Timeframe = SEASON): UserStats
-    logbook: [Log!]!
+    logbook(timeframe: Timeframe = SEASON): [Log!]!
     parties: [Party!]!
     partyInvites: [Party!]!
 }
@@ -98,12 +98,7 @@ enum OAuthType {
     FACEBOOK
 }
 
-type OAuthTypeCorrelation {
-    type: OAuthType!
-    id: ID!
-}
-
-input OAuthTypeCorrelationInput {
+input OAuthTypeCorrelation {
     type: OAuthType!
     id: ID!
     token: ID!
@@ -112,15 +107,6 @@ input OAuthTypeCorrelationInput {
 input UserDataPair {
     key: String!
     value: String!
-}
-
-input DeleteUserOptions {
-    tokensToInvalidate: [InvalidateTokenOption!]!
-}
-
-input InvalidateTokenOption {
-    type: OAuthType!
-    token: ID!
 }
 
 type Query {
@@ -136,15 +122,15 @@ type Query {
 
 type Mutation {
     oauthSignIn(
-        oauthLoginId: OAuthTypeCorrelationInput!
+        oauthLoginId: OAuthTypeCorrelation!
         email: String
         userData: [UserDataPair!]
     ): AuthorizationToken
     refreshLynxToken(refreshToken: ID!): AuthorizationToken
-    combineOAuthAccounts(combineWith: OAuthTypeCorrelationInput!): User!
+    combineOAuthAccounts(combineWith: OAuthTypeCorrelation!): User!
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
-    deleteUser(options: DeleteUserOptions): User!
+    deleteUser: User!
     editUser(userData: [UserDataPair!]!): User!
     createInviteKey: String!
     resolveInviteKey(inviteKey: ID!): User!

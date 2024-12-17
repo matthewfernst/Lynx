@@ -1,5 +1,5 @@
-mutation DeleteAccount($options: DeleteUserOptions!) {
-    deleteUser(options: $options) {
-      id
+mutation DeleteAccount {
+    deleteUser {
+        id
     }
 }

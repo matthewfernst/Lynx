@@ -1,6 +1,7 @@
 import { ApolloServerErrorCode } from "@apollo/server/errors";
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { GraphQLError } from "graphql";
+import { IncomingMessage } from "http";
 import jwt from "jsonwebtoken";
 
 import { Context, DefinedUserContext } from "./index";
@@ -27,9 +28,13 @@ export function decryptToken(token: string, grantType: GrantType): AccessToken {
     return jwt.verify(token, key) as AccessToken;
 }
 
-export function authenticateHTTPAccessToken(req: APIGatewayProxyEvent): string | undefined {
-    const authHeader = req.headers?.Authorization;
-    if (!authHeader) return undefined;
+export function authenticateHTTPAccessToken(
+    req: IncomingMessage | APIGatewayProxyEvent
+): string | null {
+    const authHeader = req.headers?.authorization || req.headers?.Authorization;
+    if (!authHeader || Array.isArray(authHeader)) {
+        return null;
+    }
 
     const token = authHeader.split(" ")[1];
     if (!token) {

@@ -9,8 +9,8 @@ public extension ApolloGeneratedGraphQL {
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        mutation DeleteAccount($options: DeleteUserOptions!) {
-          deleteUser(options: $options) {
+        mutation DeleteAccount {
+          deleteUser {
             __typename
             id
           }
@@ -18,13 +18,7 @@ public extension ApolloGeneratedGraphQL {
         """#
       ))
 
-    public var options: DeleteUserOptions
-
-    public init(options: DeleteUserOptions) {
-      self.options = options
-    }
-
-    public var __variables: Variables? { ["options": options] }
+    public init() {}
 
     public struct Data: ApolloGeneratedGraphQL.SelectionSet {
       public let __data: DataDict
@@ -32,7 +26,7 @@ public extension ApolloGeneratedGraphQL {
 
       public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Mutation }
       public static var __selections: [ApolloAPI.Selection] { [
-        .field("deleteUser", DeleteUser.self, arguments: ["options": .variable("options")]),
+        .field("deleteUser", DeleteUser.self),
       ] }
 
       public var deleteUser: DeleteUser { __data["deleteUser"] }
