@@ -71,6 +71,17 @@ type Party {
     ): [User!]!
 }
 
+type OAuthTypeCorrelation {
+    type: OAuthType!
+    id: ID!
+}
+
+enum OAuthType {
+    APPLE
+    GOOGLE
+    FACEBOOK
+}
+
 enum LeaderboardSort {
     DISTANCE
     RUN_COUNT
@@ -92,13 +103,7 @@ type AuthorizationToken {
     refreshToken: ID!
 }
 
-enum OAuthType {
-    APPLE
-    GOOGLE
-    FACEBOOK
-}
-
-input OAuthTypeCorrelation {
+input OAuthTypeCorrelationInput {
     type: OAuthType!
     id: ID!
     token: ID!
@@ -122,12 +127,12 @@ type Query {
 
 type Mutation {
     oauthSignIn(
-        oauthLoginId: OAuthTypeCorrelation!
+        oauthLoginId: OAuthTypeCorrelationInput!
         email: String
         userData: [UserDataPair!]
     ): AuthorizationToken
     refreshLynxToken(refreshToken: ID!): AuthorizationToken
-    combineOAuthAccounts(combineWith: OAuthTypeCorrelation!): User!
+    combineOAuthAccounts(combineWith: OAuthTypeCorrelationInput!): User!
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
     deleteUser: User!

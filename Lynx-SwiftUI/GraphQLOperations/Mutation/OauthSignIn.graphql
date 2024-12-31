@@ -1,5 +1,5 @@
 mutation oauthSignIn(
-    $oauthLoginId: OAuthTypeCorrelation!
+    $oauthLoginId: OAuthTypeCorrelationInput!
     $email: String
     $userData: [UserDataPair!]
 ) {

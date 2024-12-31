@@ -9,7 +9,7 @@ public extension ApolloGeneratedGraphQL {
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        mutation oauthSignIn($oauthLoginId: OAuthTypeCorrelation!, $email: String, $userData: [UserDataPair!]) {
+        mutation oauthSignIn($oauthLoginId: OAuthTypeCorrelationInput!, $email: String, $userData: [UserDataPair!]) {
           oauthSignIn(oauthLoginId: $oauthLoginId, email: $email, userData: $userData) {
             __typename
             accessToken
@@ -20,12 +20,12 @@ public extension ApolloGeneratedGraphQL {
         """#
       ))
 
-    public var oauthLoginId: OAuthTypeCorrelation
+    public var oauthLoginId: OAuthTypeCorrelationInput
     public var email: GraphQLNullable<String>
     public var userData: GraphQLNullable<[UserDataPair]>
 
     public init(
-      oauthLoginId: OAuthTypeCorrelation,
+      oauthLoginId: OAuthTypeCorrelationInput,
       email: GraphQLNullable<String>,
       userData: GraphQLNullable<[UserDataPair]>
     ) {

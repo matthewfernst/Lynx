@@ -4,7 +4,7 @@
 import ApolloAPI
 
 public extension ApolloGeneratedGraphQL {
-  struct OAuthTypeCorrelation: InputObject {
+  struct OAuthTypeCorrelationInput: InputObject {
     public private(set) var __data: InputDict
 
     public init(_ data: InputDict) {
