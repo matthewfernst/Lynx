@@ -73,8 +73,8 @@ export class LynxAPIStack extends Stack {
         const slopesZippedBucket = this.createSlopesZippedBucket();
         const slopesUnzippedBucket = this.createSlopesUnzippedBucket();
 
-        const unzipper = this.createUnzipperLambda(slopesZippedBucket, slopesUnzippedBucket);
-        const reducer = this.createReducerLambda(slopesUnzippedBucket, leaderboardTable);
+        const unzipper = this.createUnzipperLambda(env, slopesZippedBucket, slopesUnzippedBucket);
+        const reducer = this.createReducerLambda(env, slopesUnzippedBucket, leaderboardTable);
         const graphql = this.createGraphqlAPILambda(
             env,
             profilePictureBucket,
@@ -232,7 +232,7 @@ export class LynxAPIStack extends Stack {
                 invitesTable,
                 partiesTable
             ),
-            ...this.createLambdaParams()
+            ...this.createLambdaParams(env)
         });
     }
 
@@ -317,6 +317,7 @@ export class LynxAPIStack extends Stack {
     }
 
     private createUnzipperLambda(
+        env: ApplicationEnvironment,
         slopesZippedBucket: Bucket,
         slopesUnzippedBucket: Bucket
     ): LambdaFunction {
@@ -326,7 +327,7 @@ export class LynxAPIStack extends Stack {
             handler: "index.handler",
             code: Code.fromAsset("dist/unzipper"),
             role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket),
-            ...this.createLambdaParams()
+            ...this.createLambdaParams(env)
         });
         unzipperLambda.addEventSource(
             new S3EventSource(slopesZippedBucket, { events: [EventType.OBJECT_CREATED] })
@@ -369,6 +370,7 @@ export class LynxAPIStack extends Stack {
     }
 
     private createReducerLambda(
+        env: ApplicationEnvironment,
         slopesUnzippedBucket: Bucket,
         leaderboardTable: Table
     ): LambdaFunction {
@@ -378,7 +380,7 @@ export class LynxAPIStack extends Stack {
             handler: "index.handler",
             code: Code.fromAsset("dist/reducer"),
             role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable),
-            ...this.createLambdaParams()
+            ...this.createLambdaParams(env)
         });
         reducerLambda.addEventSource(
             new S3EventSource(slopesUnzippedBucket, { events: [EventType.OBJECT_CREATED] })
@@ -414,7 +416,7 @@ export class LynxAPIStack extends Stack {
         });
     }
 
-    private createLambdaParams(): Partial<FunctionProps> {
+    private createLambdaParams(env: ApplicationEnvironment): Partial<FunctionProps> {
         return {
             memorySize: 2048,
             timeout: Duration.seconds(29),
@@ -423,7 +425,7 @@ export class LynxAPIStack extends Stack {
             loggingFormat: LoggingFormat.JSON,
             applicationLogLevelV2: ApplicationLogLevel.WARN,
             systemLogLevelV2: SystemLogLevel.WARN,
-            environment: { NODE_OPTIONS: "--enable-source-maps" }
+            environment: { ...env, NODE_OPTIONS: "--enable-source-maps" }
         };
     }
 
