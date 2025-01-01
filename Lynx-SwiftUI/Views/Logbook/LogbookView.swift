@@ -156,7 +156,7 @@ struct LogbookView: View {
     
     private var lifetimeSummary: some View {
         VStack(alignment: .leading, spacing: Constants.Spacing.dateAndSummary) {
-            Text("Lifetime Summary")
+            Text("Season Summary")
                 .font(.system(
                     size: Constants.Fonts.resortNameSize,
                     weight: Constants.Fonts.resortNameWeight
