@@ -3,7 +3,7 @@ import { Upload } from "@aws-sdk/lib-storage";
 import { S3Event } from "aws-lambda";
 import { Entry, Parse, ParseStream as IncompleteTypedParseStream } from "unzipper";
 
-import { s3Client } from "../graphql/aws/s3";
+import { checkIfObjectInBucket, s3Client } from "../graphql/aws/s3";
 import { SLOPES_UNZIPPED_BUCKET } from "../infrastructure/stacks/lynxApiStack";
 import { NodeJsRuntimeStreamingBlobPayloadOutputTypes } from "@smithy/types";
 
@@ -36,13 +36,16 @@ export async function handler(event: S3Event) {
 
 const uploadAndDelete = async (bucket: string, objectKey: string, entry: Entry) => {
     const targetFile = renameFileFunction(objectKey);
-    await new Upload({
-        client: s3Client,
-        params: { Bucket: SLOPES_UNZIPPED_BUCKET, Key: targetFile, Body: entry }
-    }).done();
-    console.info(
-        `File ${targetFile} uploaded to bucket ${SLOPES_UNZIPPED_BUCKET} successfully.`
-    );
+    const fileExists = await checkIfObjectInBucket(SLOPES_UNZIPPED_BUCKET, targetFile);
+    if (!fileExists) {
+        await new Upload({
+            client: s3Client,
+            params: { Bucket: SLOPES_UNZIPPED_BUCKET, Key: targetFile, Body: entry }
+        }).done();
+        console.info(
+            `File ${targetFile} uploaded to bucket ${SLOPES_UNZIPPED_BUCKET} successfully.`
+        );
+    }
 
     const deleteObjectRequest = new DeleteObjectCommand({ Bucket: bucket, Key: objectKey });
     await s3Client.send(deleteObjectRequest);
