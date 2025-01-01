@@ -64,8 +64,8 @@ export class LynxAPIStack extends Stack {
         const slopesZippedBucket = this.createSlopesZippedBucket();
         const slopesUnzippedBucket = this.createSlopesUnzippedBucket();
 
-        const reducer = this.createReducerLambda(slopesUnzippedBucket, leaderboardTable);
         const unzipper = this.createUnzipperLambda(slopesZippedBucket, slopesUnzippedBucket);
+        const reducer = this.createReducerLambda(slopesUnzippedBucket, leaderboardTable);
         const graphql = this.createGraphqlAPILambda(
             env,
             profilePictureBucket,
@@ -311,56 +311,6 @@ export class LynxAPIStack extends Stack {
         });
     }
 
-    private createReducerLambda(
-        slopesUnzippedBucket: Bucket,
-        leaderboardTable: Table
-    ): LambdaFunction {
-        const reducerLambda = new LambdaFunction(this, "lynxReducerLambda", {
-            functionName: "lynx-reducer",
-            runtime: Runtime.NODEJS_LATEST,
-            handler: "index.handler",
-            memorySize: 2048,
-            timeout: Duration.seconds(60),
-            code: Code.fromAsset("dist/reducer"),
-            role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable),
-            tracing: Tracing.ACTIVE,
-            logRetention: RetentionDays.ONE_MONTH,
-            environment: { NODE_OPTIONS: "--enable-source-maps" }
-        });
-        reducerLambda.addEventSource(
-            new S3EventSource(slopesUnzippedBucket, { events: [EventType.OBJECT_CREATED] })
-        );
-        return reducerLambda;
-    }
-
-    private createReducerLambdaRole(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Role {
-        return new Role(this, "lynxReducerLambdaRole", {
-            roleName: "LynxReducerLambdaRole",
-            assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-            managedPolicies: [
-                ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
-                ManagedPolicy.fromAwsManagedPolicyName("AWSXrayWriteOnlyAccess")
-            ],
-            inlinePolicies: {
-                BucketAccessPolicy: new PolicyDocument({
-                    statements: [
-                        new PolicyStatement({
-                            actions: ["s3:GetObject"],
-                            resources: [
-                                slopesUnzippedBucket.bucketArn,
-                                slopesUnzippedBucket.arnForObjects("*")
-                            ]
-                        }),
-                        new PolicyStatement({
-                            actions: ["dynamodb:UpdateItem"],
-                            resources: [leaderboardTable.tableArn]
-                        })
-                    ]
-                })
-            }
-        });
-    }
-
     private createUnzipperLambda(
         slopesZippedBucket: Bucket,
         slopesUnzippedBucket: Bucket
@@ -405,11 +355,61 @@ export class LynxAPIStack extends Stack {
                             ]
                         }),
                         new PolicyStatement({
-                            actions: ["s3:PutObject"],
+                            actions: ["s3:GetObject", "s3:PutObject"],
                             resources: [
                                 slopesUnzippedBucket.bucketArn,
                                 slopesUnzippedBucket.arnForObjects("*")
                             ]
+                        })
+                    ]
+                })
+            }
+        });
+    }
+
+    private createReducerLambda(
+        slopesUnzippedBucket: Bucket,
+        leaderboardTable: Table
+    ): LambdaFunction {
+        const reducerLambda = new LambdaFunction(this, "lynxReducerLambda", {
+            functionName: "lynx-reducer",
+            runtime: Runtime.NODEJS_LATEST,
+            handler: "index.handler",
+            memorySize: 2048,
+            timeout: Duration.seconds(60),
+            code: Code.fromAsset("dist/reducer"),
+            role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable),
+            tracing: Tracing.ACTIVE,
+            logRetention: RetentionDays.ONE_MONTH,
+            environment: { NODE_OPTIONS: "--enable-source-maps" }
+        });
+        reducerLambda.addEventSource(
+            new S3EventSource(slopesUnzippedBucket, { events: [EventType.OBJECT_CREATED] })
+        );
+        return reducerLambda;
+    }
+
+    private createReducerLambdaRole(slopesUnzippedBucket: Bucket, leaderboardTable: Table): Role {
+        return new Role(this, "lynxReducerLambdaRole", {
+            roleName: "LynxReducerLambdaRole",
+            assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+            managedPolicies: [
+                ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
+                ManagedPolicy.fromAwsManagedPolicyName("AWSXrayWriteOnlyAccess")
+            ],
+            inlinePolicies: {
+                BucketAccessPolicy: new PolicyDocument({
+                    statements: [
+                        new PolicyStatement({
+                            actions: ["s3:GetObject"],
+                            resources: [
+                                slopesUnzippedBucket.bucketArn,
+                                slopesUnzippedBucket.arnForObjects("*")
+                            ]
+                        }),
+                        new PolicyStatement({
+                            actions: ["dynamodb:UpdateItem"],
+                            resources: [leaderboardTable.tableArn]
                         })
                     ]
                 })
