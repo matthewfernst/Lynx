@@ -355,7 +355,7 @@ export class LynxAPIStack extends Stack {
                             ]
                         }),
                         new PolicyStatement({
-                            actions: ["s3:GetObject", "s3:PutObject"],
+                            actions: ["s3:GetObject", "s3:ListBucket", "s3:PutObject"],
                             resources: [
                                 slopesUnzippedBucket.bucketArn,
                                 slopesUnzippedBucket.arnForObjects("*")
