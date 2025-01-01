@@ -47,7 +47,7 @@ struct LeaderboardView: View {
     
     private func populateLeaderboard() {
         ApolloLynxClient.getAllLeaderboards(
-            for: .allTime,
+            for: .season,
             limit: Constants.topThree,
             inMeasurementSystem: profileManager.measurementSystem
         ) { result in

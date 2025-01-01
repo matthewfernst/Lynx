@@ -17,7 +17,16 @@ import {
     Role,
     ServicePrincipal
 } from "aws-cdk-lib/aws-iam";
-import { Code, Function as LambdaFunction, Runtime, Tracing } from "aws-cdk-lib/aws-lambda";
+import {
+    ApplicationLogLevel,
+    Code,
+    FunctionProps,
+    Function as LambdaFunction,
+    LoggingFormat,
+    Runtime,
+    SystemLogLevel,
+    Tracing
+} from "aws-cdk-lib/aws-lambda";
 import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
@@ -213,8 +222,6 @@ export class LynxAPIStack extends Stack {
             functionName: "lynx-graphql",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
-            memorySize: 2048,
-            timeout: Duration.seconds(29),
             code: Code.fromAsset("dist/graphql"),
             role: this.createGraphqlAPILambdaRole(
                 profilePictureBucket,
@@ -225,9 +232,7 @@ export class LynxAPIStack extends Stack {
                 invitesTable,
                 partiesTable
             ),
-            tracing: Tracing.ACTIVE,
-            logRetention: RetentionDays.ONE_MONTH,
-            environment: { ...env, NODE_OPTIONS: "--enable-source-maps" }
+            ...this.createLambdaParams()
         });
     }
 
@@ -319,13 +324,9 @@ export class LynxAPIStack extends Stack {
             functionName: "lynx-unzipper",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
-            memorySize: 2048,
-            timeout: Duration.seconds(60),
             code: Code.fromAsset("dist/unzipper"),
             role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket),
-            tracing: Tracing.ACTIVE,
-            logRetention: RetentionDays.ONE_MONTH,
-            environment: { NODE_OPTIONS: "--enable-source-maps" }
+            ...this.createLambdaParams()
         });
         unzipperLambda.addEventSource(
             new S3EventSource(slopesZippedBucket, { events: [EventType.OBJECT_CREATED] })
@@ -375,13 +376,9 @@ export class LynxAPIStack extends Stack {
             functionName: "lynx-reducer",
             runtime: Runtime.NODEJS_LATEST,
             handler: "index.handler",
-            memorySize: 2048,
-            timeout: Duration.seconds(60),
             code: Code.fromAsset("dist/reducer"),
             role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable),
-            tracing: Tracing.ACTIVE,
-            logRetention: RetentionDays.ONE_MONTH,
-            environment: { NODE_OPTIONS: "--enable-source-maps" }
+            ...this.createLambdaParams()
         });
         reducerLambda.addEventSource(
             new S3EventSource(slopesUnzippedBucket, { events: [EventType.OBJECT_CREATED] })
@@ -415,6 +412,19 @@ export class LynxAPIStack extends Stack {
                 })
             }
         });
+    }
+
+    private createLambdaParams(): Partial<FunctionProps> {
+        return {
+            memorySize: 2048,
+            timeout: Duration.seconds(29),
+            tracing: Tracing.ACTIVE,
+            logRetention: RetentionDays.ONE_MONTH,
+            loggingFormat: LoggingFormat.JSON,
+            applicationLogLevelV2: ApplicationLogLevel.WARN,
+            systemLogLevelV2: SystemLogLevel.WARN,
+            environment: { NODE_OPTIONS: "--enable-source-maps" }
+        };
     }
 
     private createLambdaErrorRateAlarms(alarmTopic: Topic, lambdas: LambdaFunction[]): Alarm[] {

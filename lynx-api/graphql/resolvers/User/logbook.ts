@@ -58,10 +58,11 @@ const filterLogByTimeframe = (log: ParsedLog, timeframe: string): boolean => {
     switch (timeframe) {
         case "ALL_TIME":
             return true;
-        case "SEASON":
+        case "SEASON": {
             const seasonStart = getSeasonStart(currentTime);
             const seasonEnd = getSeasonEnd(currentTime);
             return seasonStart < date && date < seasonEnd;
+        }
         case "MONTH":
             return diff.months <= 1;
         case "WEEK":

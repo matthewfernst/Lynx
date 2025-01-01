@@ -60,7 +60,7 @@ function runProductionServer() {
         handlers.createAPIGatewayProxyEventRequestHandler(),
         {
             context: async ({ event }) => ({
-                userId: await authenticateHTTPAccessToken(event),
+                userId: authenticateHTTPAccessToken(event),
                 dataloaders: createDataloaders()
             }),
             middleware: [

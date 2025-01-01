@@ -13,7 +13,7 @@ struct AllLeadersForCategoryView: View {
     let category: LeaderboardCategory
     @State private var leaders: [LeaderAttributes] = []
     
-    @State private var timeframe: Timeframe = .allTime
+    @State private var timeframe: Timeframe = .season
 
     var body: some View {
         VStack {
