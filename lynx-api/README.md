@@ -33,7 +33,6 @@ npm run deploy
 The following environment variables can be overriden to configure the application for your environment.
 
 APPLE_CLIENT_ID: The client id for the Apple OAuth provider.  
-APPLE_CLIENT_SECRET: The client secret for the Apple OAuth provider.  
 AUTH_KEY: The key used to sign JWT tokens.  
 ESCAPE_INVITE_HATCH: A backdoor to allow users to join the application without an invite code (for first user setup).  
 FACEBOOK_CLIENT_ID: The client id for the Facebook OAuth provider.  

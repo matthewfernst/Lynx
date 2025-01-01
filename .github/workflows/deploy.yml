@@ -51,7 +51,6 @@ jobs:
           file-path: 'lynx-api/.env'
         env:
           LYNX_APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
-          LYNX_APPLE_CLIENT_SECRET: ${{ secrets.APPLE_CLIENT_SECRET }}
           LYNX_AUTH_KEY: ${{ secrets.AUTH_KEY }}
           LYNX_ESCAPE_INVITE_HATCH: ${{ secrets.ESCAPE_INVITE_HATCH }}
           LYNX_FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID }}

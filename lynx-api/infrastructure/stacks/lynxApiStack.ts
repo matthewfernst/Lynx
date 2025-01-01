@@ -46,7 +46,6 @@ export const SLOPES_UNZIPPED_BUCKET = "lynx-slopes-unzipped";
 
 interface ApplicationEnvironment {
     APPLE_CLIENT_ID: string;
-    APPLE_CLIENT_SECRET: string;
     AUTH_KEY: string;
     ESCAPE_INVITE_HATCH: string;
     FACEBOOK_CLIENT_ID: string;
