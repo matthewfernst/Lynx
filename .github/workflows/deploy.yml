@@ -50,6 +50,7 @@ jobs:
           input-prefix: 'LYNX_' # Needed To Prevent GitHub Variables From Propagating To Lambda
           file-path: 'lynx-api/.env'
         env:
+          LYNX_ALARM_EMAILS: ${{ secrets.ALARM_EMAILS }}
           LYNX_APPLE_CLIENT_ID: ${{ secrets.APPLE_CLIENT_ID }}
           LYNX_AUTH_KEY: ${{ secrets.AUTH_KEY }}
           LYNX_ESCAPE_INVITE_HATCH: ${{ secrets.ESCAPE_INVITE_HATCH }}

@@ -31,9 +31,12 @@ import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { Topic } from "aws-cdk-lib/aws-sns";
+import { EmailSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 
 import { Construct } from "constructs";
 import { config } from "dotenv";
+
+import { ApplicationEnvironment } from "../app";
 
 export const USERS_TABLE = "lynx-users";
 export const LEADERBOARD_TABLE = "lynx-leaderboard";
@@ -43,16 +46,6 @@ export const INVITES_TABLE = "lynx-invites";
 export const PROFILE_PICS_BUCKET = "lynx-profile-pictures";
 export const SLOPES_ZIPPED_BUCKET = "lynx-slopes-zipped";
 export const SLOPES_UNZIPPED_BUCKET = "lynx-slopes-unzipped";
-
-interface ApplicationEnvironment {
-    APPLE_CLIENT_ID: string;
-    AUTH_KEY: string;
-    ESCAPE_INVITE_HATCH: string;
-    FACEBOOK_CLIENT_ID: string;
-    FACEBOOK_CLIENT_SECRET: string;
-    GOOGLE_CLIENT_ID: string;
-    NODE_ENV: string;
-}
 
 export class LynxAPIStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
@@ -107,7 +100,7 @@ export class LynxAPIStack extends Stack {
             .addResource("graphql")
             .addMethod("POST", new LambdaIntegration(graphql, { allowTestInvoke: false }));
 
-        const alarmTopic = this.createAlarmActions();
+        const alarmTopic = this.createAlarmActions(env);
         this.createLambdaErrorRateAlarms(alarmTopic, [graphql, reducer, unzipper]);
         this.createAPIErrorRateAlarms(alarmTopic, api);
     }
@@ -219,7 +212,7 @@ export class LynxAPIStack extends Stack {
     ): LambdaFunction {
         return new LambdaFunction(this, "lynxGraphqlLambda", {
             functionName: "lynx-graphql",
-            runtime: Runtime.NODEJS_LATEST,
+            runtime: Runtime.NODEJS_22_X,
             handler: "index.handler",
             code: Code.fromAsset("dist/graphql"),
             role: this.createGraphqlAPILambdaRole(
@@ -322,7 +315,7 @@ export class LynxAPIStack extends Stack {
     ): LambdaFunction {
         const unzipperLambda = new LambdaFunction(this, "lynxUnzipperLambda", {
             functionName: "lynx-unzipper",
-            runtime: Runtime.NODEJS_LATEST,
+            runtime: Runtime.NODEJS_22_X,
             handler: "index.handler",
             code: Code.fromAsset("dist/unzipper"),
             role: this.createUnzipperLambdaRole(slopesZippedBucket, slopesUnzippedBucket),
@@ -375,7 +368,7 @@ export class LynxAPIStack extends Stack {
     ): LambdaFunction {
         const reducerLambda = new LambdaFunction(this, "lynxReducerLambda", {
             functionName: "lynx-reducer",
-            runtime: Runtime.NODEJS_LATEST,
+            runtime: Runtime.NODEJS_22_X,
             handler: "index.handler",
             code: Code.fromAsset("dist/reducer"),
             role: this.createReducerLambdaRole(slopesUnzippedBucket, leaderboardTable),
@@ -475,7 +468,11 @@ export class LynxAPIStack extends Stack {
         });
     }
 
-    private createAlarmActions() {
-        return new Topic(this, "lynxAlarmTopic", { topicName: "lynx-alarms" });
+    private createAlarmActions(env: ApplicationEnvironment): Topic {
+        const topic = new Topic(this, "lynxAlarmTopic", { topicName: "lynx-alarms" });
+        for (const email of env.ALARM_EMAILS.split(",")) {
+            topic.addSubscription(new EmailSubscription(email));
+        }
+        return topic;
     }
 }
