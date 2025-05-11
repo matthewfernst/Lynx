@@ -110,7 +110,8 @@ export class LynxAPIStack extends Stack {
             tableName: USERS_TABLE,
             partitionKey: { name: "id", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
-            removalPolicy: RemovalPolicy.DESTROY
+            removalPolicy: RemovalPolicy.DESTROY,
+            deletionProtection: true
         });
         const oauthSecondaryIndices = ["appleId", "googleId", "facebookId"];
         oauthSecondaryIndices.map((indexName) => {
@@ -131,6 +132,7 @@ export class LynxAPIStack extends Stack {
             sortKey: { name: "timeframe", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
             removalPolicy: RemovalPolicy.DESTROY,
+            deletionProtection: true,
             timeToLiveAttribute: "ttl"
         });
         const timeframeSecondaryIndices = ["distance", "runCount", "topSpeed", "verticalDistance"];
@@ -151,7 +153,8 @@ export class LynxAPIStack extends Stack {
             tableName: PARTIES_TABLE,
             partitionKey: { name: "id", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
-            removalPolicy: RemovalPolicy.DESTROY
+            removalPolicy: RemovalPolicy.DESTROY,
+            deletionProtection: true
         });
     }
 
@@ -161,6 +164,7 @@ export class LynxAPIStack extends Stack {
             partitionKey: { name: "id", type: AttributeType.STRING },
             billingMode: BillingMode.PAY_PER_REQUEST,
             removalPolicy: RemovalPolicy.DESTROY,
+            deletionProtection: true,
             timeToLiveAttribute: "ttl"
         });
     }
