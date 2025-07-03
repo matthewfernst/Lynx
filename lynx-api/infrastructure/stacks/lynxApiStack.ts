@@ -438,10 +438,10 @@ export class LynxAPIStack extends Stack {
         const invocationSumExpr = totalInvocations.map((_, i) => `i${i}`).join(" + ");
         const successRateExpr = `(1 - (${errorSumExpr}) / (${invocationSumExpr})) * 100`;
 
-        const alarm = new Alarm(this, `CantaloupeLambdaSuccessRateAlarm`, {
-            alarmName: "Cantaloupe Lambda Success Rate",
+        const alarm = new Alarm(this, `LynxLambdasSuccessRateAlarm`, {
+            alarmName: "Lynx Lambdas Success Rate",
             metric: new MathExpression({
-                label: "Cantaloupe Lambda Success Rate",
+                label: "Lynx Lambdas Success Rate",
                 expression: successRateExpr,
                 usingMetrics: metricMap,
                 period: Duration.minutes(5)
