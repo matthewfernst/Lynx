@@ -32,9 +32,4 @@ new ApplicationAssociator(app, "LynxAssociatedApplication", {
     ]
 });
 
-// Have to hardcode for now, but this should be application.appRegistryApplication.applicationArn
-const applicationArn =
-    "arn:aws:resource-groups:us-east-1:170267588697:group/Lynx/028eddv2r6eqzvykir0gy3cwoa";
-const tags = { awsApplication: applicationArn };
-
-new LynxAPIStack(app, "LynxStack", { env, tags });
+new LynxAPIStack(app, "LynxStack", { env });
