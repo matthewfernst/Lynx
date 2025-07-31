@@ -1,5 +1,11 @@
 import { Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
-import { Cors, EndpointType, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
+import {
+    Cors,
+    EndpointType,
+    LambdaIntegration,
+    MethodLoggingLevel,
+    RestApi
+} from "aws-cdk-lib/aws-apigateway";
 import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
 import {
     Alarm,
@@ -92,7 +98,11 @@ export class LynxAPIStack extends Stack {
                 })
             },
             disableExecuteApiEndpoint: true,
-            deployOptions: { stageName: "production", tracingEnabled: true },
+            deployOptions: {
+                stageName: "production",
+                tracingEnabled: true,
+                loggingLevel: MethodLoggingLevel.ERROR
+            },
             defaultCorsPreflightOptions: { allowOrigins: Cors.ALL_ORIGINS },
             endpointExportName: "LynxGraphqlApiEndpoint"
         });
