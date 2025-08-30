@@ -11,7 +11,6 @@ import {
     Alarm,
     ComparisonOperator,
     MathExpression,
-    Metric,
     TreatMissingData
 } from "aws-cdk-lib/aws-cloudwatch";
 import { SnsAction } from "aws-cdk-lib/aws-cloudwatch-actions";
