@@ -437,8 +437,8 @@ export class LynxAPIStack extends Stack {
 
     private createLambdaErrorAlarms(alarmTopic: Topic, lambdas: LambdaFunction[]): Alarm[] {
         return lambdas.map((lambda) => {
-            const alarm = new Alarm(this, `Lynx${lambda.node.id}Alarm`, {
-                alarmName: `Lynx ${lambda.functionName} Errors`,
+            const alarm = new Alarm(this, `${lambda.node.id}-ErrorsAlarm`, {
+                alarmName: `${lambda.functionName} Errors`,
                 metric: lambda.metricErrors(),
                 threshold: 0,
                 comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
@@ -453,7 +453,7 @@ export class LynxAPIStack extends Stack {
 
     private createRestAPIErrorsAlarm(alarmTopic: Topic, api: RestApi): Alarm {
         const errorExpression = new MathExpression({
-            label: "Lynx API Errors",
+            label: "Errors",
             expression: "clientErrors + serverErrors",
             usingMetrics: {
                 clientErrors: api.metricClientError(),
