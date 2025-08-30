@@ -112,8 +112,8 @@ export class LynxAPIStack extends Stack {
             .addMethod("POST", new LambdaIntegration(graphql, { allowTestInvoke: false }));
 
         const alarmTopic = this.createAlarmActions(env);
-        this.createLambdaErrorRateAlarm(alarmTopic, [graphql, reducer, unzipper]);
-        this.createRestAPIErrorRateAlarm(alarmTopic, api);
+        this.createLambdaErrorAlarms(alarmTopic, [graphql, reducer, unzipper]);
+        this.createRestAPIErrorsAlarm(alarmTopic, api);
     }
 
     private createUsersTable(): Table {
@@ -436,53 +436,38 @@ export class LynxAPIStack extends Stack {
         };
     }
 
-    private createLambdaErrorRateAlarm(alarmTopic: Topic, lambdas: LambdaFunction[]): Alarm {
-        const totalErrors = lambdas.map((lambda) => lambda.metricErrors());
-        const totalInvocations = lambdas.map((lambda) => lambda.metricInvocations());
+    private createLambdaErrorAlarms(alarmTopic: Topic, lambdas: LambdaFunction[]): Alarm[] {
+        return lambdas.map((lambda) => {
+            const alarm = new Alarm(this, `Lynx${lambda.node.id}Alarm`, {
+                alarmName: `Lynx ${lambda.functionName} Errors`,
+                metric: lambda.metricErrors(),
+                threshold: 0,
+                comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+                evaluationPeriods: 1,
+                treatMissingData: TreatMissingData.NOT_BREACHING
+            });
 
-        const metricMap: Record<string, Metric> = {};
-        totalErrors.forEach((metric, i) => (metricMap[`e${i}`] = metric));
-        totalInvocations.forEach((metric, i) => (metricMap[`i${i}`] = metric));
-
-        const errorSumExpr = totalErrors.map((_, i) => `e${i}`).join(" + ");
-        const invocationSumExpr = totalInvocations.map((_, i) => `i${i}`).join(" + ");
-        const successRateExpr = `(1 - (${errorSumExpr}) / (${invocationSumExpr})) * 100`;
-
-        const alarm = new Alarm(this, `LynxLambdasSuccessRateAlarm`, {
-            alarmName: "Lynx Lambdas Success Rate",
-            metric: new MathExpression({
-                label: "Lynx Lambdas Success Rate",
-                expression: successRateExpr,
-                usingMetrics: metricMap,
-                period: Duration.minutes(5)
-            }),
-            threshold: 99.99,
-            comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-            evaluationPeriods: 1,
-            treatMissingData: TreatMissingData.NOT_BREACHING
+            alarm.addAlarmAction(new SnsAction(alarmTopic));
+            return alarm;
         });
-
-        alarm.addAlarmAction(new SnsAction(alarmTopic));
-        return alarm;
     }
 
-    private createRestAPIErrorRateAlarm(alarmTopic: Topic, api: RestApi): Alarm {
-        const errorRateExpression = new MathExpression({
-            label: "Lynx API Success Rate",
-            expression: "(1 - (clientErrors + serverErrors) / invocations) * 100",
+    private createRestAPIErrorsAlarm(alarmTopic: Topic, api: RestApi): Alarm {
+        const errorExpression = new MathExpression({
+            label: "Lynx API Errors",
+            expression: "clientErrors + serverErrors",
             usingMetrics: {
                 clientErrors: api.metricClientError(),
-                serverErrors: api.metricServerError(),
-                invocations: api.metricCount()
+                serverErrors: api.metricServerError()
             },
             period: Duration.minutes(5)
         });
 
-        const alarm = new Alarm(this, `LynxRestApiSuccessRateAlarm`, {
-            alarmName: "Lynx Rest API Success Rate",
-            metric: errorRateExpression,
-            threshold: 99.99,
-            comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+        const alarm = new Alarm(this, "LynxRestApiErrorsAlarm", {
+            alarmName: "Lynx Rest API Errors",
+            metric: errorExpression,
+            threshold: 0,
+            comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
             evaluationPeriods: 1,
             treatMissingData: TreatMissingData.NOT_BREACHING
         });
