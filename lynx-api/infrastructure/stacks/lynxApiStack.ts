@@ -99,8 +99,7 @@ export class LynxAPIStack extends Stack {
             disableExecuteApiEndpoint: true,
             deployOptions: {
                 stageName: "production",
-                tracingEnabled: true,
-                loggingLevel: MethodLoggingLevel.ERROR
+                tracingEnabled: true
             },
             defaultCorsPreflightOptions: { allowOrigins: Cors.ALL_ORIGINS },
             endpointExportName: "LynxGraphqlApiEndpoint"
@@ -452,19 +451,9 @@ export class LynxAPIStack extends Stack {
     }
 
     private createRestAPIErrorsAlarm(alarmTopic: Topic, api: RestApi): Alarm {
-        const errorExpression = new MathExpression({
-            label: "Errors",
-            expression: "clientErrors + serverErrors",
-            usingMetrics: {
-                clientErrors: api.metricClientError(),
-                serverErrors: api.metricServerError()
-            },
-            period: Duration.minutes(5)
-        });
-
-        const alarm = new Alarm(this, "LynxRestApiErrorsAlarm", {
-            alarmName: "Lynx Rest API Errors",
-            metric: errorExpression,
+        const alarm = new Alarm(this, "LynxApiServerErrorsAlarm", {
+            alarmName: "Lynx API Server Errors",
+            metric: api.metricServerError(),
             threshold: 0,
             comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
             evaluationPeriods: 1,
