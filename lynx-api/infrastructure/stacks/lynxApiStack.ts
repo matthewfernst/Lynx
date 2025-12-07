@@ -99,7 +99,6 @@ export class LynxAPIStack extends Stack {
             .addMethod("POST", new LambdaIntegration(graphql, { allowTestInvoke: false }));
 
         const alarmTopic = this.createAlarmActions(env);
-        this.createLambdaErrorAlarms(alarmTopic, [graphql, reducer, unzipper]);
         this.createRestAPIErrorsAlarm(alarmTopic, api);
     }
 
@@ -421,22 +420,6 @@ export class LynxAPIStack extends Stack {
             systemLogLevelV2: SystemLogLevel.WARN,
             environment: { ...env, NODE_OPTIONS: "--enable-source-maps" }
         };
-    }
-
-    private createLambdaErrorAlarms(alarmTopic: Topic, lambdas: LambdaFunction[]): Alarm[] {
-        return lambdas.map((lambda) => {
-            const alarm = new Alarm(this, `${lambda.node.id}-ErrorsAlarm`, {
-                alarmName: `${lambda.functionName} Errors`,
-                metric: lambda.metricErrors(),
-                threshold: 0,
-                comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-                evaluationPeriods: 1,
-                treatMissingData: TreatMissingData.NOT_BREACHING
-            });
-
-            alarm.addAlarmAction(new SnsAction(alarmTopic));
-            return alarm;
-        });
     }
 
     private createRestAPIErrorsAlarm(alarmTopic: Topic, api: RestApi): Alarm {
