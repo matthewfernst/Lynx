@@ -14,8 +14,8 @@ export interface DatabaseUser {
     firstName?: string;
     lastName?: string;
     profilePictureUrl?: string;
-    parties: string[];
-    partyInvites: string[];
+    parties?: string[];
+    partyInvites?: string[];
 }
 
 export interface UserStats {
