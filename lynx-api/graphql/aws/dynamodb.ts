@@ -1,5 +1,5 @@
 import { ApolloServerErrorCode } from "@apollo/server/errors";
-import { DynamoDB } from "@aws-sdk/client-dynamodb";
+import { ConditionalCheckFailedException, DynamoDB } from "@aws-sdk/client-dynamodb";
 import {
     DynamoDBDocument,
     DeleteCommand,
@@ -32,6 +32,10 @@ type TableObject<T extends Table> =
     T extends typeof INVITES_TABLE ? Invite :
     T extends typeof PARTIES_TABLE ? Party :
     unknown;
+
+type TableArrayOptions = {
+    uniqueValues: boolean;
+};
 
 if (!process.env.AWS_REGION) throw new GraphQLError("AWS_REGION Is Not Defined");
 const awsClient = new DynamoDB({ region: process.env.AWS_REGION });
@@ -132,40 +136,51 @@ export const updateItem = async <T extends Table>(
     }
 };
 
-export const addItemsToArray = async <T extends Table>(
+export async function addItemToArray<T extends Table>(
     table: T,
     id: string,
     key: string,
-    values: string[]
-): Promise<TableObject<T>> => {
+    value: any,
+    options: TableArrayOptions = { uniqueValues: true }
+): Promise<TableObject<T>> {
+    console.debug(
+        `Updating item in ${table} with id ${JSON.stringify(id)}. ${key} now has the following as a value: ${value.toString()}`
+    );
     try {
-        console.info(
-            `Updating item in ${table} with id ${id}. ${key} now has the following as values: ${values}`
-        );
         const updateItemRequest = new UpdateCommand({
             TableName: table,
             Key: { id },
             UpdateExpression:
                 "SET #updateKey = list_append(if_not_exists(#updateKey, :empty_list), :value)",
+            ...(options.uniqueValues && {
+                ConditionExpression: "NOT contains (#updateKey, :value)"
+            }),
             ExpressionAttributeNames: { "#updateKey": key },
-            ExpressionAttributeValues: { empty_list: [], ":value": values },
+            ExpressionAttributeValues: { ":empty_list": [], ":value": [value] },
             ReturnValues: "ALL_NEW"
         });
         const itemOutput = await documentClient.send(updateItemRequest);
         const object = itemOutput.Attributes as TableObject<T> | undefined;
         if (!object) {
-            throw new GraphQLError("Called DynamoDB Without Validating Item Exists", {
-                extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR, table, id }
-            });
+            throw new Error("Called DynamoDB Without Validating Item Exists");
         }
         return object;
     } catch (err) {
+        if (err instanceof ConditionalCheckFailedException) {
+            console.info(err);
+            throw new GraphQLError(
+                `${value} Already Exists For ${JSON.stringify(id)} With Key ${key}`,
+                {
+                    extensions: { code: ApolloServerErrorCode.BAD_REQUEST, table, key, value }
+                }
+            );
+        }
         console.error(err);
         throw new GraphQLError("DynamoDB Update Call Failed", {
-            extensions: { code: DEPENDENCY_ERROR }
+            extensions: { code: DEPENDENCY_ERROR, table, key }
         });
     }
-};
+}
 
 export const deleteItemsFromArray = async <T extends Table>(
     table: T,
