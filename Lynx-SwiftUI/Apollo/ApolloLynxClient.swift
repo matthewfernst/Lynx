@@ -751,14 +751,11 @@ final class ApolloLynxClient {
             case unwrapError
         }
 
-        let graphqlifiedSort = GraphQLEnum<LeaderboardSort>(rawValue: sortBy.rawValue)
-        let graphqlifiedTimeframe = GraphQLEnum<Timeframe>(rawValue: timeframe.rawValue)
-
         apolloClient.fetch(
             query: ApolloGeneratedGraphQL.GetPartyDetailsQuery(
                 partyId: partyId,
-                sortBy: graphqlifiedSort,
-                timeframe: graphqlifiedTimeframe,
+                sortBy: .some(.init(sortBy)),
+                timeframe: .some(.init(timeframe)),
                 limit: .some(limit)
             )
         ) { result in
