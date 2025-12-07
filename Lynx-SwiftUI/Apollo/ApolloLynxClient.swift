@@ -621,11 +621,11 @@ final class ApolloLynxClient {
         inMeasurementSystem system: MeasurementSystem,
         completion: @escaping ((Result<[LeaderAttributes], Error>) -> Void)
     ) {
-        
+
         enum SelectedLeaderboardError: Error {
             case unwrapError
         }
-        
+
         let graphqlifiedSystem = GraphQLEnum<MeasurementSystem>(rawValue: system.rawValue)
         let graphqlifiedSort = GraphQLEnum<LeaderboardSort>(rawValue: sort.rawValue)
         apolloClient.fetch(
@@ -635,7 +635,7 @@ final class ApolloLynxClient {
                 measurementSystem: graphqlifiedSystem
             )
         ) { result in
-            
+
             switch result {
             case .success(let graphQLResult):
                 guard let leaders = graphQLResult.data?.leaderboard else {
@@ -643,9 +643,9 @@ final class ApolloLynxClient {
                     completion(.failure(SelectedLeaderboardError.unwrapError))
                     return
                 }
-                
+
                 var leaderData = [LeaderAttributes]()
-                
+
                 for leader in leaders {
                     leaderData.append(
                         LeaderAttributes(
@@ -655,12 +655,353 @@ final class ApolloLynxClient {
                         )
                     )
                 }
-                
+
                 Logger.apollo.info("Successfully got specific leaders.")
                 completion(.success(leaderData))
-                
+
             case .failure(let error):
                 Logger.apollo.error("Error Fetching Selected Leaderbords: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    // MARK: - Party Management
+
+    static func getParties(completion: @escaping ((Result<[PartyAttributes], Error>) -> Void)) {
+        enum GetPartiesError: Error {
+            case unwrapError
+        }
+
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetPartiesQuery()) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let parties = graphQLResult.data?.selfLookup?.parties else {
+                    Logger.apollo.error("Failed to unwrap parties.")
+                    completion(.failure(GetPartiesError.unwrapError))
+                    return
+                }
+
+                let partyAttributes = parties.map { party in
+                    PartyAttributes(
+                        id: party.id,
+                        name: party.name,
+                        partyManagerId: party.partyManager.id,
+                        partyManagerName: "\(party.partyManager.firstName) \(party.partyManager.lastName)",
+                        partyManagerProfilePictureURL: URL(string: party.partyManager.profilePictureUrl ?? ""),
+                        userCount: party.users.count,
+                        invitedUserCount: party.invitedUsers.count
+                    )
+                }
+
+                Logger.apollo.info("Successfully got parties.")
+                completion(.success(partyAttributes))
+
+            case .failure(let error):
+                Logger.apollo.error("Error fetching parties: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    static func getPartyInvites(completion: @escaping ((Result<[PartyAttributes], Error>) -> Void)) {
+        enum GetPartyInvitesError: Error {
+            case unwrapError
+        }
+
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetPartyInvitesQuery()) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let invites = graphQLResult.data?.selfLookup?.partyInvites else {
+                    Logger.apollo.error("Failed to unwrap party invites.")
+                    completion(.failure(GetPartyInvitesError.unwrapError))
+                    return
+                }
+
+                let partyAttributes = invites.map { party in
+                    PartyAttributes(
+                        id: party.id,
+                        name: party.name,
+                        partyManagerId: party.partyManager.id,
+                        partyManagerName: "\(party.partyManager.firstName) \(party.partyManager.lastName)",
+                        partyManagerProfilePictureURL: URL(string: party.partyManager.profilePictureUrl ?? ""),
+                        userCount: party.users.count,
+                        invitedUserCount: 0
+                    )
+                }
+
+                Logger.apollo.info("Successfully got party invites.")
+                completion(.success(partyAttributes))
+
+            case .failure(let error):
+                Logger.apollo.error("Error fetching party invites: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    static func getPartyDetails(
+        partyId: String,
+        sortBy: LeaderboardSort = .verticalDistance,
+        timeframe: Timeframe = .season,
+        limit: Int = 5,
+        completion: @escaping ((Result<PartyDetails, Error>) -> Void)
+    ) {
+        enum GetPartyDetailsError: Error {
+            case unwrapError
+        }
+
+        let graphqlifiedSort = GraphQLEnum<LeaderboardSort>(rawValue: sortBy.rawValue)
+        let graphqlifiedTimeframe = GraphQLEnum<Timeframe>(rawValue: timeframe.rawValue)
+
+        apolloClient.fetch(
+            query: ApolloGeneratedGraphQL.GetPartyDetailsQuery(
+                partyId: partyId,
+                sortBy: graphqlifiedSort,
+                timeframe: graphqlifiedTimeframe,
+                limit: .some(limit)
+            )
+        ) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let party = graphQLResult.data?.partyLookupById else {
+                    Logger.apollo.error("Failed to unwrap party details.")
+                    completion(.failure(GetPartyDetailsError.unwrapError))
+                    return
+                }
+
+                let users = party.users.map { user in
+                    PartyUser(
+                        id: user.id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        profilePictureURL: URL(string: user.profilePictureUrl ?? "")
+                    )
+                }
+
+                let invitedUsers = party.invitedUsers.map { user in
+                    PartyUser(
+                        id: user.id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        profilePictureURL: URL(string: user.profilePictureUrl ?? "")
+                    )
+                }
+
+                let leaderboard = party.leaderboard.map { leader in
+                    PartyLeaderboardEntry(
+                        id: leader.id,
+                        firstName: leader.firstName,
+                        lastName: leader.lastName,
+                        profilePictureURL: URL(string: leader.profilePictureUrl ?? ""),
+                        stats: leader.stats.map { stats in
+                            UserStatsAttributes(
+                                runCount: stats.runCount,
+                                distance: stats.distance,
+                                topSpeed: stats.topSpeed,
+                                verticalDistance: stats.verticalDistance
+                            )
+                        }
+                    )
+                }
+
+                let partyDetails = PartyDetails(
+                    id: party.id,
+                    name: party.name,
+                    partyManager: PartyUser(
+                        id: party.partyManager.id,
+                        firstName: party.partyManager.firstName,
+                        lastName: party.partyManager.lastName,
+                        profilePictureURL: URL(string: party.partyManager.profilePictureUrl ?? "")
+                    ),
+                    users: users,
+                    invitedUsers: invitedUsers,
+                    leaderboard: leaderboard
+                )
+
+                Logger.apollo.info("Successfully got party details.")
+                completion(.success(partyDetails))
+
+            case .failure(let error):
+                Logger.apollo.error("Error fetching party details: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    static func createParty(name: String, completion: @escaping ((Result<PartyAttributes, Error>) -> Void)) {
+        enum CreatePartyError: Error {
+            case unwrapError
+        }
+
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreatePartyMutation(name: name)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let party = graphQLResult.data?.createParty else {
+                    Logger.apollo.error("Failed to unwrap created party.")
+                    completion(.failure(CreatePartyError.unwrapError))
+                    return
+                }
+
+                let partyAttributes = PartyAttributes(
+                    id: party.id,
+                    name: party.name,
+                    partyManagerId: party.partyManager.id,
+                    partyManagerName: "\(party.partyManager.firstName) \(party.partyManager.lastName)",
+                    partyManagerProfilePictureURL: URL(string: party.partyManager.profilePictureUrl ?? ""),
+                    userCount: party.users.count,
+                    invitedUserCount: party.invitedUsers.count
+                )
+
+                Logger.apollo.info("Successfully created party.")
+                completion(.success(partyAttributes))
+
+            case .failure(let error):
+                Logger.apollo.error("Error creating party: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    static func deleteParty(partyId: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+        enum DeletePartyError: Error {
+            case unwrapError
+        }
+
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.DeletePartyMutation(partyId: partyId)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let _ = graphQLResult.data?.deleteParty else {
+                    Logger.apollo.error("Failed to delete party.")
+                    completion(.failure(DeletePartyError.unwrapError))
+                    return
+                }
+
+                Logger.apollo.info("Successfully deleted party.")
+                completion(.success(()))
+
+            case .failure(let error):
+                Logger.apollo.error("Error deleting party: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    static func joinParty(partyId: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+        enum JoinPartyError: Error {
+            case unwrapError
+        }
+
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.JoinPartyMutation(partyId: partyId)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let _ = graphQLResult.data?.joinParty else {
+                    Logger.apollo.error("Failed to join party.")
+                    completion(.failure(JoinPartyError.unwrapError))
+                    return
+                }
+
+                Logger.apollo.info("Successfully joined party.")
+                completion(.success(()))
+
+            case .failure(let error):
+                Logger.apollo.error("Error joining party: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    static func leaveParty(partyId: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+        enum LeavePartyError: Error {
+            case unwrapError
+        }
+
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.LeavePartyMutation(partyId: partyId)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let _ = graphQLResult.data?.leaveParty else {
+                    Logger.apollo.error("Failed to leave party.")
+                    completion(.failure(LeavePartyError.unwrapError))
+                    return
+                }
+
+                Logger.apollo.info("Successfully left party.")
+                completion(.success(()))
+
+            case .failure(let error):
+                Logger.apollo.error("Error leaving party: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    static func inviteUserToParty(partyId: String, userId: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+        enum InviteUserError: Error {
+            case unwrapError
+        }
+
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreatePartyInviteMutation(partyId: partyId, userId: userId)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let _ = graphQLResult.data?.createPartyInvite else {
+                    Logger.apollo.error("Failed to invite user to party.")
+                    completion(.failure(InviteUserError.unwrapError))
+                    return
+                }
+
+                Logger.apollo.info("Successfully invited user to party.")
+                completion(.success(()))
+
+            case .failure(let error):
+                Logger.apollo.error("Error inviting user to party: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    static func removeInviteFromParty(partyId: String, userId: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+        enum RemoveInviteError: Error {
+            case unwrapError
+        }
+
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.DeletePartyInviteMutation(partyId: partyId, userId: userId)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let _ = graphQLResult.data?.deletePartyInvite else {
+                    Logger.apollo.error("Failed to remove invite from party.")
+                    completion(.failure(RemoveInviteError.unwrapError))
+                    return
+                }
+
+                Logger.apollo.info("Successfully removed invite from party.")
+                completion(.success(()))
+
+            case .failure(let error):
+                Logger.apollo.error("Error removing invite from party: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    static func removeUserFromParty(partyId: String, userId: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+        enum RemoveUserError: Error {
+            case unwrapError
+        }
+
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.RemoveUserFromPartyMutation(partyId: partyId, userId: userId)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let _ = graphQLResult.data?.removeUserFromParty else {
+                    Logger.apollo.error("Failed to remove user from party.")
+                    completion(.failure(RemoveUserError.unwrapError))
+                    return
+                }
+
+                Logger.apollo.info("Successfully removed user from party.")
+                completion(.success(()))
+
+            case .failure(let error):
+                Logger.apollo.error("Error removing user from party: \(error)")
                 completion(.failure(error))
             }
         }
@@ -709,7 +1050,49 @@ struct ProfileAttributes: CustomDebugStringConvertible {
     }
 }
 
-// MARK: - Extensions of ApolloGraphQL 
+// MARK: - Party Models
+struct PartyAttributes {
+    let id: String
+    let name: String
+    let partyManagerId: String
+    let partyManagerName: String
+    let partyManagerProfilePictureURL: URL?
+    let userCount: Int
+    let invitedUserCount: Int
+}
+
+struct PartyUser {
+    let id: String
+    let firstName: String
+    let lastName: String
+    let profilePictureURL: URL?
+}
+
+struct UserStatsAttributes {
+    let runCount: Int
+    let distance: Double
+    let topSpeed: Double
+    let verticalDistance: Double
+}
+
+struct PartyLeaderboardEntry {
+    let id: String
+    let firstName: String
+    let lastName: String
+    let profilePictureURL: URL?
+    let stats: UserStatsAttributes?
+}
+
+struct PartyDetails {
+    let id: String
+    let name: String
+    let partyManager: PartyUser
+    let users: [PartyUser]
+    let invitedUsers: [PartyUser]
+    let leaderboard: [PartyLeaderboardEntry]
+}
+
+// MARK: - Extensions of ApolloGraphQL
 extension MeasurementSystem {
     var feetOrMeters: String {
         switch self {
@@ -719,7 +1102,7 @@ extension MeasurementSystem {
             return "M"
         }
     }
-    
+
     var milesOrKilometersPerHour: String {
         switch self {
         case .imperial:

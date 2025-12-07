@@ -1,0 +1,9 @@
+mutation JoinParty($partyId: ID!) {
+  joinParty(partyId: $partyId) {
+    id
+    parties {
+      id
+      name
+    }
+  }
+}

@@ -1,0 +1,9 @@
+mutation LeaveParty($partyId: ID!) {
+  leaveParty(partyId: $partyId) {
+    id
+    parties {
+      id
+      name
+    }
+  }
+}

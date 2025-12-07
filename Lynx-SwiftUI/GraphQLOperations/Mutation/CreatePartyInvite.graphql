@@ -1,0 +1,12 @@
+mutation CreatePartyInvite($partyId: ID!, $userId: ID!) {
+  createPartyInvite(partyId: $partyId, userId: $userId) {
+    id
+    name
+    invitedUsers {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+  }
+}

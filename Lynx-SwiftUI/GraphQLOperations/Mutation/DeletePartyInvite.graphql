@@ -1,0 +1,12 @@
+mutation DeletePartyInvite($partyId: ID!, $userId: ID!) {
+  deletePartyInvite(partyId: $partyId, userId: $userId) {
+    id
+    name
+    invitedUsers {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+  }
+}

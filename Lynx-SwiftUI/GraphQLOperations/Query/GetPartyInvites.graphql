@@ -1,0 +1,21 @@
+query GetPartyInvites {
+  selfLookup {
+    id
+    partyInvites {
+      id
+      name
+      partyManager {
+        id
+        firstName
+        lastName
+        profilePictureUrl
+      }
+      users {
+        id
+        firstName
+        lastName
+        profilePictureUrl
+      }
+    }
+  }
+}

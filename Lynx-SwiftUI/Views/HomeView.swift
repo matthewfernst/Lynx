@@ -25,12 +25,17 @@ struct HomeView: View {
             .tabItem {
                 Label("Logbook", systemImage: "book.pages")
             }
-            
+
             LeaderboardView()
                 .tabItem {
                     Label("Leaderboard", systemImage: "trophy")
                 }
-            
+
+            PartyView()
+                .tabItem {
+                    Label("Parties", systemImage: "person.3.fill")
+                }
+
             AccountView()
                 .tabItem {
                     Label("Account", systemImage: "person.crop.circle.fill")

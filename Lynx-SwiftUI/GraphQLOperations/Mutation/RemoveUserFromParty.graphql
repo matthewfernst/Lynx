@@ -1,0 +1,12 @@
+mutation RemoveUserFromParty($partyId: ID!, $userId: ID!) {
+  removeUserFromParty(partyId: $partyId, userId: $userId) {
+    id
+    name
+    users {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+  }
+}

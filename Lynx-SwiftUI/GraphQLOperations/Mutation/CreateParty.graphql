@@ -1,0 +1,24 @@
+mutation CreateParty($name: String!) {
+  createParty(name: $name) {
+    id
+    name
+    partyManager {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+    users {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+    invitedUsers {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+  }
+}

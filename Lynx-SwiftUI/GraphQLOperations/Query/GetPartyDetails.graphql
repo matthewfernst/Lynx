@@ -1,0 +1,36 @@
+query GetPartyDetails($partyId: ID!, $sortBy: LeaderboardSort = VERTICAL_DISTANCE, $timeframe: Timeframe = SEASON, $limit: Int = 5) {
+  partyLookupById(id: $partyId) {
+    id
+    name
+    partyManager {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+    users {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+    invitedUsers {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+    leaderboard(sortBy: $sortBy, timeframe: $timeframe, limit: $limit) {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+      stats(timeframe: $timeframe) {
+        runCount
+        distance
+        topSpeed
+        verticalDistance
+      }
+    }
+  }
+}

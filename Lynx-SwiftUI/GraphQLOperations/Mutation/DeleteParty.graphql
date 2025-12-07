@@ -1,0 +1,6 @@
+mutation DeleteParty($partyId: ID!) {
+  deleteParty(partyId: $partyId) {
+    id
+    name
+  }
+}

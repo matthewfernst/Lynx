@@ -4,7 +4,7 @@ import { copyFile } from "fs/promises";
 const isProduction = process.env.NODE_ENV === "production";
 
 async function buildLambdaFunction(entrypoint, directory, watch = false) {
-    const target = { bundle: true, platform: "node", sourcemap: true, target: "node18" };
+    const target = { bundle: true, platform: "node", sourcemap: true, target: "node22" };
     const productionOptions = { minify: true, treeShaking: true };
     const options = {
         entryPoints: [entrypoint],
