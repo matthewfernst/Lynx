@@ -2,7 +2,7 @@ import { GraphQLError, GraphQLResolveInfo } from "graphql";
 
 import {
   checkHasUserId,
-  checkIsValidUserAndHasValidInvite,
+  checkIsValidUser,
   checkIsValidParty,
 } from "../../auth";
 import { addItemsToArray, deleteItemsFromArray } from "../../aws/dynamodb";
@@ -24,7 +24,7 @@ const joinParty = async (
   _info: GraphQLResolveInfo,
 ): Promise<DatabaseUser> => {
   checkHasUserId(context);
-  await checkIsValidUserAndHasValidInvite(context);
+  await checkIsValidUser(context);
   const party = await checkIsValidParty(context, args.partyId);
   if (!(party.invitedUsers ?? []).includes(context.userId)) {
     throw new GraphQLError("Not Invited To Requested Party", {

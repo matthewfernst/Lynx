@@ -15,7 +15,6 @@ struct LoginView: View {
     @State private var isWaving = false
     
     @State private var showSignInError = false
-    @State private var showInvitationSheet = false
     @State private var isSigningIn = false
     
     // Animation States
@@ -49,19 +48,6 @@ struct LoginView: View {
                     )
                 }
         }
-        .sheet(isPresented: $showInvitationSheet, content: {
-            InvitationKeyView(isSigningIn: $isSigningIn) {
-                loginHandler.loginUser { result in
-                    switch result {
-                    case .success(_):
-                        profileManager.update(signInWith: true)
-                    case .failure(_):
-                        showSignInError = true
-                    }
-                }
-            }
-            .interactiveDismissDisabled()
-        })
         .onAppear {
             funSignInPhrase = funSignInPhrases.randomElement() ?? Array("Signing in...")
             withAnimation(.easeInOut(duration: 1)) {
@@ -109,8 +95,7 @@ struct LoginView: View {
             ) { attributes, oauthToken in
                 loginHandler.commonSignIn(
                     withOAuthAttributes: attributes,
-                    oauthToken: oauthToken, 
-                    showInvitationSheet: $showInvitationSheet,
+                    oauthToken: oauthToken,
                     showSignInError: $showSignInError
                 )
             }
@@ -131,13 +116,12 @@ struct LoginView: View {
                 loginHandler.commonSignIn(
                     withOAuthAttributes: attributes,
                     oauthToken: oauthToken,
-                    showInvitationSheet: $showInvitationSheet,
                     showSignInError: $showSignInError
                 )
             }
         }
     }
-    
+
     private var signInWithFacebookButton: some View {
         signInButton(company: "Facebook") {
             facebookSignInHandler.signIn(
@@ -147,7 +131,6 @@ struct LoginView: View {
                 loginHandler.commonSignIn(
                     withOAuthAttributes: attributes,
                     oauthToken: oauthToken,
-                    showInvitationSheet: $showInvitationSheet,
                     showSignInError: $showSignInError
                 )
             }

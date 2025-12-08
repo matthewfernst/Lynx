@@ -15,7 +15,7 @@ import {
   updateItem,
 } from "../../aws/dynamodb";
 import { deleteObjectsInBucket } from "../../aws/s3";
-import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsValidUser } from "../../auth";
 import { Context } from "../../index";
 import { DatabaseUser } from "../../types";
 import { OAuthType, idKeyFromIdType, verifyToken } from "./oauthSignIn";
@@ -35,7 +35,7 @@ const combineOAuthAccounts = async (
   _info: GraphQLResolveInfo,
 ): Promise<DatabaseUser> => {
   checkHasUserId(context);
-  await checkIsValidUserAndHasValidInvite(context);
+  await checkIsValidUser(context);
   const { type, id, token } = args.combineWith;
   const idKey = idKeyFromIdType[OAuthType[type]];
   const otherUser = (await getItemByIndex(

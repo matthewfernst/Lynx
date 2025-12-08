@@ -1,7 +1,7 @@
 import { GraphQLResolveInfo } from "graphql";
 import { v4 as uuid } from "uuid";
 
-import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsValidUser } from "../../auth";
 import { addItemsToArray, putItem } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { Party } from "../../types";
@@ -21,7 +21,7 @@ const createParty = async (
   _info: GraphQLResolveInfo,
 ): Promise<Party> => {
   checkHasUserId(context);
-  await checkIsValidUserAndHasValidInvite(context);
+  await checkIsValidUser(context);
   console.info(`Creating party token for user with id ${context.userId}`);
   const partyId = uuid();
   const party: Party = {

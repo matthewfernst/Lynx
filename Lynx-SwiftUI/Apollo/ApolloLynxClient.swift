@@ -128,7 +128,6 @@ final class ApolloLynxClient {
                 let profileAttributes = ProfileAttributes(
                     id: id,
                     oauthType: oauthType.rawValue,
-                    validatedInvite: selfLookup.validatedInvite,
                     email: selfLookup.email,
                     firstName: selfLookup.firstName,
                     lastName: selfLookup.lastName,
@@ -288,47 +287,6 @@ final class ApolloLynxClient {
                 
             case .failure(let error):
                 Logger.apollo.error("Failed to refresh access token: \(error)")
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    static func createInviteKey(completion: @escaping (Result<String, Error>) -> Void) {
-        enum CreateInviteKeyError: Error {
-            case failedToUnwrapData
-        }
-        
-        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreateInviteKeyMutation()) { result in
-            switch result {
-            case .success(let graphQLResult):
-                guard let inviteKey = graphQLResult.data?.createInviteKey else {
-                    Logger.apollo.error("Error: Failed to unwrap data for invite key.")
-                    completion(.failure(CreateInviteKeyError.failedToUnwrapData))
-                    return
-                }
-                
-                completion(.success(inviteKey))
-                
-            case .failure(let error):
-                Logger.apollo.error("Error: Failed to create invite key with error \(error)")
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    static func submitInviteKey(with invitationKey: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
-        enum InviteKeyError: Error {
-            case failedValidateInvite
-        }
-        apolloClient.perform(mutation: ApolloGeneratedGraphQL.SubmitInviteKeyMutation(inviteKey: invitationKey)) { result in
-            switch result {
-            case .success(let graphQLResult):
-                if let validatedInvite = graphQLResult.data?.resolveInviteKey.validatedInvite, validatedInvite {
-                    completion(.success(()))
-                } else {
-                    completion(.failure(InviteKeyError.failedValidateInvite))
-                }
-            case .failure(let error):
                 completion(.failure(error))
             }
         }
@@ -1113,16 +1071,14 @@ final class ApolloLynxClient {
 struct ProfileAttributes: CustomDebugStringConvertible {
     var id: String
     var oauthType: String
-    var validatedInvite: Bool
     var email: String? = nil
     var firstName: String? = nil
     var lastName: String? = nil
     var profilePictureURL: URL? = nil
-    
+
     init(
         id: String,
         oauthType: String,
-        validatedInvite: Bool,
         email: String? = nil,
         firstName: String? = nil,
         lastName: String? = nil,
@@ -1130,18 +1086,16 @@ struct ProfileAttributes: CustomDebugStringConvertible {
     ) {
         self.id = id
         self.oauthType = oauthType
-        self.validatedInvite = validatedInvite
         self.email = email
         self.firstName = firstName
         self.lastName = lastName
         self.profilePictureURL = profilePictureURL
     }
-    
+
     var debugDescription: String {
        """
        id: \(self.id)
        oauthType: \(self.oauthType)
-       validatedInvite: \(self.validatedInvite)
        firstName: \(self.firstName ?? "Johnny")
        lastName: \(self.lastName ?? "Appleseed")
        email: \(self.email ?? "johnny.appleseed@email.com")

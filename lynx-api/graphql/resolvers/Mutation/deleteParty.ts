@@ -2,7 +2,7 @@ import { GraphQLResolveInfo } from "graphql";
 
 import {
   checkHasUserId,
-  checkIsValidUserAndHasValidInvite,
+  checkIsValidUser,
   checkIsValidPartyAndIsPartyOwner,
 } from "../../auth";
 import { deleteItem, deleteItemsFromArray } from "../../aws/dynamodb";
@@ -24,7 +24,7 @@ const deleteParty = async (
   _info: GraphQLResolveInfo,
 ): Promise<Party> => {
   checkHasUserId(context);
-  await checkIsValidUserAndHasValidInvite(context);
+  await checkIsValidUser(context);
   await checkIsValidPartyAndIsPartyOwner(context, args.partyId);
 
   console.info(`Deleting party with id ${args.partyId}`);

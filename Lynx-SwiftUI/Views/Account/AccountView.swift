@@ -4,12 +4,6 @@ import MessageUI
 struct AccountView: View {
     @Environment(ProfileManager.self) private var profileManager
     @State private var refreshView = false
-
-    @State private var showMessagesNotAvailable = false
-    @State private var messagesAlertBody = ""
-    @State private var copyMessageText = ""
-    private let messageComposeDelegate = MessageDelegate()
-
     @State private var showMailNotAvailable = false
     private let mailComposeDelegate = MailDelegate()
     
@@ -18,7 +12,6 @@ struct AccountView: View {
             Form {
                 profileInformation
                 settings
-                shareInvitationKey
                 showYourSupport
                 contactDevelopers
                 signOutSection
@@ -34,17 +27,6 @@ struct AccountView: View {
                 }
             } message: {
                 Text("We were unable to open the Mail app. Please send an email to \(Constants.Mail.developerContactEmail). You can copy the bug report template below.")
-            }
-            
-            .alert("Failed to Open Messages", isPresented: $showMessagesNotAvailable) {
-                Button("Copy Invite Key") {
-                    UIPasteboard.general.string = copyMessageText
-                }
-                Button("Dismiss") {
-                    showMessagesNotAvailable = false
-                }
-            } message: {
-                Text(messagesAlertBody)
             }
         }
     }
@@ -88,20 +70,6 @@ struct AccountView: View {
             }
         } header: {
             Text("Settings")
-        }
-    }
-    
-    private var shareInvitationKey: some View {
-        Section {
-            Button {
-                presentMessageCompose()
-            } label: {
-                cell(withIconColor: .green, andText: "Share Invitation Key") {
-                    iconView(withSystemImageName: "person.badge.key.fill")
-                }
-            }
-        } header: {
-            Text("Invitation Key")
         }
     }
     
@@ -328,43 +296,6 @@ extension AccountView {
 
     }
 
-    /// Present an message compose view controller modally in UIKit environment
-    private func presentMessageCompose() {
-        let failureMessage = "We were unable to open the Messages app. Please try again or copy the invitation key."
-        ApolloLynxClient.createInviteKey { result in
-            switch result {
-            case .success(let inviteKey):
-                let message = """
-                          \(profileManager.profile!.name) has shared an invitation key to Lynx. Open the app and enter the key below. This invitation key will expire in 24 hours.
-                          
-                          Invitation Key: \(inviteKey)
-                          """
-                
-                copyMessageText = message
-                guard MFMessageComposeViewController.canSendText() else {
-                    messagesAlertBody = failureMessage
-                    showMessagesNotAvailable = true
-                    return
-                }
-                
-                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-                let window = windowScene?.windows.first
-                let vc = window?.rootViewController
-                
-                let composeVC = MFMessageComposeViewController()
-                composeVC.messageComposeDelegate = messageComposeDelegate
-                
-                
-                composeVC.body = message
-                
-                vc?.present(composeVC, animated: true)
-                
-            case .failure(_):
-                messagesAlertBody = failureMessage
-                showMessagesNotAvailable = true
-            }
-        }
-    }
 }
 
 #Preview {

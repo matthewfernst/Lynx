@@ -148,6 +148,63 @@ import OSLog
         }
     }
 
+    func inviteUserToParty(partyId: String, userId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        errorMessage = nil
+
+        ApolloLynxClient.inviteUserToParty(partyId: partyId, userId: userId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self?.fetchPartyDetails(partyId: partyId)
+                    Logger.partyHandler.info("Successfully invited user to party")
+                    completion(.success(()))
+                case .failure(let error):
+                    self?.errorMessage = "Failed to invite user"
+                    Logger.partyHandler.error("Error inviting user: \(error)")
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
+    func removeUserFromParty(partyId: String, userId: String, completion: @escaping (Bool) -> Void) {
+        errorMessage = nil
+
+        ApolloLynxClient.removeUserFromParty(partyId: partyId, userId: userId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self?.fetchPartyDetails(partyId: partyId)
+                    Logger.partyHandler.info("Successfully removed user from party")
+                    completion(true)
+                case .failure(let error):
+                    self?.errorMessage = "Failed to remove user"
+                    Logger.partyHandler.error("Error removing user: \(error)")
+                    completion(false)
+                }
+            }
+        }
+    }
+
+    func revokePartyInvite(partyId: String, userId: String, completion: @escaping (Bool) -> Void) {
+        errorMessage = nil
+
+        ApolloLynxClient.removeInviteFromParty(partyId: partyId, userId: userId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self?.fetchPartyDetails(partyId: partyId)
+                    Logger.partyHandler.info("Successfully revoked party invite")
+                    completion(true)
+                case .failure(let error):
+                    self?.errorMessage = "Failed to revoke invite"
+                    Logger.partyHandler.error("Error revoking invite: \(error)")
+                    completion(false)
+                }
+            }
+        }
+    }
+
     func refreshAll() {
         fetchParties()
         fetchPartyInvites()

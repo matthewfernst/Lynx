@@ -1,14 +1,16 @@
 import SwiftUI
+import Charts
 
 struct PartyDetailView: View {
     @Environment(ProfileManager.self) private var profileManager
+    @Environment(\.dismiss) private var dismiss
     @Bindable var partyHandler: PartyHandler
     let partyId: String
 
     @State private var selectedSort: LeaderboardSort = .verticalDistance
     @State private var selectedTimeframe: Timeframe = .season
-    @State private var showLeaveConfirmation = false
-    @State private var showDeleteConfirmation = false
+    @State private var showSettings = false
+    @State private var showInviteUser = false
 
     var body: some View {
         ScrollView {
@@ -18,9 +20,7 @@ struct PartyDetailView: View {
                     .padding()
             } else if let details = partyHandler.selectedPartyDetails {
                 VStack(spacing: 24) {
-                    PartyInfoSection(details: details)
-
-                    PartyLeaderboardSection(
+                    PartyLeaderboardChartsSection(
                         details: details,
                         selectedSort: $selectedSort,
                         selectedTimeframe: $selectedTimeframe,
@@ -34,18 +34,20 @@ struct PartyDetailView: View {
                         }
                     )
 
-                    PartyMembersSection(details: details)
-
-                    if !details.invitedUsers.isEmpty {
-                        PartyInvitedUsersSection(details: details)
-                    }
-
-                    PartyActionsSection(
+                    PartyMembersListSection(
                         details: details,
                         profileManager: profileManager,
-                        onLeave: { showLeaveConfirmation = true },
-                        onDelete: { showDeleteConfirmation = true }
+                        partyHandler: partyHandler,
+                        partyId: partyId
                     )
+
+                    if !details.invitedUsers.isEmpty {
+                        PartyInvitedUsersListSection(
+                            details: details,
+                            partyHandler: partyHandler,
+                            partyId: partyId
+                        )
+                    }
                 }
                 .padding()
             }
@@ -53,6 +55,18 @@ struct PartyDetailView: View {
         .navigationTitle(partyHandler.selectedPartyDetails?.name ?? "Party")
         .navigationBarTitleDisplayMode(.large)
         .scrollContentBackground(.hidden)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: { showInviteUser = true }) {
+                    Image(systemName: "person.badge.plus")
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: { showSettings = true }) {
+                    Image(systemName: "gearshape")
+                }
+            }
+        }
         .onAppear {
             partyHandler.fetchPartyDetails(partyId: partyId)
         }
@@ -63,72 +77,24 @@ struct PartyDetailView: View {
                 timeframe: selectedTimeframe
             )
         }
-        .alert("Leave Party", isPresented: $showLeaveConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Leave", role: .destructive) {
-                partyHandler.leaveParty(partyId: partyId) { _ in }
+        .sheet(isPresented: $showSettings) {
+            if let details = partyHandler.selectedPartyDetails {
+                PartySettingsView(
+                    details: details,
+                    profileManager: profileManager,
+                    partyHandler: partyHandler,
+                    partyId: partyId,
+                    onDismiss: { dismiss() }
+                )
             }
-        } message: {
-            Text("Are you sure you want to leave this party?")
         }
-        .alert("Delete Party", isPresented: $showDeleteConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
-                partyHandler.deleteParty(partyId: partyId) { _ in }
-            }
-        } message: {
-            Text("Are you sure you want to delete this party? This action cannot be undone.")
+        .sheet(isPresented: $showInviteUser) {
+            PartyInviteUserView(partyHandler: partyHandler, partyId: partyId)
         }
     }
 }
 
-struct PartyInfoSection: View {
-    let details: PartyDetails
-
-    var body: some View {
-        VStack(spacing: 12) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Party Manager")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text("\(details.partyManager.firstName) \(details.partyManager.lastName)")
-                        .font(.headline)
-                }
-                Spacer()
-            }
-
-            HStack(spacing: 20) {
-                VStack {
-                    Text("\(details.users.count)")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                    Text("Members")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity)
-
-                Divider()
-
-                VStack {
-                    Text("\(details.invitedUsers.count)")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                    Text("Invited")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity)
-            }
-            .padding()
-            .background(Color(uiColor: .secondarySystemGroupedBackground))
-            .cornerRadius(12)
-        }
-    }
-}
-
-struct PartyLeaderboardSection: View {
+struct PartyLeaderboardChartsSection: View {
     let details: PartyDetails
     @Binding var selectedSort: LeaderboardSort
     @Binding var selectedTimeframe: Timeframe
@@ -136,34 +102,12 @@ struct PartyLeaderboardSection: View {
     let onSortChange: (LeaderboardSort, Timeframe) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Leaderboard")
                 .font(.title2)
                 .fontWeight(.bold)
 
             HStack {
-                Menu {
-                    Picker("Sort By", selection: $selectedSort) {
-                        Text("Vertical Distance").tag(LeaderboardSort.verticalDistance)
-                        Text("Distance").tag(LeaderboardSort.distance)
-                        Text("Top Speed").tag(LeaderboardSort.topSpeed)
-                        Text("Run Count").tag(LeaderboardSort.runCount)
-                    }
-                } label: {
-                    HStack {
-                        Text(sortLabel)
-                        Image(systemName: "chevron.down")
-                    }
-                    .font(.caption)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color(uiColor: .secondarySystemGroupedBackground))
-                    .cornerRadius(8)
-                }
-                .onChange(of: selectedSort) { _, newValue in
-                    onSortChange(newValue, selectedTimeframe)
-                }
-
                 Menu {
                     Picker("Timeframe", selection: $selectedTimeframe) {
                         Text("Season").tag(Timeframe.season)
@@ -195,28 +139,24 @@ struct PartyLeaderboardSection: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(.vertical, 40)
             } else {
-                VStack(spacing: 8) {
-                    ForEach(Array(details.leaderboard.enumerated()), id: \.element.id) { index, entry in
-                        PartyLeaderboardRow(
-                            entry: entry,
-                            rank: index + 1,
-                            sortBy: selectedSort,
+                TabView(selection: $selectedSort) {
+                    ForEach([LeaderboardSort.verticalDistance, .distance, .topSpeed, .runCount], id: \.self) { sort in
+                        PartyLeaderboardChart(
+                            leaderboard: details.leaderboard,
+                            sortBy: sort,
                             measurementSystem: profileManager.measurementSystem
                         )
+                        .tag(sort)
                     }
                 }
+                .tabViewStyle(.page(indexDisplayMode: .always))
+                .frame(height: 250)
+                .onChange(of: selectedSort) { _, newValue in
+                    onSortChange(newValue, selectedTimeframe)
+                }
             }
-        }
-    }
-
-    private var sortLabel: String {
-        switch selectedSort {
-        case .verticalDistance: return "Vertical"
-        case .distance: return "Distance"
-        case .topSpeed: return "Speed"
-        case .runCount: return "Runs"
         }
     }
 
@@ -231,63 +171,127 @@ struct PartyLeaderboardSection: View {
     }
 }
 
-struct PartyLeaderboardRow: View {
-    let entry: PartyLeaderboardEntry
-    let rank: Int
+struct PartyLeaderboardChart: View {
+    let leaderboard: [PartyLeaderboardEntry]
     let sortBy: LeaderboardSort
     let measurementSystem: MeasurementSystem
 
-    var body: some View {
-        HStack(spacing: 12) {
-            Text("\(rank)")
-                .font(.headline)
-                .foregroundStyle(rank <= 3 ? .yellow : .secondary)
-                .frame(width: 30)
+    private var topThree: [PartyLeaderboardEntry] {
+        Array(leaderboard.prefix(3))
+    }
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text("\(entry.firstName) \(entry.lastName)")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                if let stats = entry.stats {
-                    Text(statValue(stats))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+    private var chartData: [(name: String, value: Double)] {
+        topThree.map { entry in
+            let value: Double
+            if let stats = entry.stats {
+                switch sortBy {
+                case .verticalDistance: value = stats.verticalDistance
+                case .distance: value = stats.distance
+                case .topSpeed: value = stats.topSpeed
+                case .runCount: value = Double(stats.runCount)
                 }
+            } else {
+                value = 0
+            }
+            return (name: "\(entry.firstName) \(entry.lastName)", value: value)
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: categoryIcon)
+                    .foregroundStyle(.blue)
+                Text(categoryLabel)
+                    .font(.headline)
+                Spacer()
             }
 
-            Spacer()
-
-            if let stats = entry.stats {
-                Text(mainStat(stats))
-                    .font(.headline)
-                    .fontWeight(.bold)
+            if chartData.isEmpty {
+                Text("No data available")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 40)
+            } else {
+                Chart {
+                    ForEach(Array(chartData.enumerated()), id: \.offset) { index, data in
+                        BarMark(
+                            x: .value("Value", data.value),
+                            y: .value("Name", data.name)
+                        )
+                        .foregroundStyle([Color.blue, .green, .orange][index])
+                    }
+                }
+                .chartXAxis {
+                    AxisMarks(values: .automatic) { value in
+                        if let xValue = value.as(Double.self) {
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel(formatValue(xValue))
+                        }
+                    }
+                }
+                .frame(height: 180)
             }
         }
         .padding()
         .background(Color(uiColor: .secondarySystemGroupedBackground))
-        .cornerRadius(8)
+        .cornerRadius(12)
     }
 
-    private func mainStat(_ stats: UserStatsAttributes) -> String {
+    private var categoryLabel: String {
         switch sortBy {
-        case .verticalDistance:
-            return String(format: "%.0f %@", stats.verticalDistance, measurementSystem.feetOrMeters)
-        case .distance:
-            return String(format: "%.1f %@", stats.distance, measurementSystem == .imperial ? "mi" : "km")
-        case .topSpeed:
-            return String(format: "%.1f %@", stats.topSpeed, measurementSystem.milesOrKilometersPerHour)
-        case .runCount:
-            return "\(stats.runCount)"
+        case .verticalDistance: return "Vertical Distance"
+        case .distance: return "Distance"
+        case .topSpeed: return "Top Speed"
+        case .runCount: return "Run Count"
         }
     }
 
-    private func statValue(_ stats: UserStatsAttributes) -> String {
-        "\(stats.runCount) runs"
+    private var categoryIcon: String {
+        switch sortBy {
+        case .verticalDistance: return "arrow.up"
+        case .distance: return "arrow.left.and.right"
+        case .topSpeed: return "speedometer"
+        case .runCount: return "figure.snowboarding"
+        }
+    }
+
+    private func formatValue(_ value: Double) -> String {
+        switch sortBy {
+        case .verticalDistance:
+            if value >= 1000 {
+                return String(format: "%.1fk \(measurementSystem.feetOrMeters)", value / 1000)
+            }
+            return String(format: "%.0f \(measurementSystem.feetOrMeters)", value)
+        case .distance:
+            switch measurementSystem {
+            case .imperial:
+                return String(format: "%.1f mi", value.feetToMiles)
+            case .metric:
+                return String(format: "%.1f km", value.metersToKilometers)
+            }
+        case .topSpeed:
+            return String(format: "%.1f \(measurementSystem.milesOrKilometersPerHour)", value)
+        case .runCount:
+            return "\(Int(value))"
+        }
     }
 }
 
-struct PartyMembersSection: View {
+struct PartyMembersListSection: View {
     let details: PartyDetails
+    let profileManager: ProfileManager
+    @Bindable var partyHandler: PartyHandler
+    let partyId: String
+
+    @State private var userToRemove: PartyUser?
+    @State private var showRemoveConfirmation = false
+
+    private var isManager: Bool {
+        profileManager.profile?.id == details.partyManager.id
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -298,11 +302,30 @@ struct PartyMembersSection: View {
             VStack(spacing: 8) {
                 ForEach(details.users, id: \.id) { user in
                     HStack {
+                        if user.id == details.partyManager.id {
+                            Image(systemName: "crown.fill")
+                                .foregroundStyle(.yellow)
+                                .font(.caption)
+                        }
+
                         VStack(alignment: .leading) {
                             Text("\(user.firstName) \(user.lastName)")
                                 .font(.subheadline)
+                                .fontWeight(user.id == details.partyManager.id ? .semibold : .regular)
                         }
+
                         Spacer()
+
+                        if isManager && user.id != details.partyManager.id {
+                            Button(action: {
+                                userToRemove = user
+                                showRemoveConfirmation = true
+                            }) {
+                                Image(systemName: "person.fill.xmark")
+                                    .foregroundStyle(.red)
+                                    .font(.caption)
+                            }
+                        }
                     }
                     .padding()
                     .background(Color(uiColor: .secondarySystemGroupedBackground))
@@ -310,11 +333,32 @@ struct PartyMembersSection: View {
                 }
             }
         }
+        .alert("Remove User", isPresented: $showRemoveConfirmation) {
+            Button("Cancel", role: .cancel) {
+                userToRemove = nil
+            }
+            Button("Remove", role: .destructive) {
+                if let user = userToRemove {
+                    partyHandler.removeUserFromParty(partyId: partyId, userId: user.id) { _ in
+                        userToRemove = nil
+                    }
+                }
+            }
+        } message: {
+            if let user = userToRemove {
+                Text("Are you sure you want to remove \(user.firstName) \(user.lastName) from the party?")
+            }
+        }
     }
 }
 
-struct PartyInvitedUsersSection: View {
+struct PartyInvitedUsersListSection: View {
     let details: PartyDetails
+    @Bindable var partyHandler: PartyHandler
+    let partyId: String
+
+    @State private var inviteToRevoke: PartyUser?
+    @State private var showRevokeConfirmation = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -333,6 +377,15 @@ struct PartyInvitedUsersSection: View {
                         Image(systemName: "envelope.fill")
                             .foregroundStyle(.secondary)
                             .font(.caption)
+
+                        Button(action: {
+                            inviteToRevoke = user
+                            showRevokeConfirmation = true
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.red)
+                                .font(.caption)
+                        }
                     }
                     .padding()
                     .background(Color(uiColor: .secondarySystemGroupedBackground))
@@ -340,35 +393,169 @@ struct PartyInvitedUsersSection: View {
                 }
             }
         }
+        .alert("Revoke Invitation", isPresented: $showRevokeConfirmation) {
+            Button("Cancel", role: .cancel) {
+                inviteToRevoke = nil
+            }
+            Button("Revoke", role: .destructive) {
+                if let user = inviteToRevoke {
+                    partyHandler.revokePartyInvite(partyId: partyId, userId: user.id) { _ in
+                        inviteToRevoke = nil
+                    }
+                }
+            }
+        } message: {
+            if let user = inviteToRevoke {
+                Text("Are you sure you want to revoke the invitation for \(user.firstName) \(user.lastName)?")
+            }
+        }
     }
 }
 
-struct PartyActionsSection: View {
+struct PartySettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     let details: PartyDetails
     let profileManager: ProfileManager
-    let onLeave: () -> Void
-    let onDelete: () -> Void
+    @Bindable var partyHandler: PartyHandler
+    let partyId: String
+    let onDismiss: () -> Void
+
+    @State private var showLeaveConfirmation = false
+    @State private var showDeleteConfirmation = false
 
     private var isManager: Bool {
         profileManager.profile?.id == details.partyManager.id
     }
 
     var body: some View {
-        VStack(spacing: 12) {
-            if isManager {
-                Button(action: onDelete) {
-                    Label("Delete Party", systemImage: "trash")
-                        .frame(maxWidth: .infinity)
+        NavigationStack {
+            List {
+                Section("Party Actions") {
+                    if isManager {
+                        Button(role: .destructive) {
+                            showDeleteConfirmation = true
+                        } label: {
+                            Label("Delete Party", systemImage: "trash")
+                        }
+                    } else {
+                        Button(role: .destructive) {
+                            showLeaveConfirmation = true
+                        } label: {
+                            Label("Leave Party", systemImage: "rectangle.portrait.and.arrow.right")
+                        }
+                    }
                 }
-                .buttonStyle(.bordered)
-                .tint(.red)
-            } else {
-                Button(action: onLeave) {
-                    Label("Leave Party", systemImage: "rectangle.portrait.and.arrow.right")
-                        .frame(maxWidth: .infinity)
+            }
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
                 }
-                .buttonStyle(.bordered)
-                .tint(.red)
+            }
+        }
+        .alert("Leave Party", isPresented: $showLeaveConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Leave", role: .destructive) {
+                partyHandler.leaveParty(partyId: partyId) { _ in
+                    dismiss()
+                    onDismiss()
+                }
+            }
+        } message: {
+            Text("Are you sure you want to leave this party?")
+        }
+        .alert("Delete Party", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                partyHandler.deleteParty(partyId: partyId) { _ in
+                    dismiss()
+                    onDismiss()
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete this party? This action cannot be undone.")
+        }
+    }
+}
+
+struct PartyInviteUserView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Bindable var partyHandler: PartyHandler
+    let partyId: String
+
+    @State private var userId = ""
+    @State private var isInviting = false
+    @State private var errorMessage: String?
+    @State private var showSuccess = false
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("User ID", text: $userId)
+                        .autocapitalization(.none)
+                        .autocorrectionDisabled()
+                } header: {
+                    Text("Enter User ID")
+                } footer: {
+                    Text("Ask the user for their User ID to send them a party invitation.")
+                }
+
+                if let errorMessage {
+                    Section {
+                        Text(errorMessage)
+                            .foregroundStyle(.red)
+                            .font(.caption)
+                    }
+                }
+
+                Section {
+                    Button(action: sendInvite) {
+                        if isInviting {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                        } else {
+                            Text("Send Invitation")
+                                .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .disabled(userId.isEmpty || isInviting)
+                }
+            }
+            .navigationTitle("Invite User")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .alert("Invitation Sent!", isPresented: $showSuccess) {
+            Button("OK") {
+                dismiss()
+            }
+        } message: {
+            Text("The party invitation has been sent successfully.")
+        }
+    }
+
+    private func sendInvite() {
+        guard !userId.isEmpty else { return }
+        isInviting = true
+        errorMessage = nil
+
+        partyHandler.inviteUserToParty(partyId: partyId, userId: userId) { result in
+            isInviting = false
+            switch result {
+            case .success:
+                showSuccess = true
+            case .failure(let error):
+                errorMessage = error.localizedDescription
             }
         }
     }

@@ -7,7 +7,7 @@ import {
   LEADERBOARD_TABLE,
 } from "../../../infrastructure/stacks/lynxApiStack";
 
-import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsValidUser } from "../../auth";
 import { deleteAllItems, deleteItem } from "../../aws/dynamodb";
 import { deleteObjectsInBucket } from "../../aws/s3";
 import { Context } from "../../index";
@@ -20,7 +20,7 @@ const deleteUser = async (
   _info: GraphQLResolveInfo,
 ): Promise<DatabaseUser> => {
   checkHasUserId(context);
-  await checkIsValidUserAndHasValidInvite(context);
+  await checkIsValidUser(context);
   console.info(`Deleting user with id ${context.userId}`);
   await deleteObjectsInBucket(PROFILE_PICS_BUCKET, context.userId);
   await deleteObjectsInBucket(SLOPES_UNZIPPED_BUCKET, context.userId);

@@ -2,7 +2,7 @@ import { GraphQLResolveInfo } from "graphql";
 
 import { createSignedUploadUrl } from "../../aws/s3";
 import { Context } from "../../index";
-import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsValidUser } from "../../auth";
 import { PROFILE_PICS_BUCKET } from "../../../infrastructure/stacks/lynxApiStack";
 
 const createUserProfilePictureUploadUrl = async (
@@ -12,7 +12,7 @@ const createUserProfilePictureUploadUrl = async (
   _info: GraphQLResolveInfo,
 ): Promise<string> => {
   checkHasUserId(context);
-  await checkIsValidUserAndHasValidInvite(context);
+  await checkIsValidUser(context);
   console.info(
     `Creating Profile Picture Upload URL For User ID ${context.userId}`,
   );

@@ -186,7 +186,6 @@ const createNewUser = async (
   await putItem(USERS_TABLE, {
     id: userId,
     [idFieldName]: id,
-    validatedInvite: false,
     email,
     ...Object.assign(
       {},

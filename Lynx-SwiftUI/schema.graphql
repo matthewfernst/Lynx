@@ -1,7 +1,6 @@
 type User {
     id: ID!
     oauthLoginIds: [OAuthTypeCorrelation!]!
-    validatedInvite: Boolean!
     email: String!
     firstName: String!
     lastName: String!
@@ -137,8 +136,6 @@ type Mutation {
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
     deleteUser: User!
     editUser(userData: [UserDataPair!]!): User!
-    createInviteKey: String!
-    resolveInviteKey(inviteKey: ID!): User!
     createParty(name: String!): Party!
     deleteParty(partyId: ID!): Party!
     createPartyInvite(partyId: ID!, userId: ID!): Party!

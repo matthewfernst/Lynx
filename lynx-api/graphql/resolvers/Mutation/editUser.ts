@@ -1,6 +1,6 @@
 import { GraphQLResolveInfo } from "graphql";
 
-import { checkHasUserId, checkIsValidUserAndHasValidInvite } from "../../auth";
+import { checkHasUserId, checkIsValidUser } from "../../auth";
 import { updateItem } from "../../aws/dynamodb";
 import { Context } from "../../index";
 import { DatabaseUser } from "../../types";
@@ -20,7 +20,7 @@ const editUser = async (
   _info: GraphQLResolveInfo,
 ): Promise<DatabaseUser> => {
   checkHasUserId(context);
-  await checkIsValidUserAndHasValidInvite(context);
+  await checkIsValidUser(context);
   for (const data of args.userData) {
     await updateItem(USERS_TABLE, context.userId, data.key, data.value);
   }

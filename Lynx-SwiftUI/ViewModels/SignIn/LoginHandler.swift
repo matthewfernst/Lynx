@@ -13,12 +13,10 @@ final class LoginHandler {
     /// - Parameters:
     ///   - attributes: OAuth attributes of the user.
     ///   - oauthToken: OAuth token for verification.
-    ///   - showInvitationSheet: Binding for showing the Invitation Sheet View.
     ///   - showSignInError: Binding for showing signing in error.
     func commonSignIn(
         withOAuthAttributes attributes: ProfileAttributes,
         oauthToken: String,
-        showInvitationSheet: Binding<Bool>,
         showSignInError: Binding<Bool>
     ) {
 #if DEBUG
@@ -36,26 +34,14 @@ final class LoginHandler {
             switch result {
             case .success(_):
                 Logger.loginHandler.info("Authorization Token successfully received.")
-                ApolloLynxClient.getProfileInformation { result in
+                self.loginUser() { result in
                     switch result {
-                    case .success(let profileAttributes):
-                        if profileAttributes.validatedInvite {
-                            self.loginUser() { result in
-                                switch result {
-                                case .success(_):
-                                    ProfileManager.shared.update(signInWith: true)
-                                case .failure(_):
-                                    showSignInError.wrappedValue = true
-                                }
-                            }
-                        } else {
-                            showInvitationSheet.wrappedValue = true
-                        }
+                    case .success(_):
+                        ProfileManager.shared.update(signInWith: true)
                     case .failure(_):
                         showSignInError.wrappedValue = true
                     }
                 }
-
             case .failure:
                 showSignInError.wrappedValue = true
             }

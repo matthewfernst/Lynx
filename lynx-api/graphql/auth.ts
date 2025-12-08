@@ -88,17 +88,6 @@ export async function checkIsValidUser(
   return userRecord;
 }
 
-export async function checkIsValidUserAndHasValidInvite(
-  context: DefinedUserContext,
-) {
-  const userRecord = await checkIsValidUser(context);
-  if (!userRecord.validatedInvite) {
-    throw new GraphQLError("No Validated Invite", {
-      extensions: { code: UNAUTHENTICATED, userId: context.userId },
-    });
-  }
-}
-
 export async function checkIsValidParty(
   context: DefinedUserContext,
   partyId: string,

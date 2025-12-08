@@ -53,7 +53,6 @@ import { ApplicationEnvironment } from "../app";
 export const USERS_TABLE = "lynx-users";
 export const LEADERBOARD_TABLE = "lynx-leaderboard";
 export const PARTIES_TABLE = "lynx-parties";
-export const INVITES_TABLE = "lynx-invites";
 
 export const PROFILE_PICS_BUCKET = "lynx-profile-pictures";
 export const SLOPES_ZIPPED_BUCKET = "lynx-slopes-zipped";
@@ -71,22 +70,13 @@ export class LynxAPIStack extends Stack {
     const usersTable = this.createUsersTable();
     const leaderboardTable = this.createLeaderboardTable();
     const partiesTable = this.createPartiesTable();
-    const invitesTable = this.createInvitesTable();
 
     const profilePictureBucket = this.createProfilePictureBucket();
     const slopesZippedBucket = this.createSlopesZippedBucket();
     const slopesUnzippedBucket = this.createSlopesUnzippedBucket();
 
-    this.createUnzipperLambda(
-      env,
-      slopesZippedBucket,
-      slopesUnzippedBucket,
-    );
-    this.createReducerLambda(
-      env,
-      slopesUnzippedBucket,
-      leaderboardTable,
-    );
+    this.createUnzipperLambda(env, slopesZippedBucket, slopesUnzippedBucket);
+    this.createReducerLambda(env, slopesUnzippedBucket, leaderboardTable);
     const graphql = this.createGraphqlAPILambda(
       env,
       profilePictureBucket,
@@ -94,7 +84,6 @@ export class LynxAPIStack extends Stack {
       slopesUnzippedBucket,
       usersTable,
       leaderboardTable,
-      invitesTable,
       partiesTable,
     );
 
@@ -143,8 +132,7 @@ export class LynxAPIStack extends Stack {
       usersTable.addGlobalSecondaryIndex({
         indexName,
         partitionKey: { name: indexName, type: AttributeType.STRING },
-        projectionType: ProjectionType.INCLUDE,
-        nonKeyAttributes: ["validatedInvite"],
+        projectionType: ProjectionType.ALL,
       });
     });
     return usersTable;
@@ -185,17 +173,6 @@ export class LynxAPIStack extends Stack {
       billingMode: BillingMode.PAY_PER_REQUEST,
       removalPolicy: RemovalPolicy.DESTROY,
       deletionProtection: true,
-    });
-  }
-
-  private createInvitesTable(): Table {
-    return new Table(this, "lynxInvitesTable", {
-      tableName: INVITES_TABLE,
-      partitionKey: { name: "id", type: AttributeType.STRING },
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      removalPolicy: RemovalPolicy.DESTROY,
-      deletionProtection: true,
-      timeToLiveAttribute: "ttl",
     });
   }
 
@@ -241,7 +218,6 @@ export class LynxAPIStack extends Stack {
     slopesUnzippedBucket: Bucket,
     usersTable: Table,
     leaderboardTable: Table,
-    invitesTable: Table,
     partiesTable: Table,
   ): LambdaFunction {
     return new LambdaFunction(this, "lynxGraphqlLambda", {
@@ -255,7 +231,6 @@ export class LynxAPIStack extends Stack {
         slopesUnzippedBucket,
         usersTable,
         leaderboardTable,
-        invitesTable,
         partiesTable,
       ),
       ...this.createLambdaParams(env),
@@ -268,7 +243,6 @@ export class LynxAPIStack extends Stack {
     slopesUnzippedBucket: Bucket,
     usersTable: Table,
     leaderboardTable: Table,
-    invitesTable: Table,
     partiesTable: Table,
   ): Role {
     return new Role(this, "lynxGraphQLApiLambdaRole", {
@@ -343,7 +317,7 @@ export class LynxAPIStack extends Stack {
                 "dynamodb:DeleteItem",
                 "dynamodb:PutItem",
               ],
-              resources: [invitesTable.tableArn, partiesTable.tableArn],
+              resources: [partiesTable.tableArn],
             }),
           ],
         }),

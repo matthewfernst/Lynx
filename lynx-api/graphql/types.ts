@@ -9,7 +9,6 @@ export interface DatabaseUser {
   appleId?: string;
   googleId?: string;
   facebookId?: string;
-  validatedInvite: boolean;
   email: string;
   firstName?: string;
   lastName?: string;
@@ -87,11 +86,6 @@ export interface ParsedLogDetails {
 export enum MeasurementSystem {
   METRIC,
   IMPERIAL,
-}
-
-export interface Invite {
-  id: string;
-  ttl: number;
 }
 
 export interface LeaderboardEntry {

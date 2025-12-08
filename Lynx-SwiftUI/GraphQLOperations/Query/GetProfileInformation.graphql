@@ -5,7 +5,6 @@ query GetProfileInformation {
         type
         id
      }
-     validatedInvite
      email
      firstName
      lastName

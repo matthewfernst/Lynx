@@ -21,11 +21,7 @@ extension Logger {
     static let folderConnectionView = Logger(subsystem: subsystem, category: "FolderConnectionView")
     
     static let homeView = Logger(subsystem: subsystem, category: "HomeView")
-    
-    static let invitationKeyHandler = Logger(subsystem: subsystem, category: "InvitationKeyHandler")
-    
-    static let invitationKeySheet = Logger(subsystem: subsystem, category: "InvitationKeySheet")
-    
+
     static let keychainManager = Logger(subsystem: subsystem, category: "KeychainManager")
     
     static let logbook = Logger(subsystem: subsystem, category: "LogbookView")

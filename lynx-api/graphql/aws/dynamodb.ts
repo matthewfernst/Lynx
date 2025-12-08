@@ -18,12 +18,10 @@ import { GraphQLError } from "graphql";
 import {
   USERS_TABLE,
   LEADERBOARD_TABLE,
-  INVITES_TABLE,
   PARTIES_TABLE,
 } from "../../infrastructure/stacks/lynxApiStack";
 import {
   DEPENDENCY_ERROR,
-  Invite,
   LeaderboardEntry,
   Party,
   DatabaseUser,
@@ -32,14 +30,12 @@ import {
 export type Table =
   | typeof USERS_TABLE
   | typeof LEADERBOARD_TABLE
-  | typeof INVITES_TABLE
   | typeof PARTIES_TABLE;
 
 // prettier-ignore
 type TableObject<T extends Table> =
   T extends typeof USERS_TABLE ? DatabaseUser :
   T extends typeof LEADERBOARD_TABLE ? LeaderboardEntry :
-  T extends typeof INVITES_TABLE ? Invite :
   T extends typeof PARTIES_TABLE ? Party :
   unknown;
 
@@ -349,6 +345,5 @@ export const deleteAllItems = async <T extends Table>(
 const tableToSortKey: { [key in Table]: string | undefined } = {
   [USERS_TABLE]: undefined,
   [LEADERBOARD_TABLE]: "timeframe",
-  [INVITES_TABLE]: undefined,
   [PARTIES_TABLE]: undefined,
 };
