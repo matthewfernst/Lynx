@@ -127,11 +127,11 @@ export class LynxAPIStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
       deletionProtection: true,
     });
-    usersTable.addGlobalSecondaryIndex({
-      indexName: "email",
-      partitionKey: { name: "email", type: AttributeType.STRING },
-      projectionType: ProjectionType.KEYS_ONLY,
-    });
+    // usersTable.addGlobalSecondaryIndex({
+    //   indexName: "email",
+    //   partitionKey: { name: "email", type: AttributeType.STRING },
+    //   projectionType: ProjectionType.KEYS_ONLY,
+    // });
     const oauthSecondaryIndices = ["appleId", "googleId", "facebookId"];
     oauthSecondaryIndices.map((indexName) => {
       usersTable.addGlobalSecondaryIndex({
