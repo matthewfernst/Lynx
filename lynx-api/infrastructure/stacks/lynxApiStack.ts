@@ -132,7 +132,7 @@ export class LynxAPIStack extends Stack {
       partitionKey: { name: "email", type: AttributeType.STRING },
       projectionType: ProjectionType.KEYS_ONLY,
     });
-    const oauthSecondaryIndices = ["appleId", "googleId", "facebookId", "email"];
+    const oauthSecondaryIndices = ["appleId", "googleId", "facebookId"];
     oauthSecondaryIndices.map((indexName) => {
       usersTable.addGlobalSecondaryIndex({
         indexName,

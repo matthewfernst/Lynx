@@ -204,7 +204,7 @@ import OSLog
         let conditionsCount = logbooks
             .compactMap { $0.conditions }
             .flatMap { $0 }
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).capitalized }
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).sanitize.capitalized }
             .reduce(into: [:]) { counts, condition in
                 counts[condition, default: 0] += 1
             }

@@ -26,6 +26,7 @@ struct PartyView: View {
                 }
                 .padding()
             }
+            .background(Color(uiColor: .systemGroupedBackground))
             .navigationTitle("Parties")
             .scrollContentBackground(.hidden)
             .toolbar {

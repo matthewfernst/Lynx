@@ -1,4 +1,5 @@
 import SwiftUI
+import Charts
 import OSLog
 
 struct LogbookView: View {
@@ -16,6 +17,8 @@ struct LogbookView: View {
 
     @State private var showProfile = false
     @State private var showLoadError = false
+
+    @State private var expandedSeasons: Set<String> = []
 
     private var slopesFolderIsConnected: Bool {
         BookmarkManager.shared.bookmark != nil
@@ -142,6 +145,11 @@ struct LogbookView: View {
                         .listRowBackground(Color.clear)
                 }
 
+                // Conditions chart section
+                Section {
+                    conditionsChart
+                }
+
                 // All-time summary section
                 Section {
                     NavigationLink {
@@ -154,12 +162,37 @@ struct LogbookView: View {
                 // Grouped by season sections
                 ForEach(logsBySeasonGrouped, id: \.season) { seasonGroup in
                     Section {
-                        ForEach(seasonGroup.logs, id: \.index) { logItem in
+                        let isExpanded = expandedSeasons.contains(seasonGroup.season)
+                        let logsToShow = isExpanded ? seasonGroup.logs : Array(seasonGroup.logs.prefix(3))
+
+                        ForEach(logsToShow, id: \.index) { logItem in
                             if let logbook = logbookStats.logbook(at: logItem.index) {
                                 NavigationLink {
                                     LogDetailView(logbook: logbook, logbookStats: logbookStats)
                                 } label: {
                                     configuredSessionSummary(with: logItem.data)
+                                }
+                            }
+                        }
+
+                        if seasonGroup.logs.count > 3 {
+                            Button(action: {
+                                withAnimation {
+                                    if isExpanded {
+                                        expandedSeasons.remove(seasonGroup.season)
+                                    } else {
+                                        expandedSeasons.insert(seasonGroup.season)
+                                    }
+                                }
+                            }) {
+                                HStack {
+                                    Text(isExpanded ? "Show Less" : "Show More (\(seasonGroup.logs.count - 3))")
+                                        .font(.subheadline)
+                                        .foregroundStyle(.blue)
+                                    Spacer()
+                                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                                        .font(.caption)
+                                        .foregroundStyle(.blue)
                                 }
                             }
                         }
@@ -178,7 +211,7 @@ struct LogbookView: View {
     
     private var lifetimeSummary: some View {
         VStack(alignment: .leading, spacing: Constants.Spacing.dateAndSummary) {
-            Text("Overview")
+            Text("Lifetime")
                 .font(.system(
                     size: Constants.Fonts.resortNameSize,
                     weight: Constants.Fonts.resortNameWeight
@@ -196,6 +229,57 @@ struct LogbookView: View {
         }
     }
     
+    @ViewBuilder
+    private var conditionsChart: some View {
+        let (conditionToCount, topCondition) = logbookStats.conditionsCount()
+        VStack(spacing: 0) {
+            HStack(spacing: 20) {
+                Chart(conditionToCount, id: \.condition) { condition, count in
+                    Plot {
+                        SectorMark(
+                            angle: .value("Value", count),
+                            innerRadius: .ratio(0.68),
+                            outerRadius: .inset(10),
+                            angularInset: 1
+                        )
+                        .cornerRadius(4)
+                        .foregroundStyle(by: .value("Condition", condition))
+                    }
+                }
+                .chartLegend(.hidden)
+                .frame(height: 140)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Top Condition")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                    Text(topCondition.sanitize)
+                        .font(.title2.bold())
+                        .foregroundStyle(.primary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.bottom, 12)
+
+            Chart(conditionToCount, id: \.condition) { condition, count in
+                Plot {
+                    SectorMark(
+                        angle: .value("Value", count),
+                        innerRadius: .ratio(0.68),
+                        outerRadius: .inset(10),
+                        angularInset: 1
+                    )
+                    .cornerRadius(4)
+                    .foregroundStyle(by: .value("Condition", condition))
+                }
+            }
+            .chartLegend(.visible)
+            .chartPlotStyle { plotArea in
+                plotArea.frame(height: 0)
+            }
+        }
+    }
+
     private func configuredSessionSummary(with data: ConfiguredLogbookData) -> some View {
         HStack(alignment: .top, spacing: Constants.Spacing.mainTitleAndDetails) {
             Text(data.dateOfRun)

@@ -40,8 +40,6 @@ struct FullLifetimeSummaryView: View {
             ) {
                 chartForRangeData(rangeData: altitudeRangeData, barColor: .green)
             }
-            
-            conditionsChart
         }
         .navigationTitle("Lifetime")
         .navigationBarTitleDisplayMode(.inline)
@@ -91,40 +89,6 @@ struct FullLifetimeSummaryView: View {
             }
         }
         .padding(.top, 5)
-    }
-    
-    @ViewBuilder
-    private var conditionsChart: some View {
-        let (conditionToCount, topCondition) = logbookStats.conditionsCount()
-        Chart(conditionToCount, id: \.condition) { condition, count in
-            Plot {
-                SectorMark(
-                    angle: .value("Value", count),
-                    innerRadius: .ratio(0.68),
-                    outerRadius: .inset(10),
-                    angularInset: 1
-                )
-                .cornerRadius(4)
-                .foregroundStyle(by: .value("Condition", condition))
-            }
-        }
-        .chartPlotStyle { plotArea in
-            plotArea.frame(height: 200)
-        }
-        .chartBackground { chartProxy in
-            GeometryReader { geometry in
-                let frame = geometry[chartProxy.plotFrame!]
-                VStack {
-                    Text("Top Condition")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                    Text(topCondition.sanitize)
-                        .font((topCondition.count > 10 ? Font.system(size: 18) : .title2).bold())
-                        .foregroundStyle(.primary)
-                }
-                .position(x: frame.midX, y: frame.midY)
-            }
-        }
     }
 }
 
