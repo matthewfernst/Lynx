@@ -10,7 +10,7 @@ const invitedUsers = async (
   _info: GraphQLResolveInfo,
 ): Promise<DatabaseUser[]> => {
   return (await context.dataloaders.users.loadMany(
-    parent.users ?? [],
+    parent.invitedUsers ?? [],
   )) as DatabaseUser[];
 };
 
