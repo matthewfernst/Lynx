@@ -27,11 +27,8 @@ struct LogbookView: View {
         ZStack {
             autoUpload
             NavigationStack {
-                VStack {
-                    LifetimeDetailsView(logbookStats: logbookStats)
-                    scrollableSessionSummaries
-                }
-                .navigationTitle("Logbook")
+                scrollableSessionSummaries
+                    .navigationTitle("Logbook")
                 .toolbar {
                     documentPickerAndConnectionButton
                     notificationsButton
@@ -167,6 +164,13 @@ struct LogbookView: View {
                     .frame(maxWidth: .infinity)
                 }
             } else {
+                // Stats section
+                Section {
+                    LifetimeDetailsView(logbookStats: logbookStats)
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                }
+
                 // All-time summary section
                 Section {
                     NavigationLink {
@@ -174,11 +178,7 @@ struct LogbookView: View {
                     } label: {
                         lifetimeSummary
                     }
-                } header: {
-                    Text("All Time")
-                        .padding(.top)
                 }
-                .headerProminence(.increased)
 
                 // Grouped by season sections
                 ForEach(logsBySeasonGrouped, id: \.season) { seasonGroup in
@@ -207,7 +207,7 @@ struct LogbookView: View {
     
     private var lifetimeSummary: some View {
         VStack(alignment: .leading, spacing: Constants.Spacing.dateAndSummary) {
-            Text("Season Summary")
+            Text("Overview")
                 .font(.system(
                     size: Constants.Fonts.resortNameSize,
                     weight: Constants.Fonts.resortNameWeight

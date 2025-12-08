@@ -38,6 +38,7 @@ import Mutation_oauthSignIn from "./Mutation/oauthSignIn";
 import Mutation_refreshLynxToken from "./Mutation/refreshLynxToken";
 import Mutation_removeUserFromParty from "./Mutation/removeUserFromParty";
 import Mutation_resolveInviteKey from "./Mutation/resolveInviteKey";
+import Party_invitedUsers from "./Party/invitedUsers";
 import Party_leaderboard from "./Party/leaderboard";
 import Party_partyManager from "./Party/partyManager";
 import Party_users from "./Party/users";
@@ -93,10 +94,8 @@ resolvers["Mutation"]["combineOAuthAccounts"] = Mutation_combineOAuthAccounts;
 resolvers["Mutation"]["createInviteKey"] = Mutation_createInviteKey;
 resolvers["Mutation"]["createParty"] = Mutation_createParty;
 resolvers["Mutation"]["createPartyInvite"] = Mutation_createPartyInvite;
-resolvers["Mutation"]["createUserProfilePictureUploadUrl"] =
-  Mutation_createUserProfilePictureUploadUrl;
-resolvers["Mutation"]["createUserRecordUploadUrl"] =
-  Mutation_createUserRecordUploadUrl;
+resolvers["Mutation"]["createUserProfilePictureUploadUrl"] = Mutation_createUserProfilePictureUploadUrl;
+resolvers["Mutation"]["createUserRecordUploadUrl"] = Mutation_createUserRecordUploadUrl;
 resolvers["Mutation"]["deleteParty"] = Mutation_deleteParty;
 resolvers["Mutation"]["deletePartyInvite"] = Mutation_deletePartyInvite;
 resolvers["Mutation"]["deleteUser"] = Mutation_deleteUser;
@@ -107,6 +106,7 @@ resolvers["Mutation"]["oauthSignIn"] = Mutation_oauthSignIn;
 resolvers["Mutation"]["refreshLynxToken"] = Mutation_refreshLynxToken;
 resolvers["Mutation"]["removeUserFromParty"] = Mutation_removeUserFromParty;
 resolvers["Mutation"]["resolveInviteKey"] = Mutation_resolveInviteKey;
+resolvers["Party"]["invitedUsers"] = Party_invitedUsers;
 resolvers["Party"]["leaderboard"] = Party_leaderboard;
 resolvers["Party"]["partyManager"] = Party_partyManager;
 resolvers["Party"]["users"] = Party_users;

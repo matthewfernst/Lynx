@@ -3,7 +3,7 @@ import { GraphQLResolveInfo } from "graphql";
 import { Context } from "../../index";
 import { Party, DatabaseUser } from "../../types";
 
-const users = async (
+const invitedUsers = async (
   parent: Party,
   _args: Record<string, never>,
   context: Context,
@@ -14,4 +14,4 @@ const users = async (
   )) as DatabaseUser[];
 };
 
-export default users;
+export default invitedUsers;

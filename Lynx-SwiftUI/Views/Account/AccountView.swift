@@ -143,7 +143,7 @@ struct AccountView: View {
             HStack {
                 Spacer()
                 VStack(alignment: .center) {
-                    Text("Made with ❤️ + ☕️ in San Diego, CA and Seattle, WA")
+                    Text("Made with ❤️ + ☕️ in San Fransisco, CA")
                     if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                         Text("Version \(appVersion)")
                     }
