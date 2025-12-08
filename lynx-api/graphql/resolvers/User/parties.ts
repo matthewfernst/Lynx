@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo } from "graphql";
 
+import { checkIsMe } from "../../auth";
 import { DefinedUserContext } from "../../index";
 import { Party, DatabaseUser } from "../../types";
 
@@ -9,6 +10,7 @@ const parties = async (
   context: DefinedUserContext,
   _info: GraphQLResolveInfo,
 ): Promise<Party[]> => {
+  checkIsMe(parent, context, "parties");
   return (await context.dataloaders.parties.loadMany(
     parent.parties ?? [],
   )) as Party[];

@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from "graphql";
+import { GraphQLResolveInfo, responsePathAsArray } from "graphql";
 
 import { checkIsMe } from "../../auth";
 import { DefinedUserContext } from "../../index";
@@ -8,9 +8,15 @@ const email = (
   parent: DatabaseUser,
   _args: Record<string, never>,
   context: DefinedUserContext,
-  _info: GraphQLResolveInfo,
+  info: GraphQLResolveInfo,
 ) => {
-  checkIsMe(parent, context, "email");
+  const pathArray = responsePathAsArray(info.path);
+  const entrypoint = pathArray.length > 0 ? String(pathArray[0]) : "";
+
+  if (entrypoint !== "userLookupByEmail") {
+    checkIsMe(parent, context, "email");
+  }
+
   return parent.email;
 };
 
