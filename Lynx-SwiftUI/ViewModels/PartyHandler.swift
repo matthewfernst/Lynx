@@ -8,6 +8,13 @@ import OSLog
     var isLoadingParties = false
     var isLoadingInvites = false
     var isLoadingDetails = false
+    var isCreatingParty = false
+    var isDeletingParty = false
+    var isLeavingParty = false
+    var isJoiningParty = false
+    var isInvitingUser = false
+    var isRemovingUser = false
+    var isRevokingInvite = false
     var errorMessage: String?
 
     func fetchParties() {
@@ -72,10 +79,12 @@ import OSLog
     }
 
     func createParty(name: String, completion: @escaping (Bool) -> Void) {
+        isCreatingParty = true
         errorMessage = nil
 
         ApolloLynxClient.createParty(name: name) { [weak self] result in
             DispatchQueue.main.async {
+                self?.isCreatingParty = false
                 switch result {
                 case .success(let newParty):
                     self?.parties.append(newParty)
@@ -91,10 +100,12 @@ import OSLog
     }
 
     func deleteParty(partyId: String, completion: @escaping (Bool) -> Void) {
+        isDeletingParty = true
         errorMessage = nil
 
         ApolloLynxClient.deleteParty(partyId: partyId) { [weak self] result in
             DispatchQueue.main.async {
+                self?.isDeletingParty = false
                 switch result {
                 case .success:
                     self?.parties.removeAll { $0.id == partyId }
@@ -110,10 +121,12 @@ import OSLog
     }
 
     func joinParty(partyId: String, completion: @escaping (Bool) -> Void) {
+        isJoiningParty = true
         errorMessage = nil
 
         ApolloLynxClient.joinParty(partyId: partyId) { [weak self] result in
             DispatchQueue.main.async {
+                self?.isJoiningParty = false
                 switch result {
                 case .success:
                     self?.partyInvites.removeAll { $0.id == partyId }
@@ -130,10 +143,12 @@ import OSLog
     }
 
     func leaveParty(partyId: String, completion: @escaping (Bool) -> Void) {
+        isLeavingParty = true
         errorMessage = nil
 
         ApolloLynxClient.leaveParty(partyId: partyId) { [weak self] result in
             DispatchQueue.main.async {
+                self?.isLeavingParty = false
                 switch result {
                 case .success:
                     self?.parties.removeAll { $0.id == partyId }
@@ -149,10 +164,12 @@ import OSLog
     }
 
     func inviteUserToParty(partyId: String, userId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        isInvitingUser = true
         errorMessage = nil
 
         ApolloLynxClient.inviteUserToParty(partyId: partyId, userId: userId) { [weak self] result in
             DispatchQueue.main.async {
+                self?.isInvitingUser = false
                 switch result {
                 case .success:
                     self?.fetchPartyDetails(partyId: partyId)
@@ -168,10 +185,12 @@ import OSLog
     }
 
     func removeUserFromParty(partyId: String, userId: String, completion: @escaping (Bool) -> Void) {
+        isRemovingUser = true
         errorMessage = nil
 
         ApolloLynxClient.removeUserFromParty(partyId: partyId, userId: userId) { [weak self] result in
             DispatchQueue.main.async {
+                self?.isRemovingUser = false
                 switch result {
                 case .success:
                     self?.fetchPartyDetails(partyId: partyId)
@@ -187,10 +206,12 @@ import OSLog
     }
 
     func revokePartyInvite(partyId: String, userId: String, completion: @escaping (Bool) -> Void) {
+        isRevokingInvite = true
         errorMessage = nil
 
         ApolloLynxClient.removeInviteFromParty(partyId: partyId, userId: userId) { [weak self] result in
             DispatchQueue.main.async {
+                self?.isRevokingInvite = false
                 switch result {
                 case .success:
                     self?.fetchPartyDetails(partyId: partyId)

@@ -191,7 +191,6 @@ struct PartyCard: View {
 struct PartyInviteCard: View {
     let party: PartyAttributes
     @Bindable var partyHandler: PartyHandler
-    @State private var isJoining = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -205,12 +204,9 @@ struct PartyInviteCard: View {
 
             HStack(spacing: 12) {
                 Button(action: {
-                    isJoining = true
-                    partyHandler.joinParty(partyId: party.id) { success in
-                        isJoining = false
-                    }
+                    partyHandler.joinParty(partyId: party.id) { _ in }
                 }) {
-                    if isJoining {
+                    if partyHandler.isJoiningParty {
                         ProgressView()
                             .progressViewStyle(.circular)
                             .frame(maxWidth: .infinity)
@@ -220,7 +216,7 @@ struct PartyInviteCard: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(isJoining)
+                .disabled(partyHandler.isJoiningParty)
 
                 Button(action: {
                 }) {
@@ -228,7 +224,7 @@ struct PartyInviteCard: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                .disabled(isJoining)
+                .disabled(partyHandler.isJoiningParty)
             }
         }
         .padding()

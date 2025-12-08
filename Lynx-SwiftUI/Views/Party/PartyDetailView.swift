@@ -63,11 +63,17 @@ struct PartyDetailView: View {
                     } label: {
                         HStack {
                             Spacer()
-                            Label(
-                                isManager ? "Delete Party" : "Leave Party",
-                                systemImage: isManager ? "trash" : "rectangle.portrait.and.arrow.right"
-                            )
-                            .foregroundStyle(.red)
+                            if (isManager && partyHandler.isDeletingParty) || (!isManager && partyHandler.isLeavingParty) {
+                                ProgressView()
+                                    .progressViewStyle(.circular)
+                                    .tint(.red)
+                            } else {
+                                Label(
+                                    isManager ? "Delete Party" : "Leave Party",
+                                    systemImage: isManager ? "trash" : "rectangle.portrait.and.arrow.right"
+                                )
+                                .foregroundStyle(.red)
+                            }
                             Spacer()
                         }
                         .padding()
@@ -75,6 +81,7 @@ struct PartyDetailView: View {
                         .cornerRadius(12)
                     }
                     .padding(.top, 8)
+                    .disabled(partyHandler.isDeletingParty || partyHandler.isLeavingParty)
                 }
                 .padding()
             }
@@ -357,13 +364,19 @@ struct PartyMembersListSection: View {
                         Spacer()
 
                         if isManager && user.id != details.partyManager.id {
-                            Button(action: {
-                                userToRemove = user
-                                showRemoveConfirmation = true
-                            }) {
-                                Image(systemName: "person.fill.xmark")
-                                    .foregroundStyle(.red)
-                                    .font(.caption)
+                            if partyHandler.isRemovingUser {
+                                ProgressView()
+                                    .progressViewStyle(.circular)
+                                    .controlSize(.small)
+                            } else {
+                                Button(action: {
+                                    userToRemove = user
+                                    showRemoveConfirmation = true
+                                }) {
+                                    Image(systemName: "person.fill.xmark")
+                                        .foregroundStyle(.red)
+                                        .font(.caption)
+                                }
                             }
                         }
                     }
@@ -418,13 +431,19 @@ struct PartyInvitedUsersListSection: View {
                             .foregroundStyle(.secondary)
                             .font(.caption)
 
-                        Button(action: {
-                            inviteToRevoke = user
-                            showRevokeConfirmation = true
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.red)
-                                .font(.caption)
+                        if partyHandler.isRevokingInvite {
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                                .controlSize(.small)
+                        } else {
+                            Button(action: {
+                                inviteToRevoke = user
+                                showRevokeConfirmation = true
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.red)
+                                    .font(.caption)
+                            }
                         }
                     }
                     .padding()
@@ -459,7 +478,6 @@ struct PartyInviteUserView: View {
 
     @State private var email = ""
     @State private var isSearching = false
-    @State private var isInviting = false
     @State private var errorMessage: String?
     @State private var showSuccess = false
     @State private var foundUser: PartyUser?
@@ -526,11 +544,11 @@ struct PartyInviteUserView: View {
                                 .frame(maxWidth: .infinity)
                         }
                     }
-                    .disabled(email.isEmpty || isSearching || isInviting)
+                    .disabled(email.isEmpty || isSearching || partyHandler.isInvitingUser)
 
                     if foundUser != nil {
                         Button(action: sendInvite) {
-                            if isInviting {
+                            if partyHandler.isInvitingUser {
                                 ProgressView()
                                     .frame(maxWidth: .infinity)
                             } else {
@@ -538,7 +556,7 @@ struct PartyInviteUserView: View {
                                     .frame(maxWidth: .infinity)
                             }
                         }
-                        .disabled(isInviting || isSearching)
+                        .disabled(partyHandler.isInvitingUser || isSearching)
                     }
                 }
             }
@@ -584,11 +602,9 @@ struct PartyInviteUserView: View {
 
     private func sendInvite() {
         guard let user = foundUser else { return }
-        isInviting = true
         errorMessage = nil
 
         partyHandler.inviteUserToParty(partyId: partyId, userId: user.id) { result in
-            isInviting = false
             switch result {
             case .success:
                 showSuccess = true

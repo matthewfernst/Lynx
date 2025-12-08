@@ -116,7 +116,18 @@ struct LogbookView: View {
 
     private var scrollableSessionSummaries: some View {
         List {
-            if logbookStats.logbooks.isEmpty {
+            if logbookStats.isLoadingLogs {
+                Section {
+                    VStack(spacing: 16) {
+                        ProgressView()
+                        Text("Loading your ski logs...")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 40)
+                    .frame(maxWidth: .infinity)
+                }
+            } else if logbookStats.logbooks.isEmpty {
                 Section {
                     VStack(spacing: 16) {
                         Text(Constants.noLogsMessage)
@@ -307,7 +318,6 @@ struct LogbookView: View {
         }
     }
     
-    // MARK: - Helpers
     private var logsBySeasonGrouped: [(season: String, logs: [(index: Int, data: ConfiguredLogbookData)])] {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
@@ -425,7 +435,6 @@ struct LogbookView: View {
         }
     }
     
-    // MARK: - Constants
     private struct Constants {
         static let noLogsMessage = """
                                    No logs found. Link your Slopes folder to start tracking your runs, view leaderboards, and see all your ski statistics.

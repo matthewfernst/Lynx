@@ -4,28 +4,31 @@ import OSLog
 @Observable final class LogbookStats {
     private var profileManager = ProfileManager.shared
     var logbooks: Logbooks = []
-    
-    // MARK: - Getting Logs
+    var isLoadingLogs = false
+
     func requestLogs(completion: ((Result<Void, Error>) -> Void)? = nil) {
+        isLoadingLogs = true
         ApolloLynxClient.clearCache()
         Task {
             ApolloLynxClient.getLogs(
                 measurementSystem: profileManager.measurementSystem
             ) { result in
-                switch result {
-                case .success(let logs):
-                    Logger.logbookStats.debug("Updating new logbook stats")
-                    self.logbooks = logs
-                    completion?(.success(()))
-                case .failure(let error):
-                    Logger.logbookStats.error("Failed to get logs: \(error)")
-                    completion?(.failure(error))
+                DispatchQueue.main.async {
+                    self.isLoadingLogs = false
+                    switch result {
+                    case .success(let logs):
+                        Logger.logbookStats.debug("Updating new logbook stats")
+                        self.logbooks = logs
+                        completion?(.success(()))
+                    case .failure(let error):
+                        Logger.logbookStats.error("Failed to get logs: \(error)")
+                        completion?(.failure(error))
+                    }
                 }
             }
         }
     }
     
-    // MARK: - Lifetime Stats
     func getDistanceFormatted(distance: Double) -> String {
         if distance >= 1000 {
             return String(format: "%.1fk", Double(distance) / 1000)
@@ -56,8 +59,6 @@ import OSLog
         let totalRuns = logbooks.map { Int($0.runCount) }.reduce(0, +)
         return totalRuns == 0 ? "--" : String(totalRuns)
     }
-    
-    // MARK: - Specific Run Record Data
     
     func logbook(at index: Int) -> Logbook? {
         guard index >= 0 && index < logbooks.count else {
@@ -135,7 +136,6 @@ import OSLog
         )
     }
     
-    // MARK: - Lifetime Stats
     var lifetimeAverages: [[Stat]] {
         return [
             [
@@ -160,7 +160,6 @@ import OSLog
         ]
     }
     
-    // MARK: - Data for graphs
     func rangeDataPerSession<T>(propertyExtractor: (ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook.Detail) -> T) -> [(date: Date, min: Double, max: Double)] {
         var rangeData: [(Date, Double, Double)] = []
         let dateFormatter = DateFormatter()
@@ -217,7 +216,6 @@ import OSLog
         return (resultsArray, resultsArray.max(by: { $0.count < $1.count })?.condition ?? "")
     }
     
-    // MARK: - Helper methods to calculate the averages and best values
     private func calculateAverageVerticalFeet() -> String {
         let averageVerticalFeet = logbooks.map { $0.verticalDistance }.reduce(0.0) {
             return $0 + $1/Double(logbooks.count)

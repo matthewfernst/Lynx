@@ -5,7 +5,6 @@ struct CreatePartyView: View {
     @Bindable var partyHandler: PartyHandler
 
     @State private var partyName = ""
-    @State private var isCreating = false
 
     var body: some View {
         NavigationStack {
@@ -25,23 +24,26 @@ struct CreatePartyView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .disabled(isCreating)
+                    .disabled(partyHandler.isCreatingParty)
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Create") {
-                        createParty()
+                    if partyHandler.isCreatingParty {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                    } else {
+                        Button("Create") {
+                            createParty()
+                        }
+                        .disabled(partyName.isEmpty)
                     }
-                    .disabled(partyName.isEmpty || isCreating)
                 }
             }
         }
     }
 
     private func createParty() {
-        isCreating = true
         partyHandler.createParty(name: partyName) { success in
-            isCreating = false
             if success {
                 dismiss()
             }
