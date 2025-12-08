@@ -24,12 +24,13 @@ const createParty = async (
   await checkIsValidUserAndHasValidInvite(context);
   console.info(`Creating party token for user with id ${context.userId}`);
   const partyId = uuid();
-  const party = await putItem(PARTIES_TABLE, {
+  const party: Party = {
     id: partyId,
     name: args.name,
     partyManager: context.userId,
     users: [context.userId],
-  });
+  };
+  await putItem(PARTIES_TABLE, party);
   await addItemsToArray(USERS_TABLE, context.userId, "parties", [partyId]);
   return party;
 };

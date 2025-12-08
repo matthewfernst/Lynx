@@ -103,7 +103,6 @@ export const putItem = async <T extends Table>(
     const putItemRequest = new PutCommand({
       TableName: table,
       Item: item,
-      ReturnValues: ReturnValue.ALL_NEW,
     });
     const itemOutput = await documentClient.send(putItemRequest);
     return itemOutput.Attributes as TableObject<T>;

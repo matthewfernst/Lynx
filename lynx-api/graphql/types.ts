@@ -109,5 +109,5 @@ export interface Party {
   name: string;
   partyManager: string;
   users: string[];
-  invitedUsers: string[];
+  invitedUsers?: string[];
 }
