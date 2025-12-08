@@ -457,22 +457,55 @@ struct PartyInviteUserView: View {
     @Bindable var partyHandler: PartyHandler
     let partyId: String
 
-    @State private var userId = ""
+    @State private var email = ""
+    @State private var isSearching = false
     @State private var isInviting = false
     @State private var errorMessage: String?
     @State private var showSuccess = false
+    @State private var foundUser: PartyUser?
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("User ID", text: $userId)
+                    TextField("Email Address", text: $email)
                         .autocapitalization(.none)
                         .autocorrectionDisabled()
+                        .keyboardType(.emailAddress)
+                        .textContentType(.emailAddress)
                 } header: {
-                    Text("Enter User ID")
+                    Text("Search by Email")
                 } footer: {
-                    Text("Ask the user for their User ID to send them a party invitation.")
+                    Text("Enter the user's email address to search for them.")
+                }
+
+                if isSearching {
+                    Section {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Text("Searching...")
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        }
+                    }
+                } else if let user = foundUser {
+                    Section {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("\(user.firstName) \(user.lastName)")
+                                    .font(.headline)
+                                Text(email)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                        }
+                    } header: {
+                        Text("User Found")
+                    }
                 }
 
                 if let errorMessage {
@@ -484,16 +517,29 @@ struct PartyInviteUserView: View {
                 }
 
                 Section {
-                    Button(action: sendInvite) {
-                        if isInviting {
+                    Button(action: searchUser) {
+                        if isSearching {
                             ProgressView()
                                 .frame(maxWidth: .infinity)
                         } else {
-                            Text("Send Invitation")
+                            Text("Search")
                                 .frame(maxWidth: .infinity)
                         }
                     }
-                    .disabled(userId.isEmpty || isInviting)
+                    .disabled(email.isEmpty || isSearching || isInviting)
+
+                    if foundUser != nil {
+                        Button(action: sendInvite) {
+                            if isInviting {
+                                ProgressView()
+                                    .frame(maxWidth: .infinity)
+                            } else {
+                                Text("Send Invitation")
+                                    .frame(maxWidth: .infinity)
+                            }
+                        }
+                        .disabled(isInviting || isSearching)
+                    }
                 }
             }
             .navigationTitle("Invite User")
@@ -515,18 +561,39 @@ struct PartyInviteUserView: View {
         }
     }
 
+    private func searchUser() {
+        guard !email.isEmpty else { return }
+        isSearching = true
+        errorMessage = nil
+        foundUser = nil
+
+        ApolloLynxClient.userLookupByEmail(email: email) { result in
+            isSearching = false
+            switch result {
+            case .success(let user):
+                if let user = user {
+                    foundUser = user
+                } else {
+                    errorMessage = "No user found with that email address."
+                }
+            case .failure(let error):
+                errorMessage = "Error searching for user: \(error.localizedDescription)"
+            }
+        }
+    }
+
     private func sendInvite() {
-        guard !userId.isEmpty else { return }
+        guard let user = foundUser else { return }
         isInviting = true
         errorMessage = nil
 
-        partyHandler.inviteUserToParty(partyId: partyId, userId: userId) { result in
+        partyHandler.inviteUserToParty(partyId: partyId, userId: user.id) { result in
             isInviting = false
             switch result {
             case .success:
                 showSuccess = true
             case .failure(let error):
-                errorMessage = error.localizedDescription
+                errorMessage = "Error sending invitation: \(error.localizedDescription)"
             }
         }
     }

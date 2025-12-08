@@ -116,6 +116,7 @@ input UserDataPair {
 type Query {
     selfLookup: User
     userLookupById(id: ID!): User
+    userLookupByEmail(email: String!): User
     partyLookupById(id: ID!): Party
     leaderboard(
         sortBy: LeaderboardSort = VERTICAL_DISTANCE

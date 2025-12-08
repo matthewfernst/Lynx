@@ -43,6 +43,7 @@ import Party_users from "./Party/users";
 import Query_leaderboard from "./Query/leaderboard";
 import Query_partyLookupById from "./Query/partyLookupById";
 import Query_selfLookup from "./Query/selfLookup";
+import Query_userLookupByEmail from "./Query/userLookupByEmail";
 import Query_userLookupById from "./Query/userLookupById";
 import User_email from "./User/email";
 import User_logbook from "./User/logbook";
@@ -91,10 +92,8 @@ resolvers["LogDetail"]["verticalDistance"] = LogDetail_verticalDistance;
 resolvers["Mutation"]["combineOAuthAccounts"] = Mutation_combineOAuthAccounts;
 resolvers["Mutation"]["createParty"] = Mutation_createParty;
 resolvers["Mutation"]["createPartyInvite"] = Mutation_createPartyInvite;
-resolvers["Mutation"]["createUserProfilePictureUploadUrl"] =
-  Mutation_createUserProfilePictureUploadUrl;
-resolvers["Mutation"]["createUserRecordUploadUrl"] =
-  Mutation_createUserRecordUploadUrl;
+resolvers["Mutation"]["createUserProfilePictureUploadUrl"] = Mutation_createUserProfilePictureUploadUrl;
+resolvers["Mutation"]["createUserRecordUploadUrl"] = Mutation_createUserRecordUploadUrl;
 resolvers["Mutation"]["deleteParty"] = Mutation_deleteParty;
 resolvers["Mutation"]["deletePartyInvite"] = Mutation_deletePartyInvite;
 resolvers["Mutation"]["deleteUser"] = Mutation_deleteUser;
@@ -111,6 +110,7 @@ resolvers["Party"]["users"] = Party_users;
 resolvers["Query"]["leaderboard"] = Query_leaderboard;
 resolvers["Query"]["partyLookupById"] = Query_partyLookupById;
 resolvers["Query"]["selfLookup"] = Query_selfLookup;
+resolvers["Query"]["userLookupByEmail"] = Query_userLookupByEmail;
 resolvers["Query"]["userLookupById"] = Query_userLookupById;
 resolvers["User"]["email"] = User_email;
 resolvers["User"]["logbook"] = User_logbook;

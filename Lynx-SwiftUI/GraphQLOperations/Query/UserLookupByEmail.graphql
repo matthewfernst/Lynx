@@ -1,0 +1,9 @@
+query UserLookupByEmail($email: String!) {
+  userLookupByEmail(email: $email) {
+    id
+    firstName
+    lastName
+    email
+    profilePictureUrl
+  }
+}

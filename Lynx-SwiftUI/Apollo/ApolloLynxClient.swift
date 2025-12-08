@@ -1066,6 +1066,33 @@ final class ApolloLynxClient {
             }
         }
     }
+
+    static func userLookupByEmail(email: String, completion: @escaping ((Result<PartyUser?, Error>) -> Void)) {
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.UserLookupByEmailQuery(email: email)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let user = graphQLResult.data?.userLookupByEmail else {
+                    Logger.apollo.info("No user found with email: \(email)")
+                    completion(.success(nil))
+                    return
+                }
+
+                let partyUser = PartyUser(
+                    id: user.id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    profilePictureURL: URL(string: user.profilePictureUrl ?? "")
+                )
+
+                Logger.apollo.info("Successfully found user by email.")
+                completion(.success(partyUser))
+
+            case .failure(let error):
+                Logger.apollo.error("Error looking up user by email: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
 }
 
 struct ProfileAttributes: CustomDebugStringConvertible {
