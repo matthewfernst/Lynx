@@ -57,20 +57,32 @@ const getTimeframeRankingByIndex = async (
     console.info(
       `Getting items with timeframe ${timeframe} sorted by ${index}`,
     );
+
+    const userPlaceholders = usersInParty.map((_, i) => `:user${i}`).join(", ");
+    const userAttributeValues = usersInParty.reduce(
+      (acc, userId, i) => {
+        acc[`:user${i}`] = userId;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
     const queryRequest = new QueryCommand({
       TableName: LEADERBOARD_TABLE,
       IndexName: index,
       KeyConditionExpression: "timeframe = :value",
       ExpressionAttributeValues: {
         ":value": timeframe,
-        ":users": usersInParty,
+        ...userAttributeValues,
       },
       ScanIndexForward: false,
-      Limit: limit,
-      FilterExpression: "id IN :users",
+      FilterExpression: `id IN (${userPlaceholders})`,
     });
+
     const itemOutput = await documentClient.send(queryRequest);
-    return itemOutput.Items as LeaderboardEntry[];
+    const results = (itemOutput.Items as LeaderboardEntry[]) || [];
+
+    return results.slice(0, limit);
   } catch (err) {
     console.error(err);
     throw new GraphQLError("DynamoDB Query Call Failed");
