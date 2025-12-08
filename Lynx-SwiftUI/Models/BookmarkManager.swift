@@ -1,10 +1,3 @@
-//
-//  BookmarkManager.swift
-//  Lynx
-//
-//  Created by Matthew Ernst on 6/20/23.
-//
-
 import Foundation
 import OSLog
 

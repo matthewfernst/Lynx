@@ -1,10 +1,3 @@
-//
-//  PartyDetailView.swift
-//  Lynx-SwiftUI
-//
-//  Created by Claude on 12/7/24.
-//
-
 import SwiftUI
 
 struct PartyDetailView: View {

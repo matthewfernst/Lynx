@@ -1,16 +1,8 @@
-//
-//  Apollo.swift
-//  Lynx
-//
-//  Created by Matthew Ernst on 4/29/23.
-//
-
 import Foundation
 import Apollo
 import OSLog
 
 
-// MARK: - Apollo Typealiases
 typealias Logbook = ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook
 typealias Logbooks = [Logbook]
 
@@ -57,6 +49,13 @@ extension ApolloGeneratedGraphQL.GetSpecificLeaderboardQuery.Data.Leaderboard: L
         .selectedLeaderStat(self.stats)
     }
 }
+
+extension ApolloGeneratedGraphQL.GetPartyDetailsQuery.Data.PartyLookupById.Leaderboard: Leaderboard {
+    var stat: LeaderStat? {
+        .partyLeaderStat(self.stats)
+    }
+}
+
 typealias LeaderboardLeaders = [Leaderboard]
 
 typealias LeaderboardSort = ApolloGeneratedGraphQL.LeaderboardSort
@@ -67,6 +66,7 @@ enum LeaderStat {
     case topSpeedStat(ApolloGeneratedGraphQL.GetAllLeaderboardsQuery.Data.TopSpeedLeader.Stats?)
     case verticalDistanceStat(ApolloGeneratedGraphQL.GetAllLeaderboardsQuery.Data.VerticalDistanceLeader.Stats?)
     case selectedLeaderStat(ApolloGeneratedGraphQL.GetSpecificLeaderboardQuery.Data.Leaderboard.Stats?)
+    case partyLeaderStat(ApolloGeneratedGraphQL.GetPartyDetailsQuery.Data.PartyLookupById.Leaderboard.Stats?)
 }
 
 
@@ -108,7 +108,6 @@ final class ApolloLynxClient {
                     return
                 }
                 
-                // TODO: First okay?
                 let oauthIds = selfLookup.oauthLoginIds
 
                 guard let oauthType = oauthIds.first?.type else {
@@ -236,7 +235,6 @@ final class ApolloLynxClient {
                 
                 UserManager.shared.lynxToken = ExpirableLynxToken(
                     accessToken: accessToken,
-//                    expirationDate: Date(timeIntervalSince1970: expiryInMilliseconds / 1000),
                     expirationDate: Calendar.current.date(byAdding: .second, value: 5, to: Date())!,
                     refreshToken: refreshToken
                 )
@@ -663,8 +661,7 @@ final class ApolloLynxClient {
         }
     }
 
-    // MARK: - Party Management
-
+    // MARK: - Party Managementz
     static func getParties(completion: @escaping ((Result<[PartyAttributes], Error>) -> Void)) {
         enum GetPartiesError: Error {
             case unwrapError
@@ -830,86 +827,58 @@ final class ApolloLynxClient {
         inMeasurementSystem system: MeasurementSystem,
         completion: @escaping ((Result<[LeaderboardSort: [LeaderAttributes]], Error>) -> Void)
     ) {
-        enum GetAllPartyLeadersErrors: Error {
-            case unableToUnwrap
-        }
-
         let nullableLimit: GraphQLNullable<Int> = (limit != nil) ? .init(integerLiteral: limit!) : .null
-        let enumSystem = GraphQLEnum<MeasurementSystem>(rawValue: system.rawValue)
-        apolloClient.fetch(
-            query: ApolloGeneratedGraphQL.GetPartyAllLeaderboardsQuery(
-                partyId: partyId,
-                timeframe: .case(timeframe),
-                limit: nullableLimit,
-                system: enumSystem
-            )
-        ) { result in
-            switch result {
-            case .success(let graphQLResult):
+        var leaderboardAttributes: [LeaderboardSort: [LeaderAttributes]] = [:]
+        let dispatchGroup = DispatchGroup()
+        var fetchError: Error?
 
-                guard let data = graphQLResult.data?.partyLookupById else {
-                    Logger.apollo.error("Error unwrapping Party All Leaders data")
-                    completion(.failure(GetAllPartyLeadersErrors.unableToUnwrap))
-                    return
-                }
+        for sort in LeaderboardSort.allCases {
+            dispatchGroup.enter()
 
-                var leaderboardAttributes: [LeaderboardSort: [LeaderAttributes]] = [:]
+            apolloClient.fetch(
+                query: ApolloGeneratedGraphQL.GetPartyDetailsQuery(
+                    partyId: partyId,
+                    sortBy: .some(.init(sort)),
+                    timeframe: .some(.init(timeframe)),
+                    limit: nullableLimit
+                )
+            ) { result in
+                defer { dispatchGroup.leave() }
 
-                for sort in LeaderboardSort.allCases {
-                    var leadersAttributes: [LeaderAttributes] = []
-
-                    let leaders: [ApolloGeneratedGraphQL.GetPartyAllLeaderboardsQuery.Data.PartyLookupById.Distance]
-
-                    switch sort {
-                    case .distance:
-                        Logger.apollo.debug("Successfully got party distance leaders")
-                        leaders = data.distance
-                    case .runCount:
-                        Logger.apollo.debug("Successfully got party run count leaders")
-                        leaders = data.runCount
-                    case .topSpeed:
-                        Logger.apollo.debug("Successfully got party top speed leaders")
-                        leaders = data.topSpeed
-                    case .verticalDistance:
-                        Logger.apollo.debug("Successfully got party vertical distance leaders")
-                        leaders = data.verticalDistance
+                switch result {
+                case .success(let graphQLResult):
+                    guard let leaders = graphQLResult.data?.partyLookupById?.leaderboard else {
+                        return
                     }
 
+                    var leadersAttributes: [LeaderAttributes] = []
                     for leader in leaders {
                         leadersAttributes.append(
                             LeaderAttributes(
-                                fullName: "\(leader.firstName) \(leader.lastName)",
-                                profilePictureURL: URL(string: leader.profilePictureUrl ?? ""),
-                                stat: statForCategory(sort, from: leader.stats, system: system)
+                                leader: leader,
+                                category: sort,
+                                profilePictureURL: URL(string: leader.profilePictureUrl ?? "")
                             )
                         )
                     }
 
                     leaderboardAttributes[sort] = leadersAttributes
+                case .failure(let error):
+                    if fetchError == nil {
+                        fetchError = error
+                    }
                 }
-
-                Logger.apollo.info("Successfully got all party leaderboards")
-                completion(.success(leaderboardAttributes))
-
-            case .failure(let error):
-                Logger.apollo.error("Error getting all party leaderboards: \(error)")
-                completion(.failure(error))
             }
         }
-    }
 
-    private static func statForCategory(_ category: LeaderboardSort, from stats: ApolloGeneratedGraphQL.GetPartyAllLeaderboardsQuery.Data.PartyLookupById.Distance.Stats?, system: MeasurementSystem) -> Double {
-        guard let stats = stats else { return 0.0 }
-
-        switch category {
-        case .distance:
-            return stats.distance ?? 0.0
-        case .runCount:
-            return Double(stats.runCount)
-        case .topSpeed:
-            return stats.topSpeed ?? 0.0
-        case .verticalDistance:
-            return stats.verticalDistance ?? 0.0
+        dispatchGroup.notify(queue: .main) {
+            if let error = fetchError {
+                Logger.apollo.error("Error getting all party leaderboards: \(error)")
+                completion(.failure(error))
+            } else {
+                Logger.apollo.info("Successfully got all party leaderboards")
+                completion(.success(leaderboardAttributes))
+            }
         }
     }
 
@@ -943,27 +912,11 @@ final class ApolloLynxClient {
 
                 var leaderData = [LeaderAttributes]()
                 for leader in leaders {
-                    let stat: Double
-                    if let stats = leader.stats {
-                        switch sort {
-                        case .distance:
-                            stat = stats.distance ?? 0.0
-                        case .runCount:
-                            stat = Double(stats.runCount)
-                        case .topSpeed:
-                            stat = stats.topSpeed ?? 0.0
-                        case .verticalDistance:
-                            stat = stats.verticalDistance ?? 0.0
-                        }
-                    } else {
-                        stat = 0.0
-                    }
-
                     leaderData.append(
                         LeaderAttributes(
-                            fullName: "\(leader.firstName) \(leader.lastName)",
-                            profilePictureURL: URL(string: leader.profilePictureUrl ?? ""),
-                            stat: stat
+                            leader: leader,
+                            category: sort,
+                            profilePictureURL: URL(string: leader.profilePictureUrl ?? "")
                         )
                     )
                 }
@@ -1157,8 +1110,6 @@ final class ApolloLynxClient {
     }
 }
 
-
-// MARK: - ProfileAttributes
 struct ProfileAttributes: CustomDebugStringConvertible {
     var id: String
     var oauthType: String
@@ -1199,7 +1150,6 @@ struct ProfileAttributes: CustomDebugStringConvertible {
     }
 }
 
-// MARK: - Party Models
 struct PartyAttributes {
     let id: String
     let name: String
@@ -1241,7 +1191,6 @@ struct PartyDetails {
     let leaderboard: [PartyLeaderboardEntry]
 }
 
-// MARK: - Extensions of ApolloGraphQL
 extension MeasurementSystem {
     var feetOrMeters: String {
         switch self {
@@ -1262,5 +1211,4 @@ extension MeasurementSystem {
     }
 }
 
-// MARK: - Extension for SwiftData
 extension MeasurementSystem: Codable { }

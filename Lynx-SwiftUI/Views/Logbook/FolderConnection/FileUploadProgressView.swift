@@ -1,10 +1,3 @@
-//
-//  FileUploadProgressView.swift
-//  Lynx-SwiftUI
-//
-//  Created by Matthew Ernst on 12/10/23.
-//
-
 import SwiftUI
 
 struct FileUploadProgressView: View {

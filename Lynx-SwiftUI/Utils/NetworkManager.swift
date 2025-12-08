@@ -1,10 +1,3 @@
-//
-//  NetworkManager.swift
-//  Lynx
-//
-//  Created by Matthew Ernst on 3/26/23.
-//
-
 import Foundation
 import SystemConfiguration
 

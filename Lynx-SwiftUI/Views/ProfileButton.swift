@@ -1,10 +1,3 @@
-//
-//  ProfileButton.swift
-//  Lynx-SwiftUI
-//
-//  Created by Claude Code
-//
-
 import SwiftUI
 
 struct ProfileButton: View {

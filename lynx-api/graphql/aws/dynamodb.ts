@@ -2,6 +2,7 @@ import { ApolloServerErrorCode } from "@apollo/server/errors";
 import {
   ConditionalCheckFailedException,
   DynamoDB,
+  ReturnValue,
 } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocument,
@@ -102,7 +103,7 @@ export const putItem = async <T extends Table>(
     const putItemRequest = new PutCommand({
       TableName: table,
       Item: item,
-      ReturnValues: "ALL_OLD",
+      ReturnValues: ReturnValue.ALL_NEW,
     });
     const itemOutput = await documentClient.send(putItemRequest);
     return itemOutput.Attributes as TableObject<T>;

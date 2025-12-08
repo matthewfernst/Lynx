@@ -1,10 +1,3 @@
-//
-//  AutoUploadView.swift
-//  Lynx-SwiftUI
-//
-//  Created by Matthew Ernst on 12/11/23.
-//
-
 import SwiftUI
 
 struct AutoUploadView: View {

@@ -1,10 +1,3 @@
-//
-//  Profile.swift
-//  Lynx
-//
-//  Created by Matthew Ernst on 1/25/23.
-//
-
 import Foundation
 import SwiftData
 

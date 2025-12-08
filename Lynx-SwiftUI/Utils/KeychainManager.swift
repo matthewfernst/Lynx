@@ -1,10 +1,3 @@
-//
-//  KeychainManager.swift
-//  Lynx-SwiftUI
-//
-//  Created by Matthew Ernst on 12/16/23.
-//
-
 import Foundation
 import OSLog
 

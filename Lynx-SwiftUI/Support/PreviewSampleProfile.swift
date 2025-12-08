@@ -1,10 +1,3 @@
-//
-//  PreviewSampleProfile.swift
-//  Lynx-SwiftUI
-//
-//  Created by Matthew Ernst on 12/15/23.
-//
-
 import SwiftData
 
 #if DEBUG

@@ -1,10 +1,3 @@
-//
-//  RequestLoggingInterceptor.swift
-//  Lynx
-//
-//  Created by Matthew Ernst on 4/30/23.
-//
-
 import Apollo
 import OSLog
 

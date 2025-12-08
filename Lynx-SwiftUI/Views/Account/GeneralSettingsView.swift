@@ -1,10 +1,3 @@
-//
-//  GeneralSettingsView.swift
-//  Lynx-SwiftUI
-//
-//  Created by Matthew Ernst on 11/30/23.
-//
-
 import SwiftUI
 
 struct GeneralSettingsView: View {

@@ -1,10 +1,3 @@
-//
-//  NotificationsHandler.swift
-//  Lynx-SwiftUI
-//
-//  Created by Matthew Ernst on 12/11/23.
-//
-
 import Foundation
 import UserNotifications
 

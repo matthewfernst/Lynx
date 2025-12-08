@@ -1,10 +1,3 @@
-//
-//  UserManager.swift
-//  Lynx
-//
-//  Created by Matthew Ernst on 4/30/23.
-//
-
 import SwiftUI
 import GoogleSignIn
 import FBSDKLoginKit

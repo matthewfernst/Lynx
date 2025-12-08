@@ -1,10 +1,3 @@
-//
-//  EditProfileView.swift
-//  Lynx-SwiftUI
-//
-//  Created by Matthew Ernst on 11/29/23.
-//
-
 import SwiftUI
 import PhotosUI
 import OSLog

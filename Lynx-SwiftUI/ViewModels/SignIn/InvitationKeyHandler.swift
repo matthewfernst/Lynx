@@ -1,10 +1,3 @@
-//
-//  InvitationKeyHandler.swift
-//  Lynx-SwiftUI
-//
-//  Created by Matthew Ernst on 1/5/24.
-//
-
 import SwiftUI
 import OSLog
 

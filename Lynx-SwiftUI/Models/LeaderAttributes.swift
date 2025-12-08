@@ -1,10 +1,3 @@
-//
-//  LeaderAttributes.swift
-//  Lynx-SwiftUI
-//
-//  Created by Matthew Ernst on 12/9/23.
-//
-
 import Foundation
 
 struct LeaderAttributes: Identifiable, Hashable {
@@ -26,7 +19,7 @@ struct LeaderAttributes: Identifiable, Hashable {
         guard let stat = leaderStat else {
             return Constants.defaultStat
         }
-        
+
         switch stat {
         case .distanceStat(let distanceStat):
             return distanceStat?.distance ?? Constants.defaultStat
@@ -40,7 +33,7 @@ struct LeaderAttributes: Identifiable, Hashable {
             guard let selectedLeaderStat = selectedLeaderStat else {
                 return Constants.defaultStat
             }
-            
+
             switch specificStatSortedBy {
             case .distance:
                 return selectedLeaderStat.distance
@@ -50,6 +43,21 @@ struct LeaderAttributes: Identifiable, Hashable {
                 return Double(selectedLeaderStat.runCount)
             case .verticalDistance:
                 return selectedLeaderStat.verticalDistance
+            }
+        case .partyLeaderStat(let partyLeaderStat):
+            guard let partyLeaderStat = partyLeaderStat else {
+                return Constants.defaultStat
+            }
+
+            switch specificStatSortedBy {
+            case .distance:
+                return partyLeaderStat.distance
+            case .topSpeed:
+                return partyLeaderStat.topSpeed
+            case .runCount:
+                return Double(partyLeaderStat.runCount)
+            case .verticalDistance:
+                return partyLeaderStat.verticalDistance
             }
         }
     }

@@ -1,10 +1,3 @@
-//
-//  UserManagementInterceptor.swift
-//  Lynx
-//
-//  Created by Matthew Ernst on 4/29/23.
-//
-
 import Foundation
 import OSLog
 

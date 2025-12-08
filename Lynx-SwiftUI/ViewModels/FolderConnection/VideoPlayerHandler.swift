@@ -1,10 +1,3 @@
-//
-//  VideoPlayerHandler.swift
-//  Lynx-SwiftUI
-//
-//  Created by Matthew Ernst on 1/1/24.
-//
-
 import SwiftUI
 import AVKit
 import Combine

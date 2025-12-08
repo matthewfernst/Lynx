@@ -1,10 +1,3 @@
-//
-//  AccountView.swift
-//  Lynx-SwiftUI
-//
-//  Created by Matthew Ernst on 11/24/23.
-//
-
 import SwiftUI
 import MessageUI
 
