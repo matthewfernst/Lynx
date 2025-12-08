@@ -56,7 +56,7 @@ import OSLog
         }
     }
 
-    func fetchPartyDetails(partyId: String, sortBy: LeaderboardSort = .verticalDistance, timeframe: Timeframe = .season) {
+    func fetchPartyDetails(partyId: String, sortBy: LeaderboardSort = .verticalDistance, timeframe: Timeframe = .season, completion: ((Bool) -> Void)? = nil) {
         isLoadingDetails = true
         errorMessage = nil
 
@@ -71,9 +71,11 @@ import OSLog
                 case .success(let details):
                     self?.selectedPartyDetails = details
                     Logger.partyHandler.info("Successfully fetched party details for \(partyId)")
+                    completion?(true)
                 case .failure(let error):
                     self?.errorMessage = "Failed to load party details"
                     Logger.partyHandler.error("Error fetching party details: \(error)")
+                    completion?(false)
                 }
             }
         }

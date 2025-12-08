@@ -34,19 +34,11 @@ struct PartyDetailView: View {
             } else if let details = partyHandler.selectedPartyDetails {
                 VStack(spacing: 24) {
                     if let description = details.description, !description.isEmpty {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("About")
-                                .font(.headline)
-                                .foregroundStyle(.secondary)
-
-                            Text(description)
-                                .font(.body)
-                                .foregroundStyle(.primary)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                        .background(Color(uiColor: .secondarySystemGroupedBackground))
-                        .cornerRadius(12)
+                        Text(description)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top, -8)
                     }
 
                     PartyLeaderboardChartsSection(
@@ -818,23 +810,6 @@ struct PartySettingsView: View {
                         }
                     } header: {
                         Text("Party Details")
-                    } footer: {
-                        if hasChanges {
-                            Button(action: saveChanges) {
-                                HStack {
-                                    if partyHandler.isEditingParty {
-                                        ProgressView()
-                                            .progressViewStyle(.circular)
-                                            .controlSize(.small)
-                                        Text("Saving...")
-                                    } else {
-                                        Text("Save Changes")
-                                            .fontWeight(.semibold)
-                                    }
-                                }
-                            }
-                            .disabled(partyHandler.isEditingParty || editedName.isEmpty)
-                        }
                     }
 
                     Section {
@@ -962,9 +937,16 @@ struct PartySettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") {
-                        dismiss()
+                    Button(action: saveAndDismiss) {
+                        if partyHandler.isEditingParty {
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                                .controlSize(.small)
+                        } else {
+                            Text("Save")
+                        }
                     }
+                    .disabled(partyHandler.isEditingParty || (isManager && editedName.isEmpty))
                 }
             }
         }
@@ -999,15 +981,26 @@ struct PartySettingsView: View {
         hasChanges = editedName != partyName || editedDescription != (partyDescription ?? "")
     }
 
-    private func saveChanges() {
-        partyHandler.editParty(
-            partyId: partyId,
-            name: editedName,
-            description: editedDescription.isEmpty ? nil : editedDescription
-        ) { result in
-            if result {
-                hasChanges = false
+    private func saveAndDismiss() {
+        // Only save if there are changes and user is manager
+        if isManager && hasChanges {
+            partyHandler.editParty(
+                partyId: partyId,
+                name: editedName,
+                description: editedDescription.isEmpty ? nil : editedDescription
+            ) { result in
+                if result {
+                    // Refetch party details to update the UI, then dismiss
+                    partyHandler.fetchPartyDetails(partyId: partyId, sortBy: .verticalDistance, timeframe: .season) { _ in
+                        dismiss()
+                    }
+                } else {
+                    dismiss()
+                }
             }
+        } else {
+            // No changes, just dismiss
+            dismiss()
         }
     }
 
