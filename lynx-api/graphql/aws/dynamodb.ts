@@ -145,7 +145,7 @@ export const updateItem = async <T extends Table>(
     console.info(
       `Updating item in ${table} with id ${id}. New ${key} is ${value}`,
     );
-    clearKeyFromTableDataLoader(table, key);
+    clearKeyFromTableDataLoader(table, id);
     const updateItemRequest = new UpdateCommand({
       TableName: table,
       Key: { id },
@@ -250,6 +250,7 @@ export const deleteItemsFromArray = async <T extends Table>(
     console.info(
       `Updating item in ${table} with id ${id}. ${key} no longer has the following as values: ${values}`,
     );
+    clearKeyFromTableDataLoader(table, id);
     const item = await getItem(table, id);
     if (!item) {
       throw new GraphQLError("Error finding item for this userId", {
@@ -299,6 +300,7 @@ export const deleteItem = async <T extends Table>(
 ): Promise<TableObject<T>> => {
   try {
     console.info(`Deleting item from ${table} with id ${id}`);
+    clearKeyFromTableDataLoader(table, id);
     const deleteItemRequest = new DeleteCommand({
       TableName: table,
       Key: { id },
