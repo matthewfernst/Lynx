@@ -4,12 +4,12 @@ import { Context } from "../../index";
 import { ParsedLog } from "../../types";
 
 const id = (
-    parent: ParsedLog,
-    _args: Record<string, never>,
-    _context: Context,
-    _info: GraphQLResolveInfo
+  parent: ParsedLog,
+  _args: Record<string, never>,
+  _context: Context,
+  _info: GraphQLResolveInfo,
 ): string => {
-    return parent.attributes.identifier;
+  return parent.attributes.identifier;
 };
 
 export default id;

@@ -4,12 +4,12 @@ import { Context } from "../../index";
 import { ParsedLog } from "../../types";
 
 const runCount = (
-    parent: ParsedLog,
-    _args: Record<string, never>,
-    _context: Context,
-    _info: GraphQLResolveInfo
+  parent: ParsedLog,
+  _args: Record<string, never>,
+  _context: Context,
+  _info: GraphQLResolveInfo,
 ): number => {
-    return parent.attributes.runCount;
+  return parent.attributes.runCount;
 };
 
 export default runCount;

@@ -93,8 +93,10 @@ resolvers["Mutation"]["combineOAuthAccounts"] = Mutation_combineOAuthAccounts;
 resolvers["Mutation"]["createInviteKey"] = Mutation_createInviteKey;
 resolvers["Mutation"]["createParty"] = Mutation_createParty;
 resolvers["Mutation"]["createPartyInvite"] = Mutation_createPartyInvite;
-resolvers["Mutation"]["createUserProfilePictureUploadUrl"] = Mutation_createUserProfilePictureUploadUrl;
-resolvers["Mutation"]["createUserRecordUploadUrl"] = Mutation_createUserRecordUploadUrl;
+resolvers["Mutation"]["createUserProfilePictureUploadUrl"] =
+  Mutation_createUserProfilePictureUploadUrl;
+resolvers["Mutation"]["createUserRecordUploadUrl"] =
+  Mutation_createUserRecordUploadUrl;
 resolvers["Mutation"]["deleteParty"] = Mutation_deleteParty;
 resolvers["Mutation"]["deletePartyInvite"] = Mutation_deletePartyInvite;
 resolvers["Mutation"]["deleteUser"] = Mutation_deleteUser;

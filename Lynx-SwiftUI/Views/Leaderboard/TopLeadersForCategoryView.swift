@@ -11,7 +11,9 @@ import Charts
 struct TopLeadersForCategoryView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(ProfileManager.self) private var profileManager
-    
+
+    let partyId: String?
+
     @State private var range: (Double, Double)? = nil
     private var rangeFormattedLabel: (String, String)? {
         guard let range = range else { return nil }
@@ -48,7 +50,7 @@ struct TopLeadersForCategoryView: View {
             chartLabel
         }
         .navigationDestination(isPresented: $goToMoreInfo) {
-            AllLeadersForCategoryView(category: category)
+            AllLeadersForCategoryView(category: category, partyId: partyId)
         }
         .alert("Unable to Load Leaders", isPresented: $showFailedToGetAllLeaders) {
             Button("OK", role: .cancel) {}

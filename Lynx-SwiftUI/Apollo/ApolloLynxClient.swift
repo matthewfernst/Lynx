@@ -823,6 +823,161 @@ final class ApolloLynxClient {
         }
     }
 
+    static func getAllPartyLeaderboards(
+        partyId: String,
+        for timeframe: Timeframe,
+        limit: Int?,
+        inMeasurementSystem system: MeasurementSystem,
+        completion: @escaping ((Result<[LeaderboardSort: [LeaderAttributes]], Error>) -> Void)
+    ) {
+        enum GetAllPartyLeadersErrors: Error {
+            case unableToUnwrap
+        }
+
+        let nullableLimit: GraphQLNullable<Int> = (limit != nil) ? .init(integerLiteral: limit!) : .null
+        let enumSystem = GraphQLEnum<MeasurementSystem>(rawValue: system.rawValue)
+        apolloClient.fetch(
+            query: ApolloGeneratedGraphQL.GetPartyAllLeaderboardsQuery(
+                partyId: partyId,
+                timeframe: .case(timeframe),
+                limit: nullableLimit,
+                system: enumSystem
+            )
+        ) { result in
+            switch result {
+            case .success(let graphQLResult):
+
+                guard let data = graphQLResult.data?.partyLookupById else {
+                    Logger.apollo.error("Error unwrapping Party All Leaders data")
+                    completion(.failure(GetAllPartyLeadersErrors.unableToUnwrap))
+                    return
+                }
+
+                var leaderboardAttributes: [LeaderboardSort: [LeaderAttributes]] = [:]
+
+                for sort in LeaderboardSort.allCases {
+                    var leadersAttributes: [LeaderAttributes] = []
+
+                    let leaders: [ApolloGeneratedGraphQL.GetPartyAllLeaderboardsQuery.Data.PartyLookupById.Distance]
+
+                    switch sort {
+                    case .distance:
+                        Logger.apollo.debug("Successfully got party distance leaders")
+                        leaders = data.distance
+                    case .runCount:
+                        Logger.apollo.debug("Successfully got party run count leaders")
+                        leaders = data.runCount
+                    case .topSpeed:
+                        Logger.apollo.debug("Successfully got party top speed leaders")
+                        leaders = data.topSpeed
+                    case .verticalDistance:
+                        Logger.apollo.debug("Successfully got party vertical distance leaders")
+                        leaders = data.verticalDistance
+                    }
+
+                    for leader in leaders {
+                        leadersAttributes.append(
+                            LeaderAttributes(
+                                fullName: "\(leader.firstName) \(leader.lastName)",
+                                profilePictureURL: URL(string: leader.profilePictureUrl ?? ""),
+                                stat: statForCategory(sort, from: leader.stats, system: system)
+                            )
+                        )
+                    }
+
+                    leaderboardAttributes[sort] = leadersAttributes
+                }
+
+                Logger.apollo.info("Successfully got all party leaderboards")
+                completion(.success(leaderboardAttributes))
+
+            case .failure(let error):
+                Logger.apollo.error("Error getting all party leaderboards: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    private static func statForCategory(_ category: LeaderboardSort, from stats: ApolloGeneratedGraphQL.GetPartyAllLeaderboardsQuery.Data.PartyLookupById.Distance.Stats?, system: MeasurementSystem) -> Double {
+        guard let stats = stats else { return 0.0 }
+
+        switch category {
+        case .distance:
+            return stats.distance ?? 0.0
+        case .runCount:
+            return Double(stats.runCount)
+        case .topSpeed:
+            return stats.topSpeed ?? 0.0
+        case .verticalDistance:
+            return stats.verticalDistance ?? 0.0
+        }
+    }
+
+    static func getSpecificPartyLeaderboard(
+        partyId: String,
+        for timeframe: Timeframe,
+        sortBy sort: LeaderboardSort,
+        limit: Int = 100,
+        inMeasurementSystem system: MeasurementSystem,
+        completion: @escaping ((Result<[LeaderAttributes], Error>) -> Void)
+    ) {
+        enum GetSpecificPartyLeaderboardError: Error {
+            case unwrapError
+        }
+
+        apolloClient.fetch(
+            query: ApolloGeneratedGraphQL.GetPartyDetailsQuery(
+                partyId: partyId,
+                sortBy: .some(.init(sort)),
+                timeframe: .some(.init(timeframe)),
+                limit: .some(limit)
+            )
+        ) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let leaders = graphQLResult.data?.partyLookupById?.leaderboard else {
+                    Logger.apollo.error("Failed to unwrap specific party leaderboard.")
+                    completion(.failure(GetSpecificPartyLeaderboardError.unwrapError))
+                    return
+                }
+
+                var leaderData = [LeaderAttributes]()
+                for leader in leaders {
+                    let stat: Double
+                    if let stats = leader.stats {
+                        switch sort {
+                        case .distance:
+                            stat = stats.distance ?? 0.0
+                        case .runCount:
+                            stat = Double(stats.runCount)
+                        case .topSpeed:
+                            stat = stats.topSpeed ?? 0.0
+                        case .verticalDistance:
+                            stat = stats.verticalDistance ?? 0.0
+                        }
+                    } else {
+                        stat = 0.0
+                    }
+
+                    leaderData.append(
+                        LeaderAttributes(
+                            fullName: "\(leader.firstName) \(leader.lastName)",
+                            profilePictureURL: URL(string: leader.profilePictureUrl ?? ""),
+                            stat: stat
+                        )
+                    )
+                }
+
+                Logger.apollo.info("Successfully got specific party leaderboard.")
+                completion(.success(leaderData))
+
+            case .failure(let error):
+                Logger.apollo.error("Error fetching specific party leaderboard: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
     static func createParty(name: String, completion: @escaping ((Result<PartyAttributes, Error>) -> Void)) {
         enum CreatePartyError: Error {
             case unwrapError

@@ -1,0 +1,42 @@
+query GetPartyAllLeaderboards($partyId: ID!, $timeframe: Timeframe = SEASON, $limit: Int = 3, $system: MeasurementSystem = IMPERIAL) {
+  partyLookupById(id: $partyId) {
+    id
+    name
+    distance: leaderboard(sortBy: DISTANCE, timeframe: $timeframe, limit: $limit) {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+      stats(timeframe: $timeframe) {
+        distance(system: $system)
+      }
+    }
+    runCount: leaderboard(sortBy: RUN_COUNT, timeframe: $timeframe, limit: $limit) {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+      stats(timeframe: $timeframe) {
+        runCount
+      }
+    }
+    topSpeed: leaderboard(sortBy: TOP_SPEED, timeframe: $timeframe, limit: $limit) {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+      stats(timeframe: $timeframe) {
+        topSpeed(system: $system)
+      }
+    }
+    verticalDistance: leaderboard(sortBy: VERTICAL_DISTANCE, timeframe: $timeframe, limit: $limit) {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+      stats(timeframe: $timeframe) {
+        verticalDistance(system: $system)
+      }
+    }
+  }
+}

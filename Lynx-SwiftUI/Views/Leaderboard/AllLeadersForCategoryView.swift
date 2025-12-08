@@ -11,6 +11,7 @@ import Charts
 struct AllLeadersForCategoryView: View {
     @Environment(ProfileManager.self) private var profileManager
     let category: LeaderboardCategory
+    let partyId: String?
     @State private var leaders: [LeaderAttributes] = []
 
     @State private var timeframe: Timeframe = .season
@@ -135,16 +136,34 @@ struct AllLeadersForCategoryView: View {
     
     
     private func populateLeaders() {
-        ApolloLynxClient.getSpecificLeaderboardAllTime(
-            for: timeframe,
-            sortBy: category.correspondingSort,
-            inMeasurementSystem: profileManager.measurementSystem
-        ) { result in
-            switch result {
-            case .success(let attributes):
-                leaders = attributes
-            case .failure(_):
-                showLoadError = true
+        if let partyId = partyId {
+            // Query party leaderboard
+            ApolloLynxClient.getSpecificPartyLeaderboard(
+                partyId: partyId,
+                for: timeframe,
+                sortBy: category.correspondingSort,
+                inMeasurementSystem: profileManager.measurementSystem
+            ) { result in
+                switch result {
+                case .success(let attributes):
+                    leaders = attributes
+                case .failure(_):
+                    showLoadError = true
+                }
+            }
+        } else {
+            // Query global leaderboard
+            ApolloLynxClient.getSpecificLeaderboardAllTime(
+                for: timeframe,
+                sortBy: category.correspondingSort,
+                inMeasurementSystem: profileManager.measurementSystem
+            ) { result in
+                switch result {
+                case .success(let attributes):
+                    leaders = attributes
+                case .failure(_):
+                    showLoadError = true
+                }
             }
         }
     }

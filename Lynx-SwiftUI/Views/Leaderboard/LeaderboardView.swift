@@ -15,18 +15,39 @@ struct LeaderboardView: View {
     @State private var distanceLeaders: [LeaderAttributes] = []
     @State private var runCountLeaders: [LeaderAttributes] = []
 
+    @State private var parties: [PartyAttributes] = []
+    @State private var selectedPartyId: String?
+
     @State private var showFailedToGetTopLeaders = false
     @State private var showProfile = false
+    @State private var showNoPartyAlert = false
     
     var body: some View {
         NavigationStack {
             ScrollView {
+                if parties.count > 1, let selectedPartyId = selectedPartyId {
+                    Picker("Party", selection: Binding(
+                        get: { selectedPartyId },
+                        set: { newValue in
+                            self.selectedPartyId = newValue
+                            populateLeaderboard()
+                        }
+                    )) {
+                        ForEach(parties, id: \.id) { party in
+                            Text(party.name).tag(party.id)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .padding(.horizontal)
+                }
+
                 ForEach(Array(zip([
                     verticalDistanceLeaders, topSpeedLeaders, distanceLeaders, runCountLeaders
                 ], [
                     LeaderboardCategory.verticalDistance(), .topSpeed(), .distance(), .runCount(),
                 ])), id: \.1) { leaders, category in
                     TopLeadersForCategoryView(
+                        partyId: selectedPartyId,
                         topLeaders: leaders,
                         category: category
                     )
@@ -41,13 +62,18 @@ struct LeaderboardView: View {
             } message: {
                 Text("We couldn't load the leaderboard data. Please check your internet connection and try again.")
             }
+            .alert("No Party Found", isPresented: $showNoPartyAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("You need to be in a party to view leaderboards. Create or join a party from the Parties tab.")
+            }
             .navigationTitle("Leaderboard")
             .scrollContentBackground(.hidden)
             .toolbar {
                 profileButton
             }
             .task {
-                populateLeaderboard()
+                loadPartiesAndLeaderboard()
             }
             .refreshable { // TODO: Refresh being wonky on simulator?
                 populateLeaderboard()
@@ -58,8 +84,31 @@ struct LeaderboardView: View {
         }
     }
     
+    private func loadPartiesAndLeaderboard() {
+        ApolloLynxClient.getParties { result in
+            switch result {
+            case .success(let fetchedParties):
+                parties = fetchedParties
+                if let firstParty = fetchedParties.first {
+                    selectedPartyId = firstParty.id
+                    populateLeaderboard()
+                } else {
+                    showNoPartyAlert = true
+                }
+            case .failure(_):
+                showFailedToGetTopLeaders = true
+            }
+        }
+    }
+
     private func populateLeaderboard() {
-        ApolloLynxClient.getAllLeaderboards(
+        guard let partyId = selectedPartyId else {
+            showNoPartyAlert = true
+            return
+        }
+
+        ApolloLynxClient.getAllPartyLeaderboards(
+            partyId: partyId,
             for: .season,
             limit: Constants.topThree,
             inMeasurementSystem: profileManager.measurementSystem

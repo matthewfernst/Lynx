@@ -8,69 +8,81 @@ import { Context } from "../../index";
 import { LEADERBOARD_TABLE } from "../../../infrastructure/stacks/lynxApiStack";
 import { LeaderboardEntry, Party, DatabaseUser } from "../../types";
 import {
-    LeaderboardSort,
-    Timeframe,
-    leaderboardSortTypesToQueryFields,
-    leaderboardTimeframeFromQueryArgument
+  LeaderboardSort,
+  Timeframe,
+  leaderboardSortTypesToQueryFields,
+  leaderboardTimeframeFromQueryArgument,
 } from "../Query/leaderboard";
 
 interface Args {
-    sortBy: keyof typeof LeaderboardSort;
-    timeframe: keyof typeof Timeframe;
-    limit: number;
+  sortBy: keyof typeof LeaderboardSort;
+  timeframe: keyof typeof Timeframe;
+  limit: number;
 }
 
 const leaderboard = async (
-    parent: Party,
-    args: Args,
-    context: Context,
-    _info: GraphQLResolveInfo
+  parent: Party,
+  args: Args,
+  context: Context,
+  _info: GraphQLResolveInfo,
 ): Promise<DatabaseUser[]> => {
-    const usersInParty = await getUserIdsInParty(context.dataloaders.parties, parent.id);
-    const leaderboardEntries = await getTimeframeRankingByIndex(
-        leaderboardSortTypesToQueryFields[LeaderboardSort[args.sortBy]],
-        leaderboardTimeframeFromQueryArgument(DateTime.now(), Timeframe[args.timeframe]),
-        args.limit,
-        usersInParty
-    );
-    return await Promise.all(
-        leaderboardEntries.map(
-            async ({ id }) => (await context.dataloaders.users.load(id)) as DatabaseUser
-        )
-    );
+  const usersInParty = await getUserIdsInParty(
+    context.dataloaders.parties,
+    parent.id,
+  );
+  const leaderboardEntries = await getTimeframeRankingByIndex(
+    leaderboardSortTypesToQueryFields[LeaderboardSort[args.sortBy]],
+    leaderboardTimeframeFromQueryArgument(
+      DateTime.now(),
+      Timeframe[args.timeframe],
+    ),
+    args.limit,
+    usersInParty,
+  );
+  return await Promise.all(
+    leaderboardEntries.map(
+      async ({ id }) =>
+        (await context.dataloaders.users.load(id)) as DatabaseUser,
+    ),
+  );
 };
 
 const getTimeframeRankingByIndex = async (
-    index: string,
-    timeframe: string,
-    limit: number,
-    usersInParty: string[]
+  index: string,
+  timeframe: string,
+  limit: number,
+  usersInParty: string[],
 ): Promise<LeaderboardEntry[]> => {
-    try {
-        console.info(`Getting items with timeframe ${timeframe} sorted by ${index}`);
-        const queryRequest = new QueryCommand({
-            TableName: LEADERBOARD_TABLE,
-            IndexName: index,
-            KeyConditionExpression: "timeframe = :value",
-            ExpressionAttributeValues: { ":value": timeframe, ":users": usersInParty },
-            ScanIndexForward: false,
-            Limit: limit,
-            FilterExpression: "id IN :users"
-        });
-        const itemOutput = await documentClient.send(queryRequest);
-        return itemOutput.Items as LeaderboardEntry[];
-    } catch (err) {
-        console.error(err);
-        throw new GraphQLError("DynamoDB Query Call Failed");
-    }
+  try {
+    console.info(
+      `Getting items with timeframe ${timeframe} sorted by ${index}`,
+    );
+    const queryRequest = new QueryCommand({
+      TableName: LEADERBOARD_TABLE,
+      IndexName: index,
+      KeyConditionExpression: "timeframe = :value",
+      ExpressionAttributeValues: {
+        ":value": timeframe,
+        ":users": usersInParty,
+      },
+      ScanIndexForward: false,
+      Limit: limit,
+      FilterExpression: "id IN :users",
+    });
+    const itemOutput = await documentClient.send(queryRequest);
+    return itemOutput.Items as LeaderboardEntry[];
+  } catch (err) {
+    console.error(err);
+    throw new GraphQLError("DynamoDB Query Call Failed");
+  }
 };
 
 const getUserIdsInParty = async (
-    partiesDataloader: DataLoader<string, Party | undefined, string>,
-    partyId: string
+  partiesDataloader: DataLoader<string, Party | undefined, string>,
+  partyId: string,
 ): Promise<string[]> => {
-    const party = (await partiesDataloader.load(partyId)) as Party;
-    return party.users;
+  const party = (await partiesDataloader.load(partyId)) as Party;
+  return party.users;
 };
 
 export default leaderboard;
