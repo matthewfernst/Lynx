@@ -5,6 +5,15 @@ struct PartyView: View {
     @State private var partyHandler = PartyHandler()
     @State private var showCreateParty = false
     @State private var showProfile = false
+    @State private var showNotifications = false
+    @State private var showUploadFilesSheet = false
+    @State private var showUploadProgress = false
+    @State private var showSlopesFolderAlreadyConnected = false
+    @State private var folderConnectionHandler = FolderConnectionHandler()
+
+    private var slopesFolderIsConnected: Bool {
+        BookmarkManager.shared.bookmark != nil
+    }
 
     var body: some View {
         NavigationStack {
@@ -21,6 +30,33 @@ struct PartyView: View {
             .navigationTitle("Parties")
             .scrollContentBackground(.hidden)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    if slopesFolderIsConnected {
+                        Button("Folder Already Connected", systemImage: "externaldrive.fill.badge.checkmark") {
+                            showSlopesFolderAlreadyConnected = true
+                        }
+                        .tint(.green)
+                    } else {
+                        Button("Connect Folder", systemImage: "folder.badge.plus") {
+                            showUploadFilesSheet = true
+                        }
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showNotifications = true
+                    }) {
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: "bell.fill")
+                            if !partyHandler.partyInvites.isEmpty {
+                                Circle()
+                                    .fill(.red)
+                                    .frame(width: 8, height: 8)
+                                    .offset(x: 4, y: -4)
+                            }
+                        }
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         showCreateParty = true
@@ -37,6 +73,25 @@ struct PartyView: View {
             }
             .sheet(isPresented: $showProfile) {
                 AccountView()
+            }
+            .sheet(isPresented: $showUploadFilesSheet) {
+                FolderConnectionView(
+                    showUploadProgressView: $showUploadProgress,
+                    folderConnectionHandler: folderConnectionHandler
+                )
+            }
+            .sheet(isPresented: $showUploadProgress) {
+                FileUploadProgressView(
+                    folderConnectionHandler: folderConnectionHandler
+                )
+            }
+            .sheet(isPresented: $showNotifications) {
+                NavigationStack {
+                    PartyInvitesView(partyHandler: partyHandler)
+                }
+            }
+            .alert("Slopes Folder Connected", isPresented: $showSlopesFolderAlreadyConnected) {} message: {
+                Text("When you open the app, we will automatically upload new files to propogate to MountainUI.")
             }
             .alert("Error", isPresented: .constant(partyHandler.errorMessage != nil)) {
                 Button("OK") {

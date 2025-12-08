@@ -5,31 +5,47 @@ struct LifetimeDetailsView: View {
     var logbookStats: LogbookStats
 
     var body: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 12) {
-                ForEach(logbookStats.lifetimeAverages.flatMap { $0 }, id: \.self) { stat in
-                    statCard(
-                        icon: stat.systemImageName,
-                        title: stat.label.uppercased(),
-                        value: stat.information,
-                        color: .blue,
-                        showBadge: false
-                    )
+        VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("LIFETIME AVERAGES")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .padding(.leading, 4)
+
+                HStack(spacing: 12) {
+                    ForEach(logbookStats.lifetimeAverages.flatMap { $0 }, id: \.self) { stat in
+                        statCard(
+                            icon: stat.systemImageName,
+                            title: stat.label.uppercased(),
+                            value: stat.information,
+                            color: .blue,
+                            showBadge: false
+                        )
+                    }
                 }
             }
-            HStack(spacing: 12) {
-                ForEach(logbookStats.lifetimeBest.flatMap { $0 }, id: \.self) { stat in
-                    statCard(
-                        icon: stat.systemImageName,
-                        title: stat.label.uppercased(),
-                        value: stat.information,
-                        color: .orange,
-                        showBadge: true
-                    )
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("PERSONAL RECORDS")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .padding(.leading, 4)
+
+                HStack(spacing: 12) {
+                    ForEach(logbookStats.lifetimeBest.flatMap { $0 }, id: \.self) { stat in
+                        statCard(
+                            icon: stat.systemImageName,
+                            title: stat.label.uppercased(),
+                            value: stat.information,
+                            color: .orange,
+                            showBadge: true
+                        )
+                    }
                 }
             }
         }
         .padding(.horizontal)
+        .padding(.top, 8)
     }
 
     private func statCard(

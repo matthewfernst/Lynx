@@ -7,8 +7,6 @@ struct LogbookView: View {
 
     var logbookStats: LogbookStats
 
-    @State private var showMoreInfo = false
-
     @State private var showUploadFilesSheet = false
     @State private var showUploadProgress = false
 
@@ -18,6 +16,8 @@ struct LogbookView: View {
 
     @State private var showProfile = false
     @State private var showLoadError = false
+    @State private var showNotifications = false
+    @State private var partyHandler = PartyHandler()
 
     private var slopesFolderIsConnected: Bool {
         BookmarkManager.shared.bookmark != nil
@@ -28,14 +28,13 @@ struct LogbookView: View {
             autoUpload
             NavigationStack {
                 VStack {
-                    ProfileSummaryView(logbookStats: logbookStats)
                     LifetimeDetailsView(logbookStats: logbookStats)
                     scrollableSessionSummaries
                 }
                 .navigationTitle("Logbook")
                 .toolbar {
-                    moreInfoButton
                     documentPickerAndConnectionButton
+                    notificationsButton
                     profileButton
                 }
                 .task {
@@ -70,6 +69,14 @@ struct LogbookView: View {
                 .sheet(isPresented: $showProfile) {
                     AccountView()
                 }
+                .sheet(isPresented: $showNotifications) {
+                    NavigationStack {
+                        PartyInvitesView(partyHandler: partyHandler)
+                    }
+                }
+                .task {
+                    partyHandler.fetchPartyInvites()
+                }
             }
         }
     }
@@ -97,28 +104,8 @@ struct LogbookView: View {
           .animation(.easeInOut, value: showAutoUpload)
     }
     
-    private var moreInfoButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button("More Info", systemImage: "info.circle") {
-                showMoreInfo = true
-            }
-            .confirmationDialog("Slopes Integration", isPresented: $showMoreInfo, titleVisibility: .visible) {
-                Link(
-                    "What is Slopes?",
-                    destination: URL(string: Constants.slopesLink)!
-                )
-                Link(
-                    "What is MountainUI?",
-                    destination: URL(string: Constants.mountainUILink)!
-                )
-            } message:  {
-                Text(Constants.slopeIntegrationMessage)
-            }
-        }
-    }
-    
     private var documentPickerAndConnectionButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .topBarLeading) {
             if slopesFolderIsConnected {
                 Button("Folder Already Connected", systemImage: "externaldrive.fill.badge.checkmark") {
                     showSlopesFolderAlreadyConnected = true
@@ -127,6 +114,24 @@ struct LogbookView: View {
             } else {
                 Button("Connect Folder", systemImage: "folder.badge.plus") {
                     showUploadFilesSheet = true
+                }
+            }
+        }
+    }
+
+    private var notificationsButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button(action: {
+                showNotifications = true
+            }) {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "bell.fill")
+                    if !partyHandler.partyInvites.isEmpty {
+                        Circle()
+                            .fill(.red)
+                            .frame(width: 8, height: 8)
+                            .offset(x: 4, y: -4)
+                    }
                 }
             }
         }
@@ -179,7 +184,13 @@ struct LogbookView: View {
                 ForEach(logsBySeasonGrouped, id: \.season) { seasonGroup in
                     Section {
                         ForEach(seasonGroup.logs, id: \.index) { logItem in
-                            configuredSessionSummary(with: logItem.data)
+                            if let logbook = logbookStats.logbook(at: logItem.index) {
+                                NavigationLink {
+                                    LogDetailView(logbook: logbook, logbookStats: logbookStats)
+                                } label: {
+                                    configuredSessionSummary(with: logItem.data)
+                                }
+                            }
                         }
                     } header: {
                         Text(seasonGroup.season)
@@ -247,8 +258,8 @@ struct LogbookView: View {
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
 
-        // Group logs by season
-        var seasonGroups: [String: [(index: Int, data: ConfiguredLogbookData)]] = [:]
+        // Group logs by season with dates for sorting
+        var seasonGroups: [String: [(index: Int, data: ConfiguredLogbookData, date: Date)]] = [:]
 
         for (index, logbook) in logbookStats.logbooks.enumerated() {
             guard let date = dateFormatter.date(from: logbook.startDate),
@@ -270,12 +281,17 @@ struct LogbookView: View {
             }
 
             let seasonKey = "\(firstYear)/\(secondYear)"
-            seasonGroups[seasonKey, default: []].append((index, configuredData))
+            seasonGroups[seasonKey, default: []].append((index, configuredData, date))
         }
 
-        // Sort seasons in descending order (most recent first) and logs within each season
+        // Sort seasons and logs in descending order (newest first)
         return seasonGroups
-            .map { (season: $0.key, logs: $0.value.sorted { $0.index > $1.index }) }
+            .map { (
+                season: $0.key,
+                logs: $0.value
+                    .sorted { $0.date > $1.date }
+                    .map { (index: $0.index, data: $0.data) }
+            ) }
             .sorted { $0.season > $1.season }
     }
 
@@ -356,12 +372,6 @@ struct LogbookView: View {
     
     // MARK: - Constants
     private struct Constants {
-        static let slopeIntegrationMessage = """
-                           Lynx works together with the Slopes App by Breakpoint Studios. Slopes is able to track a skier or snowboarder while they shred it down the mountain. Slopes can track things such as average speed, total vertical feet, and more. Lynx uses the data stored by Slopes and links to your MountainUI display.
-                       """
-        static let mountainUILink = "https://github.com/matthewfernst/Mountain-UI"
-        static let slopesLink = "https://getslopes.com"
-
         static let noLogsMessage = """
                                    No logs found. Link your Slopes folder to start tracking your runs, view leaderboards, and see all your ski statistics.
 
@@ -375,16 +385,16 @@ struct LogbookView: View {
 
                                                    Happy Shreading! 🏂
                                                    """
-        
+
         struct Spacing {
             static let mainTitleAndDetails: CGFloat = 20
             static let dateAndSummary: CGFloat = 4
         }
-        
+
         struct Fonts {
             static let resortNameSize: CGFloat = 18
             static let resortNameWeight: Font.Weight = .medium
-            
+
             static let detailSize: CGFloat = 12
             static let detailWeight: Font.Weight = .medium
         }
