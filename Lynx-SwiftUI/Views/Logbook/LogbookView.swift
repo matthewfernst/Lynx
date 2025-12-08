@@ -115,40 +115,40 @@ struct LogbookView: View {
     }
 
     private var scrollableSessionSummaries: some View {
-        List {
+        Group {
             if logbookStats.isLoadingLogs {
-                Section {
-                    VStack(spacing: 16) {
-                        ProgressView()
-                        Text("Loading your ski logs...")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical, 40)
-                    .frame(maxWidth: .infinity)
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .controlSize(.large)
+                    Text("Loading your ski logs...")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                 }
-            } else if logbookStats.logbooks.isEmpty {
-                Section {
-                    VStack(spacing: 16) {
-                        Text(Constants.noLogsMessage)
-                            .multilineTextAlignment(.center)
-                            .foregroundStyle(.secondary)
-
-                        Button {
-                            showUploadFilesSheet = true
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "link")
-                                Text("Link Your Account")
-                            }
-                            .font(.headline)
-                        }
-                        .buttonStyle(.borderedProminent)
-                    }
-                    .padding(.vertical)
-                    .frame(maxWidth: .infinity)
-                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
+                List {
+                    if logbookStats.logbooks.isEmpty {
+                        Section {
+                            VStack(spacing: 16) {
+                                Text(Constants.noLogsMessage)
+                                    .multilineTextAlignment(.center)
+                                    .foregroundStyle(.secondary)
+
+                                Button {
+                                    showUploadFilesSheet = true
+                                } label: {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "link")
+                                        Text("Link Your Account")
+                                    }
+                                    .font(.headline)
+                                }
+                                .buttonStyle(.borderedProminent)
+                            }
+                            .padding(.vertical)
+                            .frame(maxWidth: .infinity)
+                        }
+                    } else {
                 // Stats section
                 Section {
                     LifetimeDetailsView(logbookStats: logbookStats)
@@ -212,11 +212,13 @@ struct LogbookView: View {
                             .padding(.top)
                     }
                     .headerProminence(.increased)
+                    }
+                    }
+                }
+                .refreshable {
+                    requestLogs()
                 }
             }
-        }
-        .refreshable {
-            requestLogs()
         }
     }
     

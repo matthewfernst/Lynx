@@ -9,7 +9,7 @@ public extension ApolloGeneratedGraphQL {
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        mutation EditUser($userData: [UserDataPair!]!) {
+        mutation EditUser($userData: [KeyValuePair!]!) {
           editUser(userData: $userData) {
             __typename
             id
@@ -40,9 +40,9 @@ public extension ApolloGeneratedGraphQL {
         """#
       ))
 
-    public var userData: [UserDataPair]
+    public var userData: [KeyValuePair]
 
-    public init(userData: [UserDataPair]) {
+    public init(userData: [KeyValuePair]) {
       self.userData = userData
     }
 

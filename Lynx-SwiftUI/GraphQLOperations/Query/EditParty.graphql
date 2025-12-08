@@ -1,0 +1,25 @@
+mutation EditParty($partyId: ID!, $partyData: [KeyValuePair!]!) {
+  editParty(partyId: $partyId, partyData: $partyData) {
+    id
+    name
+    description
+    partyManager {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+    users {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+    invitedUsers {
+      id
+      firstName
+      lastName
+      profilePictureUrl
+    }
+  }
+}

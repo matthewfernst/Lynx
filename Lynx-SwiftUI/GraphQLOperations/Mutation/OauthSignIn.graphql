@@ -1,7 +1,7 @@
 mutation oauthSignIn(
     $oauthLoginId: OAuthTypeCorrelationInput!
     $email: String
-    $userData: [UserDataPair!]
+    $userData: [KeyValuePair!]
 ) {
     oauthSignIn(oauthLoginId: $oauthLoginId, email: $email, userData: $userData) {
         accessToken

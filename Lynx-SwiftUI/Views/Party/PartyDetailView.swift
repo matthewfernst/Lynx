@@ -9,21 +9,27 @@ struct PartyDetailView: View {
 
     @State private var selectedTimeframe: Timeframe = .season
     @State private var showInviteUser = false
-    @State private var showEditParty = false
+    @State private var showPartySettings = false
     @State private var showLeaveConfirmation = false
     @State private var showDeleteConfirmation = false
 
     private var isManager: Bool {
         guard let details = partyHandler.selectedPartyDetails,
-              let profileId = profileManager.profile?.id else { return false }
-        return profileId == details.partyManager.id
+              let profile = profileManager.profile else { return false }
+        // Try ID match first
+        if profile.id == details.partyManager.id {
+            return true
+        }
+        // Fallback: match by name and email
+        return profile.firstName == details.partyManager.firstName &&
+               profile.lastName == details.partyManager.lastName
     }
 
     var body: some View {
         ScrollView {
             if partyHandler.isLoadingDetails {
                 ProgressView()
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding()
             } else if let details = partyHandler.selectedPartyDetails {
                 VStack(spacing: 24) {
@@ -63,61 +69,23 @@ struct PartyDetailView: View {
                         partyId: partyId
                     )
 
-                    if !details.invitedUsers.isEmpty {
-                        PartyInvitedUsersListSection(
-                            details: details,
-                            partyHandler: partyHandler,
-                            partyId: partyId
-                        )
-                    }
-
-                    Button(role: .destructive) {
-                        if isManager {
-                            showDeleteConfirmation = true
-                        } else {
-                            showLeaveConfirmation = true
-                        }
-                    } label: {
-                        HStack {
-                            Spacer()
-                            if (isManager && partyHandler.isDeletingParty) || (!isManager && partyHandler.isLeavingParty) {
-                                ProgressView()
-                                    .progressViewStyle(.circular)
-                                    .tint(.red)
-                            } else {
-                                Label(
-                                    isManager ? "Delete Party" : "Leave Party",
-                                    systemImage: isManager ? "trash" : "rectangle.portrait.and.arrow.right"
-                                )
-                                .foregroundStyle(.red)
-                            }
-                            Spacer()
-                        }
-                        .padding()
-                        .background(Color(uiColor: .secondarySystemGroupedBackground))
-                        .cornerRadius(12)
-                    }
-                    .padding(.top, 8)
-                    .disabled(partyHandler.isDeletingParty || partyHandler.isLeavingParty)
+                    PartyInvitedUsersListSection(
+                        details: details,
+                        partyHandler: partyHandler,
+                        partyId: partyId
+                    )
                 }
                 .padding()
             }
         }
+        .background(Color(uiColor: .systemGroupedBackground))
         .navigationTitle(partyHandler.selectedPartyDetails?.name ?? "Party")
         .navigationBarTitleDisplayMode(.large)
         .scrollContentBackground(.hidden)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                HStack(spacing: 16) {
-                    if isManager {
-                        Button(action: { showEditParty = true }) {
-                            Image(systemName: "pencil")
-                        }
-                    }
-
-                    Button(action: { showInviteUser = true }) {
-                        Image(systemName: "person.badge.plus")
-                    }
+                Button(action: { showPartySettings = true }) {
+                    Image(systemName: "pencil")
                 }
             }
         }
@@ -134,13 +102,16 @@ struct PartyDetailView: View {
         .sheet(isPresented: $showInviteUser) {
             PartyInviteUserView(partyHandler: partyHandler, partyId: partyId)
         }
-        .sheet(isPresented: $showEditParty) {
+        .sheet(isPresented: $showPartySettings) {
             if let details = partyHandler.selectedPartyDetails {
-                EditPartyView(
+                PartySettingsView(
                     partyHandler: partyHandler,
                     partyId: partyId,
-                    currentName: details.name,
-                    currentDescription: details.description
+                    partyName: details.name,
+                    partyDescription: details.description,
+                    invitedUsers: details.invitedUsers,
+                    isManager: isManager,
+                    onDismiss: { dismiss() }
                 )
             }
         }
@@ -454,36 +425,51 @@ struct PartyInvitedUsersListSection: View {
                 .font(.title3)
                 .fontWeight(.semibold)
 
-            VStack(spacing: 8) {
-                ForEach(details.invitedUsers, id: \.id) { user in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("\(user.firstName) \(user.lastName)")
-                                .font(.subheadline)
-                        }
-                        Spacer()
-                        Image(systemName: "envelope.fill")
-                            .foregroundStyle(.secondary)
-                            .font(.caption)
+            if details.invitedUsers.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "envelope")
+                        .font(.system(size: 32))
+                        .foregroundStyle(.secondary)
+                    Text("No Pending Invites")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 32)
+                .background(Color(uiColor: .secondarySystemGroupedBackground))
+                .cornerRadius(12)
+            } else {
+                VStack(spacing: 8) {
+                    ForEach(details.invitedUsers, id: \.id) { user in
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("\(user.firstName) \(user.lastName)")
+                                    .font(.subheadline)
+                            }
+                            Spacer()
+                            Image(systemName: "envelope.fill")
+                                .foregroundStyle(.secondary)
+                                .font(.caption)
 
-                        if partyHandler.isRevokingInvite {
-                            ProgressView()
-                                .progressViewStyle(.circular)
-                                .controlSize(.small)
-                        } else {
-                            Button(action: {
-                                inviteToRevoke = user
-                                showRevokeConfirmation = true
-                            }) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundStyle(.red)
-                                    .font(.caption)
+                            if partyHandler.isRevokingInvite {
+                                ProgressView()
+                                    .progressViewStyle(.circular)
+                                    .controlSize(.small)
+                            } else {
+                                Button(action: {
+                                    inviteToRevoke = user
+                                    showRevokeConfirmation = true
+                                }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.red)
+                                        .font(.caption)
+                                }
                             }
                         }
+                        .padding()
+                        .background(Color(uiColor: .secondarySystemGroupedBackground))
+                        .cornerRadius(8)
                     }
-                    .padding()
-                    .background(Color(uiColor: .secondarySystemGroupedBackground))
-                    .cornerRadius(8)
                 }
             }
         }
@@ -768,6 +754,335 @@ struct PartyInviteUserView: View {
                 showSuccess = true
             case .failure(let error):
                 errorMessage = "Error sending invitation: \(error.localizedDescription)"
+            }
+        }
+    }
+}
+
+struct PartySettingsView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Bindable var partyHandler: PartyHandler
+    let partyId: String
+    let partyName: String
+    let partyDescription: String?
+    let invitedUsers: [PartyUser]
+    let isManager: Bool
+    let onDismiss: () -> Void
+
+    @State private var editedName: String
+    @State private var editedDescription: String
+    @State private var showLeaveConfirmation = false
+    @State private var showDeleteConfirmation = false
+    @State private var hasChanges = false
+
+    // Invite user state
+    @State private var inviteEmail = ""
+    @State private var isSearching = false
+    @State private var searchErrorMessage: String?
+    @State private var foundUser: PartyUser?
+    @State private var profilePicture: Image?
+    @State private var searchTask: Task<Void, Never>?
+
+    init(partyHandler: PartyHandler, partyId: String, partyName: String, partyDescription: String?, invitedUsers: [PartyUser], isManager: Bool, onDismiss: @escaping () -> Void) {
+        self.partyHandler = partyHandler
+        self.partyId = partyId
+        self.partyName = partyName
+        self.partyDescription = partyDescription
+        self.invitedUsers = invitedUsers
+        self.isManager = isManager
+        self.onDismiss = onDismiss
+        _editedName = State(initialValue: partyName)
+        _editedDescription = State(initialValue: partyDescription ?? "")
+    }
+
+    private var isUserAlreadyInvited: Bool {
+        guard let user = foundUser else { return false }
+        return invitedUsers.contains(where: { $0.id == user.id })
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if isManager {
+                    Section {
+                        TextField("Party Name", text: $editedName)
+                            .onChange(of: editedName) { _, _ in checkForChanges() }
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Description")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            TextField("Add a description...", text: $editedDescription, axis: .vertical)
+                                .lineLimit(3...6)
+                                .onChange(of: editedDescription) { _, _ in checkForChanges() }
+                        }
+                    } header: {
+                        Text("Party Details")
+                    } footer: {
+                        if hasChanges {
+                            Button(action: saveChanges) {
+                                HStack {
+                                    if partyHandler.isEditingParty {
+                                        ProgressView()
+                                            .progressViewStyle(.circular)
+                                            .controlSize(.small)
+                                        Text("Saving...")
+                                    } else {
+                                        Text("Save Changes")
+                                            .fontWeight(.semibold)
+                                    }
+                                }
+                            }
+                            .disabled(partyHandler.isEditingParty || editedName.isEmpty)
+                        }
+                    }
+
+                    Section {
+                        TextField("Search by email...", text: $inviteEmail)
+                            .autocapitalization(.none)
+                            .autocorrectionDisabled()
+                            .keyboardType(.emailAddress)
+                            .textContentType(.emailAddress)
+                            .onChange(of: inviteEmail) { _, newValue in
+                                debouncedSearch(email: newValue)
+                            }
+
+                        if isSearching {
+                            HStack {
+                                ProgressView()
+                                    .controlSize(.small)
+                                Text("Searching...")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 8)
+                        } else if let errorMessage = searchErrorMessage {
+                            Text(errorMessage)
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        } else if let user = foundUser {
+                            HStack(spacing: 12) {
+                                if let profilePicture {
+                                    profilePicture
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 40, height: 40)
+                                        .clipShape(Circle())
+                                } else {
+                                    Image(systemName: "person.circle.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 40, height: 40)
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("\(user.firstName) \(user.lastName)")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                    Text(inviteEmail)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                Spacer()
+
+                                if isUserAlreadyInvited {
+                                    Text("Already Invited")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(Color(uiColor: .secondarySystemGroupedBackground))
+                                        .cornerRadius(6)
+                                } else {
+                                    Button(action: sendInvite) {
+                                        if partyHandler.isInvitingUser {
+                                            ProgressView()
+                                                .progressViewStyle(.circular)
+                                                .controlSize(.small)
+                                        } else {
+                                            Text("Invite")
+                                                .fontWeight(.semibold)
+                                        }
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    .controlSize(.small)
+                                    .disabled(partyHandler.isInvitingUser)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    } header: {
+                        Text("Invite User")
+                    } footer: {
+                        if !inviteEmail.isEmpty && foundUser == nil && !isSearching && searchErrorMessage == nil {
+                            Text("Start typing an email to search for users")
+                                .font(.caption)
+                        }
+                    }
+                }
+
+                Section {
+                    if isManager {
+                        Button(role: .destructive, action: { showDeleteConfirmation = true }) {
+                            HStack {
+                                if partyHandler.isDeletingParty {
+                                    ProgressView()
+                                        .progressViewStyle(.circular)
+                                        .controlSize(.small)
+                                } else {
+                                    Image(systemName: "trash")
+                                    Text("Delete Party")
+                                }
+                            }
+                        }
+                        .disabled(partyHandler.isDeletingParty)
+                    } else {
+                        Button(role: .destructive, action: { showLeaveConfirmation = true }) {
+                            HStack {
+                                if partyHandler.isLeavingParty {
+                                    ProgressView()
+                                        .progressViewStyle(.circular)
+                                        .controlSize(.small)
+                                } else {
+                                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                                    Text("Leave Party")
+                                }
+                            }
+                        }
+                        .disabled(partyHandler.isLeavingParty)
+                    }
+                } header: {
+                    Text("Danger Zone")
+                }
+            }
+            .navigationTitle("Party Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .onChange(of: foundUser) { _, newUser in
+            loadProfilePicture(for: newUser)
+        }
+        .alert("Leave Party", isPresented: $showLeaveConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Leave", role: .destructive) {
+                partyHandler.leaveParty(partyId: partyId) { _ in
+                    dismiss()
+                    onDismiss()
+                }
+            }
+        } message: {
+            Text("Are you sure you want to leave this party?")
+        }
+        .alert("Delete Party", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                partyHandler.deleteParty(partyId: partyId) { _ in
+                    dismiss()
+                    onDismiss()
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete this party? This action cannot be undone.")
+        }
+    }
+
+    private func checkForChanges() {
+        hasChanges = editedName != partyName || editedDescription != (partyDescription ?? "")
+    }
+
+    private func saveChanges() {
+        partyHandler.editParty(
+            partyId: partyId,
+            name: editedName,
+            description: editedDescription.isEmpty ? nil : editedDescription
+        ) { result in
+            if result {
+                hasChanges = false
+            }
+        }
+    }
+
+    private func debouncedSearch(email: String) {
+        searchTask?.cancel()
+        searchErrorMessage = nil
+
+        guard !email.isEmpty else {
+            foundUser = nil
+            profilePicture = nil
+            return
+        }
+
+        searchTask = Task {
+            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+
+            guard !Task.isCancelled else { return }
+
+            await MainActor.run {
+                searchUser(email: email)
+            }
+        }
+    }
+
+    private func searchUser(email: String) {
+        guard !email.isEmpty else { return }
+        isSearching = true
+        foundUser = nil
+        profilePicture = nil
+
+        ApolloLynxClient.userLookupByEmail(email: email) { result in
+            DispatchQueue.main.async {
+                isSearching = false
+                switch result {
+                case .success(let user):
+                    if let user = user {
+                        foundUser = user
+                    } else {
+                        searchErrorMessage = "No user found with that email address."
+                    }
+                case .failure(let error):
+                    searchErrorMessage = "Error searching for user: \(error.localizedDescription)"
+                }
+            }
+        }
+    }
+
+    private func loadProfilePicture(for user: PartyUser?) {
+        guard let user = user, let url = user.profilePictureURL else {
+            profilePicture = nil
+            return
+        }
+
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data, let uiImage = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    profilePicture = Image(uiImage: uiImage)
+                }
+            }
+        }.resume()
+    }
+
+    private func sendInvite() {
+        guard let user = foundUser else { return }
+        searchErrorMessage = nil
+
+        partyHandler.inviteUserToParty(partyId: partyId, userId: user.id) { result in
+            switch result {
+            case .success:
+                // Clear the search after successful invite
+                inviteEmail = ""
+                foundUser = nil
+                profilePicture = nil
+            case .failure(let error):
+                searchErrorMessage = "Error sending invitation: \(error.localizedDescription)"
             }
         }
     }

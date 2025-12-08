@@ -1,4 +1,4 @@
-mutation EditUser($userData: [UserDataPair!]!) {
+mutation EditUser($userData: [KeyValuePair!]!) {
     editUser(userData: $userData) {
         id
         oauthLoginIds {

@@ -17,6 +17,7 @@ public extension ApolloGeneratedGraphQL {
               __typename
               id
               name
+              description
               partyManager {
                 __typename
                 id
@@ -86,6 +87,7 @@ public extension ApolloGeneratedGraphQL {
             .field("__typename", String.self),
             .field("id", ApolloGeneratedGraphQL.ID.self),
             .field("name", String.self),
+            .field("description", String?.self),
             .field("partyManager", PartyManager.self),
             .field("users", [User].self),
             .field("invitedUsers", [InvitedUser].self),
@@ -93,6 +95,7 @@ public extension ApolloGeneratedGraphQL {
 
           public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
           public var name: String { __data["name"] }
+          public var description: String? { __data["description"] }
           public var partyManager: PartyManager { __data["partyManager"] }
           public var users: [User] { __data["users"] }
           public var invitedUsers: [InvitedUser] { __data["invitedUsers"] }

@@ -4,7 +4,7 @@
 import ApolloAPI
 
 public extension ApolloGeneratedGraphQL {
-  struct UserDataPair: InputObject {
+  struct KeyValuePair: InputObject {
     public private(set) var __data: InputDict
 
     public init(_ data: InputDict) {

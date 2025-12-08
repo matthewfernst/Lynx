@@ -99,7 +99,7 @@ struct PartiesListSection: View {
         VStack(alignment: .leading, spacing: 12) {
             if partyHandler.isLoadingParties {
                 ProgressView()
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding()
             } else if partyHandler.parties.isEmpty {
                 VStack(spacing: 12) {
@@ -146,7 +146,7 @@ struct PartyInvitesSection: View {
 
             if partyHandler.isLoadingInvites {
                 ProgressView()
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding()
             } else {
                 ForEach(partyHandler.partyInvites, id: \.id) { party in

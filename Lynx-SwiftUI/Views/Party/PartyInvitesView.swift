@@ -9,7 +9,7 @@ struct PartyInvitesView: View {
             if partyHandler.isLoadingInvites {
                 Section {
                     ProgressView()
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding()
                 }
             } else if partyHandler.partyInvites.isEmpty {

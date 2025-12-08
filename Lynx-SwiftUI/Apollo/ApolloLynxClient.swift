@@ -184,18 +184,18 @@ final class ApolloLynxClient {
         Logger.apollo.debug("                         profilePictureUrl  -> \(profilePictureURL?.absoluteString ?? "nil")")
 
         
-        var userData: [ApolloGeneratedGraphQL.UserDataPair] = []
-        var userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.UserDataPair]>(nilLiteral: ())
+        var userData: [ApolloGeneratedGraphQL.KeyValuePair] = []
+        var userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.KeyValuePair]>(nilLiteral: ())
         
         // Dumb code. Would rather use compactMap but Apollo forces you to explicitly say the userData's each element 🤷‍♂️
         if let firstName = firstName, let lastName = lastName {
-            userData.append(ApolloGeneratedGraphQL.UserDataPair(key: "firstName", value: firstName))
-            userData.append(ApolloGeneratedGraphQL.UserDataPair(key: "lastName", value: lastName))
+            userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "firstName", value: firstName))
+            userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "lastName", value: lastName))
             if let profilePictureURL = profilePictureURL {
-                userData.append(ApolloGeneratedGraphQL.UserDataPair(key: "profilePictureUrl", value: profilePictureURL.absoluteString))
-                userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.UserDataPair]>(arrayLiteral: userData[0], userData[1], userData[2])
+                userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "profilePictureUrl", value: profilePictureURL.absoluteString))
+                userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.KeyValuePair]>(arrayLiteral: userData[0], userData[1], userData[2])
             } else {
-                userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.UserDataPair]>(arrayLiteral: userData[0], userData[1])
+                userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.KeyValuePair]>(arrayLiteral: userData[0], userData[1])
             }
         }
         
@@ -299,10 +299,10 @@ final class ApolloLynxClient {
             case profilePictureURLMissing
         }
         
-        var userData: [ApolloGeneratedGraphQL.UserDataPair] = []
+        var userData: [ApolloGeneratedGraphQL.KeyValuePair] = []
         for (key, value) in profileChanges {
             let stringValue = String(describing: value)
-            userData.append(ApolloGeneratedGraphQL.UserDataPair(key: key, value: stringValue))
+            userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: key, value: stringValue))
         }
         
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.EditUserMutation(userData: userData)) { result in
@@ -896,8 +896,8 @@ final class ApolloLynxClient {
         enum CreatePartyError: Error {
             case unwrapError
         }
-
-        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreatePartyMutation(name: name, description: .some(description))) { result in
+        let descriptionGQL: GraphQLNullable<String> = (description == nil) ? .null : .some(description!)
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreatePartyMutation(name: name, description: descriptionGQL)) { result in
             switch result {
             case .success(let graphQLResult):
                 guard let party = graphQLResult.data?.createParty else {
