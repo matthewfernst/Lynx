@@ -2,6 +2,7 @@ query GetPartyDetails($partyId: ID!, $sortBy: LeaderboardSort = VERTICAL_DISTANC
   partyLookupById(id: $partyId) {
     id
     name
+    description
     partyManager {
       id
       firstName

@@ -1,11 +1,23 @@
 import SwiftUI
 
-struct CreatePartyView: View {
+struct EditPartyView: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var partyHandler: PartyHandler
+    let partyId: String
+    let currentName: String
+    let currentDescription: String?
 
-    @State private var partyName = ""
-    @State private var partyDescription = ""
+    @State private var partyName: String
+    @State private var partyDescription: String
+
+    init(partyHandler: PartyHandler, partyId: String, currentName: String, currentDescription: String?) {
+        self.partyHandler = partyHandler
+        self.partyId = partyId
+        self.currentName = currentName
+        self.currentDescription = currentDescription
+        self._partyName = State(initialValue: currentName)
+        self._partyDescription = State(initialValue: currentDescription ?? "")
+    }
 
     var body: some View {
         NavigationStack {
@@ -27,34 +39,38 @@ struct CreatePartyView: View {
                     Text("Add a description to let others know what your party is about")
                 }
             }
-            .navigationTitle("Create Party")
+            .navigationTitle("Edit Party")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .disabled(partyHandler.isCreatingParty)
+                    .disabled(partyHandler.isEditingParty)
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
-                    if partyHandler.isCreatingParty {
+                    if partyHandler.isEditingParty {
                         ProgressView()
                             .progressViewStyle(.circular)
                     } else {
-                        Button("Create") {
-                            createParty()
+                        Button("Save") {
+                            editParty()
                         }
-                        .disabled(partyName.isEmpty)
+                        .disabled(partyName.isEmpty || !hasChanges)
                     }
                 }
             }
         }
     }
 
-    private func createParty() {
+    private var hasChanges: Bool {
+        partyName != currentName || partyDescription != (currentDescription ?? "")
+    }
+
+    private func editParty() {
         let descriptionToSave = partyDescription.isEmpty ? nil : partyDescription
-        partyHandler.createParty(name: partyName, description: descriptionToSave) { success in
+        partyHandler.editParty(partyId: partyId, name: partyName, description: descriptionToSave) { success in
             if success {
                 dismiss()
             }
@@ -63,5 +79,10 @@ struct CreatePartyView: View {
 }
 
 #Preview {
-    CreatePartyView(partyHandler: PartyHandler())
+    EditPartyView(
+        partyHandler: PartyHandler(),
+        partyId: "1",
+        currentName: "Test Party",
+        currentDescription: "This is a test party"
+    )
 }

@@ -21,6 +21,11 @@ import {
   PARTIES_TABLE,
 } from "../../infrastructure/stacks/lynxApiStack";
 import {
+  leaderboardDataLoader,
+  partiesDataLoader,
+  usersDataLoader,
+} from "../dataloaders";
+import {
   DEPENDENCY_ERROR,
   LeaderboardEntry,
   Party,
@@ -31,6 +36,13 @@ export type Table =
   | typeof USERS_TABLE
   | typeof LEADERBOARD_TABLE
   | typeof PARTIES_TABLE;
+
+// prettier-ignore
+type TableDataLoader<T extends Table> =
+  T extends typeof USERS_TABLE ? typeof usersDataLoader :
+  T extends typeof PARTIES_TABLE ? typeof partiesDataLoader :
+  T extends typeof LEADERBOARD_TABLE ? typeof leaderboardDataLoader :
+  never;
 
 // prettier-ignore
 type TableObject<T extends Table> =
@@ -48,6 +60,19 @@ if (!process.env.AWS_REGION)
 const awsClient = new DynamoDB({ region: process.env.AWS_REGION });
 const dynamodbClient = captureAWSv3Client(awsClient);
 export const documentClient = DynamoDBDocument.from(dynamodbClient);
+
+function clearKeyFromTableDataLoader<T extends Table>(table: T, key: string) {
+  const tableMapping: {
+    [K in Table]: TableDataLoader<K>;
+  } = {
+    [USERS_TABLE]: usersDataLoader,
+    [PARTIES_TABLE]: partiesDataLoader,
+    [LEADERBOARD_TABLE]: leaderboardDataLoader,
+  };
+  const dataloader = tableMapping[table];
+  // @ts-expect-error Can't infer DataLoader to key mapping through generics
+  dataloader.clear(key);
+}
 
 export const getItem = async <T extends Table>(
   table: T,
@@ -120,6 +145,7 @@ export const updateItem = async <T extends Table>(
     console.info(
       `Updating item in ${table} with id ${id}. New ${key} is ${value}`,
     );
+    clearKeyFromTableDataLoader(table, key);
     const updateItemRequest = new UpdateCommand({
       TableName: table,
       Key: { id },
@@ -158,6 +184,7 @@ export async function addItemToArray<T extends Table>(
   console.debug(
     `Updating item in ${table} with id ${JSON.stringify(id)}. ${key} now has the following as a value: ${value.toString()}`,
   );
+  clearKeyFromTableDataLoader(table, id);
   try {
     const updateItemRequest = new UpdateCommand({
       TableName: table,

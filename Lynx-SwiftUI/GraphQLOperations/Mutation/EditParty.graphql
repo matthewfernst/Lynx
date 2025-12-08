@@ -1,5 +1,5 @@
-mutation CreateParty($name: String!, $description: String) {
-  createParty(name: $name, description: $description) {
+mutation EditParty($partyId: ID!, $partyData: [KeyValuePair!]!) {
+  editParty(partyId: $partyId, partyData: $partyData) {
     id
     name
     description

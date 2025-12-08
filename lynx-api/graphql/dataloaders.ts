@@ -25,35 +25,41 @@ import {
   ParsedLog,
 } from "./types";
 
-const createDataloaders = () => ({
-  users: new DataLoader(userDataLoader),
-  parties: new DataLoader(partiesDataLoader),
-  leaderboard: new DataLoader(leaderboardDataLoader, {
-    cacheKeyFn: (key) => JSON.stringify(key),
-  }),
-  logs: new DataLoader(logsDataLoader),
-  profilePictures: new DataLoader(profilePictureDataloader, {
-    cacheKeyFn: (user) => user.id,
-  }),
+export const usersDataLoader = new DataLoader(usersDataLoaderImpl);
+export const partiesDataLoader = new DataLoader(partiesDataLoaderImpl);
+export const leaderboardDataLoader = new DataLoader(leaderboardDataLoaderImpl, {
+  cacheKeyFn: (key) => JSON.stringify(key),
 });
 
-const userDataLoader = async (
-  userIds: readonly string[],
-): Promise<(DatabaseUser | undefined)[]> => {
-  return Promise.all(userIds.map((userId) => getItem(USERS_TABLE, userId)));
-};
+function retrieveAllDataLoaders() {
+  return {
+    users: usersDataLoader,
+    parties: partiesDataLoader,
+    leaderboard: leaderboardDataLoader,
+    logs: new DataLoader(logsDataLoader),
+    profilePictures: new DataLoader(profilePictureDataloader, {
+      cacheKeyFn: (user) => user.id,
+    }),
+  };
+}
 
-const partiesDataLoader = async (
+async function usersDataLoaderImpl(
+  userIds: readonly string[],
+): Promise<(DatabaseUser | undefined)[]> {
+  return Promise.all(userIds.map((userId) => getItem(USERS_TABLE, userId)));
+}
+
+async function partiesDataLoaderImpl(
   partyIds: readonly string[],
-): Promise<(Party | undefined)[]> => {
+): Promise<(Party | undefined)[]> {
   return Promise.all(
     partyIds.map((partyId) => getItem(PARTIES_TABLE, partyId)),
   );
-};
+}
 
-const leaderboardDataLoader = async (
+async function leaderboardDataLoaderImpl(
   leaderboardTableKeys: readonly { id: string; timeframe: string }[],
-) => {
+) {
   return Promise.all(
     leaderboardTableKeys.map(async ({ id, timeframe }) => {
       try {
@@ -74,7 +80,7 @@ const leaderboardDataLoader = async (
       }
     }),
   );
-};
+}
 
 export const profilePictureDataloader = async (
   users: readonly DatabaseUser[],
@@ -117,4 +123,4 @@ export const logsDataLoader = async (
   );
 };
 
-export default createDataloaders;
+export default retrieveAllDataLoaders;

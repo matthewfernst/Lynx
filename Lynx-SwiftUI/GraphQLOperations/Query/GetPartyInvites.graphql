@@ -4,6 +4,7 @@ query GetPartyInvites {
     partyInvites {
       id
       name
+      description
       partyManager {
         id
         firstName

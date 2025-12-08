@@ -30,6 +30,7 @@ import Mutation_createUserRecordUploadUrl from "./Mutation/createUserRecordUploa
 import Mutation_deleteParty from "./Mutation/deleteParty";
 import Mutation_deletePartyInvite from "./Mutation/deletePartyInvite";
 import Mutation_deleteUser from "./Mutation/deleteUser";
+import Mutation_editParty from "./Mutation/editParty";
 import Mutation_editUser from "./Mutation/editUser";
 import Mutation_joinParty from "./Mutation/joinParty";
 import Mutation_leaveParty from "./Mutation/leaveParty";
@@ -92,11 +93,14 @@ resolvers["LogDetail"]["verticalDistance"] = LogDetail_verticalDistance;
 resolvers["Mutation"]["combineOAuthAccounts"] = Mutation_combineOAuthAccounts;
 resolvers["Mutation"]["createParty"] = Mutation_createParty;
 resolvers["Mutation"]["createPartyInvite"] = Mutation_createPartyInvite;
-resolvers["Mutation"]["createUserProfilePictureUploadUrl"] = Mutation_createUserProfilePictureUploadUrl;
-resolvers["Mutation"]["createUserRecordUploadUrl"] = Mutation_createUserRecordUploadUrl;
+resolvers["Mutation"]["createUserProfilePictureUploadUrl"] =
+  Mutation_createUserProfilePictureUploadUrl;
+resolvers["Mutation"]["createUserRecordUploadUrl"] =
+  Mutation_createUserRecordUploadUrl;
 resolvers["Mutation"]["deleteParty"] = Mutation_deleteParty;
 resolvers["Mutation"]["deletePartyInvite"] = Mutation_deletePartyInvite;
 resolvers["Mutation"]["deleteUser"] = Mutation_deleteUser;
+resolvers["Mutation"]["editParty"] = Mutation_editParty;
 resolvers["Mutation"]["editUser"] = Mutation_editUser;
 resolvers["Mutation"]["joinParty"] = Mutation_joinParty;
 resolvers["Mutation"]["leaveParty"] = Mutation_leaveParty;

@@ -101,6 +101,7 @@ export interface LeaderboardEntry {
 export interface Party {
   id: string;
   name: string;
+  description?: string;
   partyManager: string;
   users: string[];
   invitedUsers?: string[];

@@ -4,6 +4,7 @@ query GetParties {
     parties {
       id
       name
+      description
       partyManager {
         id
         firstName

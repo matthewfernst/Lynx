@@ -638,6 +638,7 @@ final class ApolloLynxClient {
                     PartyAttributes(
                         id: party.id,
                         name: party.name,
+                        description: party.description,
                         partyManagerId: party.partyManager.id,
                         partyManagerName: "\(party.partyManager.firstName) \(party.partyManager.lastName)",
                         partyManagerProfilePictureURL: URL(string: party.partyManager.profilePictureUrl ?? ""),
@@ -674,6 +675,7 @@ final class ApolloLynxClient {
                     PartyAttributes(
                         id: party.id,
                         name: party.name,
+                        description: party.description,
                         partyManagerId: party.partyManager.id,
                         partyManagerName: "\(party.partyManager.firstName) \(party.partyManager.lastName)",
                         partyManagerProfilePictureURL: URL(string: party.partyManager.profilePictureUrl ?? ""),
@@ -757,6 +759,7 @@ final class ApolloLynxClient {
                 let partyDetails = PartyDetails(
                     id: party.id,
                     name: party.name,
+                    description: party.description,
                     partyManager: PartyUser(
                         id: party.partyManager.id,
                         firstName: party.partyManager.firstName,
@@ -889,12 +892,12 @@ final class ApolloLynxClient {
         }
     }
 
-    static func createParty(name: String, completion: @escaping ((Result<PartyAttributes, Error>) -> Void)) {
+    static func createParty(name: String, description: String? = nil, completion: @escaping ((Result<PartyAttributes, Error>) -> Void)) {
         enum CreatePartyError: Error {
             case unwrapError
         }
 
-        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreatePartyMutation(name: name)) { result in
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreatePartyMutation(name: name, description: .some(description))) { result in
             switch result {
             case .success(let graphQLResult):
                 guard let party = graphQLResult.data?.createParty else {
@@ -906,6 +909,7 @@ final class ApolloLynxClient {
                 let partyAttributes = PartyAttributes(
                     id: party.id,
                     name: party.name,
+                    description: party.description,
                     partyManagerId: party.partyManager.id,
                     partyManagerName: "\(party.partyManager.firstName) \(party.partyManager.lastName)",
                     partyManagerProfilePictureURL: URL(string: party.partyManager.profilePictureUrl ?? ""),
@@ -918,6 +922,32 @@ final class ApolloLynxClient {
 
             case .failure(let error):
                 Logger.apollo.error("Error creating party: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    static func editParty(partyId: String, partyChanges: [String: String], completion: @escaping ((Result<Void, Error>) -> Void)) {
+        enum EditPartyError: Error {
+            case unwrapError
+        }
+
+        let partyData = partyChanges.map { ApolloGeneratedGraphQL.KeyValuePair(key: $0.key, value: $0.value) }
+
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.EditPartyMutation(partyId: partyId, partyData: partyData)) { result in
+            switch result {
+            case .success(let graphQLResult):
+                guard let _ = graphQLResult.data?.editParty else {
+                    Logger.apollo.error("Failed to edit party.")
+                    completion(.failure(EditPartyError.unwrapError))
+                    return
+                }
+
+                Logger.apollo.info("Successfully edited party.")
+                completion(.success(()))
+
+            case .failure(let error):
+                Logger.apollo.error("Error editing party: \(error)")
                 completion(.failure(error))
             }
         }
@@ -1134,6 +1164,7 @@ struct ProfileAttributes: CustomDebugStringConvertible {
 struct PartyAttributes {
     let id: String
     let name: String
+    let description: String?
     let partyManagerId: String
     let partyManagerName: String
     let partyManagerProfilePictureURL: URL?
@@ -1141,11 +1172,15 @@ struct PartyAttributes {
     let invitedUserCount: Int
 }
 
-struct PartyUser {
+struct PartyUser : Equatable {
     let id: String
     let firstName: String
     let lastName: String
     let profilePictureURL: URL?
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 struct UserStatsAttributes {
@@ -1166,6 +1201,7 @@ struct PartyLeaderboardEntry {
 struct PartyDetails {
     let id: String
     let name: String
+    let description: String?
     let partyManager: PartyUser
     let users: [PartyUser]
     let invitedUsers: [PartyUser]

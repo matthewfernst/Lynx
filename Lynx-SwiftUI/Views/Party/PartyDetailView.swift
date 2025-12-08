@@ -9,6 +9,7 @@ struct PartyDetailView: View {
 
     @State private var selectedTimeframe: Timeframe = .season
     @State private var showInviteUser = false
+    @State private var showEditParty = false
     @State private var showLeaveConfirmation = false
     @State private var showDeleteConfirmation = false
 
@@ -26,6 +27,22 @@ struct PartyDetailView: View {
                     .padding()
             } else if let details = partyHandler.selectedPartyDetails {
                 VStack(spacing: 24) {
+                    if let description = details.description, !description.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("About")
+                                .font(.headline)
+                                .foregroundStyle(.secondary)
+
+                            Text(description)
+                                .font(.body)
+                                .foregroundStyle(.primary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .background(Color(uiColor: .secondarySystemGroupedBackground))
+                        .cornerRadius(12)
+                    }
+
                     PartyLeaderboardChartsSection(
                         details: details,
                         selectedTimeframe: $selectedTimeframe,
@@ -91,8 +108,16 @@ struct PartyDetailView: View {
         .scrollContentBackground(.hidden)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { showInviteUser = true }) {
-                    Image(systemName: "person.badge.plus")
+                HStack(spacing: 16) {
+                    if isManager {
+                        Button(action: { showEditParty = true }) {
+                            Image(systemName: "pencil")
+                        }
+                    }
+
+                    Button(action: { showInviteUser = true }) {
+                        Image(systemName: "person.badge.plus")
+                    }
                 }
             }
         }
@@ -108,6 +133,16 @@ struct PartyDetailView: View {
         }
         .sheet(isPresented: $showInviteUser) {
             PartyInviteUserView(partyHandler: partyHandler, partyId: partyId)
+        }
+        .sheet(isPresented: $showEditParty) {
+            if let details = partyHandler.selectedPartyDetails {
+                EditPartyView(
+                    partyHandler: partyHandler,
+                    partyId: partyId,
+                    currentName: details.name,
+                    currentDescription: details.description
+                )
+            }
         }
         .alert("Leave Party", isPresented: $showLeaveConfirmation) {
             Button("Cancel", role: .cancel) { }
@@ -481,90 +516,172 @@ struct PartyInviteUserView: View {
     @State private var errorMessage: String?
     @State private var showSuccess = false
     @State private var foundUser: PartyUser?
+    @State private var profilePicture: Image?
+    @State private var searchTask: Task<Void, Never>?
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    TextField("Email Address", text: $email)
-                        .autocapitalization(.none)
-                        .autocorrectionDisabled()
-                        .keyboardType(.emailAddress)
-                        .textContentType(.emailAddress)
-                } header: {
-                    Text("Search by Email")
-                } footer: {
-                    Text("Enter the user's email address to search for them.")
-                }
+            VStack(spacing: 0) {
+                VStack(spacing: 16) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Search by Email")
+                            .font(.headline)
 
-                if isSearching {
-                    Section {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Text("Searching...")
+                        TextField("Enter email address", text: $email)
+                            .autocapitalization(.none)
+                            .autocorrectionDisabled()
+                            .keyboardType(.emailAddress)
+                            .textContentType(.emailAddress)
+                            .padding(12)
+                            .background(Color(uiColor: .secondarySystemGroupedBackground))
+                            .cornerRadius(10)
+                            .onChange(of: email) { oldValue, newValue in
+                                debouncedSearch(email: newValue)
+                            }
+
+                        if !email.isEmpty {
+                            Text("Searching as you type...")
+                                .font(.caption)
                                 .foregroundStyle(.secondary)
-                            Spacer()
                         }
                     }
-                } else if let user = foundUser {
-                    Section {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("\(user.firstName) \(user.lastName)")
-                                    .font(.headline)
-                                Text(email)
-                                    .font(.caption)
+                    .padding(.horizontal)
+                    .padding(.top, 20)
+                }
+                .background(Color(uiColor: .systemGroupedBackground))
+                ScrollView {
+                    VStack(spacing: 20) {
+                        if isSearching {
+                            VStack(spacing: 16) {
+                                ProgressView()
+                                    .controlSize(.large)
+                                Text("Searching for user...")
+                                    .font(.subheadline)
                                     .foregroundStyle(.secondary)
                             }
-                            Spacer()
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                        }
-                    } header: {
-                        Text("User Found")
-                    }
-                }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 60)
+                        } else if let user = foundUser {
+                            VStack(spacing: 24) {
+                                VStack(spacing: 16) {
+                                    if let profilePicture {
+                                        profilePicture
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 100, height: 100)
+                                            .clipShape(Circle())
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color.green, lineWidth: 3)
+                                            )
+                                    } else {
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color(uiColor: .secondarySystemGroupedBackground))
+                                                .frame(width: 100, height: 100)
 
-                if let errorMessage {
-                    Section {
-                        Text(errorMessage)
-                            .foregroundStyle(.red)
-                            .font(.caption)
-                    }
-                }
+                                            if user.profilePictureURL != nil {
+                                                ProgressView()
+                                            } else {
+                                                Image(systemName: "person.circle.fill")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 100, height: 100)
+                                                    .foregroundStyle(.secondary)
+                                            }
+                                        }
+                                        .overlay(
+                                            Circle()
+                                                .stroke(Color.green, lineWidth: 3)
+                                        )
+                                    }
 
-                Section {
-                    Button(action: searchUser) {
-                        if isSearching {
-                            ProgressView()
-                                .frame(maxWidth: .infinity)
-                        } else {
-                            Text("Search")
-                                .frame(maxWidth: .infinity)
-                        }
-                    }
-                    .disabled(email.isEmpty || isSearching || partyHandler.isInvitingUser)
+                                    VStack(spacing: 4) {
+                                        HStack(spacing: 8) {
+                                            Text("\(user.firstName) \(user.lastName)")
+                                                .font(.title2)
+                                                .fontWeight(.semibold)
+                                            Image(systemName: "checkmark.seal.fill")
+                                                .foregroundStyle(.green)
+                                        }
 
-                    if foundUser != nil {
-                        Button(action: sendInvite) {
-                            if partyHandler.isInvitingUser {
-                                ProgressView()
+                                        Text(email)
+                                            .font(.subheadline)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                                .padding(.top, 40)
+                                Button(action: sendInvite) {
+                                    HStack {
+                                        if partyHandler.isInvitingUser {
+                                            ProgressView()
+                                                .progressViewStyle(.circular)
+                                                .tint(.white)
+                                        } else {
+                                            Image(systemName: "paperplane.fill")
+                                            Text("Send Invitation")
+                                                .fontWeight(.semibold)
+                                        }
+                                    }
                                     .frame(maxWidth: .infinity)
-                            } else {
-                                Text("Send Invitation")
-                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .controlSize(.large)
+                                .disabled(partyHandler.isInvitingUser || isSearching)
+                                .padding(.horizontal)
                             }
+                            .frame(maxWidth: .infinity)
+                        } else if let errorMessage {
+                            VStack(spacing: 16) {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .font(.system(size: 50))
+                                    .foregroundStyle(.orange)
+                                Text(errorMessage)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 60)
+                        } else if !email.isEmpty && !isSearching {
+                            VStack(spacing: 16) {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 50))
+                                    .foregroundStyle(.secondary)
+                                Text("Start typing to search for a user")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 60)
+                        } else {
+                            VStack(spacing: 16) {
+                                Image(systemName: "person.2.fill")
+                                    .font(.system(size: 50))
+                                    .foregroundStyle(.secondary)
+
+                                Text("Enter an email address to find and invite users to this party")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 60)
                         }
-                        .disabled(partyHandler.isInvitingUser || isSearching)
                     }
+                    .padding(.vertical)
                 }
+                .background(Color(uiColor: .systemGroupedBackground))
             }
             .navigationTitle("Invite User")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") {
+                        searchTask?.cancel()
                         dismiss()
                     }
                 }
@@ -577,27 +694,68 @@ struct PartyInviteUserView: View {
         } message: {
             Text("The party invitation has been sent successfully.")
         }
+        .onChange(of: foundUser) { _, newUser in
+            loadProfilePicture(for: newUser)
+        }
     }
 
-    private func searchUser() {
-        guard !email.isEmpty else { return }
-        isSearching = true
+    private func debouncedSearch(email: String) {
+        searchTask?.cancel()
         errorMessage = nil
-        foundUser = nil
 
-        ApolloLynxClient.userLookupByEmail(email: email) { result in
-            isSearching = false
-            switch result {
-            case .success(let user):
-                if let user = user {
-                    foundUser = user
-                } else {
-                    errorMessage = "No user found with that email address."
-                }
-            case .failure(let error):
-                errorMessage = "Error searching for user: \(error.localizedDescription)"
+        guard !email.isEmpty else {
+            foundUser = nil
+            profilePicture = nil
+            return
+        }
+
+        searchTask = Task {
+            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+
+            guard !Task.isCancelled else { return }
+
+            await MainActor.run {
+                searchUser(email: email)
             }
         }
+    }
+
+    private func searchUser(email: String) {
+        guard !email.isEmpty else { return }
+        isSearching = true
+        foundUser = nil
+        profilePicture = nil
+
+        ApolloLynxClient.userLookupByEmail(email: email) { result in
+            DispatchQueue.main.async {
+                isSearching = false
+                switch result {
+                case .success(let user):
+                    if let user = user {
+                        foundUser = user
+                    } else {
+                        errorMessage = "No user found with that email address."
+                    }
+                case .failure(let error):
+                    errorMessage = "Error searching for user: \(error.localizedDescription)"
+                }
+            }
+        }
+    }
+
+    private func loadProfilePicture(for user: PartyUser?) {
+        guard let user = user, let url = user.profilePictureURL else {
+            profilePicture = nil
+            return
+        }
+
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data, let uiImage = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    profilePicture = Image(uiImage: uiImage)
+                }
+            }
+        }.resume()
     }
 
     private func sendInvite() {

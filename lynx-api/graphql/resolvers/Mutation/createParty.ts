@@ -12,6 +12,7 @@ import {
 
 interface Args {
   name: string;
+  description?: string;
 }
 
 const createParty = async (
@@ -27,6 +28,7 @@ const createParty = async (
   const party: Party = {
     id: partyId,
     name: args.name,
+    description: args.description,
     partyManager: context.userId,
     users: [context.userId],
   };

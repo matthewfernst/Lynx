@@ -9,6 +9,7 @@ import OSLog
     var isLoadingInvites = false
     var isLoadingDetails = false
     var isCreatingParty = false
+    var isEditingParty = false
     var isDeletingParty = false
     var isLeavingParty = false
     var isJoiningParty = false
@@ -78,11 +79,11 @@ import OSLog
         }
     }
 
-    func createParty(name: String, completion: @escaping (Bool) -> Void) {
+    func createParty(name: String, description: String? = nil, completion: @escaping (Bool) -> Void) {
         isCreatingParty = true
         errorMessage = nil
 
-        ApolloLynxClient.createParty(name: name) { [weak self] result in
+        ApolloLynxClient.createParty(name: name, description: description) { [weak self] result in
             DispatchQueue.main.async {
                 self?.isCreatingParty = false
                 switch result {
@@ -93,6 +94,33 @@ import OSLog
                 case .failure(let error):
                     self?.errorMessage = "Failed to create party"
                     Logger.partyHandler.error("Error creating party: \(error)")
+                    completion(false)
+                }
+            }
+        }
+    }
+
+    func editParty(partyId: String, name: String, description: String?, completion: @escaping (Bool) -> Void) {
+        isEditingParty = true
+        errorMessage = nil
+
+        var changes: [String: String] = ["name": name]
+        if let description = description {
+            changes["description"] = description
+        }
+
+        ApolloLynxClient.editParty(partyId: partyId, partyChanges: changes) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isEditingParty = false
+                switch result {
+                case .success:
+                    // Refresh party details to get updated info
+                    self?.fetchPartyDetails(partyId: partyId)
+                    Logger.partyHandler.info("Successfully edited party: \(partyId)")
+                    completion(true)
+                case .failure(let error):
+                    self?.errorMessage = "Failed to edit party"
+                    Logger.partyHandler.error("Error editing party: \(error)")
                     completion(false)
                 }
             }

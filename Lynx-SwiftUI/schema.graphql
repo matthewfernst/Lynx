@@ -60,6 +60,7 @@ enum MeasurementSystem {
 type Party {
     id: ID!
     name: String!
+    description: String
     partyManager: User!
     users: [User!]!
     invitedUsers: [User!]!
@@ -108,7 +109,7 @@ input OAuthTypeCorrelationInput {
     token: ID!
 }
 
-input UserDataPair {
+input KeyValuePair {
     key: String!
     value: String!
 }
@@ -129,15 +130,16 @@ type Mutation {
     oauthSignIn(
         oauthLoginId: OAuthTypeCorrelationInput!
         email: String
-        userData: [UserDataPair!]
+        userData: [KeyValuePair!]
     ): AuthorizationToken
     refreshLynxToken(refreshToken: ID!): AuthorizationToken
     combineOAuthAccounts(combineWith: OAuthTypeCorrelationInput!): User!
     createUserProfilePictureUploadUrl: String!
     createUserRecordUploadUrl(requestedPaths: [String!]!): [String]!
     deleteUser: User!
-    editUser(userData: [UserDataPair!]!): User!
-    createParty(name: String!): Party!
+    editUser(userData: [KeyValuePair!]!): User!
+    createParty(name: String!, description: String): Party!
+    editParty(partyId: ID!, partyData: [KeyValuePair!]!): Party!
     deleteParty(partyId: ID!): Party!
     createPartyInvite(partyId: ID!, userId: ID!): Party!
     deletePartyInvite(partyId: ID!, userId: ID!): Party!

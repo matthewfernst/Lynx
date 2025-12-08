@@ -322,7 +322,7 @@ export class LynxAPIStack extends Stack {
                 "dynamodb:GetItem",
                 "dynamodb:DeleteItem",
                 "dynamodb:PutItem",
-                "dynamodb:UpdateItem"
+                "dynamodb:UpdateItem",
               ],
               resources: [partiesTable.tableArn],
             }),

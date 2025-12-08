@@ -171,6 +171,13 @@ struct PartyCard: View {
                     .foregroundStyle(.tertiary)
             }
 
+            if let description = party.description, !description.isEmpty {
+                Text(description)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+
             HStack(spacing: 16) {
                 Label("\(party.userCount)", systemImage: "person.2.fill")
                     .font(.caption)
