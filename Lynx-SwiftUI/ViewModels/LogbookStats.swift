@@ -13,7 +13,7 @@ import OSLog
     var logbooks: Logbooks = []
     
     // MARK: - Getting Logs
-    func requestLogs(completion: (() -> Void)? = nil) {
+    func requestLogs(completion: ((Result<Void, Error>) -> Void)? = nil) {
         ApolloLynxClient.clearCache()
         Task {
             ApolloLynxClient.getLogs(
@@ -23,9 +23,10 @@ import OSLog
                 case .success(let logs):
                     Logger.logbookStats.debug("Updating new logbook stats")
                     self.logbooks = logs
-                    completion?()
+                    completion?(.success(()))
                 case .failure(let error):
                     Logger.logbookStats.error("Failed to get logs: \(error)")
+                    completion?(.failure(error))
                 }
             }
         }

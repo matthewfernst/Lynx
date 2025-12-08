@@ -28,6 +28,7 @@ struct AccountView: View {
                 shareInvitationKey
                 showYourSupport
                 contactDevelopers
+                signOutSection
             }
             .navigationTitle("Account")
             
@@ -166,7 +167,22 @@ struct AccountView: View {
             presentMailCompose()
         }
     }
-    
+
+    private var signOutSection: some View {
+        Section {
+            Button {
+                LoginHandler.signOut()
+            } label: {
+                HStack {
+                    Spacer()
+                    Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.forward")
+                        .foregroundStyle(.red)
+                    Spacer()
+                }
+            }
+        }
+    }
+
     private func cell(
         withIconColor color: Color,
         andText text: String,

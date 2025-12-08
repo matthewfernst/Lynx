@@ -35,11 +35,6 @@ struct HomeView: View {
                 .tabItem {
                     Label("Parties", systemImage: "person.3.fill")
                 }
-
-            AccountView()
-                .tabItem {
-                    Label("Account", systemImage: "person.crop.circle.fill")
-                }
         }
         .onAppear {
             scheduleNotificationsForRemindingToUpload()

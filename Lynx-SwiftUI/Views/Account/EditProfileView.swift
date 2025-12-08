@@ -42,7 +42,7 @@ struct EditProfileView: View {
                 changeProfilePicture
                 Form {
                     nameAndEmailEditableSection
-                    mergeAndSignOutSection
+                    mergeAccountsSection
                     deleteAccount
                 }
                 Spacer()
@@ -174,17 +174,12 @@ struct EditProfileView: View {
         }
     }
     
-    private var mergeAndSignOutSection: some View {
+    private var mergeAccountsSection: some View {
         Section {
             Button {
                 showMergeAccountsNotAvailable = true
             } label: {
                 Label("Merge Accounts", systemImage: "shared.with.you")
-            }
-            Button {
-                LoginHandler.signOut()
-            } label: {
-                Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.forward")
             }
         }
     }

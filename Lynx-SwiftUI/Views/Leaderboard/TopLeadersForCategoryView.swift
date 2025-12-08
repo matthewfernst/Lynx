@@ -39,7 +39,7 @@ struct TopLeadersForCategoryView: View {
     var body: some View {
         GroupBox {
             if topLeaders.isEmpty {
-                Text("No Leaders Yet")
+                Text("No leaders yet")
                     .frame(height: Constants.Chart.height)
             } else {
                 chartOfTopLeaders
@@ -50,7 +50,11 @@ struct TopLeadersForCategoryView: View {
         .navigationDestination(isPresented: $goToMoreInfo) {
             AllLeadersForCategoryView(category: category)
         }
-        .alert("Failed to Get All Leaders", isPresented: $showFailedToGetAllLeaders, actions: {})
+        .alert("Unable to Load Leaders", isPresented: $showFailedToGetAllLeaders) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("We couldn't load the detailed leaderboard. Please check your internet connection and try again.")
+        }
         .padding(.bottom)
         .listRowSeparator(.hidden)
     }

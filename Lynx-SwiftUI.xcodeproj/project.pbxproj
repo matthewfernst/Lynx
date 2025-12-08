@@ -142,6 +142,7 @@
 		B47585FE2EE6335700F6E9F7 /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47585D42EE6335700F6E9F7 /* NotificationSettingsView.swift */; };
 		B47585FF2EE6335700F6E9F7 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47585D22EE6335700F6E9F7 /* EditProfileView.swift */; };
 		B47586032EE633A700F6E9F7 /* PartyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47586022EE633A700F6E9F7 /* PartyHandler.swift */; };
+		B47586052EE658E100F6E9F7 /* ProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47586042EE658E100F6E9F7 /* ProfileButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -274,6 +275,7 @@
 		B47585E82EE6335700F6E9F7 /* PartyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartyView.swift; sourceTree = "<group>"; };
 		B47585EA2EE6335700F6E9F7 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		B47586022EE633A700F6E9F7 /* PartyHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartyHandler.swift; sourceTree = "<group>"; };
+		B47586042EE658E100F6E9F7 /* ProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -659,6 +661,7 @@
 				B47585E52EE6335700F6E9F7 /* Login */,
 				B47585E92EE6335700F6E9F7 /* Party */,
 				B47585EA2EE6335700F6E9F7 /* HomeView.swift */,
+				B47586042EE658E100F6E9F7 /* ProfileButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -807,6 +810,7 @@
 				B475854F2EE6327200F6E9F7 /* CreateRunRecordUploadUrlMutation.graphql.swift in Sources */,
 				B47585502EE6327200F6E9F7 /* OAuthTypeCorrelation.graphql.swift in Sources */,
 				B47585512EE6327200F6E9F7 /* LogDetailType.graphql.swift in Sources */,
+				B47586052EE658E100F6E9F7 /* ProfileButton.swift in Sources */,
 				B47585EC2EE6335700F6E9F7 /* InvitationKeyView.swift in Sources */,
 				B47585ED2EE6335700F6E9F7 /* CreatePartyView.swift in Sources */,
 				B47585EE2EE6335700F6E9F7 /* AutoUploadView.swift in Sources */,

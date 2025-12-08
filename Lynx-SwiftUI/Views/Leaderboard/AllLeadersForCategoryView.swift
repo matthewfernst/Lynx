@@ -12,8 +12,24 @@ struct AllLeadersForCategoryView: View {
     @Environment(ProfileManager.self) private var profileManager
     let category: LeaderboardCategory
     @State private var leaders: [LeaderAttributes] = []
-    
+
     @State private var timeframe: Timeframe = .season
+    @State private var showLoadError = false
+
+    private var emptyStateMessage: String {
+        switch timeframe {
+        case .day:
+            return "No leaders yet today"
+        case .week:
+            return "No leaders yet this week"
+        case .month:
+            return "No leaders yet this month"
+        case .season:
+            return "No leaders yet this season"
+        case .allTime:
+            return "No leaders yet"
+        }
+    }
 
     var body: some View {
         VStack {
@@ -21,7 +37,15 @@ struct AllLeadersForCategoryView: View {
             listOfLeaders
         }
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
+        .alert("Unable to Load Leaders", isPresented: $showLoadError) {
+            Button("Retry") {
+                populateLeaders()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("We couldn't load the leaderboard data. Please check your internet connection and try again.")
+        }
+        .task {
             populateLeaders()
         }
         .onChange(of: timeframe) { _, _ in
@@ -49,7 +73,7 @@ struct AllLeadersForCategoryView: View {
             timeframePicker
                 .padding(.bottom)
             if leaders.isEmpty {
-                Text("No Leaders Yet")
+                Text(emptyStateMessage)
                     .frame(
                         maxWidth: .infinity,
                         maxHeight: .infinity,
@@ -120,7 +144,7 @@ struct AllLeadersForCategoryView: View {
             case .success(let attributes):
                 leaders = attributes
             case .failure(_):
-                print()
+                showLoadError = true
             }
         }
     }

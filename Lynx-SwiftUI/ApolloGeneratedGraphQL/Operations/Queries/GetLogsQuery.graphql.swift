@@ -12,7 +12,7 @@ public extension ApolloGeneratedGraphQL {
         query GetLogs($system: MeasurementSystem!) {
           selfLookup {
             __typename
-            logbook {
+            logbook(timeframe: ALL_TIME) {
               __typename
               id
               originalFileName
@@ -74,7 +74,7 @@ public extension ApolloGeneratedGraphQL {
         public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.User }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("logbook", [Logbook].self),
+          .field("logbook", [Logbook].self, arguments: ["timeframe": "ALL_TIME"]),
         ] }
 
         public var logbook: [Logbook] { __data["logbook"] }

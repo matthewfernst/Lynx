@@ -11,18 +11,21 @@ import OSLog
 struct LogbookView: View {
     @Bindable var folderConnectionHandler: FolderConnectionHandler
     @Environment(ProfileManager.self) private var profileManager
-    
+
     var logbookStats: LogbookStats
-    
+
     @State private var showMoreInfo = false
-    
+
     @State private var showUploadFilesSheet = false
     @State private var showUploadProgress = false
-    
+
     @State private var showSlopesFolderAlreadyConnected = false
-    
+
     @State private var showAutoUpload = false
-    
+
+    @State private var showProfile = false
+    @State private var showLoadError = false
+
     private var slopesFolderIsConnected: Bool {
         BookmarkManager.shared.bookmark != nil
     }
@@ -40,8 +43,9 @@ struct LogbookView: View {
                 .toolbar {
                     moreInfoButton
                     documentPickerAndConnectionButton
+                    profileButton
                 }
-                .onAppear {
+                .task {
                     BookmarkManager.shared.loadAllBookmarks()
                     requestLogs()
                     checkForNewFilesAndUpload()
@@ -61,6 +65,17 @@ struct LogbookView: View {
                 }
                 .alert("Slopes Folder Connected", isPresented: $showSlopesFolderAlreadyConnected) {} message: {
                     Text("When you open the app, we will automatically upload new files to propogate to MountainUI.")
+                }
+                .alert("Unable to Load Logs", isPresented: $showLoadError) {
+                    Button("Retry") {
+                        requestLogs()
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("We couldn't load your ski logs. Please check your internet connection and try again.")
+                }
+                .sheet(isPresented: $showProfile) {
+                    AccountView()
                 }
             }
         }
@@ -123,29 +138,61 @@ struct LogbookView: View {
             }
         }
     }
-    
+
+    private var profileButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            ProfileButton(showProfile: $showProfile)
+        }
+    }
+
     private var scrollableSessionSummaries: some View {
         List {
-            Section {
-                if logbookStats.logbooks.isEmpty {
-                    Text(Constants.uploadFilesForLogbooksMessage)
-                        .multilineTextAlignment(.center)
-                } else {
+            if logbookStats.logbooks.isEmpty {
+                Section {
+                    VStack(spacing: 16) {
+                        Text(Constants.noLogsMessage)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.secondary)
+
+                        Button {
+                            showUploadFilesSheet = true
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "link")
+                                Text("Link Your Account")
+                            }
+                            .font(.headline)
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .padding(.vertical)
+                    .frame(maxWidth: .infinity)
+                }
+            } else {
+                // All-time summary section
+                Section {
                     NavigationLink {
                         FullLifetimeSummaryView(logbookStats: logbookStats)
                     } label: {
                         lifetimeSummary
                     }
+                } header: {
+                    Text("All Time")
+                        .padding(.top)
                 }
-            } header: {
-                Text(yearHeader)
-                    .padding(.top)
-            }
-            .headerProminence(.increased)
-            
-            ForEach(logbookStats.logbooks.indices, id: \.self) { index in
-                if let configuredData = logbookStats.getConfiguredLogbookData(at: index) {
-                    configuredSessionSummary(with: configuredData)
+                .headerProminence(.increased)
+
+                // Grouped by season sections
+                ForEach(logsBySeasonGrouped, id: \.season) { seasonGroup in
+                    Section {
+                        ForEach(seasonGroup.logs, id: \.index) { logItem in
+                            configuredSessionSummary(with: logItem.data)
+                        }
+                    } header: {
+                        Text(seasonGroup.season)
+                            .padding(.top)
+                    }
+                    .headerProminence(.increased)
                 }
             }
         }
@@ -202,17 +249,99 @@ struct LogbookView: View {
     }
     
     // MARK: - Helpers
-    private var yearHeader: String {
+    private var logsBySeasonGrouped: [(season: String, logs: [(index: Int, data: ConfiguredLogbookData)])] {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy"
-        let currentYear = dateFormatter.string(from: .now)
-        let pastYear = String((Int(currentYear) ?? 0) - 1)
-        return "\(pastYear)/\(currentYear)"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+
+        // Group logs by season
+        var seasonGroups: [String: [(index: Int, data: ConfiguredLogbookData)]] = [:]
+
+        for (index, logbook) in logbookStats.logbooks.enumerated() {
+            guard let date = dateFormatter.date(from: logbook.startDate),
+                  let configuredData = logbookStats.getConfiguredLogbookData(at: index) else {
+                continue
+            }
+
+            let calendar = Calendar.current
+            let month = calendar.component(.month, from: date)
+            let year = calendar.component(.year, from: date)
+
+            let (firstYear, secondYear): (Int, Int)
+            if month >= 10 { // October-December: current/next year season
+                firstYear = year
+                secondYear = year + 1
+            } else { // January-September: previous/current year season
+                firstYear = year - 1
+                secondYear = year
+            }
+
+            let seasonKey = "\(firstYear)/\(secondYear)"
+            seasonGroups[seasonKey, default: []].append((index, configuredData))
+        }
+
+        // Sort seasons in descending order (most recent first) and logs within each season
+        return seasonGroups
+            .map { (season: $0.key, logs: $0.value.sorted { $0.index > $1.index }) }
+            .sorted { $0.season > $1.season }
+    }
+
+    private var yearHeader: String {
+        guard !logbookStats.logbooks.isEmpty else {
+            // No logs, show current ski season
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy"
+            let currentYear = dateFormatter.string(from: .now)
+            let pastYear = String((Int(currentYear) ?? 0) - 1)
+            return "\(pastYear)/\(currentYear)"
+        }
+
+        // Get the most recent log date
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+
+        let logDates = logbookStats.logbooks.compactMap { logbook -> Date? in
+            dateFormatter.date(from: logbook.startDate)
+        }
+
+        guard let mostRecentDate = logDates.max() else {
+            // Fallback to current season if we can't parse dates
+            let yearFormatter = DateFormatter()
+            yearFormatter.dateFormat = "yyyy"
+            let currentYear = yearFormatter.string(from: .now)
+            let pastYear = String((Int(currentYear) ?? 0) - 1)
+            return "\(pastYear)/\(currentYear)"
+        }
+
+        // Calculate ski season based on the most recent log date
+        // Ski season runs roughly October-April
+        let calendar = Calendar.current
+        let month = calendar.component(.month, from: mostRecentDate)
+        let year = calendar.component(.year, from: mostRecentDate)
+
+        let (firstYear, secondYear): (Int, Int)
+        if month >= 10 { // October-December: current/next year season
+            firstYear = year
+            secondYear = year + 1
+        } else { // January-September: previous/current year season
+            firstYear = year - 1
+            secondYear = year
+        }
+
+        return "\(firstYear)/\(secondYear)"
     }
     
     private func requestLogs() {
         if !showAutoUpload { // only allow upload if we aren't currently uploading
-            logbookStats.requestLogs()
+            logbookStats.requestLogs { result in
+                switch result {
+                case .success:
+                    break
+                case .failure:
+                    showLoadError = true
+                }
+            }
         }
     }
     
@@ -239,12 +368,18 @@ struct LogbookView: View {
                        """
         static let mountainUILink = "https://github.com/matthewfernst/Mountain-UI"
         static let slopesLink = "https://getslopes.com"
-        
+
+        static let noLogsMessage = """
+                                   No logs found. Link your Slopes folder to start tracking your runs, view leaderboards, and see all your ski statistics.
+
+                                   Happy Shredding! 🏂
+                                   """
+
         static let uploadFilesForLogbooksMessage = """
                                                    Upload files to see run statistics, leaderboards, and all other information.
-                                                   
+
                                                    To get started, press the folder button in the top right of this screen and connect to your Slopes folder.
-                                                   
+
                                                    Happy Shreading! 🏂
                                                    """
         

@@ -457,10 +457,7 @@ final class ApolloLynxClient {
     }
     
     static func getLogs(measurementSystem: MeasurementSystem, completion: @escaping ((Result<Logbooks, Error>) -> Void)) {
-        
-        let system = GraphQLEnum<ApolloGeneratedGraphQL.MeasurementSystem>(rawValue: measurementSystem.rawValue)
-        
-        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetLogsQuery(system: system)) { result in
+        apolloClient.fetch(query: ApolloGeneratedGraphQL.GetLogsQuery(system: .init(measurementSystem))) { result in
             switch result {
             case .success(let graphQLResult):
                 guard var logbook = graphQLResult.data?.selfLookup?.logbook else {

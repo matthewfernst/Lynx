@@ -11,6 +11,7 @@ struct PartyView: View {
     @Environment(ProfileManager.self) private var profileManager
     @State private var partyHandler = PartyHandler()
     @State private var showCreateParty = false
+    @State private var showProfile = false
 
     var body: some View {
         NavigationStack {
@@ -34,9 +35,15 @@ struct PartyView: View {
                         Image(systemName: "plus")
                     }
                 }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    ProfileButton(showProfile: $showProfile)
+                }
             }
             .sheet(isPresented: $showCreateParty) {
                 CreatePartyView(partyHandler: partyHandler)
+            }
+            .sheet(isPresented: $showProfile) {
+                AccountView()
             }
             .alert("Error", isPresented: .constant(partyHandler.errorMessage != nil)) {
                 Button("OK") {
@@ -47,7 +54,7 @@ struct PartyView: View {
                     Text(errorMessage)
                 }
             }
-            .onAppear {
+            .task {
                 partyHandler.refreshAll()
             }
             .refreshable {

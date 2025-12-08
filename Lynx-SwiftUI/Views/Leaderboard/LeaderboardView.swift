@@ -9,14 +9,14 @@ import SwiftUI
 
 struct LeaderboardView: View {
     @Environment(ProfileManager.self) private var profileManager
-    
+
     @State private var verticalDistanceLeaders: [LeaderAttributes] = []
     @State private var topSpeedLeaders: [LeaderAttributes] = []
     @State private var distanceLeaders: [LeaderAttributes] = []
     @State private var runCountLeaders: [LeaderAttributes] = []
-    
-    
+
     @State private var showFailedToGetTopLeaders = false
+    @State private var showProfile = false
     
     var body: some View {
         NavigationStack {
@@ -33,14 +33,27 @@ struct LeaderboardView: View {
                 }
             }
             .padding()
-            .alert("Failed to Get Top Leaders", isPresented: $showFailedToGetTopLeaders, actions: {})
+            .alert("Unable to Load Leaderboard", isPresented: $showFailedToGetTopLeaders) {
+                Button("Retry") {
+                    populateLeaderboard()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("We couldn't load the leaderboard data. Please check your internet connection and try again.")
+            }
             .navigationTitle("Leaderboard")
             .scrollContentBackground(.hidden)
-            .onAppear {
+            .toolbar {
+                profileButton
+            }
+            .task {
                 populateLeaderboard()
             }
             .refreshable { // TODO: Refresh being wonky on simulator?
                 populateLeaderboard()
+            }
+            .sheet(isPresented: $showProfile) {
+                AccountView()
             }
         }
     }
@@ -62,7 +75,13 @@ struct LeaderboardView: View {
             }
         }
     }
-    
+
+    private var profileButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            ProfileButton(showProfile: $showProfile)
+        }
+    }
+
     private struct Constants {
         static let topThree: Int = 3
     }

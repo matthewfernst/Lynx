@@ -1,6 +1,6 @@
 query GetLogs($system: MeasurementSystem!) {
     selfLookup {
-        logbook {
+        logbook(timeframe: ALL_TIME) {
             id
             originalFileName
             distance(system: $system)
