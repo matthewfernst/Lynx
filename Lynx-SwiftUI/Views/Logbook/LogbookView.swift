@@ -16,8 +16,6 @@ struct LogbookView: View {
 
     @State private var showProfile = false
     @State private var showLoadError = false
-    @State private var showNotifications = false
-    @State private var partyHandler = PartyHandler()
 
     private var slopesFolderIsConnected: Bool {
         BookmarkManager.shared.bookmark != nil
@@ -31,7 +29,6 @@ struct LogbookView: View {
                     .navigationTitle("Logbook")
                 .toolbar {
                     documentPickerAndConnectionButton
-                    notificationsButton
                     profileButton
                 }
                 .task {
@@ -65,14 +62,6 @@ struct LogbookView: View {
                 }
                 .sheet(isPresented: $showProfile) {
                     AccountView()
-                }
-                .sheet(isPresented: $showNotifications) {
-                    NavigationStack {
-                        PartyInvitesView(partyHandler: partyHandler)
-                    }
-                }
-                .task {
-                    partyHandler.fetchPartyInvites()
                 }
             }
         }
@@ -111,24 +100,6 @@ struct LogbookView: View {
             } else {
                 Button("Connect Folder", systemImage: "folder.badge.plus") {
                     showUploadFilesSheet = true
-                }
-            }
-        }
-    }
-
-    private var notificationsButton: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
-            Button(action: {
-                showNotifications = true
-            }) {
-                ZStack(alignment: .topTrailing) {
-                    Image(systemName: "bell.fill")
-                    if !partyHandler.partyInvites.isEmpty {
-                        Circle()
-                            .fill(.red)
-                            .frame(width: 8, height: 8)
-                            .offset(x: 4, y: -4)
-                    }
                 }
             }
         }

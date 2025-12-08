@@ -60,16 +60,13 @@
 		B47584FD2EE6325400F6E9F7 /* OauthSignIn.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584E32EE6325400F6E9F7 /* OauthSignIn.graphql */; };
 		B47584FE2EE6325400F6E9F7 /* DeleteAccount.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584DC2EE6325400F6E9F7 /* DeleteAccount.graphql */; };
 		B47584FF2EE6325400F6E9F7 /* MergeAccounts.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584E22EE6325400F6E9F7 /* MergeAccounts.graphql */; };
-		B47585002EE6325400F6E9F7 /* CreateInviteKey.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584D72EE6325400F6E9F7 /* CreateInviteKey.graphql */; };
 		B47585012EE6325400F6E9F7 /* LeaveParty.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584E12EE6325400F6E9F7 /* LeaveParty.graphql */; };
 		B47585022EE6325400F6E9F7 /* GetPartyDetails.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584EC2EE6325400F6E9F7 /* GetPartyDetails.graphql */; };
 		B47585032EE6325400F6E9F7 /* GetAllLeaderboards.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584E82EE6325400F6E9F7 /* GetAllLeaderboards.graphql */; };
 		B47585042EE6325400F6E9F7 /* DeletePartyInvite.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584DE2EE6325400F6E9F7 /* DeletePartyInvite.graphql */; };
-		B47585052EE6325400F6E9F7 /* HasValidatedInvite.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584F12EE6325400F6E9F7 /* HasValidatedInvite.graphql */; };
 		B47585062EE6325400F6E9F7 /* GetProfileInformation.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584EE2EE6325400F6E9F7 /* GetProfileInformation.graphql */; };
 		B47585072EE6325400F6E9F7 /* RefreshAccessToken.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584E42EE6325400F6E9F7 /* RefreshAccessToken.graphql */; };
 		B47585082EE6325400F6E9F7 /* JoinParty.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584E02EE6325400F6E9F7 /* JoinParty.graphql */; };
-		B47585092EE6325400F6E9F7 /* SubmitInviteKey.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584E62EE6325400F6E9F7 /* SubmitInviteKey.graphql */; };
 		B475850A2EE6325400F6E9F7 /* GetUploadedLogs.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584F02EE6325400F6E9F7 /* GetUploadedLogs.graphql */; };
 		B475850B2EE6325400F6E9F7 /* CreateParty.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584D82EE6325400F6E9F7 /* CreateParty.graphql */; };
 		B475850C2EE6325400F6E9F7 /* CreatePartyInvite.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B47584D92EE6325400F6E9F7 /* CreatePartyInvite.graphql */; };
@@ -178,7 +175,6 @@
 		65F6CFD52B12EA2300E94E40 /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
 		65F6CFD92B13020300E94E40 /* GoogleSignInHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInHandler.swift; sourceTree = "<group>"; };
 		65F6CFDB2B1305F300E94E40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		B47584D72EE6325400F6E9F7 /* CreateInviteKey.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = CreateInviteKey.graphql; sourceTree = "<group>"; };
 		B47584D82EE6325400F6E9F7 /* CreateParty.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = CreateParty.graphql; sourceTree = "<group>"; };
 		B47584D92EE6325400F6E9F7 /* CreatePartyInvite.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = CreatePartyInvite.graphql; sourceTree = "<group>"; };
 		B47584DA2EE6325400F6E9F7 /* CreateRunRecordUploadUrl.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = CreateRunRecordUploadUrl.graphql; sourceTree = "<group>"; };
@@ -193,7 +189,6 @@
 		B47584E32EE6325400F6E9F7 /* OauthSignIn.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = OauthSignIn.graphql; sourceTree = "<group>"; };
 		B47584E42EE6325400F6E9F7 /* RefreshAccessToken.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = RefreshAccessToken.graphql; sourceTree = "<group>"; };
 		B47584E52EE6325400F6E9F7 /* RemoveUserFromParty.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoveUserFromParty.graphql; sourceTree = "<group>"; };
-		B47584E62EE6325400F6E9F7 /* SubmitInviteKey.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = SubmitInviteKey.graphql; sourceTree = "<group>"; };
 		B47584E82EE6325400F6E9F7 /* GetAllLeaderboards.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetAllLeaderboards.graphql; sourceTree = "<group>"; };
 		B47584E92EE6325400F6E9F7 /* GetLogs.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetLogs.graphql; sourceTree = "<group>"; };
 		B47584EA2EE6325400F6E9F7 /* GetOAuthLogins.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetOAuthLogins.graphql; sourceTree = "<group>"; };
@@ -203,7 +198,6 @@
 		B47584EE2EE6325400F6E9F7 /* GetProfileInformation.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetProfileInformation.graphql; sourceTree = "<group>"; };
 		B47584EF2EE6325400F6E9F7 /* GetSpecificLeaderboard.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetSpecificLeaderboard.graphql; sourceTree = "<group>"; };
 		B47584F02EE6325400F6E9F7 /* GetUploadedLogs.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetUploadedLogs.graphql; sourceTree = "<group>"; };
-		B47584F12EE6325400F6E9F7 /* HasValidatedInvite.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = HasValidatedInvite.graphql; sourceTree = "<group>"; };
 		B475850E2EE6327200F6E9F7 /* LeaderboardFields.graphql.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardFields.graphql.swift; sourceTree = "<group>"; };
 		B47585102EE6327200F6E9F7 /* CombineOAuthAccountsMutation.graphql.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineOAuthAccountsMutation.graphql.swift; sourceTree = "<group>"; };
 		B47585112EE6327200F6E9F7 /* CreateInviteKeyMutation.graphql.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateInviteKeyMutation.graphql.swift; sourceTree = "<group>"; };
@@ -420,7 +414,6 @@
 		B47584E72EE6325400F6E9F7 /* Mutation */ = {
 			isa = PBXGroup;
 			children = (
-				B47584D72EE6325400F6E9F7 /* CreateInviteKey.graphql */,
 				B47584D82EE6325400F6E9F7 /* CreateParty.graphql */,
 				B47584D92EE6325400F6E9F7 /* CreatePartyInvite.graphql */,
 				B47584DA2EE6325400F6E9F7 /* CreateRunRecordUploadUrl.graphql */,
@@ -435,7 +428,6 @@
 				B47584E32EE6325400F6E9F7 /* OauthSignIn.graphql */,
 				B47584E42EE6325400F6E9F7 /* RefreshAccessToken.graphql */,
 				B47584E52EE6325400F6E9F7 /* RemoveUserFromParty.graphql */,
-				B47584E62EE6325400F6E9F7 /* SubmitInviteKey.graphql */,
 			);
 			path = Mutation;
 			sourceTree = "<group>";
@@ -452,7 +444,6 @@
 				B47584EE2EE6325400F6E9F7 /* GetProfileInformation.graphql */,
 				B47584EF2EE6325400F6E9F7 /* GetSpecificLeaderboard.graphql */,
 				B47584F02EE6325400F6E9F7 /* GetUploadedLogs.graphql */,
-				B47584F12EE6325400F6E9F7 /* HasValidatedInvite.graphql */,
 			);
 			path = Query;
 			sourceTree = "<group>";
@@ -740,16 +731,13 @@
 				B47584FD2EE6325400F6E9F7 /* OauthSignIn.graphql in Resources */,
 				B47584FE2EE6325400F6E9F7 /* DeleteAccount.graphql in Resources */,
 				B47584FF2EE6325400F6E9F7 /* MergeAccounts.graphql in Resources */,
-				B47585002EE6325400F6E9F7 /* CreateInviteKey.graphql in Resources */,
 				B47585012EE6325400F6E9F7 /* LeaveParty.graphql in Resources */,
 				B47585022EE6325400F6E9F7 /* GetPartyDetails.graphql in Resources */,
 				B47585032EE6325400F6E9F7 /* GetAllLeaderboards.graphql in Resources */,
 				B47585042EE6325400F6E9F7 /* DeletePartyInvite.graphql in Resources */,
-				B47585052EE6325400F6E9F7 /* HasValidatedInvite.graphql in Resources */,
 				B47585062EE6325400F6E9F7 /* GetProfileInformation.graphql in Resources */,
 				B47585072EE6325400F6E9F7 /* RefreshAccessToken.graphql in Resources */,
 				B47585082EE6325400F6E9F7 /* JoinParty.graphql in Resources */,
-				B47585092EE6325400F6E9F7 /* SubmitInviteKey.graphql in Resources */,
 				B475850A2EE6325400F6E9F7 /* GetUploadedLogs.graphql in Resources */,
 				B475850B2EE6325400F6E9F7 /* CreateParty.graphql in Resources */,
 				B475850C2EE6325400F6E9F7 /* CreatePartyInvite.graphql in Resources */,

@@ -2,10 +2,9 @@ import SwiftUI
 
 struct PartyView: View {
     @Environment(ProfileManager.self) private var profileManager
-    @State private var partyHandler = PartyHandler()
+    @Bindable var partyHandler: PartyHandler
     @State private var showCreateParty = false
     @State private var showProfile = false
-    @State private var showNotifications = false
     @State private var showUploadFilesSheet = false
     @State private var showUploadProgress = false
     @State private var showSlopesFolderAlreadyConnected = false
@@ -44,21 +43,6 @@ struct PartyView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        showNotifications = true
-                    }) {
-                        ZStack(alignment: .topTrailing) {
-                            Image(systemName: "bell.fill")
-                            if !partyHandler.partyInvites.isEmpty {
-                                Circle()
-                                    .fill(.red)
-                                    .frame(width: 8, height: 8)
-                                    .offset(x: 4, y: -4)
-                            }
-                        }
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
                         showCreateParty = true
                     }) {
                         Image(systemName: "plus")
@@ -84,11 +68,6 @@ struct PartyView: View {
                 FileUploadProgressView(
                     folderConnectionHandler: folderConnectionHandler
                 )
-            }
-            .sheet(isPresented: $showNotifications) {
-                NavigationStack {
-                    PartyInvitesView(partyHandler: partyHandler)
-                }
             }
             .alert("Slopes Folder Connected", isPresented: $showSlopesFolderAlreadyConnected) {} message: {
                 Text("When you open the app, we will automatically upload new files to propogate to MountainUI.")
@@ -117,13 +96,6 @@ struct PartiesListSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("My Parties")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                Spacer()
-            }
-
             if partyHandler.isLoadingParties {
                 ProgressView()
                     .frame(maxWidth: .infinity)
@@ -190,14 +162,9 @@ struct PartyCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(party.name)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                    Text("Manager: \(party.partyManagerName)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                Text(party.name)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .foregroundStyle(.tertiary)
@@ -274,5 +241,5 @@ struct PartyInviteCard: View {
 }
 
 #Preview {
-    PartyView()
+    PartyView(partyHandler: PartyHandler())
 }

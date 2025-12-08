@@ -44,7 +44,6 @@ struct LifetimeDetailsView: View {
                 }
             }
         }
-        .padding(.horizontal)
         .padding(.top, 8)
     }
 

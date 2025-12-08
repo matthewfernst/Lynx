@@ -65,7 +65,7 @@ struct LeaderAttributes: Identifiable, Hashable {
     
     static func formattedStatLabel(
         _ stat: Double,
-        forCategory category: LeaderboardCategory,
+        forCategory category: LeaderboardSort,
         withMeasurementSystem measurementSystem: MeasurementSystem
     ) -> String {
         switch category {
