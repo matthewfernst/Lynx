@@ -26,7 +26,7 @@ const joinParty = async (
   checkHasUserId(context);
   await checkIsValidUserAndHasValidInvite(context);
   const party = await checkIsValidParty(context, args.partyId);
-  if (!party.invitedUsers.includes(context.userId)) {
+  if (!(party.invitedUsers ?? []).includes(context.userId)) {
     throw new GraphQLError("Not Invited To Requested Party", {
       extensions: { code: FORBIDDEN, partyId: args.partyId },
     });
