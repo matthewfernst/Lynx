@@ -9,8 +9,6 @@ final class RequestLoggingInterceptor: ApolloInterceptor {
         response: HTTPResponse<Operation>?,
         completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
     ) {
-        
-        Logger.apollo.log("Outgoing request: \(request.debugDescription)")
         chain.proceedAsync(
             request: request,
             response: response,

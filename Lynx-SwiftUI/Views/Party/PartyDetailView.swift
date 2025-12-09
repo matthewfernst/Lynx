@@ -982,24 +982,15 @@ struct PartySettingsView: View {
     }
 
     private func saveAndDismiss() {
-        // Only save if there are changes and user is manager
         if isManager && hasChanges {
             partyHandler.editParty(
                 partyId: partyId,
                 name: editedName,
                 description: editedDescription.isEmpty ? nil : editedDescription
             ) { result in
-                if result {
-                    // Refetch party details to update the UI, then dismiss
-                    partyHandler.fetchPartyDetails(partyId: partyId, sortBy: .verticalDistance, timeframe: .season) { _ in
-                        dismiss()
-                    }
-                } else {
-                    dismiss()
-                }
+                dismiss()
             }
         } else {
-            // No changes, just dismiss
             dismiss()
         }
     }

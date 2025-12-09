@@ -28,7 +28,6 @@ import OSLog
                 switch result {
                 case .success(let fetchedParties):
                     self?.parties = fetchedParties
-                    Logger.partyHandler.info("Successfully fetched \(fetchedParties.count) parties")
                 case .failure(let error):
                     self?.errorMessage = "Failed to load parties"
                     Logger.partyHandler.error("Error fetching parties: \(error)")
@@ -47,7 +46,6 @@ import OSLog
                 switch result {
                 case .success(let fetchedInvites):
                     self?.partyInvites = fetchedInvites
-                    Logger.partyHandler.info("Successfully fetched \(fetchedInvites.count) party invites")
                 case .failure(let error):
                     self?.errorMessage = "Failed to load party invites"
                     Logger.partyHandler.error("Error fetching party invites: \(error)")
@@ -70,7 +68,6 @@ import OSLog
                 switch result {
                 case .success(let details):
                     self?.selectedPartyDetails = details
-                    Logger.partyHandler.info("Successfully fetched party details for \(partyId)")
                     completion?(true)
                 case .failure(let error):
                     self?.errorMessage = "Failed to load party details"
@@ -91,7 +88,6 @@ import OSLog
                 switch result {
                 case .success(let newParty):
                     self?.parties.append(newParty)
-                    Logger.partyHandler.info("Successfully created party: \(name)")
                     completion(true)
                 case .failure(let error):
                     self?.errorMessage = "Failed to create party"
@@ -115,10 +111,18 @@ import OSLog
             DispatchQueue.main.async {
                 self?.isEditingParty = false
                 switch result {
-                case .success:
-                    // Refresh party details to get updated info
-                    self?.fetchPartyDetails(partyId: partyId)
-                    Logger.partyHandler.info("Successfully edited party: \(partyId)")
+                case .success(let editedParty):
+                    if let currentDetails = self?.selectedPartyDetails {
+                        self?.selectedPartyDetails = PartyDetails(
+                            id: editedParty.id,
+                            name: editedParty.name,
+                            description: editedParty.description,
+                            partyManager: editedParty.partyManager,
+                            users: editedParty.users,
+                            invitedUsers: editedParty.invitedUsers,
+                            leaderboard: currentDetails.leaderboard
+                        )
+                    }
                     completion(true)
                 case .failure(let error):
                     self?.errorMessage = "Failed to edit party"
@@ -139,7 +143,6 @@ import OSLog
                 switch result {
                 case .success:
                     self?.parties.removeAll { $0.id == partyId }
-                    Logger.partyHandler.info("Successfully deleted party: \(partyId)")
                     completion(true)
                 case .failure(let error):
                     self?.errorMessage = "Failed to delete party"
@@ -161,7 +164,6 @@ import OSLog
                 case .success:
                     self?.partyInvites.removeAll { $0.id == partyId }
                     self?.fetchParties()
-                    Logger.partyHandler.info("Successfully joined party: \(partyId)")
                     completion(true)
                 case .failure(let error):
                     self?.errorMessage = "Failed to join party"
@@ -182,7 +184,6 @@ import OSLog
                 switch result {
                 case .success:
                     self?.parties.removeAll { $0.id == partyId }
-                    Logger.partyHandler.info("Successfully left party: \(partyId)")
                     completion(true)
                 case .failure(let error):
                     self?.errorMessage = "Failed to leave party"
@@ -201,9 +202,18 @@ import OSLog
             DispatchQueue.main.async {
                 self?.isInvitingUser = false
                 switch result {
-                case .success:
-                    self?.fetchPartyDetails(partyId: partyId)
-                    Logger.partyHandler.info("Successfully invited user to party")
+                case .success(let inviteResult):
+                    if let currentDetails = self?.selectedPartyDetails {
+                        self?.selectedPartyDetails = PartyDetails(
+                            id: currentDetails.id,
+                            name: currentDetails.name,
+                            description: currentDetails.description,
+                            partyManager: currentDetails.partyManager,
+                            users: currentDetails.users,
+                            invitedUsers: inviteResult.invitedUsers,
+                            leaderboard: currentDetails.leaderboard
+                        )
+                    }
                     completion(.success(()))
                 case .failure(let error):
                     self?.errorMessage = "Failed to invite user"
@@ -222,9 +232,18 @@ import OSLog
             DispatchQueue.main.async {
                 self?.isRemovingUser = false
                 switch result {
-                case .success:
-                    self?.fetchPartyDetails(partyId: partyId)
-                    Logger.partyHandler.info("Successfully removed user from party")
+                case .success(let removeResult):
+                    if let currentDetails = self?.selectedPartyDetails {
+                        self?.selectedPartyDetails = PartyDetails(
+                            id: currentDetails.id,
+                            name: currentDetails.name,
+                            description: currentDetails.description,
+                            partyManager: currentDetails.partyManager,
+                            users: removeResult.users,
+                            invitedUsers: currentDetails.invitedUsers,
+                            leaderboard: currentDetails.leaderboard
+                        )
+                    }
                     completion(true)
                 case .failure(let error):
                     self?.errorMessage = "Failed to remove user"
@@ -243,9 +262,18 @@ import OSLog
             DispatchQueue.main.async {
                 self?.isRevokingInvite = false
                 switch result {
-                case .success:
-                    self?.fetchPartyDetails(partyId: partyId)
-                    Logger.partyHandler.info("Successfully revoked party invite")
+                case .success(let removeResult):
+                    if let currentDetails = self?.selectedPartyDetails {
+                        self?.selectedPartyDetails = PartyDetails(
+                            id: currentDetails.id,
+                            name: currentDetails.name,
+                            description: currentDetails.description,
+                            partyManager: currentDetails.partyManager,
+                            users: currentDetails.users,
+                            invitedUsers: removeResult.invitedUsers,
+                            leaderboard: currentDetails.leaderboard
+                        )
+                    }
                     completion(true)
                 case .failure(let error):
                     self?.errorMessage = "Failed to revoke invite"

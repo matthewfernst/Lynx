@@ -647,7 +647,6 @@ final class ApolloLynxClient {
                     )
                 }
 
-                Logger.apollo.info("Successfully got parties.")
                 completion(.success(partyAttributes))
 
             case .failure(let error):
@@ -684,7 +683,6 @@ final class ApolloLynxClient {
                     )
                 }
 
-                Logger.apollo.info("Successfully got party invites.")
                 completion(.success(partyAttributes))
 
             case .failure(let error):
@@ -771,7 +769,6 @@ final class ApolloLynxClient {
                     leaderboard: leaderboard
                 )
 
-                Logger.apollo.info("Successfully got party details.")
                 completion(.success(partyDetails))
 
             case .failure(let error):
@@ -837,7 +834,6 @@ final class ApolloLynxClient {
                 Logger.apollo.error("Error getting all party leaderboards: \(error)")
                 completion(.failure(error))
             } else {
-                Logger.apollo.info("Successfully got all party leaderboards")
                 completion(.success(leaderboardAttributes))
             }
         }
@@ -882,7 +878,6 @@ final class ApolloLynxClient {
                     )
                 }
 
-                Logger.apollo.info("Successfully got specific party leaderboard.")
                 completion(.success(leaderData))
 
             case .failure(let error):
@@ -917,7 +912,6 @@ final class ApolloLynxClient {
                     invitedUserCount: party.invitedUsers.count
                 )
 
-                Logger.apollo.info("Successfully created party.")
                 completion(.success(partyAttributes))
 
             case .failure(let error):
@@ -927,7 +921,16 @@ final class ApolloLynxClient {
         }
     }
 
-    static func editParty(partyId: String, partyChanges: [String: String], completion: @escaping ((Result<Void, Error>) -> Void)) {
+    struct EditPartyResult {
+        let id: String
+        let name: String
+        let description: String?
+        let partyManager: PartyUser
+        let users: [PartyUser]
+        let invitedUsers: [PartyUser]
+    }
+
+    static func editParty(partyId: String, partyChanges: [String: String], completion: @escaping ((Result<EditPartyResult, Error>) -> Void)) {
         enum EditPartyError: Error {
             case unwrapError
         }
@@ -937,14 +940,47 @@ final class ApolloLynxClient {
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.EditPartyMutation(partyId: partyId, partyData: partyData)) { result in
             switch result {
             case .success(let graphQLResult):
-                guard let _ = graphQLResult.data?.editParty else {
+                guard let editedParty = graphQLResult.data?.editParty else {
                     Logger.apollo.error("Failed to edit party.")
                     completion(.failure(EditPartyError.unwrapError))
                     return
                 }
 
-                Logger.apollo.info("Successfully edited party.")
-                completion(.success(()))
+                let manager = PartyUser(
+                    id: editedParty.partyManager.id,
+                    firstName: editedParty.partyManager.firstName,
+                    lastName: editedParty.partyManager.lastName,
+                    profilePictureURL: editedParty.partyManager.profilePictureUrl.flatMap { URL(string: $0) }
+                )
+
+                let users = editedParty.users.map { user in
+                    PartyUser(
+                        id: user.id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        profilePictureURL: user.profilePictureUrl.flatMap { URL(string: $0) }
+                    )
+                }
+
+                let invitedUsers = editedParty.invitedUsers.map { user in
+                    PartyUser(
+                        id: user.id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        profilePictureURL: user.profilePictureUrl.flatMap { URL(string: $0) }
+                    )
+                }
+
+                let result = EditPartyResult(
+                    id: editedParty.id,
+                    name: editedParty.name,
+                    description: editedParty.description,
+                    partyManager: manager,
+                    users: users,
+                    invitedUsers: invitedUsers
+                )
+
+                completion(.success(result))
 
             case .failure(let error):
                 Logger.apollo.error("Error editing party: \(error)")
@@ -967,7 +1003,6 @@ final class ApolloLynxClient {
                     return
                 }
 
-                Logger.apollo.info("Successfully deleted party.")
                 completion(.success(()))
 
             case .failure(let error):
@@ -991,7 +1026,6 @@ final class ApolloLynxClient {
                     return
                 }
 
-                Logger.apollo.info("Successfully joined party.")
                 completion(.success(()))
 
             case .failure(let error):
@@ -1015,7 +1049,6 @@ final class ApolloLynxClient {
                     return
                 }
 
-                Logger.apollo.info("Successfully left party.")
                 completion(.success(()))
 
             case .failure(let error):
@@ -1025,7 +1058,13 @@ final class ApolloLynxClient {
         }
     }
 
-    static func inviteUserToParty(partyId: String, userId: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+    struct InviteUserResult {
+        let id: String
+        let name: String
+        let invitedUsers: [PartyUser]
+    }
+
+    static func inviteUserToParty(partyId: String, userId: String, completion: @escaping ((Result<InviteUserResult, Error>) -> Void)) {
         enum InviteUserError: Error {
             case unwrapError
         }
@@ -1033,14 +1072,28 @@ final class ApolloLynxClient {
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreatePartyInviteMutation(partyId: partyId, userId: userId)) { result in
             switch result {
             case .success(let graphQLResult):
-                guard let _ = graphQLResult.data?.createPartyInvite else {
+                guard let inviteResult = graphQLResult.data?.createPartyInvite else {
                     Logger.apollo.error("Failed to invite user to party.")
                     completion(.failure(InviteUserError.unwrapError))
                     return
                 }
 
-                Logger.apollo.info("Successfully invited user to party.")
-                completion(.success(()))
+                let invitedUsers = inviteResult.invitedUsers.map { user in
+                    PartyUser(
+                        id: user.id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        profilePictureURL: user.profilePictureUrl.flatMap { URL(string: $0) }
+                    )
+                }
+
+                let result = InviteUserResult(
+                    id: inviteResult.id,
+                    name: inviteResult.name,
+                    invitedUsers: invitedUsers
+                )
+
+                completion(.success(result))
 
             case .failure(let error):
                 Logger.apollo.error("Error inviting user to party: \(error)")
@@ -1049,7 +1102,13 @@ final class ApolloLynxClient {
         }
     }
 
-    static func removeInviteFromParty(partyId: String, userId: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+    struct RemoveInviteResult {
+        let id: String
+        let name: String
+        let invitedUsers: [PartyUser]
+    }
+
+    static func removeInviteFromParty(partyId: String, userId: String, completion: @escaping ((Result<RemoveInviteResult, Error>) -> Void)) {
         enum RemoveInviteError: Error {
             case unwrapError
         }
@@ -1057,14 +1116,28 @@ final class ApolloLynxClient {
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.DeletePartyInviteMutation(partyId: partyId, userId: userId)) { result in
             switch result {
             case .success(let graphQLResult):
-                guard let _ = graphQLResult.data?.deletePartyInvite else {
+                guard let removeResult = graphQLResult.data?.deletePartyInvite else {
                     Logger.apollo.error("Failed to remove invite from party.")
                     completion(.failure(RemoveInviteError.unwrapError))
                     return
                 }
 
-                Logger.apollo.info("Successfully removed invite from party.")
-                completion(.success(()))
+                let invitedUsers = removeResult.invitedUsers.map { user in
+                    PartyUser(
+                        id: user.id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        profilePictureURL: user.profilePictureUrl.flatMap { URL(string: $0) }
+                    )
+                }
+
+                let result = RemoveInviteResult(
+                    id: removeResult.id,
+                    name: removeResult.name,
+                    invitedUsers: invitedUsers
+                )
+
+                completion(.success(result))
 
             case .failure(let error):
                 Logger.apollo.error("Error removing invite from party: \(error)")
@@ -1073,7 +1146,13 @@ final class ApolloLynxClient {
         }
     }
 
-    static func removeUserFromParty(partyId: String, userId: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+    struct RemoveUserResult {
+        let id: String
+        let name: String
+        let users: [PartyUser]
+    }
+
+    static func removeUserFromParty(partyId: String, userId: String, completion: @escaping ((Result<RemoveUserResult, Error>) -> Void)) {
         enum RemoveUserError: Error {
             case unwrapError
         }
@@ -1081,14 +1160,28 @@ final class ApolloLynxClient {
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.RemoveUserFromPartyMutation(partyId: partyId, userId: userId)) { result in
             switch result {
             case .success(let graphQLResult):
-                guard let _ = graphQLResult.data?.removeUserFromParty else {
+                guard let removeResult = graphQLResult.data?.removeUserFromParty else {
                     Logger.apollo.error("Failed to remove user from party.")
                     completion(.failure(RemoveUserError.unwrapError))
                     return
                 }
 
-                Logger.apollo.info("Successfully removed user from party.")
-                completion(.success(()))
+                let users = removeResult.users.map { user in
+                    PartyUser(
+                        id: user.id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        profilePictureURL: user.profilePictureUrl.flatMap { URL(string: $0) }
+                    )
+                }
+
+                let result = RemoveUserResult(
+                    id: removeResult.id,
+                    name: removeResult.name,
+                    users: users
+                )
+
+                completion(.success(result))
 
             case .failure(let error):
                 Logger.apollo.error("Error removing user from party: \(error)")
@@ -1114,7 +1207,6 @@ final class ApolloLynxClient {
                     profilePictureURL: URL(string: user.profilePictureUrl ?? "")
                 )
 
-                Logger.apollo.info("Successfully found user by email.")
                 completion(.success(partyUser))
 
             case .failure(let error):

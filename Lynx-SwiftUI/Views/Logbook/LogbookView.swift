@@ -120,7 +120,7 @@ struct LogbookView: View {
                 VStack(spacing: 16) {
                     ProgressView()
                         .controlSize(.large)
-                    Text("Loading your ski logs...")
+                    Text("Loading Ski Logs...")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }

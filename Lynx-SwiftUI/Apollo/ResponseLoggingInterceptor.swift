@@ -13,16 +13,17 @@ final class ResponseLoggingInterceptor: ApolloInterceptor {
         response: HTTPResponse<Operation>?,
         completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
     ) {
+        Logger.apollo.info("→ GraphQL Request: \(Operation.operationName)")
+
         defer {
-            // Even if we can't log, we still want to keep going.
             chain.proceedAsync(
                 request: request,
                 response: response,
                 completion: completion
             )
         }
-        
-        guard let receivedResponse = response else {
+
+        guard let _ = response else {
             chain.handleErrorAsync(
                 ResponseLoggingError.notYetReceived,
                 request: request,
@@ -30,13 +31,6 @@ final class ResponseLoggingInterceptor: ApolloInterceptor {
                 completion: completion
             )
             return
-        }
-        
-        Logger.apollo.log("HTTP Response: \(receivedResponse.httpResponse.debugDescription)")
-        if let stringData = String(bytes: receivedResponse.rawData, encoding: .utf8) {
-            Logger.apollo.log("Data: \(stringData)")
-        } else {
-            Logger.apollo.error("Could not convert data to string!")
         }
     }
 }

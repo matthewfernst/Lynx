@@ -56,12 +56,7 @@ final class KeychainManager {
         }
         
         do {
-            let token = try JSONDecoder().decode(ExpirableLynxToken.self, from: tokenData)
-            Logger.keychainManager.info("Successfully got saved token.")
-            Logger.keychainManager.debug("AccessToken: \(token.accessToken)")
-            Logger.keychainManager.debug("RefreshToken: \(token.refreshToken)")
-            Logger.keychainManager.debug("ExpiryTime: \(token.expirationDate)")
-            return token
+            return try JSONDecoder().decode(ExpirableLynxToken.self, from: tokenData)
         } catch {
             Logger.keychainManager.error("Error in getting ExpirableToken: Data conversion error")
             throw KeychainError.dataConversionError
