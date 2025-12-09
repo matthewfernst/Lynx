@@ -13,8 +13,6 @@ final class ResponseLoggingInterceptor: ApolloInterceptor {
         response: HTTPResponse<Operation>?,
         completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
     ) {
-        Logger.apollo.info("→ GraphQL Request: \(Operation.operationName)")
-
         defer {
             chain.proceedAsync(
                 request: request,
@@ -24,6 +22,7 @@ final class ResponseLoggingInterceptor: ApolloInterceptor {
         }
 
         guard let _ = response else {
+            Logger.apollo.info("← GraphQL Error: \(Operation.operationName)")
             chain.handleErrorAsync(
                 ResponseLoggingError.notYetReceived,
                 request: request,
