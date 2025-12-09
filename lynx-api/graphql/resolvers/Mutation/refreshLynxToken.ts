@@ -9,7 +9,9 @@ import {
 } from "../../auth";
 import { Context } from "../../index";
 import { AuthorizationToken } from "./oauthSignIn";
-import { UNAUTHENTICATED } from "../../types";
+import { FORBIDDEN } from "../../types";
+import { TokenExpiredError } from "jsonwebtoken";
+import { ApolloServerErrorCode } from "@apollo/server/errors";
 
 interface Args {
   refreshToken: string;
@@ -37,9 +39,15 @@ const decryptRefreshToken = (token: string): AccessToken => {
   try {
     return decryptToken(token, GrantType.REFRESH);
   } catch (err) {
-    console.error(err);
+    if (err instanceof TokenExpiredError) {
+      console.debug("Refresh Token Expired");
+      throw new GraphQLError("Expired Refresh Token", {
+        extensions: { code: FORBIDDEN, token },
+      });
+    }
+    console.error("Invalid Refresh Token");
     throw new GraphQLError("Invalid Refresh Token", {
-      extensions: { code: UNAUTHENTICATED, token },
+      extensions: { code: ApolloServerErrorCode.BAD_REQUEST, token },
     });
   }
 };
