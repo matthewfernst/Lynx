@@ -150,7 +150,7 @@ const oauthLogin = async (
 ): Promise<AuthorizationToken> => {
   const user = await getItemByIndex(USERS_TABLE, idFieldName, id);
   const oneHourFromNow = DateTime.now()
-    .plus({ hours: 1 })
+    .plus({ hours: 12 })
     .toMillis()
     .toString();
   let userId;

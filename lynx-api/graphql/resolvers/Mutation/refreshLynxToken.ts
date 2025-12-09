@@ -23,7 +23,7 @@ const refreshLynxToken = (
 ): AuthorizationToken => {
   const { id: userId } = decryptRefreshToken(args.refreshToken);
   const oneHourFromNow = DateTime.now()
-    .plus({ hours: 1 })
+    .plus({ hours: 12 })
     .toMillis()
     .toString();
   return {
