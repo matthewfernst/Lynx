@@ -10,6 +10,7 @@ import {
 
 interface Args {
   timeframe: keyof typeof Timeframe;
+  resort?: string;
 }
 
 const stats = async (
@@ -22,7 +23,11 @@ const stats = async (
     DateTime.now(),
     Timeframe[args.timeframe],
   );
-  return context.dataloaders.leaderboard.load({ id: parent.id, timeframe });
+  return context.dataloaders.leaderboard.load({
+    id: parent.id,
+    timeframe,
+    resort: args.resort
+  });
 };
 
 export default stats;

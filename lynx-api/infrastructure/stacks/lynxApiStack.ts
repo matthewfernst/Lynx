@@ -51,7 +51,7 @@ import { config } from "dotenv";
 import { ApplicationEnvironment } from "../app";
 
 export const USERS_TABLE = "lynx-users";
-export const LEADERBOARD_TABLE = "lynx-leaderboard";
+export const LEADERBOARD_TABLE = "lynx-leaderboards";
 export const PARTIES_TABLE = "lynx-parties";
 
 export const PROFILE_PICS_BUCKET = "lynx-profile-pictures";
@@ -148,23 +148,26 @@ export class LynxAPIStack extends Stack {
     const leaderboardTable = new Table(this, "lynxLeaderboardTable", {
       tableName: LEADERBOARD_TABLE,
       partitionKey: { name: "id", type: AttributeType.STRING },
-      sortKey: { name: "timeframe", type: AttributeType.STRING },
+      sortKey: { name: "uniqueness-id", type: AttributeType.STRING },
       billingMode: BillingMode.PAY_PER_REQUEST,
       removalPolicy: RemovalPolicy.DESTROY,
       deletionProtection: true,
       timeToLiveAttribute: "ttl",
     });
-    const timeframeSecondaryIndices = [
+    const metrics = [
       "distance",
       "runCount",
       "topSpeed",
       "verticalDistance",
     ];
-    timeframeSecondaryIndices.map((indexName) => {
+    metrics.map((metric) => {
       leaderboardTable.addGlobalSecondaryIndex({
-        indexName,
-        partitionKey: { name: "timeframe", type: AttributeType.STRING },
-        sortKey: { name: indexName, type: AttributeType.NUMBER },
+        indexName: metric,
+        partitionKeys: [
+          { name: "timeframe", type: AttributeType.STRING },
+          { name: "resort", type: AttributeType.STRING },
+        ],
+        sortKey: { name: metric, type: AttributeType.NUMBER },
         projectionType: ProjectionType.INCLUDE,
         nonKeyAttributes: ["id"],
       });

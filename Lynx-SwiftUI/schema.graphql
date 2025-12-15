@@ -68,6 +68,7 @@ type Party {
         sortBy: LeaderboardSort = VERTICAL_DISTANCE
         timeframe: Timeframe = SEASON
         limit: Int = 5
+        resort: String
     ): [User!]!
 }
 
@@ -123,6 +124,7 @@ type Query {
         sortBy: LeaderboardSort = VERTICAL_DISTANCE
         timeframe: Timeframe = SEASON
         limit: Int = 5
+        resort: String
     ): [User!]!
 }
 

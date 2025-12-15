@@ -25,6 +25,7 @@ interface Args {
   sortBy: keyof typeof LeaderboardSort;
   timeframe: keyof typeof Timeframe;
   limit: number;
+  resort?: string;
 }
 
 export const leaderboardSortTypesToQueryFields: {
@@ -53,6 +54,7 @@ const leaderboard = async (
       Timeframe[args.timeframe],
     ),
     args.limit,
+    args.resort,
   );
   return Promise.all(
     leaderboardEntries.map(
@@ -92,16 +94,21 @@ const getTimeframeRankingByIndex = async (
   index: string,
   timeframe: string,
   limit: number,
+  resort?: string,
 ): Promise<LeaderboardEntry[]> => {
   try {
+    const resortValue = resort || "ALL";
     console.info(
-      `Getting items with timeframe ${timeframe} sorted by ${index}`,
+      `Getting items with timeframe ${timeframe} and resort ${resortValue} sorted by ${index}`,
     );
     const queryRequest = new QueryCommand({
       TableName: LEADERBOARD_TABLE,
       IndexName: index,
-      KeyConditionExpression: "timeframe = :value",
-      ExpressionAttributeValues: { ":value": timeframe },
+      KeyConditionExpression: "timeframe = :timeframe AND resort = :resort",
+      ExpressionAttributeValues: {
+        ":timeframe": timeframe,
+        ":resort": resortValue,
+      },
       ScanIndexForward: false,
       Limit: limit,
     });

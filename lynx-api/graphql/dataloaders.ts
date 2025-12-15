@@ -58,18 +58,20 @@ async function partiesDataLoaderImpl(
 }
 
 async function leaderboardDataLoaderImpl(
-  leaderboardTableKeys: readonly { id: string; timeframe: string }[],
+  leaderboardTableKeys: readonly { id: string; timeframe: string; resort?: string }[],
 ) {
   return Promise.all(
-    leaderboardTableKeys.map(async ({ id, timeframe }) => {
+    leaderboardTableKeys.map(async ({ id, timeframe, resort }) => {
       try {
+        const resortValue = resort || "ALL";
+        const uniquenessId = `${timeframe}#${resortValue}`;
         const queryRequest = new GetCommand({
           TableName: LEADERBOARD_TABLE,
-          Key: { id, timeframe },
+          Key: { id, "uniqueness-id": uniquenessId },
         });
         const itemOutput = await documentClient.send(queryRequest);
         console.log(
-          `Retrieved leaderboard item for id ${id} and timeframe ${timeframe}`,
+          `Retrieved leaderboard item for id ${id}, timeframe ${timeframe}, and resort ${resortValue}`,
         );
         return itemOutput.Item as UserStats;
       } catch (err) {
@@ -82,9 +84,9 @@ async function leaderboardDataLoaderImpl(
   );
 }
 
-export const profilePictureDataloader = async (
+export async function profilePictureDataloader(
   users: readonly DatabaseUser[],
-): Promise<(string | null)[]> => {
+): Promise<(string | null)[]> {
   return Promise.all(
     users.map(async (user) => {
       if (await checkIfObjectInBucket(PROFILE_PICS_BUCKET, user.id)) {
@@ -97,11 +99,11 @@ export const profilePictureDataloader = async (
       }
     }),
   );
-};
+}
 
-export const logsDataLoader = async (
+export async function logsDataLoader(
   userIds: readonly string[],
-): Promise<ParsedLog[][]> => {
+): Promise<ParsedLog[][]> {
   return Promise.all(
     userIds.map(async (userId) => {
       const recordNames = await getObjectNamesInBucket(
@@ -121,6 +123,6 @@ export const logsDataLoader = async (
       );
     }),
   );
-};
+}
 
 export default retrieveAllDataLoaders;

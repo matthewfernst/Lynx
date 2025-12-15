@@ -33,15 +33,14 @@ export async function handler(event: S3Event) {
 
         const userId = objectKey.split("/")[0];
         const endTime = DateTime.fromFormat(activity.attributes.end, "yyyy-MM-dd HH:mm:ss ZZZ");
+        const resorts = ["ALL", activity.attributes.locationName];
 
         await Promise.all(
             timeframes.map(async (timeframe) => {
                 const resultsForTimeframe = await Promise.all(
-                    Object.values(leaderboardSortTypesToQueryFields).map(async (sortType) => {
-                        const activityKey = sortType === "verticalDistance" ? "vertical" : sortType;
-                        const value = activity.attributes[activityKey];
-                        return await updateItem(userId, endTime, timeframe, sortType, value);
-                    })
+                    resorts.flatMap(async (resortValue) =>
+                        await updateAllMetrics(activity, userId, endTime, timeframe, resortValue)
+                    )
                 );
                 console.info(
                     `Successfully updated leaderboard for timeframe "${Timeframe[timeframe]}".`
@@ -52,23 +51,44 @@ export async function handler(event: S3Event) {
     }
 }
 
-const updateItem = async (
+async function updateAllMetrics(
+    activity: any,
+    userId: string,
+    endTime: DateTime,
+    timeframe: Timeframe,
+    resortValue: string
+) {
+    return Object.values(leaderboardSortTypesToQueryFields).map(async (sortType) => {
+        const activityKey = sortType === "verticalDistance" ? "vertical" : sortType;
+        const value = activity.attributes[activityKey];
+        return await updateItem(userId, endTime, timeframe, resortValue, sortType, value);
+    });
+}
+
+async function updateItem(
     id: string,
     endTime: DateTime,
     timeframe: Timeframe,
+    resort: string,
     sortType: string,
-    value: number
-): Promise<UpdateItemOutput | undefined> => {
+    value: number,
+): Promise<UpdateItemOutput | undefined> {
+    const timeframeKey = leaderboardTimeframeFromQueryArgument(endTime, timeframe);
     try {
+        const uniquenessId = `${timeframeKey}#${resort}`;
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
-            Key: { id, timeframe: leaderboardTimeframeFromQueryArgument(endTime, timeframe) },
+            Key: { id, "uniqueness-id": uniquenessId },
             UpdateExpression: generateUpdateExpression(timeframe, sortType),
             ExpressionAttributeNames: {
+                "#timeframe": "timeframe",
+                "#resort": "resort",
                 "#updateKey": sortType,
                 ...(timeframe !== Timeframe.ALL_TIME && { "#ttl": "ttl" })
             },
             ExpressionAttributeValues: {
+                ":timeframe": timeframeKey,
+                ":resort": resort,
                 ":value": value,
                 ...(timeframe !== Timeframe.ALL_TIME && {
                     ":ttl": getTimeToLive(endTime, timeframe)
@@ -90,26 +110,22 @@ const updateItem = async (
         console.error(err);
         throw new Error("DynamoDB Update Call Failed");
     }
-};
+}
 
-const generateUpdateExpression = (timeframe: Timeframe, sortType: string) => {
-    const updateExpression = isMaximumSortType(sortType)
-        ? "SET #updateKey = :value"
-        : "ADD #updateKey :value";
-    if (timeframe !== Timeframe.ALL_TIME) {
-        const setTTL = "#ttl = :ttl";
-        const ttlAddition = isMaximumSortType(sortType) ? `, ${setTTL}` : ` SET ${setTTL}`;
-        return `${updateExpression}${ttlAddition}`;
-    }
-    return updateExpression;
-};
+function generateUpdateExpression(timeframe: Timeframe, sortType: string) {
+    const ttl = timeframe !== Timeframe.ALL_TIME ? ", #ttl = :ttl" : "";
+
+    return isMaximumSortType(sortType)
+        ? `SET #timeframe = :timeframe, #resort = :resort${ttl}, #updateKey = :value`
+        : `SET #timeframe = :timeframe, #resort = :resort${ttl} ADD #updateKey :value`;
+}
 
 const isMaximumSortType = (sortType: string) => sortType.includes("top");
 
-const getTimeToLive = (
+function getTimeToLive(
     endTime: DateTime,
     timeframe: Exclude<Timeframe, Timeframe.ALL_TIME>
-): number => {
+): number {
     switch (timeframe) {
         case Timeframe.DAY:
             return endTime.startOf("day").plus({ days: 1 }).toSeconds();
@@ -120,4 +136,4 @@ const getTimeToLive = (
         case Timeframe.SEASON:
             return getSeasonEnd(endTime).toSeconds();
     }
-};
+}

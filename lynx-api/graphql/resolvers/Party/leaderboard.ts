@@ -18,6 +18,7 @@ interface Args {
   sortBy: keyof typeof LeaderboardSort;
   timeframe: keyof typeof Timeframe;
   limit: number;
+  resort?: string;
 }
 
 const leaderboard = async (
@@ -38,6 +39,7 @@ const leaderboard = async (
     ),
     args.limit,
     usersInParty,
+    args.resort,
   );
   return await Promise.all(
     leaderboardEntries.map(
@@ -52,10 +54,11 @@ const getTimeframeRankingByIndex = async (
   timeframe: string,
   limit: number,
   usersInParty: string[],
+  resort?: string,
 ): Promise<LeaderboardEntry[]> => {
   try {
     console.info(
-      `Getting items with timeframe ${timeframe} sorted by ${index}`,
+      `Getting items with timeframe ${timeframe}${resort ? ` and resort ${resort}` : ""} sorted by ${index}`,
     );
 
     const userPlaceholders = usersInParty.map((_, i) => `:user${i}`).join(", ");
@@ -70,9 +73,10 @@ const getTimeframeRankingByIndex = async (
     const queryRequest = new QueryCommand({
       TableName: LEADERBOARD_TABLE,
       IndexName: index,
-      KeyConditionExpression: "timeframe = :value",
+      KeyConditionExpression: "timeframe = :timeframe AND resort = :resort",
       ExpressionAttributeValues: {
-        ":value": timeframe,
+        ":timeframe": timeframe,
+        ":resort": resort || "ALL",
         ...userAttributeValues,
       },
       ScanIndexForward: false,
@@ -81,7 +85,6 @@ const getTimeframeRankingByIndex = async (
 
     const itemOutput = await documentClient.send(queryRequest);
     const results = (itemOutput.Items as LeaderboardEntry[]) || [];
-
     return results.slice(0, limit);
   } catch (err) {
     console.error(err);
