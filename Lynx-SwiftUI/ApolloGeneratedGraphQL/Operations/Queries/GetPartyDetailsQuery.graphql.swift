@@ -9,7 +9,7 @@ public extension ApolloGeneratedGraphQL {
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        query GetPartyDetails($partyId: ID!, $sortBy: LeaderboardSort = VERTICAL_DISTANCE, $timeframe: Timeframe = SEASON, $limit: Int = 5) {
+        query GetPartyDetails($partyId: ID!, $sortBy: LeaderboardSort = VERTICAL_DISTANCE, $timeframe: Timeframe = SEASON, $limit: Int = 5, $resort: String) {
           partyLookupById(id: $partyId) {
             __typename
             id
@@ -36,7 +36,12 @@ public extension ApolloGeneratedGraphQL {
               lastName
               profilePictureUrl
             }
-            leaderboard(sortBy: $sortBy, timeframe: $timeframe, limit: $limit) {
+            leaderboard(
+              sortBy: $sortBy
+              timeframe: $timeframe
+              limit: $limit
+              resort: $resort
+            ) {
               __typename
               id
               firstName
@@ -59,24 +64,28 @@ public extension ApolloGeneratedGraphQL {
     public var sortBy: GraphQLNullable<GraphQLEnum<LeaderboardSort>>
     public var timeframe: GraphQLNullable<GraphQLEnum<Timeframe>>
     public var limit: GraphQLNullable<Int>
+    public var resort: GraphQLNullable<String>
 
     public init(
       partyId: ID,
       sortBy: GraphQLNullable<GraphQLEnum<LeaderboardSort>> = .init(.verticalDistance),
       timeframe: GraphQLNullable<GraphQLEnum<Timeframe>> = .init(.season),
-      limit: GraphQLNullable<Int> = 5
+      limit: GraphQLNullable<Int> = 5,
+      resort: GraphQLNullable<String>
     ) {
       self.partyId = partyId
       self.sortBy = sortBy
       self.timeframe = timeframe
       self.limit = limit
+      self.resort = resort
     }
 
     public var __variables: Variables? { [
       "partyId": partyId,
       "sortBy": sortBy,
       "timeframe": timeframe,
-      "limit": limit
+      "limit": limit,
+      "resort": resort
     ] }
 
     public struct Data: ApolloGeneratedGraphQL.SelectionSet {
@@ -109,7 +118,8 @@ public extension ApolloGeneratedGraphQL {
           .field("leaderboard", [Leaderboard].self, arguments: [
             "sortBy": .variable("sortBy"),
             "timeframe": .variable("timeframe"),
-            "limit": .variable("limit")
+            "limit": .variable("limit"),
+            "resort": .variable("resort")
           ]),
         ] }
 

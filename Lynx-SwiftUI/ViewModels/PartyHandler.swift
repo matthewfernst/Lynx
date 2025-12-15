@@ -54,14 +54,15 @@ import OSLog
         }
     }
 
-    func fetchPartyDetails(partyId: String, sortBy: LeaderboardSort = .verticalDistance, timeframe: Timeframe = .season, completion: ((Bool) -> Void)? = nil) {
+    func fetchPartyDetails(partyId: String, sortBy: LeaderboardSort = .verticalDistance, timeframe: Timeframe = .season, resort: String? = nil, completion: ((Bool) -> Void)? = nil) {
         isLoadingDetails = true
         errorMessage = nil
 
         ApolloLynxClient.getPartyDetails(
             partyId: partyId,
             sortBy: sortBy,
-            timeframe: timeframe
+            timeframe: timeframe,
+            resort: resort
         ) { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoadingDetails = false

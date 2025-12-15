@@ -9,11 +9,12 @@ public extension ApolloGeneratedGraphQL {
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
         #"""
-        query GetAllLeaderboards($timeframe: Timeframe!, $limit: Int, $measurementSystem: MeasurementSystem!) {
+        query GetAllLeaderboards($timeframe: Timeframe!, $limit: Int, $measurementSystem: MeasurementSystem!, $resort: String) {
           distanceLeaders: leaderboard(
             sortBy: DISTANCE
             timeframe: $timeframe
             limit: $limit
+            resort: $resort
           ) {
             __typename
             ...leaderboardFields
@@ -26,6 +27,7 @@ public extension ApolloGeneratedGraphQL {
             sortBy: RUN_COUNT
             timeframe: $timeframe
             limit: $limit
+            resort: $resort
           ) {
             __typename
             ...leaderboardFields
@@ -38,6 +40,7 @@ public extension ApolloGeneratedGraphQL {
             sortBy: TOP_SPEED
             timeframe: $timeframe
             limit: $limit
+            resort: $resort
           ) {
             __typename
             ...leaderboardFields
@@ -50,6 +53,7 @@ public extension ApolloGeneratedGraphQL {
             sortBy: VERTICAL_DISTANCE
             timeframe: $timeframe
             limit: $limit
+            resort: $resort
           ) {
             __typename
             ...leaderboardFields
@@ -66,21 +70,25 @@ public extension ApolloGeneratedGraphQL {
     public var timeframe: GraphQLEnum<Timeframe>
     public var limit: GraphQLNullable<Int>
     public var measurementSystem: GraphQLEnum<MeasurementSystem>
+    public var resort: GraphQLNullable<String>
 
     public init(
       timeframe: GraphQLEnum<Timeframe>,
       limit: GraphQLNullable<Int>,
-      measurementSystem: GraphQLEnum<MeasurementSystem>
+      measurementSystem: GraphQLEnum<MeasurementSystem>,
+      resort: GraphQLNullable<String>
     ) {
       self.timeframe = timeframe
       self.limit = limit
       self.measurementSystem = measurementSystem
+      self.resort = resort
     }
 
     public var __variables: Variables? { [
       "timeframe": timeframe,
       "limit": limit,
-      "measurementSystem": measurementSystem
+      "measurementSystem": measurementSystem,
+      "resort": resort
     ] }
 
     public struct Data: ApolloGeneratedGraphQL.SelectionSet {
@@ -92,22 +100,26 @@ public extension ApolloGeneratedGraphQL {
         .field("leaderboard", alias: "distanceLeaders", [DistanceLeader].self, arguments: [
           "sortBy": "DISTANCE",
           "timeframe": .variable("timeframe"),
-          "limit": .variable("limit")
+          "limit": .variable("limit"),
+          "resort": .variable("resort")
         ]),
         .field("leaderboard", alias: "runCountLeaders", [RunCountLeader].self, arguments: [
           "sortBy": "RUN_COUNT",
           "timeframe": .variable("timeframe"),
-          "limit": .variable("limit")
+          "limit": .variable("limit"),
+          "resort": .variable("resort")
         ]),
         .field("leaderboard", alias: "topSpeedLeaders", [TopSpeedLeader].self, arguments: [
           "sortBy": "TOP_SPEED",
           "timeframe": .variable("timeframe"),
-          "limit": .variable("limit")
+          "limit": .variable("limit"),
+          "resort": .variable("resort")
         ]),
         .field("leaderboard", alias: "verticalDistanceLeaders", [VerticalDistanceLeader].self, arguments: [
           "sortBy": "VERTICAL_DISTANCE",
           "timeframe": .variable("timeframe"),
-          "limit": .variable("limit")
+          "limit": .variable("limit"),
+          "resort": .variable("resort")
         ]),
       ] }
 

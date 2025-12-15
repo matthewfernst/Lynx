@@ -1,21 +1,34 @@
 import SwiftUI
 import Charts
+import OSLog
 
 struct LeaderboardView: View {
     @Environment(ProfileManager.self) private var profileManager
-    @State private var leaderboardHandler = LeaderboardHandler()
     @State private var logbookStats = LogbookStats()
     @State private var selectedTimeframe: Timeframe = .season
     @State private var selectedResort: String? = nil
 
+    @State private var isLoading = false
+    @State private var distanceLeaders: [LeaderAttributes] = []
+    @State private var runCountLeaders: [LeaderAttributes] = []
+    @State private var topSpeedLeaders: [LeaderAttributes] = []
+    @State private var verticalDistanceLeaders: [LeaderAttributes] = []
+    @State private var errorMessage: String?
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                if leaderboardHandler.isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(.top, 100)
-                } else if let errorMessage = leaderboardHandler.errorMessage {
+                if isLoading {
+                    VStack(spacing: 16) {
+                        ProgressView()
+                            .controlSize(.large)
+                        Text("Loading Leaderboards...")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.top, 100)
+                } else if let errorMessage {
                     VStack(spacing: 16) {
                         Image(systemName: "exclamationmark.triangle")
                             .font(.largeTitle)
@@ -37,25 +50,25 @@ struct LeaderboardView: View {
 
                         // Four leaderboard charts
                         GlobalLeaderboardChart(
-                            leaders: leaderboardHandler.verticalDistanceLeaders,
+                            leaders: verticalDistanceLeaders,
                             sortBy: .verticalDistance,
                             measurementSystem: profileManager.measurementSystem
                         )
 
                         GlobalLeaderboardChart(
-                            leaders: leaderboardHandler.distanceLeaders,
+                            leaders: distanceLeaders,
                             sortBy: .distance,
                             measurementSystem: profileManager.measurementSystem
                         )
 
                         GlobalLeaderboardChart(
-                            leaders: leaderboardHandler.topSpeedLeaders,
+                            leaders: topSpeedLeaders,
                             sortBy: .topSpeed,
                             measurementSystem: profileManager.measurementSystem
                         )
 
                         GlobalLeaderboardChart(
-                            leaders: leaderboardHandler.runCountLeaders,
+                            leaders: runCountLeaders,
                             sortBy: .runCount,
                             measurementSystem: profileManager.measurementSystem
                         )
@@ -67,6 +80,7 @@ struct LeaderboardView: View {
             .navigationBarTitleDisplayMode(.large)
             .background(Color(uiColor: .systemGroupedBackground))
             .task {
+                Logger.leaderboard.info("LeaderboardView appeared - starting initial fetch")
                 logbookStats.requestLogs()
                 fetchLeaderboards()
             }
@@ -133,9 +147,6 @@ struct LeaderboardView: View {
                 Spacer()
             }
         }
-        .padding()
-        .background(Color(uiColor: .secondarySystemGroupedBackground))
-        .cornerRadius(12)
     }
 
     private var timeframeLabel: String {
@@ -154,10 +165,31 @@ struct LeaderboardView: View {
     }
 
     private func fetchLeaderboards() {
-        leaderboardHandler.fetchAllLeaderboards(
-            timeframe: selectedTimeframe,
-            resort: selectedResort,
-            measurementSystem: profileManager.measurementSystem
-        )
+        isLoading = true
+        errorMessage = nil
+
+        ApolloLynxClient.getAllLeaderboards(
+            for: selectedTimeframe,
+            limit: 10,
+            inMeasurementSystem: profileManager.measurementSystem,
+            resort: selectedResort
+        ) { result in
+            DispatchQueue.main.async {
+                self.isLoading = false
+                switch result {
+                case .success(let leaderboards):
+                    self.distanceLeaders = leaderboards[.distance] ?? []
+                    self.runCountLeaders = leaderboards[.runCount] ?? []
+                    self.topSpeedLeaders = leaderboards[.topSpeed] ?? []
+                    self.verticalDistanceLeaders = leaderboards[.verticalDistance] ?? []
+
+                    // Log detailed info
+                    Logger.leaderboard.info("Successfully fetched leaderboards - Distance: \(self.distanceLeaders.count), RunCount: \(self.runCountLeaders.count), TopSpeed: \(self.topSpeedLeaders.count), Vertical: \(self.verticalDistanceLeaders.count)")
+                case .failure(let error):
+                    Logger.leaderboard.error("Failed to fetch leaderboards: \(error.localizedDescription)")
+                    self.errorMessage = "Failed to load leaderboards. \(error.localizedDescription)"
+                }
+            }
+        }
     }
 }

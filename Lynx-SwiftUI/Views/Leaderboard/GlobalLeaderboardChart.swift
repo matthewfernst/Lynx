@@ -12,9 +12,7 @@ struct GlobalLeaderboardChart: View {
 
     private var chartData: [(name: String, value: Double)] {
         topTen.map { leader in
-            let value = leader.stat
-            let name = "\(leader.firstName) \(leader.lastName)"
-            return (name: name, value: value)
+            (name: leader.fullName, value: leader.stat)
         }
     }
 

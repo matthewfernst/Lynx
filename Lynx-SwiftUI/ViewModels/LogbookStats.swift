@@ -29,19 +29,14 @@ import OSLog
         }
     }
     
-    func getDistanceFormatted(distance: Double) -> String {
-        if distance >= 1000 {
-            return String(format: "%.1fk", Double(distance) / 1000)
-        }
-        return String(distance)
-    }
-    
     var lifetimeVertical: String {
         let totalVerticalFeet = logbooks.map { $0.verticalDistance }.reduce(0, +)
-        
-        if totalVerticalFeet == 0 { return "--" }
-        
-        return getDistanceFormatted(distance: totalVerticalFeet)
+        guard totalVerticalFeet > 0 else { return "--" }
+
+        if totalVerticalFeet >= 1000 {
+            return String(format: "%.1fk", totalVerticalFeet / 1000)
+        }
+        return String(format: "%.0f", totalVerticalFeet)
     }
     
     var lifetimeDaysOnMountain: String {
@@ -60,102 +55,116 @@ import OSLog
         return totalRuns == 0 ? "--" : String(totalRuns)
     }
     
-    func logbook(at index: Int) -> Logbook? {
-        guard index >= 0 && index < logbooks.count else {
-            return nil
-        }
-        
+    func logbook(at index: Int) -> ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook? {
+        guard logbooks.indices.contains(index) else { return nil }
         return logbooks[index]
     }
-    
-    func formattedDateOfRun(at index: Int) -> String {
-        let defaultDate = "NA\n"
-        guard let logbook = logbook(at: index) else {
-            return defaultDate
-        }
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        
-        if let date = dateFormatter.date(from: String(logbook.startDate.split(separator: " ")[0])) {
-            dateFormatter.dateFormat = "MMM\nd"
-            return dateFormatter.string(from: date)
-        }
-        
-        return defaultDate
-    }
-    
-    func totalLogbookTime(at index: Int) -> (Int, Int) {
-        guard let logbook = logbook(at: index) else {
-            return (0, 0)
-        }
-        
+
+    func getConfiguredLogbookData(at index: Int) -> ConfiguredLogbookData? {
+        guard logbooks.indices.contains(index) else { return nil }
+        let logbook = logbooks[index]
+
+        // Calculate duration
         let durationInSeconds = Int(logbook.duration)
         let hours = durationInSeconds / 3600
         let minutes = (durationInSeconds % 3600) / 60
-        
-        return (hours, minutes)
-    }
-    
-    func logbookConditions(at index: Int) -> String {
-        guard let conditions = logbook(at: index)?.conditions else {
-            return ""
+
+        // Format date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        var dateOfRun = "NA\n"
+        if let date = dateFormatter.date(from: String(logbook.startDate.split(separator: " ")[0])) {
+            dateFormatter.dateFormat = "MMM\nd"
+            dateOfRun = dateFormatter.string(from: date)
         }
-        
-        var capitalizedConditions = conditions.map {
+
+        // Format conditions
+        var capitalizedConditions = logbook.conditions.map {
             $0.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "_", with: " ").capitalized
         }
-        
         if capitalizedConditions.count > 1 {
             capitalizedConditions.removeAll(where: { $0 == "Packed" })
         }
-        
-        let formattedCondition = capitalizedConditions.first ?? ""
-        return formattedCondition
-    }
-    
-    func logbookTopSpeed(at index: Int) -> String {
-        return String(format: "%.1f\(profileManager.measurementSystem.milesOrKilometersPerHour)", logbook(at: index)?.topSpeed ?? 0.0)
-    }
-    
-    func getConfiguredLogbookData(at index: Int) -> ConfiguredLogbookData? {
-        guard let logbook = logbook(at: index) else {
-            return nil
-        }
-        
-        let (runDurationHour, runDurationMinutes) = totalLogbookTime(at: index)
-        
+        let conditions = capitalizedConditions.first ?? ""
+
         return ConfiguredLogbookData(
             resortName: logbook.locationName,
             numberOfRuns: Int(logbook.runCount),
-            runDurationHour: runDurationHour,
-            runDurationMinutes: runDurationMinutes,
-            dateOfRun: formattedDateOfRun(at: index),
-            conditions: logbookConditions(at: index),
-            topSpeed: logbookTopSpeed(at: index)
+            runDurationHour: hours,
+            runDurationMinutes: minutes,
+            dateOfRun: dateOfRun,
+            conditions: conditions,
+            topSpeed: String(format: "%.1f\(profileManager.measurementSystem.milesOrKilometersPerHour)", logbook.topSpeed)
         )
     }
     
     var lifetimeAverages: [[Stat]] {
+        // Average vertical feet
+        let averageVerticalFeet: String = {
+            guard !logbooks.isEmpty else { return "--" }
+            let average = logbooks.map { $0.verticalDistance }.reduce(0.0, +) / Double(logbooks.count)
+
+            if average >= 1000 {
+                return String(format: "%.1fk \(profileManager.measurementSystem.feetOrMeters)", average / 1000)
+            }
+            return String(format: "%.0f \(profileManager.measurementSystem.feetOrMeters)", average)
+        }()
+
+        // Average distance
+        let averageDistance: String = {
+            guard !logbooks.isEmpty else { return "--" }
+            let average = logbooks.map { $0.distance }.reduce(0.0, +) / Double(logbooks.count)
+
+            switch profileManager.measurementSystem {
+            case .imperial:
+                return String(format: "%.1f MI", average.feetToMiles)
+            case .metric:
+                return String(format: "%.1f KM", average.metersToKilometers)
+            }
+        }()
+
+        // Average speed
+        let averageSpeed: String = {
+            guard !logbooks.isEmpty else { return "--" }
+            let average = logbooks.map { $0.topSpeed }.reduce(0.0, +) / Double(logbooks.count)
+            return String(format: "%.1f \(profileManager.measurementSystem.milesOrKilometersPerHour)", average)
+        }()
+
         return [
             [
-                Stat(label: "run vertical", information: calculateAverageVerticalFeet(), systemImageName: "arrow.down"),
-                Stat(label: "run distance", information: calculateAverageDistance(), systemImageName: "arrow.right")
+                Stat(label: "run vertical", information: averageVerticalFeet, systemImageName: "arrow.down"),
+                Stat(label: "run distance", information: averageDistance, systemImageName: "arrow.right")
             ],
             [
-                Stat(label: "speed", information: calculateAverageSpeed(), systemImageName: "speedometer")
+                Stat(label: "speed", information: averageSpeed, systemImageName: "speedometer")
             ],
         ]
     }
-    
+
     var lifetimeBest: [[Stat]] {
+        // Top speed
+        let topSpeed = String(format: "%.1f \(profileManager.measurementSystem.milesOrKilometersPerHour)", logbooks.map { $0.topSpeed }.max() ?? 0.0)
+
+        // Tallest run
+        let tallestRun = String(format: "%.1f \(profileManager.measurementSystem.feetOrMeters)", logbooks.map { $0.verticalDistance }.max() ?? 0.0)
+
+        // Longest run
+        let longestRun: String = {
+            switch profileManager.measurementSystem {
+            case .imperial:
+                return String(format: "%.1f MI", (logbooks.map { $0.distance }.max() ?? 0.0).feetToMiles)
+            case .metric:
+                return String(format: "%.1f KM", (logbooks.map { $0.distance }.max() ?? 0.0).metersToKilometers)
+            }
+        }()
+
         return [
             [
-                Stat(label: "top speed", information: calculateBestTopSpeed(), systemImageName: "flame"),
-                Stat(label: "tallest run", information: calculateBestTallestRun(), systemImageName: "ruler")
+                Stat(label: "top speed", information: topSpeed, systemImageName: "flame"),
+                Stat(label: "tallest run", information: tallestRun, systemImageName: "ruler")
             ],
             [
-                Stat(label: "longest run", information: calculateBestLongestRun(), systemImageName: "timer"),
+                Stat(label: "longest run", information: longestRun, systemImageName: "timer"),
             ]
         ]
     }
@@ -214,55 +223,6 @@ import OSLog
         
         
         return (resultsArray, resultsArray.max(by: { $0.count < $1.count })?.condition ?? "")
-    }
-    
-    private func calculateAverageVerticalFeet() -> String {
-        let averageVerticalFeet = logbooks.map { $0.verticalDistance }.reduce(0.0) {
-            return $0 + $1/Double(logbooks.count)
-        }
-        
-        if averageVerticalFeet >= 1000 {
-            return String(format: "%.1fk \(profileManager.measurementSystem.feetOrMeters)", averageVerticalFeet / 1000)
-        }
-        
-        return String(format: "%.0f \(profileManager.measurementSystem.feetOrMeters)", averageVerticalFeet)
-    }
-    
-    private func calculateAverageDistance() -> String {
-        let averageDistance = logbooks.map { $0.distance }.reduce(0.0) {
-            return $0 + $1/Double(logbooks.count)
-        }
-        switch profileManager.measurementSystem {
-        case .imperial:
-            return String(format: "%.1f MI", averageDistance.feetToMiles)
-        case .metric:
-            return String(format: "%.1f KM", averageDistance.metersToKilometers)
-        }
-    }
-    
-    private func calculateAverageSpeed() -> String {
-        let averageSpeed = logbooks.map { $0.topSpeed }.reduce(0.0) {
-            return $0 + $1/Double(logbooks.count)
-        }
-        
-        return String(format: "%.1f \(profileManager.measurementSystem.milesOrKilometersPerHour)", averageSpeed)
-    }
-    
-    private func calculateBestTopSpeed() -> String {
-        return String(format: "%.1f \(profileManager.measurementSystem.milesOrKilometersPerHour)", logbooks.map { $0.topSpeed }.max() ?? 0.0)
-    }
-    
-    private func calculateBestTallestRun() -> String {
-        return String(format: "%.1f \(profileManager.measurementSystem.feetOrMeters)", logbooks.map { $0.verticalDistance }.max() ?? 0.0)
-    }
-    
-    private func calculateBestLongestRun() -> String {
-        switch profileManager.measurementSystem {
-        case .imperial:
-            return String(format: "%.1f MI", (logbooks.map { $0.distance }.max() ?? 0.0).feetToMiles)
-        case .metric:
-            return String(format: "%.1f KM", (logbooks.map { $0.distance }.max() ?? 0.0).metersToKilometers)
-        }
     }
 }
 

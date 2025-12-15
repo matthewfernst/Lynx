@@ -95,6 +95,7 @@ struct LifetimeDetailsView: View {
             RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(color.opacity(0.3), lineWidth: 1)
         )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 

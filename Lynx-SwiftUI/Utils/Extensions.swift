@@ -24,10 +24,14 @@ extension Logger {
 
     static let keychainManager = Logger(subsystem: subsystem, category: "KeychainManager")
     
+    static let leaderboard = Logger(subsystem: subsystem, category: "Leaderboard")
+
     static let logbook = Logger(subsystem: subsystem, category: "LogbookView")
-    
+
     static let logbookStats = Logger(subsystem: subsystem, category: "LogbookStats")
-    
+
+    static let logbookView = Logger(subsystem: subsystem, category: "LogbookView")
+
     static let loginHandler = Logger(subsystem: subsystem, category: "LoginHandler")
     
     static let notifications = Logger(subsystem: subsystem, category: "Notifications")
