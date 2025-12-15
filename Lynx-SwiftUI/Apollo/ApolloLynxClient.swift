@@ -523,16 +523,12 @@ final class ApolloLynxClient {
 
                     switch sort {
                     case .distance:
-                        Logger.apollo.debug("Successfully got distance leaders")
                         leaders = data.distanceLeaders
                     case .runCount:
-                        Logger.apollo.debug("Successfully got run count leaders")
                         leaders = data.runCountLeaders
                     case .topSpeed:
-                        Logger.apollo.debug("Successfully got top speed leaders")
                         leaders = data.topSpeedLeaders
                     case .verticalDistance:
-                        Logger.apollo.debug("Successfully got vertical distance leaders")
                         leaders = data.verticalDistanceLeaders
                     }
 
