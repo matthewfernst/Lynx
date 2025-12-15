@@ -19,7 +19,8 @@ export enum GrantType {
 export function generateToken(id: string, grantType: GrantType): string {
   console.info(`Generating ${GrantType[grantType]} token for user ${id}`);
   const key = process.env[`${grantType}_KEY`] || GrantType[grantType];
-  return jwt.sign({ id }, key, { expiresIn: "12h" });
+  const expiresIn = grantType === GrantType.REFRESH ? "7d" : "12h";
+  return jwt.sign({ id }, key, { expiresIn });
 }
 
 export function decryptToken(token: string, grantType: GrantType): AccessToken {

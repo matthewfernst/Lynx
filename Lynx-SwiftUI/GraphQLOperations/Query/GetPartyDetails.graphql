@@ -1,4 +1,4 @@
-query GetPartyDetails($partyId: ID!, $sortBy: LeaderboardSort = VERTICAL_DISTANCE, $timeframe: Timeframe = SEASON, $limit: Int = 5) {
+query GetPartyDetails($partyId: ID!, $sortBy: LeaderboardSort = VERTICAL_DISTANCE, $timeframe: Timeframe = SEASON, $limit: Int = 5, $resort: String) {
   partyLookupById(id: $partyId) {
     id
     name
@@ -21,7 +21,7 @@ query GetPartyDetails($partyId: ID!, $sortBy: LeaderboardSort = VERTICAL_DISTANC
       lastName
       profilePictureUrl
     }
-    leaderboard(sortBy: $sortBy, timeframe: $timeframe, limit: $limit) {
+    leaderboard(sortBy: $sortBy, timeframe: $timeframe, limit: $limit, resort: $resort) {
       id
       firstName
       lastName

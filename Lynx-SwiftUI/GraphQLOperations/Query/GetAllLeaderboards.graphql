@@ -1,26 +1,26 @@
-query GetAllLeaderboards($timeframe: Timeframe!, $limit: Int, $measurementSystem: MeasurementSystem!)  {
-    distanceLeaders: leaderboard(sortBy: DISTANCE, timeframe: $timeframe, limit: $limit) {
+query GetAllLeaderboards($timeframe: Timeframe!, $limit: Int, $measurementSystem: MeasurementSystem!, $resort: String)  {
+    distanceLeaders: leaderboard(sortBy: DISTANCE, timeframe: $timeframe, limit: $limit, resort: $resort) {
         ...leaderboardFields
         stats(timeframe: $timeframe) {
             distance(system: $measurementSystem)
         }
     }
-    
-    runCountLeaders: leaderboard(sortBy: RUN_COUNT, timeframe: $timeframe, limit: $limit){
+
+    runCountLeaders: leaderboard(sortBy: RUN_COUNT, timeframe: $timeframe, limit: $limit, resort: $resort){
         ...leaderboardFields
         stats(timeframe: $timeframe) {
             runCount
         }
     }
-    
-    topSpeedLeaders: leaderboard(sortBy: TOP_SPEED, timeframe: $timeframe, limit: $limit) {
+
+    topSpeedLeaders: leaderboard(sortBy: TOP_SPEED, timeframe: $timeframe, limit: $limit, resort: $resort) {
         ...leaderboardFields
         stats(timeframe: $timeframe) {
             topSpeed(system: $measurementSystem)
         }
     }
-    
-    verticalDistanceLeaders: leaderboard(sortBy: VERTICAL_DISTANCE, timeframe: $timeframe, limit: $limit) {
+
+    verticalDistanceLeaders: leaderboard(sortBy: VERTICAL_DISTANCE, timeframe: $timeframe, limit: $limit, resort: $resort) {
         ...leaderboardFields
         stats(timeframe: $timeframe) {
             verticalDistance(system: $measurementSystem)

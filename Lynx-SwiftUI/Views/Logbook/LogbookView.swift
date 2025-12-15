@@ -74,32 +74,51 @@ struct LogbookView: View {
     private var autoUpload: some View {
         VStack {
               Spacer()
-                  .frame(height: showAutoUpload ? 0 : 55)
+                  .frame(height: showAutoUpload && !folderConnectionHandler.isUploadingInBackground ? 0 : 55)
                   .animation(.easeInOut, value: showAutoUpload)
-            
-            AutoUploadView(
-                folderConnectionHandler: folderConnectionHandler,
-                showAutoUpload: $showAutoUpload
-            )
-            .padding(.top, showAutoUpload ? 55 : 0)
-            .offset(y: showAutoUpload ? 0 : -UIScreen.main.bounds.height)
-            .animation(.easeInOut(duration: 1.25), value: showAutoUpload)
+
+            // Only show compact overlay if NOT doing background upload
+            if showAutoUpload && !folderConnectionHandler.isUploadingInBackground {
+                AutoUploadView(
+                    folderConnectionHandler: folderConnectionHandler,
+                    showAutoUpload: $showAutoUpload
+                )
+                .padding(.top, showAutoUpload ? 55 : 0)
+                .offset(y: showAutoUpload ? 0 : -UIScreen.main.bounds.height)
+                .animation(.easeInOut(duration: 1.25), value: showAutoUpload)
+            }
 
             Spacer()
           }
           .ignoresSafeArea(.all)
           .zIndex(1)
-          .opacity(showAutoUpload ? 1 : 0)
+          .opacity(showAutoUpload && !folderConnectionHandler.isUploadingInBackground ? 1 : 0)
           .animation(.easeInOut, value: showAutoUpload)
     }
     
     private var documentPickerAndConnectionButton: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             if slopesFolderIsConnected {
-                Button("Folder Already Connected", systemImage: "externaldrive.fill.badge.checkmark") {
+                Button {
                     showSlopesFolderAlreadyConnected = true
+                } label: {
+                    ZStack {
+                        // Background icon
+                        Image(systemName: "externaldrive.fill.badge.checkmark")
+                            .foregroundStyle(.green)
+
+                        // Progress overlay when uploading in background
+                        if folderConnectionHandler.isUploadingInBackground {
+                            Circle()
+                                .trim(from: 0.0, to: folderConnectionHandler.uploadProgress)
+                                .stroke(style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                                .foregroundColor(.blue)
+                                .rotationEffect(.degrees(-90))
+                                .frame(width: 35, height: 35)
+                                .animation(.easeInOut, value: folderConnectionHandler.uploadProgress)
+                        }
+                    }
                 }
-                .tint(.green)
             } else {
                 Button("Connect Folder", systemImage: "folder.badge.plus") {
                     showUploadFilesSheet = true
@@ -422,13 +441,33 @@ struct LogbookView: View {
     }
     
     private func checkForNewFilesAndUpload() {
+        // Only check once per app launch
+        guard !folderConnectionHandler.hasCheckedForFilesThisSession else {
+            Logger.logbookView.debug("Already checked for files this session, skipping.")
+            return
+        }
+
+        folderConnectionHandler.hasCheckedForFilesThisSession = true
+
         if let url = BookmarkManager.shared.bookmark?.url {
             folderConnectionHandler.getNonUploadedSlopeFiles(forURL: url) { files in
-                if let files {
-                    showAutoUpload = true
-                    
+                if let files, !files.isEmpty {
+                    // Determine if this is first-time setup or background upload
+                    let isFirstTimeSetup = UserDefaults.standard.bool(forKey: "hasCompletedInitialUpload") == false
+
+                    if isFirstTimeSetup {
+                        // Show full progress dialog for first upload
+                        showAutoUpload = true
+                    } else {
+                        // Background upload with minimal UI
+                        folderConnectionHandler.isUploadingInBackground = true
+                    }
+
                     folderConnectionHandler.uploadNewFiles(files) {
+                        UserDefaults.standard.set(true, forKey: "hasCompletedInitialUpload")
+
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3.25) { // give time for Lambda's to fire and animation to end
+                            folderConnectionHandler.isUploadingInBackground = false
                             requestLogs()
                         }
                     }

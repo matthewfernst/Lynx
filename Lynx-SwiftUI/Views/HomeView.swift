@@ -20,6 +20,11 @@ struct HomeView: View {
                 Label("Logbook", systemImage: "book.pages")
             }
 
+            LeaderboardView()
+                .tabItem {
+                    Label("Leaderboard", systemImage: "trophy.fill")
+                }
+
             PartyView(partyHandler: partyHandler)
                 .tabItem {
                     Label("Parties", systemImage: "person.3.fill")

@@ -8,6 +8,8 @@ struct PartyDetailView: View {
     let partyId: String
 
     @State private var selectedTimeframe: Timeframe = .season
+    @State private var selectedResort: String? = nil
+    @State private var logbookStats = LogbookStats()
     @State private var showInviteUser = false
     @State private var showPartySettings = false
     @State private var showLeaveConfirmation = false
@@ -44,12 +46,15 @@ struct PartyDetailView: View {
                     PartyLeaderboardChartsSection(
                         details: details,
                         selectedTimeframe: $selectedTimeframe,
+                        selectedResort: $selectedResort,
                         profileManager: profileManager,
-                        onTimeframeChange: { timeframe in
+                        logbookStats: logbookStats,
+                        onFilterChange: { timeframe, resort in
                             partyHandler.fetchPartyDetails(
                                 partyId: partyId,
                                 sortBy: .verticalDistance,
-                                timeframe: timeframe
+                                timeframe: timeframe,
+                                resort: resort
                             )
                         }
                     )
@@ -127,14 +132,19 @@ struct PartyDetailView: View {
         } message: {
             Text("Are you sure you want to delete this party? This action cannot be undone.")
         }
+        .task {
+            logbookStats.requestLogs()
+        }
     }
 }
 
 struct PartyLeaderboardChartsSection: View {
     let details: PartyDetails
     @Binding var selectedTimeframe: Timeframe
+    @Binding var selectedResort: String?
     let profileManager: ProfileManager
-    let onTimeframeChange: (Timeframe) -> Void
+    let logbookStats: LogbookStats
+    let onFilterChange: (Timeframe, String?) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -143,6 +153,7 @@ struct PartyLeaderboardChartsSection: View {
                 .fontWeight(.bold)
 
             HStack {
+                // Timeframe Menu
                 Menu {
                     Picker("Timeframe", selection: $selectedTimeframe) {
                         Text("All Time").tag(Timeframe.allTime)
@@ -163,7 +174,30 @@ struct PartyLeaderboardChartsSection: View {
                     .cornerRadius(8)
                 }
                 .onChange(of: selectedTimeframe) { _, newValue in
-                    onTimeframeChange(newValue)
+                    onFilterChange(newValue, selectedResort)
+                }
+
+                // Resort Menu
+                Menu {
+                    Picker("Resort", selection: $selectedResort) {
+                        Text("All Resorts").tag(String?.none)
+                        ForEach(visitedResorts, id: \.self) { resort in
+                            Text(resort).tag(String?.some(resort))
+                        }
+                    }
+                } label: {
+                    HStack {
+                        Text(selectedResort ?? "All Resorts")
+                        Image(systemName: "chevron.down")
+                    }
+                    .font(.caption)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color(uiColor: .secondarySystemGroupedBackground))
+                    .cornerRadius(8)
+                }
+                .onChange(of: selectedResort) { _, newValue in
+                    onFilterChange(selectedTimeframe, newValue)
                 }
 
                 Spacer()
@@ -213,6 +247,11 @@ struct PartyLeaderboardChartsSection: View {
         case .day: return "Day"
         case .allTime: return "All Time"
         }
+    }
+
+    private var visitedResorts: [String] {
+        let resorts = Set(logbookStats.logbooks.map { $0.locationName })
+        return resorts.sorted()
     }
 }
 

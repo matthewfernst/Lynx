@@ -12,6 +12,8 @@ import OSLog
     var currentFileBeingUploaded = ""
     private var freezingPeriodActive = false
     private var uploadTimer: Timer?
+    var hasCheckedForFilesThisSession = false
+    var isUploadingInBackground = false
     
     func picker(didPickDocumentsAt url: URL, dismissForUpload: Binding<Bool>) {
         resetUploadProgressAndFilename()

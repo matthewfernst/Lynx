@@ -183,36 +183,27 @@ final class ApolloLynxClient {
         Logger.apollo.debug("                         lastName           -> \(lastName ?? "nil")")
         Logger.apollo.debug("                         profilePictureUrl  -> \(profilePictureURL?.absoluteString ?? "nil")")
 
-        
+
         var userData: [ApolloGeneratedGraphQL.KeyValuePair] = []
-        var userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.KeyValuePair]>(nilLiteral: ())
-        
+
         // Dumb code. Would rather use compactMap but Apollo forces you to explicitly say the userData's each element 🤷‍♂️
         if let firstName = firstName, let lastName = lastName {
             userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "firstName", value: firstName))
             userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "lastName", value: lastName))
             if let profilePictureURL = profilePictureURL {
                 userData.append(ApolloGeneratedGraphQL.KeyValuePair(key: "profilePictureUrl", value: profilePictureURL.absoluteString))
-                userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.KeyValuePair]>(arrayLiteral: userData[0], userData[1], userData[2])
-            } else {
-                userDataNullable = GraphQLNullable<[ApolloGeneratedGraphQL.KeyValuePair]>(arrayLiteral: userData[0], userData[1])
             }
         }
-        
-        let type = GraphQLEnum<ApolloGeneratedGraphQL.OAuthType>(rawValue: oauthType)
-        let oauthLoginId = ApolloGeneratedGraphQL.OAuthTypeCorrelationInput(type: type, id: id, token: oauthToken)
-        
-        let emailNullable: GraphQLNullable<String>
-        if email == nil {
-            emailNullable = GraphQLNullable<String>(nilLiteral: ())
-        } else {
-            emailNullable = GraphQLNullable<String>(stringLiteral: email!)
-        }
-        
+
         apolloClient.perform(mutation: ApolloGeneratedGraphQL.OauthSignInMutation(
-            oauthLoginId: oauthLoginId,
-            email: emailNullable,
-            userData: userDataNullable)) { result in
+            oauthLoginId: ApolloGeneratedGraphQL.OAuthTypeCorrelationInput(
+                type: .init(rawValue: oauthType),
+                id: id,
+                token: oauthToken
+            ),
+            email: email.map { .some($0) } ?? .null,
+            userData: userData.isEmpty ? .null : .some(userData)
+        )) { result in
             switch result {
             case .success(let graphQLResult):
                 guard let data = graphQLResult.data?.oauthSignIn else {
@@ -231,10 +222,10 @@ final class ApolloLynxClient {
                 Logger.apollo.debug("LYNX ACCESS TOKEN ->                 \(accessToken)")
                 Logger.apollo.debug("REFRESH TOKEN     ->                 \(refreshToken)")
                 Logger.apollo.debug("EXPIRY DATE MS    ->                 \(expiryInMilliseconds)")
-                
+
                 UserManager.shared.lynxToken = ExpirableLynxToken(
                     accessToken: accessToken,
-                    expirationDate: Calendar.current.date(byAdding: .second, value: 5, to: Date())!,
+                    expirationDate: Date(timeIntervalSince1970: expiryInMilliseconds / 1000),
                     refreshToken: refreshToken
                 )
                 
@@ -498,19 +489,19 @@ final class ApolloLynxClient {
         for timeframe: Timeframe,
         limit: Int?,
         inMeasurementSystem system: MeasurementSystem,
+        resort: String? = nil,
         completion: @escaping ((Result<[LeaderboardSort: [LeaderAttributes]], Error>) -> Void)
     ) {
         enum GetAllLeadersErrors: Error {
             case unableToUnwrap
         }
-        
-        let nullableLimit: GraphQLNullable<Int> = (limit != nil) ? .init(integerLiteral: limit!) : .null
-        let enumSystem = GraphQLEnum<MeasurementSystem>(rawValue: system.rawValue)
+
         apolloClient.fetch(
             query: ApolloGeneratedGraphQL.GetAllLeaderboardsQuery(
                 timeframe: .case(timeframe),
-                limit: nullableLimit,
-                measurementSystem: enumSystem
+                limit: limit.map { .some($0) } ?? .null,
+                measurementSystem: .init(rawValue: system.rawValue),
+                resort: resort.map { .some($0) } ?? .null
             )
         ) { result in
             switch result {
@@ -579,13 +570,11 @@ final class ApolloLynxClient {
             case unwrapError
         }
 
-        let graphqlifiedSystem = GraphQLEnum<MeasurementSystem>(rawValue: system.rawValue)
-        let graphqlifiedSort = GraphQLEnum<LeaderboardSort>(rawValue: sort.rawValue)
         apolloClient.fetch(
             query: ApolloGeneratedGraphQL.GetSpecificLeaderboardQuery(
                 timeframe: .case(timeframe),
-                sortBy: graphqlifiedSort,
-                measurementSystem: graphqlifiedSystem
+                sortBy: .init(rawValue: sort.rawValue),
+                measurementSystem: .init(rawValue: system.rawValue)
             )
         ) { result in
 
@@ -697,6 +686,7 @@ final class ApolloLynxClient {
         sortBy: LeaderboardSort = .verticalDistance,
         timeframe: Timeframe = .season,
         limit: Int = 5,
+        resort: String? = nil,
         completion: @escaping ((Result<PartyDetails, Error>) -> Void)
     ) {
         enum GetPartyDetailsError: Error {
@@ -708,7 +698,8 @@ final class ApolloLynxClient {
                 partyId: partyId,
                 sortBy: .some(.init(sortBy)),
                 timeframe: .some(.init(timeframe)),
-                limit: .some(limit)
+                limit: .some(limit),
+                resort: resort.map { .some($0) } ?? .null
             )
         ) { result in
             switch result {
@@ -783,9 +774,9 @@ final class ApolloLynxClient {
         for timeframe: Timeframe,
         limit: Int?,
         inMeasurementSystem system: MeasurementSystem,
+        resort: String? = nil,
         completion: @escaping ((Result<[LeaderboardSort: [LeaderAttributes]], Error>) -> Void)
     ) {
-        let nullableLimit: GraphQLNullable<Int> = (limit != nil) ? .init(integerLiteral: limit!) : .null
         var leaderboardAttributes: [LeaderboardSort: [LeaderAttributes]] = [:]
         let dispatchGroup = DispatchGroup()
         var fetchError: Error?
@@ -798,7 +789,8 @@ final class ApolloLynxClient {
                     partyId: partyId,
                     sortBy: .some(.init(sort)),
                     timeframe: .some(.init(timeframe)),
-                    limit: nullableLimit
+                    limit: limit.map { .some($0) } ?? .null,
+                    resort: resort.map { .some($0) } ?? .null
                 )
             ) { result in
                 defer { dispatchGroup.leave() }
@@ -845,6 +837,7 @@ final class ApolloLynxClient {
         sortBy sort: LeaderboardSort,
         limit: Int = 100,
         inMeasurementSystem system: MeasurementSystem,
+        resort: String? = nil,
         completion: @escaping ((Result<[LeaderAttributes], Error>) -> Void)
     ) {
         enum GetSpecificPartyLeaderboardError: Error {
@@ -856,7 +849,8 @@ final class ApolloLynxClient {
                 partyId: partyId,
                 sortBy: .some(.init(sort)),
                 timeframe: .some(.init(timeframe)),
-                limit: .some(limit)
+                limit: .some(limit),
+                resort: resort.map { .some($0) } ?? .null
             )
         ) { result in
             switch result {
@@ -891,8 +885,10 @@ final class ApolloLynxClient {
         enum CreatePartyError: Error {
             case unwrapError
         }
-        let descriptionGQL: GraphQLNullable<String> = (description == nil) ? .null : .some(description!)
-        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreatePartyMutation(name: name, description: descriptionGQL)) { result in
+        apolloClient.perform(mutation: ApolloGeneratedGraphQL.CreatePartyMutation(
+            name: name,
+            description: description.map { .some($0) } ?? .null
+        )) { result in
             switch result {
             case .success(let graphQLResult):
                 guard let party = graphQLResult.data?.createParty else {
