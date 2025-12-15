@@ -1,6 +1,7 @@
 import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import DataLoader from "dataloader";
 import { GraphQLError } from "graphql";
+import { v5 as uuidv5 } from "uuid";
 
 import {
   LEADERBOARD_TABLE,
@@ -24,6 +25,17 @@ import {
   UserStats,
   ParsedLog,
 } from "./types";
+
+// Namespace for generating deterministic UUIDs for leaderboard uniqueness-ids
+export const LEADERBOARD_NAMESPACE = "8648700c-adf5-43c1-8262-64e5340b0969";
+
+/**
+ * Generates a deterministic UUID v5 for leaderboard uniqueness-id
+ * Same timeframe + resort combination will always produce the same UUID
+ */
+export function generateUniquenessId(timeframe: string, resort: string): string {
+  return uuidv5(`${timeframe}-${resort}`, LEADERBOARD_NAMESPACE);
+}
 
 export const usersDataLoader = new DataLoader(usersDataLoaderImpl);
 export const partiesDataLoader = new DataLoader(partiesDataLoaderImpl);
@@ -64,7 +76,7 @@ async function leaderboardDataLoaderImpl(
     leaderboardTableKeys.map(async ({ id, timeframe, resort }) => {
       try {
         const resortValue = resort || "ALL";
-        const uniquenessId = `${timeframe}#${resortValue}`;
+        const uniquenessId = generateUniquenessId(timeframe, resortValue);
         const queryRequest = new GetCommand({
           TableName: LEADERBOARD_TABLE,
           Key: { id, "uniqueness-id": uniquenessId },

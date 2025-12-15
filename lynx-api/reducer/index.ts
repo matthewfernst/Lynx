@@ -7,6 +7,7 @@ import { LEADERBOARD_TABLE } from "../infrastructure/stacks/lynxApiStack";
 
 import { documentClient } from "../graphql/aws/dynamodb";
 import { getRecordFromBucket } from "../graphql/aws/s3";
+import { generateUniquenessId } from "../graphql/dataloaders";
 import {
     Timeframe,
     leaderboardSortTypesToQueryFields,
@@ -75,7 +76,7 @@ async function updateItem(
 ): Promise<UpdateItemOutput | undefined> {
     const timeframeKey = leaderboardTimeframeFromQueryArgument(endTime, timeframe);
     try {
-        const uniquenessId = `${timeframeKey}#${resort}`;
+        const uniquenessId = generateUniquenessId(timeframeKey, resort);
         const updateItemRequest = new UpdateCommand({
             TableName: LEADERBOARD_TABLE,
             Key: { id, "uniqueness-id": uniquenessId },
