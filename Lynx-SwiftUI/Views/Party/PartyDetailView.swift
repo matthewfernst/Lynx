@@ -60,15 +60,17 @@ struct PartyDetailView: View {
             }
           )
 
+          if !details.invitedUsers.isEmpty {
+            PartyInvitedUsersListSection(
+              details: details,
+              partyHandler: partyHandler,
+              partyId: partyId
+            )
+          }
+
           PartyMembersListSection(
             details: details,
             profileManager: profileManager,
-            partyHandler: partyHandler,
-            partyId: partyId
-          )
-
-          PartyInvitedUsersListSection(
-            details: details,
             partyHandler: partyHandler,
             partyId: partyId
           )
