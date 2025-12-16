@@ -20,6 +20,7 @@ struct LogbookView: View {
 
   @State private var expandedSeasons: Set<String> = []
   @State private var conditionsChartHasAppeared = false
+  @State private var hasPerformedInitialLoad = false
 
   private var slopesFolderIsConnected: Bool {
     BookmarkManager.shared.bookmark != nil
@@ -35,7 +36,9 @@ struct LogbookView: View {
             documentPickerAndConnectionButton
             profileButton
           }
-          .task {
+          .onAppear {
+            guard !hasPerformedInitialLoad else { return }
+            hasPerformedInitialLoad = true
             BookmarkManager.shared.loadAllBookmarks()
             requestLogs()
             checkForNewFilesAndUpload()
