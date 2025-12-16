@@ -169,20 +169,15 @@ struct LogbookView: View {
                             .frame(maxWidth: .infinity)
                         }
                     } else {
-                // Stats section
                 Section {
                     LifetimeDetailsView(logbookStats: logbookStats)
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
                 }
                 .listSectionSpacing(8)
-
-                // Conditions chart section
                 Section {
                     conditionsChart
                 }
-
-                // All-time summary section
                 Section {
                     NavigationLink {
                         FullLifetimeSummaryView(logbookStats: logbookStats)
@@ -190,8 +185,6 @@ struct LogbookView: View {
                         lifetimeSummary
                     }
                 }
-
-                // Grouped by season sections
                 ForEach(logsBySeasonGrouped, id: \.season) { seasonGroup in
                     Section {
                         let isExpanded = expandedSeasons.contains(seasonGroup.season)
