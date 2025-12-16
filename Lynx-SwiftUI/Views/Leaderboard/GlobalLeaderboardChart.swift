@@ -6,6 +6,8 @@ struct GlobalLeaderboardChart: View {
     let sortBy: LeaderboardSort
     let measurementSystem: MeasurementSystem
 
+    @State private var hasAppeared = false
+
     private var topTen: [LeaderAttributes] {
         Array(leaders.prefix(10))
     }
@@ -36,10 +38,11 @@ struct GlobalLeaderboardChart: View {
                 Chart {
                     ForEach(Array(chartData.enumerated()), id: \.offset) { index, data in
                         BarMark(
-                            x: .value("Value", data.value),
+                            x: .value("Value", hasAppeared ? data.value : 0),
                             y: .value("Name", data.name)
                         )
                         .foregroundStyle(colorForRank(index))
+                        .cornerRadius(6)
                     }
                 }
                 .chartXAxis {
@@ -52,11 +55,24 @@ struct GlobalLeaderboardChart: View {
                     }
                 }
                 .frame(height: 300)
+                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: chartData.map(\.value))
+                .animation(.spring(response: 0.8, dampingFraction: 0.75), value: hasAppeared)
             }
         }
         .padding()
         .background(Color(uiColor: .secondarySystemGroupedBackground))
         .cornerRadius(12)
+        .onAppear {
+            withAnimation(.spring(response: 0.8, dampingFraction: 0.75).delay(0.1)) {
+                hasAppeared = true
+            }
+        }
+        .onChange(of: sortBy) { _, _ in
+            hasAppeared = false
+            withAnimation(.spring(response: 0.8, dampingFraction: 0.75).delay(0.1)) {
+                hasAppeared = true
+            }
+        }
     }
 
     private var categoryLabel: String {

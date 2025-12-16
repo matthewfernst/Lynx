@@ -32,7 +32,13 @@ struct PartyInvitesView: View {
             } else {
                 Section {
                     ForEach(partyHandler.partyInvites, id: \.id) { party in
-                        PartyInviteCard(party: party, partyHandler: partyHandler)
+                        PartyInviteCard(
+                            party: party,
+                            isJoiningParty: partyHandler.isJoiningParty,
+                            onJoin: {
+                                partyHandler.joinParty(partyId: party.id) { _ in }
+                            }
+                        )
                     }
                 }
             }

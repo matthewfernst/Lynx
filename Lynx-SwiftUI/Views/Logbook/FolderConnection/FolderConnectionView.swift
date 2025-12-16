@@ -5,13 +5,13 @@ import OSLog
 struct FolderConnectionView: View {
     @Binding var showUploadProgressView: Bool
     @Bindable var folderConnectionHandler: FolderConnectionHandler
-    
+
     @Environment(\.dismiss) private var dismiss
     @State private var showDocumentPicker = false
     @State var dismissForUpload: Bool = false
-    
-    @State private var playerHandler = VideoPlayerHandler()
-    @State private var showContinueButton = false
+
+    @State private var player = AVPlayer(url: Bundle.main.url(forResource: "HowToUpload", withExtension: "mov")!)
+    @State private var videoDone = false
     
     var body: some View {
         NavigationStack {
@@ -63,25 +63,30 @@ struct FolderConnectionView: View {
                 .frame(maxHeight: .infinity)
                 .padding(.bottom)
             
-            VideoPlayer(player: playerHandler.player)
+            VideoPlayer(player: player)
                 .aspectRatio(Constants.Video.aspectRatio, contentMode: .fit)
                 .frame(height: Constants.Video.height)
                 .cornerRadius(Constants.Video.cornerRadius)
                 .onAppear {
-                    playerHandler.player.play()
+                    player.play()
                 }
                 .onDisappear {
-                    playerHandler.player.pause()
-                    playerHandler.player.seek(to: .zero)
+                    player.pause()
+                    player.seek(to: .zero)
                 }
-            
-            
+                .onReceive(NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime)) { _ in
+                    withAnimation {
+                        videoDone = true
+                    }
+                }
+
+
             Button("Continue") {
                 showDocumentPicker = true
             }
             .buttonStyle(.borderedProminent)
             .frame(maxHeight: .infinity)
-            .opacity(playerHandler.videoDone ? 1 : 0)
+            .opacity(videoDone ? 1 : 0)
             
         }
         .padding()

@@ -1,11 +1,14 @@
 import SwiftUI
+import OSLog
 
 struct CreatePartyView: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable var partyHandler: PartyHandler
+    let onPartyCreated: (PartyAttributes) -> Void
 
     @State private var partyName = ""
     @State private var partyDescription = ""
+    @State private var isCreatingParty = false
+    @State private var errorMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -34,11 +37,11 @@ struct CreatePartyView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .disabled(partyHandler.isCreatingParty)
+                    .disabled(isCreatingParty)
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
-                    if partyHandler.isCreatingParty {
+                    if isCreatingParty {
                         ProgressView()
                             .progressViewStyle(.circular)
                     } else {
@@ -53,15 +56,30 @@ struct CreatePartyView: View {
     }
 
     private func createParty() {
+        isCreatingParty = true
+        errorMessage = nil
         let descriptionToSave = partyDescription.isEmpty ? nil : partyDescription
-        partyHandler.createParty(name: partyName, description: descriptionToSave) { success in
-            if success {
-                dismiss()
+
+        ApolloLynxClient.createParty(name: partyName, description: descriptionToSave) { result in
+            DispatchQueue.main.async {
+                self.isCreatingParty = false
+                switch result {
+                case .success(let newParty):
+                    onPartyCreated(newParty)
+                    dismiss()
+                case .failure(let error):
+                    self.errorMessage = "Failed to create party"
+                    Logger.createPartyView.error("Error creating party: \(error)")
+                }
             }
         }
     }
 }
 
+extension Logger {
+    static let createPartyView = Logger(subsystem: "com.lynx", category: "CreatePartyView")
+}
+
 #Preview {
-    CreatePartyView(partyHandler: PartyHandler())
+    CreatePartyView(onPartyCreated: { _ in })
 }

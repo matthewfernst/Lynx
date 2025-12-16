@@ -12,7 +12,6 @@
 		650041A12B3FDEC200122C77 /* FacebookBasics in Frameworks */ = {isa = PBXBuildFile; productRef = 650041A02B3FDEC200122C77 /* FacebookBasics */; };
 		650041A32B3FDEC200122C77 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = 650041A22B3FDEC200122C77 /* FacebookCore */; };
 		650041A72B3FDEC200122C77 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 650041A62B3FDEC200122C77 /* FacebookLogin */; };
-		6529A83E2B1AE5F500FF455E /* EditProfileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6529A83D2B1AE5F500FF455E /* EditProfileHandler.swift */; };
 		653404932B24E96800614C59 /* LeaderAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653404922B24E96800614C59 /* LeaderAttributes.swift */; };
 		6534049A2B26838D00614C59 /* FolderConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653404992B26838D00614C59 /* FolderConnectionHandler.swift */; };
 		653404A22B26CD1900614C59 /* FolderConnectionHandler+ErrorAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653404A12B26CD1900614C59 /* FolderConnectionHandler+ErrorAlerts.swift */; };
@@ -145,7 +144,6 @@
 /* Begin PBXFileReference section */
 		6500413E2B3F985E00122C77 /* FacebookSignInHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookSignInHandler.swift; sourceTree = "<group>"; };
 		650041402B3FA2DC00122C77 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		6529A83D2B1AE5F500FF455E /* EditProfileHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileHandler.swift; sourceTree = "<group>"; };
 		653404922B24E96800614C59 /* LeaderAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderAttributes.swift; sourceTree = "<group>"; };
 		653404992B26838D00614C59 /* FolderConnectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderConnectionHandler.swift; sourceTree = "<group>"; };
 		653404A12B26CD1900614C59 /* FolderConnectionHandler+ErrorAlerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FolderConnectionHandler+ErrorAlerts.swift"; sourceTree = "<group>"; };
@@ -374,7 +372,6 @@
 				65D59FE52B2F84B0008E3A2B /* SignIn */,
 				653404A32B26CFA100614C59 /* FolderConnection */,
 				65B39A662B13FD0500948C9D /* LogbookStats.swift */,
-				6529A83D2B1AE5F500FF455E /* EditProfileHandler.swift */,
 				B47586022EE633A700F6E9F7 /* PartyHandler.swift */,
 				65B39A642B13E61100948C9D /* ProfileManager.swift */,
 			);
@@ -855,7 +852,6 @@
 				65B35F2F2B11BF1D002E99E4 /* NetworkManager.swift in Sources */,
 				B4921E7B2EF0C52400BE191E /* LeaderboardView.swift in Sources */,
 				B4921E7C2EF0C52400BE191E /* GlobalLeaderboardChart.swift in Sources */,
-				6529A83E2B1AE5F500FF455E /* EditProfileHandler.swift in Sources */,
 				B47586072EE662F100F6E9F7 /* LogDetailView.swift in Sources */,
 				65A518CF2B2D38BF00A06014 /* PreviewSampleProfile.swift in Sources */,
 				65B39A652B13E61100948C9D /* ProfileManager.swift in Sources */,

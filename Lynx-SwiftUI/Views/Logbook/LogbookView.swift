@@ -19,6 +19,7 @@ struct LogbookView: View {
     @State private var showLoadError = false
 
     @State private var expandedSeasons: Set<String> = []
+    @State private var conditionsChartHasAppeared = false
 
     private var slopesFolderIsConnected: Bool {
         BookmarkManager.shared.bookmark != nil
@@ -174,6 +175,7 @@ struct LogbookView: View {
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
                 }
+                .listSectionSpacing(8)
 
                 // Conditions chart section
                 Section {
@@ -264,12 +266,13 @@ struct LogbookView: View {
     @ViewBuilder
     private var conditionsChart: some View {
         let (conditionToCount, topCondition) = logbookStats.conditionsCount()
+        let sortedConditions = conditionToCount.sorted { $0.count > $1.count }
         VStack(spacing: 0) {
             HStack(spacing: 20) {
-                Chart(conditionToCount, id: \.condition) { condition, count in
+                Chart(sortedConditions, id: \.condition) { condition, count in
                     Plot {
                         SectorMark(
-                            angle: .value("Value", count),
+                            angle: .value("Value", conditionsChartHasAppeared ? count : 0),
                             innerRadius: .ratio(0.68),
                             outerRadius: .inset(10),
                             angularInset: 1
@@ -280,6 +283,15 @@ struct LogbookView: View {
                 }
                 .chartLegend(.hidden)
                 .frame(height: 140)
+                .opacity(conditionsChartHasAppeared ? 1 : 0)
+                .scaleEffect(conditionsChartHasAppeared ? 1 : 0.8)
+                .animation(.spring(response: 0.8, dampingFraction: 0.75), value: conditionsChartHasAppeared)
+                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: sortedConditions.map(\.count))
+                .onAppear {
+                    withAnimation(.spring(response: 0.8, dampingFraction: 0.75).delay(0.2)) {
+                        conditionsChartHasAppeared = true
+                    }
+                }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Top Condition")
@@ -290,10 +302,12 @@ struct LogbookView: View {
                         .foregroundStyle(.primary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .opacity(conditionsChartHasAppeared ? 1 : 0)
+                .animation(.easeInOut.delay(0.4), value: conditionsChartHasAppeared)
             }
             .padding(.bottom, 12)
 
-            Chart(conditionToCount, id: \.condition) { condition, count in
+            Chart(sortedConditions, id: \.condition) { condition, count in
                 Plot {
                     SectorMark(
                         angle: .value("Value", count),

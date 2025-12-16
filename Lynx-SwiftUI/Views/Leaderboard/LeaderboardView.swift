@@ -14,6 +14,7 @@ struct LeaderboardView: View {
     @State private var topSpeedLeaders: [LeaderAttributes] = []
     @State private var verticalDistanceLeaders: [LeaderAttributes] = []
     @State private var errorMessage: String?
+    @State private var hasAppeared = false
 
     var body: some View {
         NavigationStack {
@@ -47,6 +48,9 @@ struct LeaderboardView: View {
                     VStack(spacing: 24) {
                         // Filter controls
                         filterSection
+                            .opacity(hasAppeared ? 1 : 0)
+                            .offset(y: hasAppeared ? 0 : -10)
+                            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: hasAppeared)
 
                         // Four leaderboard charts
                         GlobalLeaderboardChart(
@@ -54,24 +58,36 @@ struct LeaderboardView: View {
                             sortBy: .verticalDistance,
                             measurementSystem: profileManager.measurementSystem
                         )
+                        .opacity(hasAppeared ? 1 : 0)
+                        .offset(y: hasAppeared ? 0 : 20)
+                        .animation(.spring(response: 0.7, dampingFraction: 0.8).delay(0.1), value: hasAppeared)
 
                         GlobalLeaderboardChart(
                             leaders: distanceLeaders,
                             sortBy: .distance,
                             measurementSystem: profileManager.measurementSystem
                         )
+                        .opacity(hasAppeared ? 1 : 0)
+                        .offset(y: hasAppeared ? 0 : 20)
+                        .animation(.spring(response: 0.7, dampingFraction: 0.8).delay(0.2), value: hasAppeared)
 
                         GlobalLeaderboardChart(
                             leaders: topSpeedLeaders,
                             sortBy: .topSpeed,
                             measurementSystem: profileManager.measurementSystem
                         )
+                        .opacity(hasAppeared ? 1 : 0)
+                        .offset(y: hasAppeared ? 0 : 20)
+                        .animation(.spring(response: 0.7, dampingFraction: 0.8).delay(0.3), value: hasAppeared)
 
                         GlobalLeaderboardChart(
                             leaders: runCountLeaders,
                             sortBy: .runCount,
                             measurementSystem: profileManager.measurementSystem
                         )
+                        .opacity(hasAppeared ? 1 : 0)
+                        .offset(y: hasAppeared ? 0 : 20)
+                        .animation(.spring(response: 0.7, dampingFraction: 0.8).delay(0.4), value: hasAppeared)
                     }
                     .padding()
                 }
@@ -83,6 +99,10 @@ struct LeaderboardView: View {
                 Logger.leaderboard.info("LeaderboardView appeared - starting initial fetch")
                 logbookStats.requestLogs()
                 fetchLeaderboards()
+
+                withAnimation {
+                    hasAppeared = true
+                }
             }
             .refreshable {
                 fetchLeaderboards()
@@ -92,10 +112,6 @@ struct LeaderboardView: View {
 
     private var filterSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Filters")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-
             HStack {
                 // Timeframe Menu
                 Menu {

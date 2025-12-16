@@ -17,7 +17,6 @@ import OSLog
                     self.isLoadingLogs = false
                     switch result {
                     case .success(let logs):
-                        Logger.logbookStats.debug("Updating new logbook stats")
                         self.logbooks = logs
                         completion?(.success(()))
                     case .failure(let error):
@@ -30,29 +29,19 @@ import OSLog
     }
     
     var lifetimeVertical: String {
-        let totalVerticalFeet = logbooks.map { $0.verticalDistance }.reduce(0, +)
-        guard totalVerticalFeet > 0 else { return "--" }
+        logbooks.lifetimeVertical(measurementSystem: profileManager.measurementSystem)
+    }
 
-        if totalVerticalFeet >= 1000 {
-            return String(format: "%.1fk", totalVerticalFeet / 1000)
-        }
-        return String(format: "%.0f", totalVerticalFeet)
-    }
-    
     var lifetimeDaysOnMountain: String {
-        let totalDays = logbooks.count
-        return totalDays == 0 ? "--" : String(totalDays)
+        logbooks.lifetimeDaysOnMountain
     }
-    
+
     var lifetimeRunsTime: String {
-        let totalHours = Int(logbooks.map { $0.duration / 3600 }.reduce(0, +))
-        if totalHours == 0 { return "--" }
-        return "\(totalHours)H"
+        logbooks.lifetimeRunsTime
     }
-    
+
     var lifetimeRuns: String {
-        let totalRuns = logbooks.map { Int($0.runCount) }.reduce(0, +)
-        return totalRuns == 0 ? "--" : String(totalRuns)
+        logbooks.lifetimeRuns
     }
     
     func logbook(at index: Int) -> ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook? {
@@ -99,130 +88,23 @@ import OSLog
     }
     
     var lifetimeAverages: [[Stat]] {
-        // Average vertical feet
-        let averageVerticalFeet: String = {
-            guard !logbooks.isEmpty else { return "--" }
-            let average = logbooks.map { $0.verticalDistance }.reduce(0.0, +) / Double(logbooks.count)
-
-            if average >= 1000 {
-                return String(format: "%.1fk \(profileManager.measurementSystem.feetOrMeters)", average / 1000)
-            }
-            return String(format: "%.0f \(profileManager.measurementSystem.feetOrMeters)", average)
-        }()
-
-        // Average distance
-        let averageDistance: String = {
-            guard !logbooks.isEmpty else { return "--" }
-            let average = logbooks.map { $0.distance }.reduce(0.0, +) / Double(logbooks.count)
-
-            switch profileManager.measurementSystem {
-            case .imperial:
-                return String(format: "%.1f MI", average.feetToMiles)
-            case .metric:
-                return String(format: "%.1f KM", average.metersToKilometers)
-            }
-        }()
-
-        // Average speed
-        let averageSpeed: String = {
-            guard !logbooks.isEmpty else { return "--" }
-            let average = logbooks.map { $0.topSpeed }.reduce(0.0, +) / Double(logbooks.count)
-            return String(format: "%.1f \(profileManager.measurementSystem.milesOrKilometersPerHour)", average)
-        }()
-
-        return [
-            [
-                Stat(label: "run vertical", information: averageVerticalFeet, systemImageName: "arrow.down"),
-                Stat(label: "run distance", information: averageDistance, systemImageName: "arrow.right")
-            ],
-            [
-                Stat(label: "speed", information: averageSpeed, systemImageName: "speedometer")
-            ],
-        ]
+        logbooks.lifetimeAverages(measurementSystem: profileManager.measurementSystem)
     }
 
     var lifetimeBest: [[Stat]] {
-        // Top speed
-        let topSpeed = String(format: "%.1f \(profileManager.measurementSystem.milesOrKilometersPerHour)", logbooks.map { $0.topSpeed }.max() ?? 0.0)
-
-        // Tallest run
-        let tallestRun = String(format: "%.1f \(profileManager.measurementSystem.feetOrMeters)", logbooks.map { $0.verticalDistance }.max() ?? 0.0)
-
-        // Longest run
-        let longestRun: String = {
-            switch profileManager.measurementSystem {
-            case .imperial:
-                return String(format: "%.1f MI", (logbooks.map { $0.distance }.max() ?? 0.0).feetToMiles)
-            case .metric:
-                return String(format: "%.1f KM", (logbooks.map { $0.distance }.max() ?? 0.0).metersToKilometers)
-            }
-        }()
-
-        return [
-            [
-                Stat(label: "top speed", information: topSpeed, systemImageName: "flame"),
-                Stat(label: "tallest run", information: tallestRun, systemImageName: "ruler")
-            ],
-            [
-                Stat(label: "longest run", information: longestRun, systemImageName: "timer"),
-            ]
-        ]
+        logbooks.lifetimeBest(measurementSystem: profileManager.measurementSystem)
     }
     
-    func rangeDataPerSession<T>(propertyExtractor: (ApolloGeneratedGraphQL.GetLogsQuery.Data.SelfLookup.Logbook.Detail) -> T) -> [(date: Date, min: Double, max: Double)] {
-        var rangeData: [(Date, Double, Double)] = []
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
-
-        for logbook in logbooks {
-            let propertyValues: [Double] = logbook.details.map { propertyExtractor($0) as! Double }
-
-            rangeData.append(
-                (
-                    date: dateFormatter.date(from: logbook.startDate)!,
-                    min: propertyValues.min() ?? 0.0,
-                    max: propertyValues.max() ?? 0.0
-                )
-            )
-        }
-        rangeData.sort(by: { $0.0 < $1.0})
-        return rangeData
+    func rangeDataPerSession<T>(propertyExtractor: (Logbook.Detail) -> T) -> [(date: Date, min: Double, max: Double)] {
+        logbooks.rangeDataPerSession(propertyExtractor: propertyExtractor)
     }
 
     func maxAndMinOfDateAndValues(fromRangeData data: [(date: Date, min: Double, max: Double)]) -> (earliest: Date, latest: Date, smallest: Double, largest: Double) {
-        var earliest: Date = .distantFuture
-        var latest: Date = .distantPast
-        
-        var smallest: Double = .infinity
-        var largest: Double = -.infinity
-        
-        for (date, yMin, yMax) in data {
-            earliest = min(earliest, date)
-            latest = max(latest, date)
-            
-            smallest = min(smallest, yMin)
-            largest = max(largest, yMax)
-        }
-        
-        return (earliest, latest, smallest, largest)
+        logbooks.maxAndMinOfDateAndValues(fromRangeData: data)
     }
-    
-    func conditionsCount() -> ([(condition: String, count: Double)], String) {
-        let conditionsCount = logbooks
-            .compactMap { $0.conditions }
-            .flatMap { $0 }
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).sanitize.capitalized }
-            .reduce(into: [:]) { counts, condition in
-                counts[condition, default: 0] += 1
-            }
 
-        let resultsArray = conditionsCount.map { (condition, count) in
-            (condition: condition, count: Double(count))
-        }
-        
-        
-        return (resultsArray, resultsArray.max(by: { $0.count < $1.count })?.condition ?? "")
+    func conditionsCount() -> ([(condition: String, count: Double)], String) {
+        logbooks.conditionsCount()
     }
 }
 
@@ -248,8 +130,163 @@ extension Double {
     var feetToMiles: Self {
         return self / 5280
     }
-    
+
     var metersToKilometers: Self {
         return self / 1000
+    }
+}
+
+// MARK: - Logbooks Extensions (View-level computed properties)
+extension Logbooks {
+    func lifetimeVertical(measurementSystem: MeasurementSystem) -> String {
+        let totalVerticalFeet = self.map { $0.verticalDistance }.reduce(0, +)
+        guard totalVerticalFeet > 0 else { return "--" }
+
+        if totalVerticalFeet >= 1000 {
+            return String(format: "%.1fk", totalVerticalFeet / 1000)
+        }
+        return String(format: "%.0f", totalVerticalFeet)
+    }
+
+    var lifetimeDaysOnMountain: String {
+        let totalDays = self.count
+        return totalDays == 0 ? "--" : String(totalDays)
+    }
+
+    var lifetimeRunsTime: String {
+        let totalHours = Int(self.map { $0.duration / 3600 }.reduce(0, +))
+        if totalHours == 0 { return "--" }
+        return "\(totalHours)H"
+    }
+
+    var lifetimeRuns: String {
+        let totalRuns = self.map { Int($0.runCount) }.reduce(0, +)
+        return totalRuns == 0 ? "--" : String(totalRuns)
+    }
+
+    func lifetimeAverages(measurementSystem: MeasurementSystem) -> [[Stat]] {
+        // Average vertical feet
+        let averageVerticalFeet: String = {
+            guard !self.isEmpty else { return "--" }
+            let average = self.map { $0.verticalDistance }.reduce(0.0, +) / Double(self.count)
+
+            if average >= 1000 {
+                return String(format: "%.1fk \(measurementSystem.feetOrMeters)", average / 1000)
+            }
+            return String(format: "%.0f \(measurementSystem.feetOrMeters)", average)
+        }()
+
+        // Average distance
+        let averageDistance: String = {
+            guard !self.isEmpty else { return "--" }
+            let average = self.map { $0.distance }.reduce(0.0, +) / Double(self.count)
+
+            switch measurementSystem {
+            case .imperial:
+                return String(format: "%.1f MI", average.feetToMiles)
+            case .metric:
+                return String(format: "%.1f KM", average.metersToKilometers)
+            }
+        }()
+
+        // Average speed
+        let averageSpeed: String = {
+            guard !self.isEmpty else { return "--" }
+            let average = self.map { $0.topSpeed }.reduce(0.0, +) / Double(self.count)
+            return String(format: "%.1f \(measurementSystem.milesOrKilometersPerHour)", average)
+        }()
+
+        return [
+            [
+                Stat(label: "run vertical", information: averageVerticalFeet, systemImageName: "arrow.down"),
+                Stat(label: "run distance", information: averageDistance, systemImageName: "arrow.right")
+            ],
+            [
+                Stat(label: "speed", information: averageSpeed, systemImageName: "speedometer")
+            ],
+        ]
+    }
+
+    func lifetimeBest(measurementSystem: MeasurementSystem) -> [[Stat]] {
+        // Top speed
+        let topSpeed = String(format: "%.1f \(measurementSystem.milesOrKilometersPerHour)", self.map { $0.topSpeed }.max() ?? 0.0)
+
+        // Tallest run
+        let tallestRun = String(format: "%.1f \(measurementSystem.feetOrMeters)", self.map { $0.verticalDistance }.max() ?? 0.0)
+
+        // Longest run
+        let longestRun: String = {
+            switch measurementSystem {
+            case .imperial:
+                return String(format: "%.1f MI", (self.map { $0.distance }.max() ?? 0.0).feetToMiles)
+            case .metric:
+                return String(format: "%.1f KM", (self.map { $0.distance }.max() ?? 0.0).metersToKilometers)
+            }
+        }()
+
+        return [
+            [
+                Stat(label: "top speed", information: topSpeed, systemImageName: "flame"),
+                Stat(label: "tallest run", information: tallestRun, systemImageName: "ruler")
+            ],
+            [
+                Stat(label: "longest run", information: longestRun, systemImageName: "timer"),
+            ]
+        ]
+    }
+
+    func conditionsCount() -> ([(condition: String, count: Double)], String) {
+        let conditionsCount = self
+            .compactMap { $0.conditions }
+            .flatMap { $0 }
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).sanitize.capitalized }
+            .reduce(into: [:]) { counts, condition in
+                counts[condition, default: 0] += 1
+            }
+
+        let resultsArray = conditionsCount.map { (condition, count) in
+            (condition: condition, count: Double(count))
+        }
+
+        return (resultsArray, resultsArray.max(by: { $0.count < $1.count })?.condition ?? "")
+    }
+
+    func rangeDataPerSession<T>(propertyExtractor: (Logbook.Detail) -> T) -> [(date: Date, min: Double, max: Double)] {
+        var rangeData: [(Date, Double, Double)] = []
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+
+        for logbook in self {
+            let propertyValues: [Double] = logbook.details.map { propertyExtractor($0) as! Double }
+
+            rangeData.append(
+                (
+                    date: dateFormatter.date(from: logbook.startDate)!,
+                    min: propertyValues.min() ?? 0.0,
+                    max: propertyValues.max() ?? 0.0
+                )
+            )
+        }
+        rangeData.sort(by: { $0.0 < $1.0})
+        return rangeData
+    }
+
+    func maxAndMinOfDateAndValues(fromRangeData data: [(date: Date, min: Double, max: Double)]) -> (earliest: Date, latest: Date, smallest: Double, largest: Double) {
+        var earliest: Date = .distantFuture
+        var latest: Date = .distantPast
+
+        var smallest: Double = .infinity
+        var largest: Double = -.infinity
+
+        for (date, yMin, yMax) in data {
+            earliest = Swift.min(earliest, date)
+            latest = Swift.max(latest, date)
+
+            smallest = Swift.min(smallest, yMin)
+            largest = Swift.max(largest, yMax)
+        }
+
+        return (earliest, latest, smallest, largest)
     }
 }

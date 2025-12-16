@@ -45,6 +45,7 @@ struct LifetimeDetailsView: View {
             }
         }
         .padding(.top, 8)
+        .padding(.bottom, 16)
     }
 
     private func statCard(

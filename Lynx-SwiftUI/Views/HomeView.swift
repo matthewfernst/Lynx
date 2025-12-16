@@ -8,7 +8,6 @@ struct HomeView: View {
     
     @State private var folderConnectionHandler = FolderConnectionHandler()
     @State private var logbookStats = LogbookStats()
-    @State private var partyHandler = PartyHandler()
 
     var body: some View {
         TabView {
@@ -25,11 +24,10 @@ struct HomeView: View {
                     Label("Leaderboard", systemImage: "trophy.fill")
                 }
 
-            PartyView(partyHandler: partyHandler)
+            PartyView()
                 .tabItem {
                     Label("Parties", systemImage: "person.3.fill")
                 }
-                .badge(partyHandler.partyInvites.count)
         }
         .onAppear {
             scheduleNotificationsForRemindingToUpload()

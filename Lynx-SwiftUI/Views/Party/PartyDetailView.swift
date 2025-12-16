@@ -4,7 +4,7 @@ import Charts
 struct PartyDetailView: View {
     @Environment(ProfileManager.self) private var profileManager
     @Environment(\.dismiss) private var dismiss
-    @Bindable var partyHandler: PartyHandler
+    @State private var partyHandler = PartyHandler()
     let partyId: String
 
     @State private var selectedTimeframe: Timeframe = .season
@@ -260,6 +260,8 @@ struct PartyLeaderboardChart: View {
     let sortBy: LeaderboardSort
     let measurementSystem: MeasurementSystem
 
+    @State private var hasAppeared = false
+
     private var topThree: [PartyLeaderboardEntry] {
         Array(leaderboard.prefix(3))
     }
@@ -301,10 +303,11 @@ struct PartyLeaderboardChart: View {
                 Chart {
                     ForEach(Array(chartData.enumerated()), id: \.offset) { index, data in
                         BarMark(
-                            x: .value("Value", data.value),
+                            x: .value("Value", hasAppeared ? data.value : 0),
                             y: .value("Name", data.name)
                         )
                         .foregroundStyle([Color.blue, .green, .orange][index])
+                        .cornerRadius(6)
                     }
                 }
                 .chartXAxis {
@@ -317,11 +320,24 @@ struct PartyLeaderboardChart: View {
                     }
                 }
                 .frame(height: 180)
+                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: chartData.map(\.value))
+                .animation(.spring(response: 0.8, dampingFraction: 0.75), value: hasAppeared)
             }
         }
         .padding()
         .background(Color(uiColor: .secondarySystemGroupedBackground))
         .cornerRadius(12)
+        .onAppear {
+            withAnimation(.spring(response: 0.8, dampingFraction: 0.75).delay(0.1)) {
+                hasAppeared = true
+            }
+        }
+        .onChange(of: sortBy) { _, _ in
+            hasAppeared = false
+            withAnimation(.spring(response: 0.8, dampingFraction: 0.75).delay(0.1)) {
+                hasAppeared = true
+            }
+        }
     }
 
     private var categoryLabel: String {
@@ -1113,6 +1129,6 @@ struct PartySettingsView: View {
 
 #Preview {
     NavigationStack {
-        PartyDetailView(partyHandler: PartyHandler(), partyId: "1")
+        PartyDetailView(partyId: "1")
     }
 }
