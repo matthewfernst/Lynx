@@ -3,8 +3,8 @@
 
 import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  struct OAuthTypeCorrelationInput: InputObject {
+extension ApolloGeneratedGraphQL {
+  public struct OAuthTypeCorrelationInput: InputObject {
     public private(set) var __data: InputDict
 
     public init(_ data: InputDict) {
@@ -19,7 +19,7 @@ public extension ApolloGeneratedGraphQL {
       __data = InputDict([
         "type": type,
         "id": id,
-        "token": token
+        "token": token,
       ])
     }
 

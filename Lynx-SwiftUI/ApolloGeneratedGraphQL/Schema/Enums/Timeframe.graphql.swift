@@ -3,8 +3,8 @@
 
 import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  enum Timeframe: String, EnumType {
+extension ApolloGeneratedGraphQL {
+  public enum Timeframe: String, EnumType {
     case day = "DAY"
     case week = "WEEK"
     case month = "MONTH"

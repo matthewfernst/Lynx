@@ -3,8 +3,8 @@
 
 import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  struct KeyValuePair: InputObject {
+extension ApolloGeneratedGraphQL {
+  public struct KeyValuePair: InputObject {
     public private(set) var __data: InputDict
 
     public init(_ data: InputDict) {
@@ -17,7 +17,7 @@ public extension ApolloGeneratedGraphQL {
     ) {
       __data = InputDict([
         "key": key,
-        "value": value
+        "value": value,
       ])
     }
 

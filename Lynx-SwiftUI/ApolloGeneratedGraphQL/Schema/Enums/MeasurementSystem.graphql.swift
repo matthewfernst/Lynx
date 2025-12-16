@@ -3,8 +3,8 @@
 
 import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  enum MeasurementSystem: String, EnumType {
+extension ApolloGeneratedGraphQL {
+  public enum MeasurementSystem: String, EnumType {
     case metric = "METRIC"
     case imperial = "IMPERIAL"
   }

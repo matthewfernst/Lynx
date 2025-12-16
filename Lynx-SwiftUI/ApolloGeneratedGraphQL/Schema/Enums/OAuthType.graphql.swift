@@ -3,8 +3,8 @@
 
 import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  enum OAuthType: String, EnumType {
+extension ApolloGeneratedGraphQL {
+  public enum OAuthType: String, EnumType {
     case apple = "APPLE"
     case google = "GOOGLE"
     case facebook = "FACEBOOK"

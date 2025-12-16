@@ -3,8 +3,8 @@
 
 import ApolloAPI
 
-public extension ApolloGeneratedGraphQL.Objects {
-  static let AuthorizationToken = Object(
+extension ApolloGeneratedGraphQL.Objects {
+  public static let AuthorizationToken = Object(
     typename: "AuthorizationToken",
     implementedInterfaces: []
   )

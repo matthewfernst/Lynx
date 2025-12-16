@@ -3,8 +3,8 @@
 
 import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  enum LeaderboardSort: String, EnumType {
+extension ApolloGeneratedGraphQL {
+  public enum LeaderboardSort: String, EnumType {
     case distance = "DISTANCE"
     case runCount = "RUN_COUNT"
     case topSpeed = "TOP_SPEED"

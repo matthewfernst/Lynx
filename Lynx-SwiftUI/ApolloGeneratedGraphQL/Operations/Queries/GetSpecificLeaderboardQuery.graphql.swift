@@ -3,8 +3,8 @@
 
 @_exported import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  class GetSpecificLeaderboardQuery: GraphQLQuery {
+extension ApolloGeneratedGraphQL {
+  public class GetSpecificLeaderboardQuery: GraphQLQuery {
     public static let operationName: String = "GetSpecificLeaderboard"
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
@@ -40,23 +40,29 @@ public extension ApolloGeneratedGraphQL {
       self.measurementSystem = measurementSystem
     }
 
-    public var __variables: Variables? { [
-      "timeframe": timeframe,
-      "sortBy": sortBy,
-      "measurementSystem": measurementSystem
-    ] }
+    public var __variables: Variables? {
+      [
+        "timeframe": timeframe,
+        "sortBy": sortBy,
+        "measurementSystem": measurementSystem,
+      ]
+    }
 
     public struct Data: ApolloGeneratedGraphQL.SelectionSet {
       public let __data: DataDict
       public init(_dataDict: DataDict) { __data = _dataDict }
 
       public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Query }
-      public static var __selections: [ApolloAPI.Selection] { [
-        .field("leaderboard", [Leaderboard].self, arguments: [
-          "sortBy": .variable("sortBy"),
-          "timeframe": .variable("timeframe")
-        ]),
-      ] }
+      public static var __selections: [ApolloAPI.Selection] {
+        [
+          .field(
+            "leaderboard", [Leaderboard].self,
+            arguments: [
+              "sortBy": .variable("sortBy"),
+              "timeframe": .variable("timeframe"),
+            ])
+        ]
+      }
 
       public var leaderboard: [Leaderboard] { __data["leaderboard"] }
 
@@ -68,11 +74,13 @@ public extension ApolloGeneratedGraphQL {
         public init(_dataDict: DataDict) { __data = _dataDict }
 
         public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.User }
-        public static var __selections: [ApolloAPI.Selection] { [
-          .field("__typename", String.self),
-          .field("stats", Stats?.self, arguments: ["timeframe": .variable("timeframe")]),
-          .fragment(LeaderboardFields.self),
-        ] }
+        public static var __selections: [ApolloAPI.Selection] {
+          [
+            .field("__typename", String.self),
+            .field("stats", Stats?.self, arguments: ["timeframe": .variable("timeframe")]),
+            .fragment(LeaderboardFields.self),
+          ]
+        }
 
         public var stats: Stats? { __data["stats"] }
         public var profilePictureUrl: String? { __data["profilePictureUrl"] }
@@ -93,14 +101,22 @@ public extension ApolloGeneratedGraphQL {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.UserStats }
-          public static var __selections: [ApolloAPI.Selection] { [
-            .field("__typename", String.self),
-            .field("distance", Double.self, arguments: ["system": .variable("measurementSystem")]),
-            .field("runCount", Int.self),
-            .field("topSpeed", Double.self, arguments: ["system": .variable("measurementSystem")]),
-            .field("verticalDistance", Double.self, arguments: ["system": .variable("measurementSystem")]),
-          ] }
+          public static var __parentType: ApolloAPI.ParentType {
+            ApolloGeneratedGraphQL.Objects.UserStats
+          }
+          public static var __selections: [ApolloAPI.Selection] {
+            [
+              .field("__typename", String.self),
+              .field(
+                "distance", Double.self, arguments: ["system": .variable("measurementSystem")]),
+              .field("runCount", Int.self),
+              .field(
+                "topSpeed", Double.self, arguments: ["system": .variable("measurementSystem")]),
+              .field(
+                "verticalDistance", Double.self,
+                arguments: ["system": .variable("measurementSystem")]),
+            ]
+          }
 
           public var distance: Double { __data["distance"] }
           public var runCount: Int { __data["runCount"] }

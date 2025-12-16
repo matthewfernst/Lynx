@@ -3,8 +3,8 @@
 
 @_exported import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  class UserLookupByEmailQuery: GraphQLQuery {
+extension ApolloGeneratedGraphQL {
+  public class UserLookupByEmailQuery: GraphQLQuery {
     public static let operationName: String = "UserLookupByEmail"
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
@@ -35,9 +35,12 @@ public extension ApolloGeneratedGraphQL {
       public init(_dataDict: DataDict) { __data = _dataDict }
 
       public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Query }
-      public static var __selections: [ApolloAPI.Selection] { [
-        .field("userLookupByEmail", UserLookupByEmail?.self, arguments: ["email": .variable("email")]),
-      ] }
+      public static var __selections: [ApolloAPI.Selection] {
+        [
+          .field(
+            "userLookupByEmail", UserLookupByEmail?.self, arguments: ["email": .variable("email")])
+        ]
+      }
 
       public var userLookupByEmail: UserLookupByEmail? { __data["userLookupByEmail"] }
 
@@ -49,14 +52,16 @@ public extension ApolloGeneratedGraphQL {
         public init(_dataDict: DataDict) { __data = _dataDict }
 
         public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.User }
-        public static var __selections: [ApolloAPI.Selection] { [
-          .field("__typename", String.self),
-          .field("id", ApolloGeneratedGraphQL.ID.self),
-          .field("firstName", String.self),
-          .field("lastName", String.self),
-          .field("email", String.self),
-          .field("profilePictureUrl", String?.self),
-        ] }
+        public static var __selections: [ApolloAPI.Selection] {
+          [
+            .field("__typename", String.self),
+            .field("id", ApolloGeneratedGraphQL.ID.self),
+            .field("firstName", String.self),
+            .field("lastName", String.self),
+            .field("email", String.self),
+            .field("profilePictureUrl", String?.self),
+          ]
+        }
 
         public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
         public var firstName: String { __data["firstName"] }

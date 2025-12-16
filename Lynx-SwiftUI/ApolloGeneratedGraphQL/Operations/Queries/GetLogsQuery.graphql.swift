@@ -3,8 +3,8 @@
 
 @_exported import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  class GetLogsQuery: GraphQLQuery {
+extension ApolloGeneratedGraphQL {
+  public class GetLogsQuery: GraphQLQuery {
     public static let operationName: String = "GetLogs"
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
@@ -58,9 +58,11 @@ public extension ApolloGeneratedGraphQL {
       public init(_dataDict: DataDict) { __data = _dataDict }
 
       public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Query }
-      public static var __selections: [ApolloAPI.Selection] { [
-        .field("selfLookup", SelfLookup?.self),
-      ] }
+      public static var __selections: [ApolloAPI.Selection] {
+        [
+          .field("selfLookup", SelfLookup?.self)
+        ]
+      }
 
       public var selfLookup: SelfLookup? { __data["selfLookup"] }
 
@@ -72,10 +74,12 @@ public extension ApolloGeneratedGraphQL {
         public init(_dataDict: DataDict) { __data = _dataDict }
 
         public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.User }
-        public static var __selections: [ApolloAPI.Selection] { [
-          .field("__typename", String.self),
-          .field("logbook", [Logbook].self, arguments: ["timeframe": "ALL_TIME"]),
-        ] }
+        public static var __selections: [ApolloAPI.Selection] {
+          [
+            .field("__typename", String.self),
+            .field("logbook", [Logbook].self, arguments: ["timeframe": "ALL_TIME"]),
+          ]
+        }
 
         public var logbook: [Logbook] { __data["logbook"] }
 
@@ -86,22 +90,26 @@ public extension ApolloGeneratedGraphQL {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Log }
-          public static var __selections: [ApolloAPI.Selection] { [
-            .field("__typename", String.self),
-            .field("id", ApolloGeneratedGraphQL.ID.self),
-            .field("originalFileName", String.self),
-            .field("distance", Double.self, arguments: ["system": .variable("system")]),
-            .field("conditions", [String].self),
-            .field("duration", Double.self),
-            .field("startDate", String.self),
-            .field("endDate", String.self),
-            .field("locationName", String.self),
-            .field("runCount", Int.self),
-            .field("topSpeed", Double.self, arguments: ["system": .variable("system")]),
-            .field("verticalDistance", Double.self, arguments: ["system": .variable("system")]),
-            .field("details", [Detail].self),
-          ] }
+          public static var __parentType: ApolloAPI.ParentType {
+            ApolloGeneratedGraphQL.Objects.Log
+          }
+          public static var __selections: [ApolloAPI.Selection] {
+            [
+              .field("__typename", String.self),
+              .field("id", ApolloGeneratedGraphQL.ID.self),
+              .field("originalFileName", String.self),
+              .field("distance", Double.self, arguments: ["system": .variable("system")]),
+              .field("conditions", [String].self),
+              .field("duration", Double.self),
+              .field("startDate", String.self),
+              .field("endDate", String.self),
+              .field("locationName", String.self),
+              .field("runCount", Int.self),
+              .field("topSpeed", Double.self, arguments: ["system": .variable("system")]),
+              .field("verticalDistance", Double.self, arguments: ["system": .variable("system")]),
+              .field("details", [Detail].self),
+            ]
+          }
 
           public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
           public var originalFileName: String { __data["originalFileName"] }
@@ -123,21 +131,25 @@ public extension ApolloGeneratedGraphQL {
             public let __data: DataDict
             public init(_dataDict: DataDict) { __data = _dataDict }
 
-            public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.LogDetail }
-            public static var __selections: [ApolloAPI.Selection] { [
-              .field("__typename", String.self),
-              .field("type", GraphQLEnum<ApolloGeneratedGraphQL.LogDetailType>.self),
-              .field("averageSpeed", Double.self, arguments: ["system": .variable("system")]),
-              .field("distance", Double.self, arguments: ["system": .variable("system")]),
-              .field("duration", Double.self),
-              .field("startDate", String.self),
-              .field("endDate", String.self),
-              .field("maxAltitude", Double.self, arguments: ["system": .variable("system")]),
-              .field("minAltitude", Double.self, arguments: ["system": .variable("system")]),
-              .field("topSpeed", Double.self, arguments: ["system": .variable("system")]),
-              .field("topSpeedAltitude", Double.self, arguments: ["system": .variable("system")]),
-              .field("verticalDistance", Double.self, arguments: ["system": .variable("system")]),
-            ] }
+            public static var __parentType: ApolloAPI.ParentType {
+              ApolloGeneratedGraphQL.Objects.LogDetail
+            }
+            public static var __selections: [ApolloAPI.Selection] {
+              [
+                .field("__typename", String.self),
+                .field("type", GraphQLEnum<ApolloGeneratedGraphQL.LogDetailType>.self),
+                .field("averageSpeed", Double.self, arguments: ["system": .variable("system")]),
+                .field("distance", Double.self, arguments: ["system": .variable("system")]),
+                .field("duration", Double.self),
+                .field("startDate", String.self),
+                .field("endDate", String.self),
+                .field("maxAltitude", Double.self, arguments: ["system": .variable("system")]),
+                .field("minAltitude", Double.self, arguments: ["system": .variable("system")]),
+                .field("topSpeed", Double.self, arguments: ["system": .variable("system")]),
+                .field("topSpeedAltitude", Double.self, arguments: ["system": .variable("system")]),
+                .field("verticalDistance", Double.self, arguments: ["system": .variable("system")]),
+              ]
+            }
 
             public var type: GraphQLEnum<ApolloGeneratedGraphQL.LogDetailType> { __data["type"] }
             public var averageSpeed: Double { __data["averageSpeed"] }

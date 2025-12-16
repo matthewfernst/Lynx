@@ -3,8 +3,8 @@
 
 @_exported import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  class GetPartyAllLeaderboardsQuery: GraphQLQuery {
+extension ApolloGeneratedGraphQL {
+  public class GetPartyAllLeaderboardsQuery: GraphQLQuery {
     public static let operationName: String = "GetPartyAllLeaderboards"
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
@@ -84,21 +84,25 @@ public extension ApolloGeneratedGraphQL {
       self.system = system
     }
 
-    public var __variables: Variables? { [
-      "partyId": partyId,
-      "timeframe": timeframe,
-      "limit": limit,
-      "system": system
-    ] }
+    public var __variables: Variables? {
+      [
+        "partyId": partyId,
+        "timeframe": timeframe,
+        "limit": limit,
+        "system": system,
+      ]
+    }
 
     public struct Data: ApolloGeneratedGraphQL.SelectionSet {
       public let __data: DataDict
       public init(_dataDict: DataDict) { __data = _dataDict }
 
       public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Query }
-      public static var __selections: [ApolloAPI.Selection] { [
-        .field("partyLookupById", PartyLookupById?.self, arguments: ["id": .variable("partyId")]),
-      ] }
+      public static var __selections: [ApolloAPI.Selection] {
+        [
+          .field("partyLookupById", PartyLookupById?.self, arguments: ["id": .variable("partyId")])
+        ]
+      }
 
       public var partyLookupById: PartyLookupById? { __data["partyLookupById"] }
 
@@ -109,32 +113,44 @@ public extension ApolloGeneratedGraphQL {
         public let __data: DataDict
         public init(_dataDict: DataDict) { __data = _dataDict }
 
-        public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Party }
-        public static var __selections: [ApolloAPI.Selection] { [
-          .field("__typename", String.self),
-          .field("id", ApolloGeneratedGraphQL.ID.self),
-          .field("name", String.self),
-          .field("leaderboard", alias: "distance", [Distance].self, arguments: [
-            "sortBy": "DISTANCE",
-            "timeframe": .variable("timeframe"),
-            "limit": .variable("limit")
-          ]),
-          .field("leaderboard", alias: "runCount", [RunCount].self, arguments: [
-            "sortBy": "RUN_COUNT",
-            "timeframe": .variable("timeframe"),
-            "limit": .variable("limit")
-          ]),
-          .field("leaderboard", alias: "topSpeed", [TopSpeed].self, arguments: [
-            "sortBy": "TOP_SPEED",
-            "timeframe": .variable("timeframe"),
-            "limit": .variable("limit")
-          ]),
-          .field("leaderboard", alias: "verticalDistance", [VerticalDistance].self, arguments: [
-            "sortBy": "VERTICAL_DISTANCE",
-            "timeframe": .variable("timeframe"),
-            "limit": .variable("limit")
-          ]),
-        ] }
+        public static var __parentType: ApolloAPI.ParentType {
+          ApolloGeneratedGraphQL.Objects.Party
+        }
+        public static var __selections: [ApolloAPI.Selection] {
+          [
+            .field("__typename", String.self),
+            .field("id", ApolloGeneratedGraphQL.ID.self),
+            .field("name", String.self),
+            .field(
+              "leaderboard", alias: "distance", [Distance].self,
+              arguments: [
+                "sortBy": "DISTANCE",
+                "timeframe": .variable("timeframe"),
+                "limit": .variable("limit"),
+              ]),
+            .field(
+              "leaderboard", alias: "runCount", [RunCount].self,
+              arguments: [
+                "sortBy": "RUN_COUNT",
+                "timeframe": .variable("timeframe"),
+                "limit": .variable("limit"),
+              ]),
+            .field(
+              "leaderboard", alias: "topSpeed", [TopSpeed].self,
+              arguments: [
+                "sortBy": "TOP_SPEED",
+                "timeframe": .variable("timeframe"),
+                "limit": .variable("limit"),
+              ]),
+            .field(
+              "leaderboard", alias: "verticalDistance", [VerticalDistance].self,
+              arguments: [
+                "sortBy": "VERTICAL_DISTANCE",
+                "timeframe": .variable("timeframe"),
+                "limit": .variable("limit"),
+              ]),
+          ]
+        }
 
         public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
         public var name: String { __data["name"] }
@@ -150,15 +166,19 @@ public extension ApolloGeneratedGraphQL {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.User }
-          public static var __selections: [ApolloAPI.Selection] { [
-            .field("__typename", String.self),
-            .field("id", ApolloGeneratedGraphQL.ID.self),
-            .field("firstName", String.self),
-            .field("lastName", String.self),
-            .field("profilePictureUrl", String?.self),
-            .field("stats", Stats?.self, arguments: ["timeframe": .variable("timeframe")]),
-          ] }
+          public static var __parentType: ApolloAPI.ParentType {
+            ApolloGeneratedGraphQL.Objects.User
+          }
+          public static var __selections: [ApolloAPI.Selection] {
+            [
+              .field("__typename", String.self),
+              .field("id", ApolloGeneratedGraphQL.ID.self),
+              .field("firstName", String.self),
+              .field("lastName", String.self),
+              .field("profilePictureUrl", String?.self),
+              .field("stats", Stats?.self, arguments: ["timeframe": .variable("timeframe")]),
+            ]
+          }
 
           public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
           public var firstName: String { __data["firstName"] }
@@ -173,11 +193,15 @@ public extension ApolloGeneratedGraphQL {
             public let __data: DataDict
             public init(_dataDict: DataDict) { __data = _dataDict }
 
-            public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.UserStats }
-            public static var __selections: [ApolloAPI.Selection] { [
-              .field("__typename", String.self),
-              .field("distance", Double.self, arguments: ["system": .variable("system")]),
-            ] }
+            public static var __parentType: ApolloAPI.ParentType {
+              ApolloGeneratedGraphQL.Objects.UserStats
+            }
+            public static var __selections: [ApolloAPI.Selection] {
+              [
+                .field("__typename", String.self),
+                .field("distance", Double.self, arguments: ["system": .variable("system")]),
+              ]
+            }
 
             public var distance: Double { __data["distance"] }
           }
@@ -190,15 +214,19 @@ public extension ApolloGeneratedGraphQL {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.User }
-          public static var __selections: [ApolloAPI.Selection] { [
-            .field("__typename", String.self),
-            .field("id", ApolloGeneratedGraphQL.ID.self),
-            .field("firstName", String.self),
-            .field("lastName", String.self),
-            .field("profilePictureUrl", String?.self),
-            .field("stats", Stats?.self, arguments: ["timeframe": .variable("timeframe")]),
-          ] }
+          public static var __parentType: ApolloAPI.ParentType {
+            ApolloGeneratedGraphQL.Objects.User
+          }
+          public static var __selections: [ApolloAPI.Selection] {
+            [
+              .field("__typename", String.self),
+              .field("id", ApolloGeneratedGraphQL.ID.self),
+              .field("firstName", String.self),
+              .field("lastName", String.self),
+              .field("profilePictureUrl", String?.self),
+              .field("stats", Stats?.self, arguments: ["timeframe": .variable("timeframe")]),
+            ]
+          }
 
           public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
           public var firstName: String { __data["firstName"] }
@@ -213,11 +241,15 @@ public extension ApolloGeneratedGraphQL {
             public let __data: DataDict
             public init(_dataDict: DataDict) { __data = _dataDict }
 
-            public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.UserStats }
-            public static var __selections: [ApolloAPI.Selection] { [
-              .field("__typename", String.self),
-              .field("runCount", Int.self),
-            ] }
+            public static var __parentType: ApolloAPI.ParentType {
+              ApolloGeneratedGraphQL.Objects.UserStats
+            }
+            public static var __selections: [ApolloAPI.Selection] {
+              [
+                .field("__typename", String.self),
+                .field("runCount", Int.self),
+              ]
+            }
 
             public var runCount: Int { __data["runCount"] }
           }
@@ -230,15 +262,19 @@ public extension ApolloGeneratedGraphQL {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.User }
-          public static var __selections: [ApolloAPI.Selection] { [
-            .field("__typename", String.self),
-            .field("id", ApolloGeneratedGraphQL.ID.self),
-            .field("firstName", String.self),
-            .field("lastName", String.self),
-            .field("profilePictureUrl", String?.self),
-            .field("stats", Stats?.self, arguments: ["timeframe": .variable("timeframe")]),
-          ] }
+          public static var __parentType: ApolloAPI.ParentType {
+            ApolloGeneratedGraphQL.Objects.User
+          }
+          public static var __selections: [ApolloAPI.Selection] {
+            [
+              .field("__typename", String.self),
+              .field("id", ApolloGeneratedGraphQL.ID.self),
+              .field("firstName", String.self),
+              .field("lastName", String.self),
+              .field("profilePictureUrl", String?.self),
+              .field("stats", Stats?.self, arguments: ["timeframe": .variable("timeframe")]),
+            ]
+          }
 
           public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
           public var firstName: String { __data["firstName"] }
@@ -253,11 +289,15 @@ public extension ApolloGeneratedGraphQL {
             public let __data: DataDict
             public init(_dataDict: DataDict) { __data = _dataDict }
 
-            public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.UserStats }
-            public static var __selections: [ApolloAPI.Selection] { [
-              .field("__typename", String.self),
-              .field("topSpeed", Double.self, arguments: ["system": .variable("system")]),
-            ] }
+            public static var __parentType: ApolloAPI.ParentType {
+              ApolloGeneratedGraphQL.Objects.UserStats
+            }
+            public static var __selections: [ApolloAPI.Selection] {
+              [
+                .field("__typename", String.self),
+                .field("topSpeed", Double.self, arguments: ["system": .variable("system")]),
+              ]
+            }
 
             public var topSpeed: Double { __data["topSpeed"] }
           }
@@ -270,15 +310,19 @@ public extension ApolloGeneratedGraphQL {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.User }
-          public static var __selections: [ApolloAPI.Selection] { [
-            .field("__typename", String.self),
-            .field("id", ApolloGeneratedGraphQL.ID.self),
-            .field("firstName", String.self),
-            .field("lastName", String.self),
-            .field("profilePictureUrl", String?.self),
-            .field("stats", Stats?.self, arguments: ["timeframe": .variable("timeframe")]),
-          ] }
+          public static var __parentType: ApolloAPI.ParentType {
+            ApolloGeneratedGraphQL.Objects.User
+          }
+          public static var __selections: [ApolloAPI.Selection] {
+            [
+              .field("__typename", String.self),
+              .field("id", ApolloGeneratedGraphQL.ID.self),
+              .field("firstName", String.self),
+              .field("lastName", String.self),
+              .field("profilePictureUrl", String?.self),
+              .field("stats", Stats?.self, arguments: ["timeframe": .variable("timeframe")]),
+            ]
+          }
 
           public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
           public var firstName: String { __data["firstName"] }
@@ -293,11 +337,15 @@ public extension ApolloGeneratedGraphQL {
             public let __data: DataDict
             public init(_dataDict: DataDict) { __data = _dataDict }
 
-            public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.UserStats }
-            public static var __selections: [ApolloAPI.Selection] { [
-              .field("__typename", String.self),
-              .field("verticalDistance", Double.self, arguments: ["system": .variable("system")]),
-            ] }
+            public static var __parentType: ApolloAPI.ParentType {
+              ApolloGeneratedGraphQL.Objects.UserStats
+            }
+            public static var __selections: [ApolloAPI.Selection] {
+              [
+                .field("__typename", String.self),
+                .field("verticalDistance", Double.self, arguments: ["system": .variable("system")]),
+              ]
+            }
 
             public var verticalDistance: Double { __data["verticalDistance"] }
           }

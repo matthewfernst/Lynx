@@ -3,8 +3,8 @@
 
 import ApolloAPI
 
-public extension ApolloGeneratedGraphQL.Objects {
-  static let LogDetail = Object(
+extension ApolloGeneratedGraphQL.Objects {
+  public static let LogDetail = Object(
     typename: "LogDetail",
     implementedInterfaces: []
   )

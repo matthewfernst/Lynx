@@ -3,8 +3,8 @@
 
 import ApolloAPI
 
-public extension ApolloGeneratedGraphQL.Objects {
-  static let Query = Object(
+extension ApolloGeneratedGraphQL.Objects {
+  public static let Query = Object(
     typename: "Query",
     implementedInterfaces: []
   )

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6500413F2B3F985E00122C77 /* FacebookSignInHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6500413E2B3F985E00122C77 /* FacebookSignInHandler.swift */; };
 		650041412B3FA2DC00122C77 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650041402B3FA2DC00122C77 /* AppDelegate.swift */; };
 		650041A12B3FDEC200122C77 /* FacebookBasics in Frameworks */ = {isa = PBXBuildFile; productRef = 650041A02B3FDEC200122C77 /* FacebookBasics */; };
 		650041A32B3FDEC200122C77 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = 650041A22B3FDEC200122C77 /* FacebookCore */; };
@@ -15,7 +14,6 @@
 		653404932B24E96800614C59 /* LeaderAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653404922B24E96800614C59 /* LeaderAttributes.swift */; };
 		6534049A2B26838D00614C59 /* FolderConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653404992B26838D00614C59 /* FolderConnectionHandler.swift */; };
 		653404A22B26CD1900614C59 /* FolderConnectionHandler+ErrorAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653404A12B26CD1900614C59 /* FolderConnectionHandler+ErrorAlerts.swift */; };
-		6573BA1B2B282B8D00381085 /* AppleSignInHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6573BA1A2B282B8D00381085 /* AppleSignInHandler.swift */; };
 		65A518CF2B2D38BF00A06014 /* PreviewSampleProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A518CE2B2D38BF00A06014 /* PreviewSampleProfile.swift */; };
 		65B314492B4904DA00229C20 /* CropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 65B314482B4904DA00229C20 /* CropViewController */; };
 		65B3144B2B4904DA00229C20 /* TOCropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 65B3144A2B4904DA00229C20 /* TOCropViewController */; };
@@ -44,8 +42,6 @@
 		65D59FE42B2ECE16008E3A2B /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D59FE32B2ECE16008E3A2B /* KeychainManager.swift */; };
 		65D9589C2B425734000E3013 /* FLAnimatedImage in Frameworks */ = {isa = PBXBuildFile; productRef = 65D9589B2B425734000E3013 /* FLAnimatedImage */; };
 		65D958A02B434F69000E3013 /* VideoPlayerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D9589F2B434F69000E3013 /* VideoPlayerHandler.swift */; };
-		65F6CFD62B12EA2300E94E40 /* LoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F6CFD52B12EA2300E94E40 /* LoginHandler.swift */; };
-		65F6CFDA2B13020300E94E40 /* GoogleSignInHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F6CFD92B13020300E94E40 /* GoogleSignInHandler.swift */; };
 		B447519B2EE6B27D00F75C34 /* UserLookupByEmail.graphql in Resources */ = {isa = PBXBuildFile; fileRef = B447519A2EE6B27D00F75C34 /* UserLookupByEmail.graphql */; };
 		B447519D2EE6B2A500F75C34 /* GetPartyAllLeaderboardsQuery.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = B447519C2EE6B2A500F75C34 /* GetPartyAllLeaderboardsQuery.graphql.swift */; };
 		B447519F2EE6B2AC00F75C34 /* UserLookupByEmailQuery.graphql.swift in Sources */ = {isa = PBXBuildFile; fileRef = B447519E2EE6B2AC00F75C34 /* UserLookupByEmailQuery.graphql.swift */; };
@@ -142,12 +138,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6500413E2B3F985E00122C77 /* FacebookSignInHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookSignInHandler.swift; sourceTree = "<group>"; };
 		650041402B3FA2DC00122C77 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		653404922B24E96800614C59 /* LeaderAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderAttributes.swift; sourceTree = "<group>"; };
 		653404992B26838D00614C59 /* FolderConnectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderConnectionHandler.swift; sourceTree = "<group>"; };
 		653404A12B26CD1900614C59 /* FolderConnectionHandler+ErrorAlerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FolderConnectionHandler+ErrorAlerts.swift"; sourceTree = "<group>"; };
-		6573BA1A2B282B8D00381085 /* AppleSignInHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInHandler.swift; sourceTree = "<group>"; };
 		6573BA1C2B28312000381085 /* Lynx-SwiftUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Lynx-SwiftUI.entitlements"; sourceTree = "<group>"; };
 		65A518CE2B2D38BF00A06014 /* PreviewSampleProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSampleProfile.swift; sourceTree = "<group>"; };
 		65B35E8C2B118C17002E99E4 /* Lynx-SwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lynx-SwiftUI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -172,8 +166,6 @@
 		65B8955C2BF98D3A0073B012 /* HowToUpload.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = HowToUpload.mov; sourceTree = "<group>"; };
 		65D59FE32B2ECE16008E3A2B /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		65D9589F2B434F69000E3013 /* VideoPlayerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerHandler.swift; sourceTree = "<group>"; };
-		65F6CFD52B12EA2300E94E40 /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
-		65F6CFD92B13020300E94E40 /* GoogleSignInHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInHandler.swift; sourceTree = "<group>"; };
 		65F6CFDB2B1305F300E94E40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B447519A2EE6B27D00F75C34 /* UserLookupByEmail.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = UserLookupByEmail.graphql; sourceTree = "<group>"; };
 		B447519C2EE6B2A500F75C34 /* GetPartyAllLeaderboardsQuery.graphql.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPartyAllLeaderboardsQuery.graphql.swift; sourceTree = "<group>"; };
@@ -405,10 +397,6 @@
 		65D59FE52B2F84B0008E3A2B /* SignIn */ = {
 			isa = PBXGroup;
 			children = (
-				65F6CFD52B12EA2300E94E40 /* LoginHandler.swift */,
-				65F6CFD92B13020300E94E40 /* GoogleSignInHandler.swift */,
-				6573BA1A2B282B8D00381085 /* AppleSignInHandler.swift */,
-				6500413E2B3F985E00122C77 /* FacebookSignInHandler.swift */,
 			);
 			path = SignIn;
 			sourceTree = "<group>";
@@ -778,7 +766,6 @@
 				6534049A2B26838D00614C59 /* FolderConnectionHandler.swift in Sources */,
 				65B35F322B11BF4B002E99E4 /* Extensions.swift in Sources */,
 				65B39A672B13FD0500948C9D /* LogbookStats.swift in Sources */,
-				65F6CFDA2B13020300E94E40 /* GoogleSignInHandler.swift in Sources */,
 				65B35EF72B11BE0C002E99E4 /* UserError.swift in Sources */,
 				65B35EF52B11BE0B002E99E4 /* RequestLoggingInterceptor.swift in Sources */,
 				65D59FE42B2ECE16008E3A2B /* KeychainManager.swift in Sources */,
@@ -847,15 +834,12 @@
 				B475856F2EE6327200F6E9F7 /* Query.graphql.swift in Sources */,
 				B47585702EE6327200F6E9F7 /* DeletePartyMutation.graphql.swift in Sources */,
 				B47585712EE6327200F6E9F7 /* Timeframe.graphql.swift in Sources */,
-				6573BA1B2B282B8D00381085 /* AppleSignInHandler.swift in Sources */,
-				6500413F2B3F985E00122C77 /* FacebookSignInHandler.swift in Sources */,
 				65B35F2F2B11BF1D002E99E4 /* NetworkManager.swift in Sources */,
 				B4921E7B2EF0C52400BE191E /* LeaderboardView.swift in Sources */,
 				B4921E7C2EF0C52400BE191E /* GlobalLeaderboardChart.swift in Sources */,
 				B47586072EE662F100F6E9F7 /* LogDetailView.swift in Sources */,
 				65A518CF2B2D38BF00A06014 /* PreviewSampleProfile.swift in Sources */,
 				65B39A652B13E61100948C9D /* ProfileManager.swift in Sources */,
-				65F6CFD62B12EA2300E94E40 /* LoginHandler.swift in Sources */,
 				65B35F8E2B11C1E0002E99E4 /* Profile.swift in Sources */,
 				B47586092EE6638200F6E9F7 /* PartyInvitesView.swift in Sources */,
 				650041412B3FA2DC00122C77 /* AppDelegate.swift in Sources */,

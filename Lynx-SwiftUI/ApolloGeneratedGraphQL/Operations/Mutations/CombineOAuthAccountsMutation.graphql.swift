@@ -3,8 +3,8 @@
 
 @_exported import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  class CombineOAuthAccountsMutation: GraphQLMutation {
+extension ApolloGeneratedGraphQL {
+  public class CombineOAuthAccountsMutation: GraphQLMutation {
     public static let operationName: String = "CombineOAuthAccounts"
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
@@ -35,10 +35,16 @@ public extension ApolloGeneratedGraphQL {
       public let __data: DataDict
       public init(_dataDict: DataDict) { __data = _dataDict }
 
-      public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Mutation }
-      public static var __selections: [ApolloAPI.Selection] { [
-        .field("combineOAuthAccounts", CombineOAuthAccounts.self, arguments: ["combineWith": .variable("combineWith")]),
-      ] }
+      public static var __parentType: ApolloAPI.ParentType {
+        ApolloGeneratedGraphQL.Objects.Mutation
+      }
+      public static var __selections: [ApolloAPI.Selection] {
+        [
+          .field(
+            "combineOAuthAccounts", CombineOAuthAccounts.self,
+            arguments: ["combineWith": .variable("combineWith")])
+        ]
+      }
 
       public var combineOAuthAccounts: CombineOAuthAccounts { __data["combineOAuthAccounts"] }
 
@@ -50,11 +56,13 @@ public extension ApolloGeneratedGraphQL {
         public init(_dataDict: DataDict) { __data = _dataDict }
 
         public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.User }
-        public static var __selections: [ApolloAPI.Selection] { [
-          .field("__typename", String.self),
-          .field("id", ApolloGeneratedGraphQL.ID.self),
-          .field("oauthLoginIds", [OauthLoginId].self),
-        ] }
+        public static var __selections: [ApolloAPI.Selection] {
+          [
+            .field("__typename", String.self),
+            .field("id", ApolloGeneratedGraphQL.ID.self),
+            .field("oauthLoginIds", [OauthLoginId].self),
+          ]
+        }
 
         public var id: ApolloGeneratedGraphQL.ID { __data["id"] }
         public var oauthLoginIds: [OauthLoginId] { __data["oauthLoginIds"] }
@@ -66,12 +74,16 @@ public extension ApolloGeneratedGraphQL {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.OAuthTypeCorrelation }
-          public static var __selections: [ApolloAPI.Selection] { [
-            .field("__typename", String.self),
-            .field("type", GraphQLEnum<ApolloGeneratedGraphQL.OAuthType>.self),
-            .field("id", ApolloGeneratedGraphQL.ID.self),
-          ] }
+          public static var __parentType: ApolloAPI.ParentType {
+            ApolloGeneratedGraphQL.Objects.OAuthTypeCorrelation
+          }
+          public static var __selections: [ApolloAPI.Selection] {
+            [
+              .field("__typename", String.self),
+              .field("type", GraphQLEnum<ApolloGeneratedGraphQL.OAuthType>.self),
+              .field("id", ApolloGeneratedGraphQL.ID.self),
+            ]
+          }
 
           public var type: GraphQLEnum<ApolloGeneratedGraphQL.OAuthType> { __data["type"] }
           public var id: ApolloGeneratedGraphQL.ID { __data["id"] }

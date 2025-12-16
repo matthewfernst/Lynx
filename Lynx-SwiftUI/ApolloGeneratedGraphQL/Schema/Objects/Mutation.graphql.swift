@@ -3,8 +3,8 @@
 
 import ApolloAPI
 
-public extension ApolloGeneratedGraphQL.Objects {
-  static let Mutation = Object(
+extension ApolloGeneratedGraphQL.Objects {
+  public static let Mutation = Object(
     typename: "Mutation",
     implementedInterfaces: []
   )

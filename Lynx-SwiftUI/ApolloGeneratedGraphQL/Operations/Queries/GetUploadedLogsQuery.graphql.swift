@@ -3,8 +3,8 @@
 
 @_exported import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  class GetUploadedLogsQuery: GraphQLQuery {
+extension ApolloGeneratedGraphQL {
+  public class GetUploadedLogsQuery: GraphQLQuery {
     public static let operationName: String = "GetUploadedLogs"
     public static let document: ApolloAPI.DocumentType = .notPersisted(
       definition: .init(
@@ -28,9 +28,11 @@ public extension ApolloGeneratedGraphQL {
       public init(_dataDict: DataDict) { __data = _dataDict }
 
       public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Query }
-      public static var __selections: [ApolloAPI.Selection] { [
-        .field("selfLookup", SelfLookup?.self),
-      ] }
+      public static var __selections: [ApolloAPI.Selection] {
+        [
+          .field("selfLookup", SelfLookup?.self)
+        ]
+      }
 
       public var selfLookup: SelfLookup? { __data["selfLookup"] }
 
@@ -42,10 +44,12 @@ public extension ApolloGeneratedGraphQL {
         public init(_dataDict: DataDict) { __data = _dataDict }
 
         public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.User }
-        public static var __selections: [ApolloAPI.Selection] { [
-          .field("__typename", String.self),
-          .field("logbook", [Logbook].self),
-        ] }
+        public static var __selections: [ApolloAPI.Selection] {
+          [
+            .field("__typename", String.self),
+            .field("logbook", [Logbook].self),
+          ]
+        }
 
         public var logbook: [Logbook] { __data["logbook"] }
 
@@ -56,11 +60,15 @@ public extension ApolloGeneratedGraphQL {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { ApolloGeneratedGraphQL.Objects.Log }
-          public static var __selections: [ApolloAPI.Selection] { [
-            .field("__typename", String.self),
-            .field("originalFileName", String.self),
-          ] }
+          public static var __parentType: ApolloAPI.ParentType {
+            ApolloGeneratedGraphQL.Objects.Log
+          }
+          public static var __selections: [ApolloAPI.Selection] {
+            [
+              .field("__typename", String.self),
+              .field("originalFileName", String.self),
+            ]
+          }
 
           public var originalFileName: String { __data["originalFileName"] }
         }

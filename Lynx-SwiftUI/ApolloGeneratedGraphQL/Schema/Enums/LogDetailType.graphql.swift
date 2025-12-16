@@ -3,8 +3,8 @@
 
 import ApolloAPI
 
-public extension ApolloGeneratedGraphQL {
-  enum LogDetailType: String, EnumType {
+extension ApolloGeneratedGraphQL {
+  public enum LogDetailType: String, EnumType {
     case run = "RUN"
     case lift = "LIFT"
   }

@@ -1,6 +1,6 @@
 import Foundation
 
 enum UserError: Error {
-    case noAuthorizationTokenReturned
-    case noProfileAttributesReturned
+  case noAuthorizationTokenReturned
+  case noProfileAttributesReturned
 }

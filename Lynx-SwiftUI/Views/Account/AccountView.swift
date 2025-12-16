@@ -1,303 +1,315 @@
-import SwiftUI
+import GoogleSignIn
 import MessageUI
+import SwiftUI
 
 struct AccountView: View {
-    @Environment(ProfileManager.self) private var profileManager
-    @State private var refreshView = false
-    @State private var showMailNotAvailable = false
-    private let mailComposeDelegate = MailDelegate()
-    
-    var body: some View {
-        NavigationStack {
-            Form {
-                profileInformation
-                settings
-                showYourSupport
-                contactDevelopers
-                signOutSection
-            }
-            .navigationTitle("Account")
-            
-            .alert("Failed to Open Mail", isPresented: $showMailNotAvailable) {
-                Button("Copy Bug Report Template") {
-                    UIPasteboard.general.string = Constants.Mail.bugReportTemplate
-                }
-                Button("Dismiss") {
-                    showMailNotAvailable = false
-                }
-            } message: {
-                Text("We were unable to open the Mail app. Please send an email to \(Constants.Mail.developerContactEmail). You can copy the bug report template below.")
-            }
-        }
-    }
-    
-    private var profileInformation: some View {
-        NavigationLink(destination: EditProfileView(profileManager: profileManager)) {
-                if let profilePicture = profileManager.profilePicture {
-                    profilePicture
-                        .resizable()
-                        .scaledToFill()
-                        .clipShape(Circle())
-                        .frame(
-                            width: Constants.ProfileInformation.imageWidthHeight,
-                            height: Constants.ProfileInformation.imageWidthHeight
-                        )
-                } else {
-                    ProgressView().padding()
-                }
-                VStack(alignment: .leading) {
-                    Text(profileManager.profile!.name)
-                        .font(.title2)
-                    Text("Edit Account & Profile")
-                        .font(.caption)
-                }
-                .padding(.horizontal)
-        }
-    }
-    
-    private var settings: some View {
-        Section {
-            NavigationLink(destination: GeneralSettingsView()) {
-                cell(withIconColor: .gray, andText: "General") {
-                    iconView(withSystemImageName: "gear")
-                }
-            }
-            
-            NavigationLink(destination: NotificationSettingsView()) {
-                cell(withIconColor: .red, andText: "Notifications") {
-                    iconView(withSystemImageName: "bell.badge.fill")
-                }
-            }
-        } header: {
-            Text("Settings")
-        }
-    }
-    
-    private var showYourSupport: some View {
-        Section {
-            Group {
-                Link(destination: Constants.Links.gitHubURL) {
-                    cell(withIconColor: .black, andText: "GitHub") {
-                        iconView(withAssetImageName: "GitHubIcon")
-                    }
-                }
-                
-                
-                Link(destination: Constants.Links.twitterURL) {
-                    cell(withIconColor: .blue, andText: "Twitter") {
-                        iconView(withAssetImageName: "TwitterIcon")
-                    }
-                }
-                
-            }
-        } header: {
-            Text("Show your support")
-        }
-        
-    }
-    
-    private var contactDevelopers: some View {
-        Section {
-            Button {
-                presentMailCompose()
-            } label: {
-                cell(withIconColor: .purple, andText: "Contact Developers") {
-                    iconView(withSystemImageName: "paperplane.fill")
-                }
-            }
-        } header: {
-            Text("Found an issue or need help?")
-        } footer: {
-            HStack {
-                Spacer()
-                VStack(alignment: .center) {
-                    Text("Made with ❤️ + ☕️ in San Fransisco, CA")
-                    if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-                        Text("Version \(appVersion)")
-                    }
-                }
-                .multilineTextAlignment(.center)
-                .font(.system(size: Constants.Fonts.footerSize))
-                .padding(.top, Constants.Fonts.footerPadding)
-                
-                Spacer()
-            }
-            
-        }
-        .onTapGesture {
-            presentMailCompose()
-        }
-    }
+  @Environment(ProfileManager.self) private var profileManager
+  @State private var refreshView = false
+  @State private var showMailNotAvailable = false
+  private let mailComposeDelegate = MailDelegate()
 
-    private var signOutSection: some View {
-        Section {
-            Button {
-                LoginHandler.signOut()
-            } label: {
-                HStack {
-                    Spacer()
-                    Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.forward")
-                        .foregroundStyle(.red)
-                    Spacer()
-                }
-            }
-        }
-    }
+  var body: some View {
+    NavigationStack {
+      Form {
+        profileInformation
+        settings
+        showYourSupport
+        contactDevelopers
+        signOutSection
+      }
+      .navigationTitle("Account")
 
-    private func cell(
-        withIconColor color: Color,
-        andText text: String,
-        iconView: () -> some View
-    ) -> some View {
-        HStack {
-            RoundedRectangle(cornerRadius: Constants.Cell.cornerRadius)
-                .frame(
-                    width: Constants.Cell.systemImageWidth,
-                    height: Constants.Cell.systemImageHeight
-                )
-                .foregroundStyle(color)
-                .overlay {
-                    iconView()
-                }
-            
-            Text(text)
-                .padding(.horizontal, Constants.Cell.textToIconPadding)
+      .alert("Failed to Open Mail", isPresented: $showMailNotAvailable) {
+        Button("Copy Bug Report Template") {
+          UIPasteboard.general.string = Constants.Mail.bugReportTemplate
         }
-    }
-    
-    private func iconView(withSystemImageName name: String) -> some View {
-        Image(systemName: name)
-            .frame(
-                width: Constants.Cell.systemImageWidth,
-                height: Constants.Cell.systemImageWidth
-            )
-            .foregroundStyle(.white)
-    }
-    
-    @ViewBuilder
-    private func iconView(withAssetImageName name: String) -> some View {
-        let widthAndHeight: CGFloat = (
-            name == "TwitterIcon" ? Constants.Cell.twitterWidthAndHeight : Constants.Cell.gitHubWidthAndHeight
+        Button("Dismiss") {
+          showMailNotAvailable = false
+        }
+      } message: {
+        Text(
+          "We were unable to open the Mail app. Please send an email to \(Constants.Mail.developerContactEmail). You can copy the bug report template below."
         )
-        Image(name)
-            .resizable()
-            .frame(
-                width: widthAndHeight,
-                height: widthAndHeight
-            )
+      }
     }
-    
-    private struct Constants {
-        struct ProfileInformation {
-            static let imageWidthHeight: CGFloat = 70
-        }
-        
-        struct Fonts {
-            static let footerSize: CGFloat = 11
-            static let footerPadding: CGFloat = 25
-        }
-        
-        struct Links {
-            static let gitHubURL = URL(string: "https://www.github.com/matthewfernst")!
-            static let twitterURL = URL(string: "https://twitter.com/ErnstMatthew")!
-        }
-        
-        struct Cell {
-            static let cornerRadius: CGFloat = 8
-            static let systemImageWidth: CGFloat = 28
-            static let systemImageHeight: CGFloat = 28
-            
-            static let textToIconPadding: CGFloat = 5
-            
-            static let gitHubWidthAndHeight: CGFloat = 25
-            static let twitterWidthAndHeight: CGFloat = 20
-        }
-        
-        struct Mail {
-            static let developerContactEmail = "matthew.f.ernst@icloud.com"
-            static let bugReportTemplate = """
-           Hello Lynx Dev Team,
-           
-           I would like to report a bug in the app. Here are the details:
-           
-           - App Version: [App Version]
-           - Device: [Device Model]
-           - iOS Version: [iOS Version]
-           
-           Bug Description:
-           [Describe the bug you encountered]
-           
-           Steps to Reproduce:
-           [Provide steps to reproduce the bug]
-           
-           Expected Behavior:
-           [Describe what you expected to happen]
-           
-           Actual Behavior:
-           [Describe what actually happened]
-           
-           Additional Information:
-           [Provide any additional relevant information]
-           
-           Thank you for your attention to this matter.
-           
-           Regards,
-           \(ProfileManager.shared.profile?.name ?? "[YOUR NAME]")
-           """
-        }
+  }
+
+  private var profileInformation: some View {
+    NavigationLink(destination: EditProfileView(profileManager: profileManager)) {
+      if let profilePicture = profileManager.profilePicture {
+        profilePicture
+          .resizable()
+          .scaledToFill()
+          .clipShape(Circle())
+          .frame(
+            width: Constants.ProfileInformation.imageWidthHeight,
+            height: Constants.ProfileInformation.imageWidthHeight
+          )
+      } else {
+        ProgressView().padding()
+      }
+      VStack(alignment: .leading) {
+        Text(profileManager.profile!.name)
+          .font(.title2)
+        Text("Edit Account & Profile")
+          .font(.caption)
+      }
+      .padding(.horizontal)
     }
+  }
+
+  private var settings: some View {
+    Section {
+      NavigationLink(destination: GeneralSettingsView()) {
+        cell(withIconColor: .gray, andText: "General") {
+          iconView(withSystemImageName: "gear")
+        }
+      }
+
+      NavigationLink(destination: NotificationSettingsView()) {
+        cell(withIconColor: .red, andText: "Notifications") {
+          iconView(withSystemImageName: "bell.badge.fill")
+        }
+      }
+    } header: {
+      Text("Settings")
+    }
+  }
+
+  private var showYourSupport: some View {
+    Section {
+      Group {
+        Link(destination: Constants.Links.gitHubURL) {
+          cell(withIconColor: .black, andText: "GitHub") {
+            iconView(withAssetImageName: "GitHubIcon")
+          }
+        }
+
+        Link(destination: Constants.Links.twitterURL) {
+          cell(withIconColor: .blue, andText: "Twitter") {
+            iconView(withAssetImageName: "TwitterIcon")
+          }
+        }
+
+      }
+    } header: {
+      Text("Show your support")
+    }
+
+  }
+
+  private var contactDevelopers: some View {
+    Section {
+      Button {
+        presentMailCompose()
+      } label: {
+        cell(withIconColor: .purple, andText: "Contact Developers") {
+          iconView(withSystemImageName: "paperplane.fill")
+        }
+      }
+    } header: {
+      Text("Found an issue or need help?")
+    } footer: {
+      HStack {
+        Spacer()
+        VStack(alignment: .center) {
+          Text("Made with ❤️ + ☕️ in San Fransisco, CA")
+          if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+            Text("Version \(appVersion)")
+          }
+        }
+        .multilineTextAlignment(.center)
+        .font(.system(size: Constants.Fonts.footerSize))
+        .padding(.top, Constants.Fonts.footerPadding)
+
+        Spacer()
+      }
+
+    }
+    .onTapGesture {
+      presentMailCompose()
+    }
+  }
+
+  private var signOutSection: some View {
+    Section {
+      Button {
+        signOut()
+      } label: {
+        HStack {
+          Spacer()
+          Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.forward")
+            .foregroundStyle(.red)
+          Spacer()
+        }
+      }
+    }
+  }
+
+  private func signOut() {
+    UserManager.shared.lynxToken = nil
+    if ProfileManager.shared.profile?.oauthType == OAuthType.google.rawValue {
+      GIDSignIn.sharedInstance.signOut()
+    }
+    ApolloLynxClient.clearCache()
+    BookmarkManager.shared.removeAllBookmarks()
+    ProfileManager.shared.update(signInWith: false)
+  }
+
+  private func cell(
+    withIconColor color: Color,
+    andText text: String,
+    iconView: () -> some View
+  ) -> some View {
+    HStack {
+      RoundedRectangle(cornerRadius: Constants.Cell.cornerRadius)
+        .frame(
+          width: Constants.Cell.systemImageWidth,
+          height: Constants.Cell.systemImageHeight
+        )
+        .foregroundStyle(color)
+        .overlay {
+          iconView()
+        }
+
+      Text(text)
+        .padding(.horizontal, Constants.Cell.textToIconPadding)
+    }
+  }
+
+  private func iconView(withSystemImageName name: String) -> some View {
+    Image(systemName: name)
+      .frame(
+        width: Constants.Cell.systemImageWidth,
+        height: Constants.Cell.systemImageWidth
+      )
+      .foregroundStyle(.white)
+  }
+
+  @ViewBuilder
+  private func iconView(withAssetImageName name: String) -> some View {
+    let widthAndHeight: CGFloat =
+      (name == "TwitterIcon"
+        ? Constants.Cell.twitterWidthAndHeight : Constants.Cell.gitHubWidthAndHeight)
+    Image(name)
+      .resizable()
+      .frame(
+        width: widthAndHeight,
+        height: widthAndHeight
+      )
+  }
+
+  private struct Constants {
+    struct ProfileInformation {
+      static let imageWidthHeight: CGFloat = 70
+    }
+
+    struct Fonts {
+      static let footerSize: CGFloat = 11
+      static let footerPadding: CGFloat = 25
+    }
+
+    struct Links {
+      static let gitHubURL = URL(string: "https://www.github.com/matthewfernst")!
+      static let twitterURL = URL(string: "https://twitter.com/ErnstMatthew")!
+    }
+
+    struct Cell {
+      static let cornerRadius: CGFloat = 8
+      static let systemImageWidth: CGFloat = 28
+      static let systemImageHeight: CGFloat = 28
+
+      static let textToIconPadding: CGFloat = 5
+
+      static let gitHubWidthAndHeight: CGFloat = 25
+      static let twitterWidthAndHeight: CGFloat = 20
+    }
+
+    struct Mail {
+      static let developerContactEmail = "matthew.f.ernst@icloud.com"
+      static let bugReportTemplate = """
+        Hello Lynx Dev Team,
+
+        I would like to report a bug in the app. Here are the details:
+
+        - App Version: [App Version]
+        - Device: [Device Model]
+        - iOS Version: [iOS Version]
+
+        Bug Description:
+        [Describe the bug you encountered]
+
+        Steps to Reproduce:
+        [Provide steps to reproduce the bug]
+
+        Expected Behavior:
+        [Describe what you expected to happen]
+
+        Actual Behavior:
+        [Describe what actually happened]
+
+        Additional Information:
+        [Provide any additional relevant information]
+
+        Thank you for your attention to this matter.
+
+        Regards,
+        \(ProfileManager.shared.profile?.name ?? "[YOUR NAME]")
+        """
+    }
+  }
 }
 
-
-// MARK: - Mail https://medium.com/@florentmorin/messageui-swiftui-and-uikit-integration-82d91159b0bd
 extension AccountView {
-    
-    /// Delegate for view controller as `MFMailComposeViewControllerDelegate`
-    private final class MailDelegate: NSObject, MFMailComposeViewControllerDelegate {
-        
-        func mailComposeController(_ controller: MFMailComposeViewController,
-                                   didFinishWith result: MFMailComposeResult,
-                                   error: Error?) {
-            controller.dismiss(animated: true)
-        }
-        
+
+  /// Delegate for view controller as `MFMailComposeViewControllerDelegate`
+  private final class MailDelegate: NSObject, MFMailComposeViewControllerDelegate {
+
+    func mailComposeController(
+      _ controller: MFMailComposeViewController,
+      didFinishWith result: MFMailComposeResult,
+      error: Error?
+    ) {
+      controller.dismiss(animated: true)
     }
-    
-    /// Present an mail compose view controller modally in UIKit environment
-    private func presentMailCompose() {
-        guard MFMailComposeViewController.canSendMail() else {
-            showMailNotAvailable = true
-            return
-        }
-        
-        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        let window = windowScene?.windows.first
-        let vc = window?.rootViewController
-        
-        let composeVC = MFMailComposeViewController()
-        composeVC.mailComposeDelegate = mailComposeDelegate
-        
-        composeVC.setToRecipients([Constants.Mail.developerContactEmail])
-        composeVC.setSubject("Lynx Bug Report: [Brief Description]")
-        composeVC.setMessageBody(Constants.Mail.bugReportTemplate, isHTML: false)
-        
-        vc?.present(composeVC, animated: true)
+
+  }
+
+  /// Present an mail compose view controller modally in UIKit environment
+  private func presentMailCompose() {
+    guard MFMailComposeViewController.canSendMail() else {
+      showMailNotAvailable = true
+      return
     }
+
+    let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+    let window = windowScene?.windows.first
+    let vc = window?.rootViewController
+
+    let composeVC = MFMailComposeViewController()
+    composeVC.mailComposeDelegate = mailComposeDelegate
+
+    composeVC.setToRecipients([Constants.Mail.developerContactEmail])
+    composeVC.setSubject("Lynx Bug Report: [Brief Description]")
+    composeVC.setMessageBody(Constants.Mail.bugReportTemplate, isHTML: false)
+
+    vc?.present(composeVC, animated: true)
+  }
 }
 
-
-// MARK: - Messages
 extension AccountView {
-    /// Delegate for view controller as `MFMessageComposeViewControllerDelegate`
-    private final class MessageDelegate: NSObject, MFMessageComposeViewControllerDelegate {
-        func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
-            controller.dismiss(animated: true)
-        }
-
+  /// Delegate for view controller as `MFMessageComposeViewControllerDelegate`
+  private final class MessageDelegate: NSObject, MFMessageComposeViewControllerDelegate {
+    func messageComposeViewController(
+      _ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult
+    ) {
+      controller.dismiss(animated: true)
     }
+
+  }
 
 }
 
 #Preview {
-    AccountView()
+  AccountView()
 }
