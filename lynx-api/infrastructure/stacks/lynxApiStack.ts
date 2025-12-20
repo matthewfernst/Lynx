@@ -40,7 +40,7 @@ import {
   Tracing,
 } from "aws-cdk-lib/aws-lambda";
 import { S3EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
-import { RetentionDays } from "aws-cdk-lib/aws-logs";
+import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { Topic } from "aws-cdk-lib/aws-sns";
 import { EmailSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
@@ -229,8 +229,9 @@ export class LynxAPIStack extends Stack {
     leaderboardTable: Table,
     partiesTable: Table,
   ): LambdaFunction {
+    const functionName = "lynx-graphql";
     return new LambdaFunction(this, "lynxGraphqlLambda", {
-      functionName: "lynx-graphql",
+      functionName,
       runtime: Runtime.NODEJS_22_X,
       handler: "index.handler",
       code: Code.fromAsset("dist/graphql"),
@@ -242,7 +243,7 @@ export class LynxAPIStack extends Stack {
         leaderboardTable,
         partiesTable,
       ),
-      ...this.createLambdaParams(env),
+      ...this.createLambdaParams(functionName, env),
     });
   }
 
@@ -340,8 +341,9 @@ export class LynxAPIStack extends Stack {
     slopesZippedBucket: Bucket,
     slopesUnzippedBucket: Bucket,
   ): LambdaFunction {
+    const functionName = "lynx-unzipper";
     const unzipperLambda = new LambdaFunction(this, "lynxUnzipperLambda", {
-      functionName: "lynx-unzipper",
+      functionName,
       runtime: Runtime.NODEJS_22_X,
       handler: "index.handler",
       code: Code.fromAsset("dist/unzipper"),
@@ -349,7 +351,7 @@ export class LynxAPIStack extends Stack {
         slopesZippedBucket,
         slopesUnzippedBucket,
       ),
-      ...this.createLambdaParams(env),
+      ...this.createLambdaParams(functionName, env),
     });
     unzipperLambda.addEventSource(
       new S3EventSource(slopesZippedBucket, {
@@ -400,8 +402,9 @@ export class LynxAPIStack extends Stack {
     slopesUnzippedBucket: Bucket,
     leaderboardTable: Table,
   ): LambdaFunction {
+    const functionName = "lynx-reducer";
     const reducerLambda = new LambdaFunction(this, "lynxReducerLambda", {
-      functionName: "lynx-reducer",
+      functionName,
       runtime: Runtime.NODEJS_22_X,
       handler: "index.handler",
       code: Code.fromAsset("dist/reducer"),
@@ -409,7 +412,7 @@ export class LynxAPIStack extends Stack {
         slopesUnzippedBucket,
         leaderboardTable,
       ),
-      ...this.createLambdaParams(env),
+      ...this.createLambdaParams(functionName, env),
     });
     reducerLambda.addEventSource(
       new S3EventSource(slopesUnzippedBucket, {
@@ -453,13 +456,18 @@ export class LynxAPIStack extends Stack {
   }
 
   private createLambdaParams(
+    functionName: string,
     env: ApplicationEnvironment,
   ): Partial<FunctionProps> {
     return {
       memorySize: 2048,
       timeout: Duration.seconds(29),
       tracing: Tracing.ACTIVE,
-      logRetention: RetentionDays.ONE_MONTH,
+      logGroup: new LogGroup(this, `${functionName}LambdaLogGroup`, {
+        logGroupName: `/aws/lambda/${functionName}`,
+        retention: RetentionDays.ONE_MONTH,
+        removalPolicy: RemovalPolicy.DESTROY
+      }),
       loggingFormat: LoggingFormat.JSON,
       applicationLogLevelV2: ApplicationLogLevel.WARN,
       systemLogLevelV2: SystemLogLevel.WARN,
