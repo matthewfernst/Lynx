@@ -1,7 +1,3 @@
-import {
-  ApplicationAssociator,
-  TargetApplication,
-} from "@aws-cdk/aws-servicecatalogappregistry-alpha";
 import { App, Environment } from "aws-cdk-lib";
 import { LynxAPIStack } from "./stacks/lynxApiStack";
 
@@ -21,15 +17,5 @@ const env: Environment = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
   region: process.env.CDK_DEFAULT_REGION,
 };
-
-new ApplicationAssociator(app, "LynxAssociatedApplication", {
-  applications: [
-    TargetApplication.createApplicationStack({
-      applicationName: "Lynx",
-      applicationDescription: "© Meloncholy Games",
-      stackName: "LynxApplicationStack",
-    }),
-  ],
-});
 
 new LynxAPIStack(app, "LynxStack", { env });

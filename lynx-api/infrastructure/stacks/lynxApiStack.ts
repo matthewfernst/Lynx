@@ -15,6 +15,7 @@ import {
   TreatMissingData,
 } from "aws-cdk-lib/aws-cloudwatch";
 import { SnsAction } from "aws-cdk-lib/aws-cloudwatch-actions";
+import { CfnGroup } from "aws-cdk-lib/aws-resourcegroups";
 import {
   AttributeType,
   BillingMode,
@@ -117,6 +118,22 @@ export class LynxAPIStack extends Stack {
 
     const alarmTopic = this.createAlarmActions(env);
     this.createRestAPIErrorsAlarm(alarmTopic, api);
+
+    this.createResourceGroup();
+  }
+
+  private createResourceGroup(): CfnGroup {
+    return new CfnGroup(this, "lynxResourceGroup", {
+      name: "Lynx",
+      description: "Copyright Meloncholy Games",
+      resourceQuery: {
+        type: "CLOUDFORMATION_STACK_1_0",
+        query: {
+          stackIdentifier: this.stackId,
+          resourceTypeFilters: ["AWS::AllSupported"],
+        },
+      },
+    });
   }
 
   private createUsersTable(): Table {
@@ -154,12 +171,7 @@ export class LynxAPIStack extends Stack {
       deletionProtection: true,
       timeToLiveAttribute: "ttl",
     });
-    const metrics = [
-      "distance",
-      "runCount",
-      "topSpeed",
-      "verticalDistance",
-    ];
+    const metrics = ["distance", "runCount", "topSpeed", "verticalDistance"];
     metrics.map((metric) => {
       leaderboardTable.addGlobalSecondaryIndex({
         indexName: metric,
@@ -466,7 +478,7 @@ export class LynxAPIStack extends Stack {
       logGroup: new LogGroup(this, `${functionName}LambdaLogGroup`, {
         logGroupName: `/aws/lambda/${functionName}`,
         retention: RetentionDays.ONE_MONTH,
-        removalPolicy: RemovalPolicy.DESTROY
+        removalPolicy: RemovalPolicy.DESTROY,
       }),
       loggingFormat: LoggingFormat.JSON,
       applicationLogLevelV2: ApplicationLogLevel.WARN,
